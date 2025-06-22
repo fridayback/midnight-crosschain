@@ -1,0 +1,64 @@
+// This file is part of midnightntwrk/example-counter.
+// Copyright (C) 2025 Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+pragma language_version 0.15;
+
+import CompactStandardLibrary;
+
+
+export { CoinInfo, QualifiedCoinInfo}
+// public state
+export ledger round: Counter;
+
+export ledger treasury: QualifiedCoinInfo;
+
+
+constructor() {
+    round.increment(1);
+}
+
+
+export circuit deposit(coin: CoinInfo): [] {
+  receive(coin);
+  treasury.write_coin(coin, right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+
+}
+
+export circuit withdraw(): [] {
+  send(treasury,left<ZswapCoinPublicKey, ContractAddress>(own_public_key()),treasury.value);
+}
+
+export circuit mint(domainSep: Bytes<32>, amount: Uint<128>,recipient: ZswapCoinPublicKey): [] {
+  const toAddr = left<ZswapCoinPublicKey, ContractAddress>(recipient);
+  mint_token(
+    domainSep,
+    amount,
+    evolve_nonce(round, domainSep),
+    toAddr
+  );
+}
+
+export circuit burn(coin: CoinInfo): [] {
+  const burnAddr = burn_address();
+  receive(coin);
+  // assert (recipient == own_public_key()) "wrong recipient";
+
+  send_immediate( coin, burnAddr, coin.value);
+}
+
+export circuit burnAddress(): Either<ZswapCoinPublicKey, ContractAddress> {
+  return burn_address();
+}
+
