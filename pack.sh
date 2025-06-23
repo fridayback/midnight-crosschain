@@ -1,1 +1,0 @@
-mkdir -p ./release && tar -cvf ./release/contract.tar ./contract/dist/ && tar -cvf ./release/api.tar ./sdk/dist/

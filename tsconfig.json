@@ -16,6 +16,8 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports":true,
+    "declarationDir": "./dist/types",
   }
 }
