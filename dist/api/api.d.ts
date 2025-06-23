@@ -1,0 +1,31 @@
+import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
+import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
+import { type FinalizedTxData, type MidnightProvider, type WalletProvider } from '@midnight-ntwrk/midnight-js-types';
+import { type Resource } from '@midnight-ntwrk/wallet';
+import { type Wallet } from '@midnight-ntwrk/wallet-api';
+import { type Logger } from 'pino';
+import { type CrossChainCircuits, type CrossChainContract, type CrossChainProviders, type DeployedCrossChainContract } from './common-types.js';
+import { type Config } from './config.js';
+import { type CrossChainPrivateState } from "../contract";
+export declare const getCrossChainLedgerState: (providers: CrossChainProviders, contractAddress: ContractAddress) => Promise<bigint | null>;
+export declare const counterContractInstance: CrossChainContract;
+export declare const joinContract: (providers: CrossChainProviders, contractAddress: string, privateState: CrossChainPrivateState) => Promise<DeployedCrossChainContract>;
+export declare const deploy: (providers: CrossChainProviders, privateState: CrossChainPrivateState) => Promise<DeployedCrossChainContract>;
+export declare const deposit: (counterContract: DeployedCrossChainContract) => Promise<FinalizedTxData>;
+export declare const withdraw: (counterContract: DeployedCrossChainContract) => Promise<FinalizedTxData>;
+export declare const mint: (counterContract: DeployedCrossChainContract) => Promise<FinalizedTxData>;
+export declare const burn: (counterContract: DeployedCrossChainContract) => Promise<FinalizedTxData>;
+export declare const displayCounterValue: (providers: CrossChainProviders, counterContract: DeployedCrossChainContract) => Promise<{
+    counterValue: bigint | null;
+    contractAddress: string;
+}>;
+export declare const createWalletAndMidnightProvider: (wallet: Wallet) => Promise<WalletProvider & MidnightProvider>;
+export declare const configureProviders: (wallet: Wallet & Resource, config: Config) => Promise<{
+    privateStateProvider: import("@midnight-ntwrk/midnight-js-types").PrivateStateProvider<CrossChainCircuits, any>;
+    publicDataProvider: import("@midnight-ntwrk/midnight-js-types").PublicDataProvider;
+    zkConfigProvider: NodeZkConfigProvider<CrossChainCircuits>;
+    proofProvider: import("@midnight-ntwrk/midnight-js-types").ProofProvider<string>;
+    walletProvider: WalletProvider & MidnightProvider;
+    midnightProvider: WalletProvider & MidnightProvider;
+}>;
+export declare function setLogger(_logger: Logger): void;

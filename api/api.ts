@@ -2,7 +2,7 @@
  * @Author: liulin blue-sky-dl5@163.com
  * @Date: 2025-06-20 17:15:35
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-06-22 12:56:21
+ * @LastEditTime: 2025-06-23 14:33:25
  * @FilePath: /midnight-crosschain/sdk/src/api.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,7 +11,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { encodeCoinInfo, EncodedCoinInfo, type ContractAddress } from '@midnight-ntwrk/compact-runtime';
-import { CrossChain, type CrossChainPrivateState, witnesses, createCrossChainPrivateState} from "@midnight-crosschain/contract-interface";
 import { type CoinInfo, createCoinInfo, nativeToken, tokenType, TokenType, Transaction, type TransactionId } from '@midnight-ntwrk/ledger';
 import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
@@ -44,7 +43,7 @@ import { assertIsContractAddress, toHex } from '@midnight-ntwrk/midnight-js-util
 import { getLedgerNetworkId, getZswapNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import * as fsAsync from 'node:fs/promises';
 import * as fs from 'node:fs';
-
+import { CrossChain, type CrossChainPrivateState, witnesses, createCrossChainPrivateState} from "../contract";
 
 let logger: Logger;
 // Instead of setting globalThis.crypto which is read-only, we'll ensure crypto is available
