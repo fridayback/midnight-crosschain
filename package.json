@@ -1,7 +1,6 @@
 {
   "name": "midnight-crosschain",
   "version": "1.0.0",
-  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -16,7 +15,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compact": "compactc contract/crosschain.compact contract/managed",
-    "build-cjs": "tsc -p tsconfig.cjs.json",
+    "build-cjs": "tsc -p tsconfig.cjs.json && ./rename.sh",
     "build-esm": "tsc -p tsconfig.esm.json",
     "build": "rm -rf dist && npm run build-cjs && npm run build-esm && cp -fR ./contract/managed ./dist/contract/managed",
     "lint": "eslint .",

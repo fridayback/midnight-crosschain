@@ -1,11 +1,12 @@
 {
   "include": ["./**/*"],
+  "exclude": ["eslint.config.mjs"],
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "dist",
     "declaration": true,
     "lib": ["ESNext"],
-    "target": "ES2022",
+    "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
     "allowJs": true,
@@ -17,7 +18,6 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports":true,
-    "declarationDir": "./dist/types",
+    "allowSyntheticDefaultImports":true
   }
 }

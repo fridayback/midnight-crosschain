@@ -1,13 +1,10 @@
 {
     "extends": "./tsconfig.json",
     "exclude": [
-        "test/**/*","dist/**/*"
-    ],
-    "include": [
-        "./**/*"
+        "test/**/*","dist/**/*","eslint.config.mjs"
     ],
     "compilerOptions": {
-        "module": "CommonJS",
-        "moduleResolution": "Node"
+        "module": "commonjs",
+        "moduleResolution": "node"
     }
 }

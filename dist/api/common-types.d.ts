@@ -1,4 +1,4 @@
-import { CrossChain, type CrossChainPrivateState } from '@midnight-crosschain/contract-interface';
+import { CrossChain, type CrossChainPrivateState } from '../contract';
 import type { ImpureCircuitId, MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
 import type { DeployedContract, FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
 export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
