@@ -18,11 +18,14 @@ pragma language_version >= 0.15.0;
 import CompactStandardLibrary;
 
 
-export { CoinInfo, QualifiedCoinInfo, CurvePoint}
-// public state
+export { CoinInfo, QualifiedCoinInfo, CurvePoint, ZswapCoinPublicKey,TokenPairInfo,FeeConfig,ProposalType,Proposal,CrossOutBound}
+
+
+// cross tx related state
 export ledger outBoundCounter: Counter;
 export ledger inBoundCounter: Counter;
 export ledger nonce: Bytes<32>;
+export ledger smgTxSigners: Set<CurvePoint>;
 
 // treasury related state
 export ledger treasuryCoins: Map<Bytes<32>, Map<Uint<128>, QualifiedCoinInfo>>;
@@ -31,15 +34,55 @@ export ledger latestOutBoundCrosstxInfo: CrossOutBound;
 
 // token related state
 export ledger tokenPairs: Map<Uint<32>, TokenPairInfo>;
+export ledger tokenManager: ZswapCoinPublicKey;
 
 //fee related state  fromChainId-> toChainId -> fee
 export ledger feeCommonConfig: Map<Uint<32>, Uint<128>>;
 export ledger feeReceiver: ZswapCoinPublicKey;
 
 // smg related state
-export ledger pubKeys: Map<Uint<8>,CurvePoint>;
-export ledger totalCount: Uint<8>;
-export ledger threshold: Uint<8>;
+export ledger smgPubkeys: Map<Uint<32>,CurvePoint>;
+export ledger smgPubkeysToIndex: Map<CurvePoint, Uint<32>>;
+export ledger smgPKThreshold: Uint<8>;
+export ledger smgCounter: Counter;
+export ledger oracleWorker: ZswapCoinPublicKey;
+
+// admin related state
+export ledger admins: Map<ZswapCoinPublicKey, Boolean>;
+export ledger adminThreshold: Uint<8>;
+
+//proposal related state
+export ledger proposalId: Counter;
+export ledger proposals: Map<Uint<32>, Proposal>;
+export ledger currentExcuteProposalId: Uint<32>;
+export ledger proposalVoters: Map<Uint<32>, Set<ZswapCoinPublicKey>>;
+
+export enum ProposalType{
+  AddAdmin,
+  RemoveAdmin,
+  UpdateFeeReceiver,
+  UpdateOracleWorker,
+  UpdateTokenManager,
+  UpdateAdminThreshold,
+  UpdateSMGPKThreshold,
+  UpdateFeeCommonConfig
+}
+
+
+export struct FeeConfig{
+  chainId: Uint<32>;
+  fee: Uint<128>;
+}
+export struct Proposal{
+  type: ProposalType;
+  addr: ZswapCoinPublicKey;
+  threshold: Uint<128>;
+  feeConfig: FeeConfig;
+}
+
+// owner related state
+export ledger owner: ZswapCoinPublicKey;
+export ledger mergeWorker: ZswapCoinPublicKey;
 
 
 export struct TokenPairInfo {
@@ -61,14 +104,15 @@ export struct CrossOutBound {
   nonce: Uint<128>; // equal to outBoundCounter
 }
 
-export struct CrossInBound{
-  uniqueId: Bytes<32>;
-  // fromAddr: Opaque<"string">;
-  toAddr: ZswapCoinPublicKey;
-  tokenPairId: Uint<32>;
-  amount: Uint<128>;
-  ttl: Uint<128>;   // require ttl > inBoundCounter
-}
+// export struct CrossInBound{
+//   uniqueId: Bytes<32>;
+//   // fromAddr: Opaque<"string">;
+//   toAddr: ZswapCoinPublicKey;
+//   tokenPairId: Uint<32>;
+//   amount: Uint<128>;
+//   fee: Uint<12>;
+//   ttl: Uint<128>;   // require ttl > inBoundCounter
+// }
 
 export struct ProofData{
   sgmId: Bytes<32>;
@@ -77,15 +121,17 @@ export struct ProofData{
   amount: Uint<128>;
   fee: Uint<128>;
   toAddr: ZswapCoinPublicKey;
-  coins: Maybe<Vector<2,Uint<128>>>;
-  signers: Vector<29, Uint<8>>;
+  coins: Maybe<Vector<4,Uint<128>>>;
+  signers: Vector<29, Uint<32>>;
   ttl: Uint<128>;
 }
 
 
 
 constructor() {
-    outBoundCounter.increment(1);
+    owner = ownPublicKey();
+    mergeWorker = ownPublicKey();
+    proposalId.increment(1);
 }
 
 
@@ -139,8 +185,8 @@ export circuit smgRelease(
   , amount: Uint<128>
   , fee: Uint<128>
   , toAddr: ZswapCoinPublicKey
-  , coins: Vector<2,Uint<128>>
-  , signers: Vector<29, Uint<8>>
+  , coins: Vector<4,Uint<128>>
+  , signers: Vector<29, Uint<32>>
   , ttl: Uint<128>
   , R: CurvePoint
   , s: Field): [] {
@@ -174,7 +220,7 @@ export circuit smgRelease(
     , amount: disclose(amount)
     , fee: disclose(fee)
     , toAddr: disclose(toAddr)
-    , coins: some<Vector<2,Uint<128>>>(disclose(coins))
+    , coins: some<Vector<4,Uint<128>>>(disclose(coins))
     , signers: disclose(signers)
     , ttl: disclose(ttl)
     };
@@ -234,7 +280,7 @@ export circuit smgMint(uniqueId: Bytes<32>
   , amount: Uint<128>
   , fee: Uint<128>
   , toAddr: ZswapCoinPublicKey
-  , signers: Vector<29, Uint<8>>
+  , signers: Vector<29, Uint<32>>
   , ttl: Uint<128>
   , R: CurvePoint
   , s: Field): [] {
@@ -269,7 +315,7 @@ export circuit smgMint(uniqueId: Bytes<32>
     , amount: disclose(amount)
     , fee: disclose(fee)
     , toAddr: disclose(toAddr)
-    , coins: none<Vector<2,Uint<128>>>()
+    , coins: none<Vector<4,Uint<128>>>()
     , signers: disclose(signers)
     , ttl: disclose(ttl)
     };
@@ -287,12 +333,16 @@ export pure circuit verifySignature(hash: Bytes<32>, P: CurvePoint, R: CurvePoin
 
 circuit verifyProof(proof:ProofData, R: CurvePoint, s: Field): Boolean {
   const hash = persistentHash<ProofData>(disclose(proof));
-  const P = fold((Pi:CurvePoint, index: Uint<8>)=> ecAdd(Pi, pubKeys.lookup(index)), default<CurvePoint>, disclose(proof.signers));
-  
+  smgTxSigners.resetToDefault();
+  const P = fold((Pi:CurvePoint, index: Uint<32>)=> {
+    smgTxSigners.insert(smgPubkeys.lookup(index));
+    return ecAdd(Pi, smgPubkeys.lookup(index));
+  }, default<CurvePoint>, disclose(proof.signers));
+  assert(smgTxSigners.size() <= smgPKThreshold, "threshold not reached");
   return verifySignature(hash, P, disclose(R), disclose(s));
 }
 
-circuit internalMerger(token: Bytes<32>, coins: Vector<2,Uint<128>>): CoinInfo { 
+circuit internalMerger(token: Bytes<32>, coins: Vector<4,Uint<128>>): CoinInfo { 
   assert(treasuryCoins.member(token),"token required not exists");
 
   return fold((acc: CoinInfo, coinIndex: Uint<128>) => {
@@ -341,3 +391,151 @@ circuit getFee(tokenPairId: Uint<32>): Uint<128> {
     return tokenPair.fee;
   }
 }
+
+
+//-------------------------------------------------------------------------------------------------------------------
+export circuit transferOwner(newOwner: ZswapCoinPublicKey): [] {
+  assert(owner == ownPublicKey(), "only owner can transfer ownership");
+  owner = disclose(newOwner);
+}
+
+export circuit setOracleWorker(newWorker: ZswapCoinPublicKey): [] {
+  assert(checkAdminAuthorized(), "not admin authorized");
+  oracleWorker = disclose(newWorker);
+}
+
+export circuit setFeeReceiver(newFeeReceiver: ZswapCoinPublicKey): [] {
+  assert(checkAdminAuthorized(), "not admin authorized");
+  feeReceiver = disclose(newFeeReceiver);
+}
+
+export circuit setTokenManager(newTokenManager: ZswapCoinPublicKey): [] {
+  assert(checkAdminAuthorized(), "not admin authorized");
+  tokenManager = disclose(newTokenManager);
+}
+
+export circuit setMegerWorker(newMergeWorker: ZswapCoinPublicKey): [] {
+  assert(checkAdminAuthorized(), "not admin authorized");
+  mergeWorker = disclose(newMergeWorker);
+}
+
+export circuit mergeTreasuryCoin(token: Bytes<32>, coins: Vector<4,Uint<128>>): [] {
+  assert(mergeWorker == ownPublicKey(), "only mergeWorker can merge coin");
+  const coinInfo = internalMerger(disclose(token), disclose(coins));
+  addTreasuryCoin(coinInfo);
+}
+
+export circuit addAdmin(admin: ZswapCoinPublicKey): [] {
+  assert(checkAdminAuthorized(), "not admin authorized");
+  assert(!admins.member(disclose(admin)), "admin already exists");
+  admins.insert(disclose(admin),true);
+}
+
+export circuit removeAdmin(admin: ZswapCoinPublicKey): [] {
+  assert(checkAdminAuthorized(), "not admin authorized");
+  assert(admins.member(disclose(admin)), "admin does not exist");
+  admins.remove(disclose(admin));
+}
+
+export circuit setAdminThreshold(threshold: Uint<8>): [] {
+  assert(checkAdminAuthorized(), "not admin authorized");
+  assert(disclose(threshold) <= admins.size(), "threshold must be less than or equal to the number of admins");
+  adminThreshold = disclose(threshold);
+}
+
+
+
+export circuit setSmgPksks(pks: Vector<29,CurvePoint>): [] {
+  assert(owner == ownPublicKey() || oracleWorker == ownPublicKey(), "only owner or orcal worker can set smg pks");
+  smgPubkeys.resetToDefault();
+  smgPubkeysToIndex.resetToDefault();
+
+  fold( (index: Uint<32>, pk: CurvePoint) =>{
+    const i = (index+smgCounter) as Field as Uint<32>;
+    smgPubkeys.insert(i,pk);
+    smgPubkeysToIndex.insert(pk,i);
+    return (index + 1) as Uint<32>;
+    }, 0, disclose(pks));
+  
+  smgCounter.increment(1);
+}
+
+circuit checkAdminAuthorized(): Boolean {
+  const isOwner = owner == ownPublicKey();
+  const isAdminAuthorized = proposalVoters.member(currentExcuteProposalId)? proposalVoters.lookup(currentExcuteProposalId).size() >= adminThreshold : false;
+  return (isOwner || isAdminAuthorized);
+}
+
+export circuit setSmgPKThreold(threshold: Uint<8>): [] {
+  assert(checkAdminAuthorized(), "not admin authorized");
+  assert(threshold <= smgPubkeys.size(), "threshold must be less than or equal to the number of smg pks");
+  smgPKThreshold = disclose(threshold);
+}
+
+export circuit setFeeCommonConfig(chainId: Uint<32>, fee: Uint<128>): [] {
+  assert(checkAdminAuthorized(), "not admin authorized");
+  if(feeCommonConfig.member(disclose(chainId))) {
+    feeCommonConfig.remove(disclose(chainId));
+  } 
+  feeCommonConfig.insert(disclose(chainId), disclose(fee));
+}
+
+export circuit addTokenPair(
+  tokenPairId: Uint<32>
+  , pairInfo: TokenPairInfo): [] {
+  assert(tokenManager == ownPublicKey() || checkAdminAuthorized(), "not authorized");
+  assert(!tokenPairs.member(disclose(tokenPairId)), "token pair already exists");
+  tokenPairs.insert(disclose(tokenPairId), disclose(pairInfo));
+}
+
+export circuit removeTokenPair(tokenPairId: Uint<32>): [] {
+  assert(tokenManager == ownPublicKey() || checkAdminAuthorized(), "not authorized");
+  assert(tokenPairs.member(disclose(tokenPairId)), "token pair does not exist");
+  tokenPairs.remove(disclose(tokenPairId));
+}
+
+export circuit newProposal(newProposal: Proposal): [] {
+  proposals.insert(proposalId as Field as Uint<32>, disclose(newProposal));
+  proposalVoters.insertDefault(proposalId as Field as Uint<32>);
+  voteProposal(proposalId as Field as Uint<32>);
+  proposalId.increment(1);
+}
+
+export circuit voteProposal(proposalId: Uint<32>): [] {
+  assert(admins.member(ownPublicKey()), "only admin can vote proposal");
+  assert(proposals.member(disclose(proposalId)), "proposal does not exist");
+  // assert(proposalVoters.lookup(disclose(proposalId)).member(ownPublicKey()), "already voted");
+
+  proposalVoters.lookup(disclose(proposalId)).insert(ownPublicKey());
+}
+
+ 
+export circuit executeProposal(proposalId: Uint<32>): [] {
+  assert(proposalVoters.member(disclose(proposalId)), "proposal does not exist");
+  currentExcuteProposalId = disclose(proposalId);
+
+
+  const currentProposal = proposals.lookup(currentExcuteProposalId);
+  if(currentProposal.type == ProposalType.AddAdmin){
+    addAdmin(currentProposal.addr);
+  }else if(currentProposal.type == ProposalType.RemoveAdmin){
+    removeAdmin(currentProposal.addr);
+  }else if(currentProposal.type == ProposalType.UpdateFeeReceiver){
+    setFeeReceiver(currentProposal.addr);
+  }else if(currentProposal.type == ProposalType.UpdateOracleWorker){
+    setOracleWorker(currentProposal.addr);
+  }else if(currentProposal.type == ProposalType.UpdateTokenManager){
+    setTokenManager(currentProposal.addr);
+  }else if(currentProposal.type == ProposalType.UpdateAdminThreshold){
+    setAdminThreshold(currentProposal.threshold as Uint<8>);
+  }else if(currentProposal.type == ProposalType.UpdateSMGPKThreshold){
+    setSmgPKThreold(currentProposal.threshold as Uint<8>);
+  }else if(currentProposal.type == ProposalType.UpdateFeeCommonConfig){
+    setFeeCommonConfig(currentProposal.feeConfig.chainId as Uint<32>, currentProposal.feeConfig.fee as Uint<128>);
+  }
+
+  proposals.remove(disclose(proposalId));
+  proposalVoters.remove(disclose(proposalId));
+}
+
+
