@@ -1,5 +1,5 @@
 {
-  "name": "@midnight-crosschain/contract-interface",
+  "name": "midnight-crosschain",
   "version": "1.0.0",
   "private": true,
   "type": "module",
