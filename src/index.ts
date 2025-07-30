@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-07-30 10:11:56
+ * @LastEditTime: 2025-07-30 18:00:58
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -29,6 +29,7 @@ import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from
 
 import * as Rx from 'rxjs';
 import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueString, CompactTypeOpaqueUint8Array, CompactTypeUnsignedInteger, CompactTypeVector, ContractAddress, convert_Uint8Array_to_bigint, degradeToTransient, ecAdd, ecMul, ecMulGenerator, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
+import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
 
 export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
 
@@ -97,6 +98,94 @@ export const createWalletAndMidnightProvider = async (wallet: Wallet): Promise<W
   };
 };
 
+export const buildWalletAndWaitForFunds = async (
+  { indexer, indexerWS, node, proofServer }: Config,
+  seed: string,
+  filename: string,
+): Promise<Wallet & Resource> => {
+  const directoryPath = process.env.SYNC_CACHE;
+  let wallet: Wallet & Resource;
+  wallet = await WalletBuilder.build(
+    indexer,
+    indexerWS,
+    proofServer,
+    node,
+    seed,
+    getZswapNetworkId(),
+    'info',
+  );
+  wallet.start();
+
+  const state = await Rx.firstValueFrom(wallet.state());
+  // logger.info(`Your wallet seed is: ${seed}`);
+  // logger.info(`Your wallet address is: ${state.address}`);
+  let balance = state.balances;
+  // let balance = state.balances;
+  // if (balance === undefined || balance === 0n) {
+  if (Object.keys(balance).length === 0) {
+    // logger.info(`Your wallet balance is: 0`);
+    // logger.info(`Waiting to receive tokens...`);
+    balance = await waitForFunds(wallet);
+  } else {
+    // logger.info(`length: ${Object.keys(balance).length}, ${balance}`);
+  }
+
+  return wallet;
+};
+
+export const waitForFunds = (wallet: Wallet) =>
+  Rx.firstValueFrom(
+    wallet.state().pipe(
+      Rx.throttleTime(10_000),
+      Rx.tap((state) => {
+        const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
+        const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
+        // logger.info(`Waiting for funds. Backend lag: ${sourceGap}, wallet lag: ${applyGap}, transactions=${state.transactionHistory.length}`,);
+      }),
+      Rx.filter((state) => {
+        // Let's allow progress only if wallet is synced
+        // logger.info(`wallet ZswapCoinPublicKey: ${parseCoinPublicKeyToHex(state.coinPublicKey, getLedgerNetworkId())},${state.coinPublicKey}`);
+        return state.syncProgress?.synced === true;
+      }),
+      // Rx.map((s) => s.balances[nativeToken()] ?? 0n),
+      Rx.map((s) => s.balances),
+      Rx.filter((balance) => balance ? true : false),
+    ),
+  );
+
+  
+export const waitForSync = (wallet: Wallet) =>
+  Rx.firstValueFrom(
+    wallet.state().pipe(
+      Rx.throttleTime(5_000),
+      Rx.tap((state) => {
+        const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
+        const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
+        // logger.info(`Waiting for funds. Backend lag: ${sourceGap}, wallet lag: ${applyGap}, transactions=${state.transactionHistory.length}`,);
+      }),
+      Rx.filter((state) => {
+        // Let's allow progress only if wallet is synced fully
+        return state.syncProgress !== undefined && state.syncProgress.synced;
+      }),
+    ),
+  );
+
+export const waitForSyncProgress = async (wallet: Wallet) =>
+  await Rx.firstValueFrom(
+    wallet.state().pipe(
+      Rx.throttleTime(5_000),
+      Rx.tap((state) => {
+        const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
+        const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
+        // logger.info(`Waiting for funds. Backend lag: ${sourceGap}, wallet lag: ${applyGap}, transactions=${state.transactionHistory.length}`,);
+      }),
+      Rx.filter((state) => {
+        // Let's allow progress only if syncProgress is defined
+        return state.syncProgress !== undefined;
+      }),
+    ),
+  );
+
 export class CrossChainApi {
   providers!: CrossChainProviders;
   crossChainContract!: DeployedCrossChainContract;
@@ -149,11 +238,11 @@ export class CrossChainApi {
       signingKey: signingKey,
       args: [BigInt(adminThreshold), BigInt(smgPkThreshold), BigInt(smgPKCount)]
     });
-    // logger.info(`Deployed contract at address: ${this.crossChainContract.deployTxData.public.contractAddress}`);
+    // // logger.info(`Deployed contract at address: ${this.crossChainContract.deployTxData.public.contractAddress}`);
     return this.crossChainContract.deployTxData.public.contractAddress;
   }
 
-  async join(contractAddress: ContractAddress): Promise<void>{
+  async join(contractAddress: ContractAddress): Promise<void> {
     this.crossChainContract = await findDeployedContract(this.providers, {
       contractAddress,
       contract: crosschainContractInstance,
@@ -162,7 +251,7 @@ export class CrossChainApi {
     });
   }
 
-  caculateHashOfProofData(proof: CrossChain.ProofData):bigint {
+  caculateHashOfProofData(proof: CrossChain.ProofData): bigint {
     const tokenPairIdHash = persistentHash(new CompactTypeUnsignedInteger(4294967295n, 4), proof.tokenPairId);
     const amountHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.amount);
     const feeHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.fee);
@@ -187,7 +276,7 @@ export class CrossChainApi {
   }
 
   /////////////////////////////////////////////////  Cross Tx  /////////////////////////////////////////////////////////////
-  async userLock(smgID: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint){
+  async userLock(smgID: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint) {
     const smgId_0 = pad(smgID, 32);
     const tokenPair_0 = BigInt(tokenPair);
     const amount_0 = BigInt(amount);
