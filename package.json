@@ -3,13 +3,21 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "workspaces":[
-    "contract",
-    "sdk",
-    "test"
-  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compact": "compactc contract/crosschain.compact src/managed/crosschain",
+    "build": "rm -rf dist && npx tsc --project tsconfig.build.json && cp -Rf ./src/managed ./dist/managed",
+    "lint": "eslint src",
+    "typecheck": "npx tsc -p tsconfig.json --noEmit",
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",
