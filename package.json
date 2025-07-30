@@ -16,8 +16,7 @@
     "compact": "compactc contract/crosschain.compact src/managed/crosschain",
     "build": "rm -rf dist && npx tsc --project tsconfig.build.json && cp -Rf ./src/managed ./dist/managed",
     "lint": "eslint src",
-    "typecheck": "npx tsc -p tsconfig.json --noEmit",
-    "postinstall": "npm run build"
+    "typecheck": "npx tsc -p tsconfig.json --noEmit"
   },
   "repository": {
     "type": "git",
