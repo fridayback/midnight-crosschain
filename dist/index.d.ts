@@ -6,6 +6,7 @@ import { CoinPublicKey, Wallet } from '@midnight-ntwrk/wallet-api';
 import { TokenType } from '@midnight-ntwrk/zswap';
 import { NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { ContractAddress, SigningKey } from '@midnight-ntwrk/compact-runtime';
+import { Resource } from '@midnight-ntwrk/wallet';
 export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
 export declare const CrossChainPrivateStateId = "crossChainPrivateState";
 export type CrossChainProviders = MidnightProviders<CrossChainCircuits, typeof CrossChainPrivateStateId, CrossChainPrivateState>;
@@ -26,6 +27,10 @@ export interface Config {
 }
 export declare const crosschainContractInstance: CrossChainContract;
 export declare const createWalletAndMidnightProvider: (wallet: Wallet) => Promise<WalletProvider & MidnightProvider>;
+export declare const buildWalletAndWaitForFunds: ({ indexer, indexerWS, node, proofServer }: Config, seed: string, filename: string) => Promise<Wallet & Resource>;
+export declare const waitForFunds: (wallet: Wallet) => Promise<Record<string, bigint>>;
+export declare const waitForSync: (wallet: Wallet) => Promise<import("@midnight-ntwrk/wallet-api").WalletState>;
+export declare const waitForSyncProgress: (wallet: Wallet) => Promise<import("@midnight-ntwrk/wallet-api").WalletState>;
 export declare class CrossChainApi {
     providers: CrossChainProviders;
     crossChainContract: DeployedCrossChainContract;
