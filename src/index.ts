@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-07-31 10:06:33
+ * @LastEditTime: 2025-07-31 17:25:00
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -26,7 +26,7 @@ import { CoinInfo, decodeTokenType, encodeTokenType, Transaction, TransactionId,
 import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
-
+import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as Rx from 'rxjs';
 import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueString, CompactTypeOpaqueUint8Array, CompactTypeUnsignedInteger, CompactTypeVector, ContractAddress, convert_Uint8Array_to_bigint, degradeToTransient, ecAdd, ecMul, ecMulGenerator, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
 import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
@@ -153,7 +153,7 @@ export const waitForFunds = (wallet: Wallet) =>
     ),
   );
 
-  
+
 export const waitForSync = (wallet: Wallet) =>
   Rx.firstValueFrom(
     wallet.state().pipe(
@@ -292,7 +292,7 @@ export class CrossChainApi {
     const tokenPair_0 = BigInt(tokenPair);
     const amount_0 = BigInt(amount);
     const fee_0 = BigInt(fee);
-    const toAddr_0 = { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(toAddr, getZswapNetworkId())) };
+    const toAddr_0 = { bytes: getCoinPublicKeyFromShieldAddress(toAddr) };
     const coins_0 = coins.map(coin => BigInt(coin));
     const signers_0 = signers.map(signer => BigInt(signer));
     const ttl_0 = BigInt(ttl);
@@ -604,3 +604,10 @@ export const configureProviders = async (wallet: Wallet & Resource, config: Conf
     midnightProvider: walletAndMidnightProvider,
   };
 };
+
+export const getCoinPublicKeyFromShieldAddress = (shieldAddr: string) => {
+  const tmp1 = MidnightBech32m.parse('mn_shield-addr_test10th0dtqgnpanzwmqj236zccpkmj9xxpkl7r7e7cr5e3v7k0stm5qxqxa9m6z5f4603nyuu4kw9c65ektu48hhyrtu2f07h42ycppkvw9ccyry600');
+  const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
+  // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
+  return tmp2.coinPublicKey.data;
+}
