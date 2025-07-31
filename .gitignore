@@ -57,5 +57,5 @@ jspm_packages/
 *.sln
 
 # Compact
-managed/
+src/managed/
 yarn.lock
