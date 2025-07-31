@@ -102,3 +102,4 @@ export declare const configureProviders: (wallet: Wallet & Resource, config: Con
     walletProvider: WalletProvider & MidnightProvider;
     midnightProvider: WalletProvider & MidnightProvider;
 }>;
+export declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
