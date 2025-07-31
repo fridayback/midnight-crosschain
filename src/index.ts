@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-07-30 18:00:58
+ * @LastEditTime: 2025-07-31 10:06:33
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -589,3 +589,18 @@ export const verifySignature = (hash: bigint, R: CrossChain.CurvePoint, s: bigin
   const realM = ecMulGenerator(s);
   return expectM.x === realM.x && expectM.y === realM.y;
 }
+
+export const configureProviders = async (wallet: Wallet & Resource, config: Config) => {
+  const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+  // console.log('^^^^^^^^^^^^^^',ZKConfig.zkConfigPath)
+  return {
+    privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
+      privateStateStoreName: ZKConfig.privateStateStoreName,
+    }),
+    publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+    zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
+    proofProvider: httpClientProofProvider(config.proofServer),
+    walletProvider: walletAndMidnightProvider,
+    midnightProvider: walletAndMidnightProvider,
+  };
+};
