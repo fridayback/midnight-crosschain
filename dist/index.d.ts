@@ -2,6 +2,7 @@ import { type CrossChainPrivateState } from './witnesses.js';
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
 import { type ImpureCircuitId, type MidnightProvider, type MidnightProviders, type WalletProvider, type FinalizedTxData } from '@midnight-ntwrk/midnight-js-types';
 import { type DeployedContract, type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
+import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { CoinPublicKey, Wallet } from '@midnight-ntwrk/wallet-api';
 import { TokenType } from '@midnight-ntwrk/zswap';
 import { NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
@@ -93,3 +94,11 @@ export declare const signData: (hash: bigint, privateKey: bigint) => {
     P: import("@midnight-ntwrk/compact-runtime").CurvePoint;
 };
 export declare const verifySignature: (hash: bigint, R: CrossChain.CurvePoint, s: bigint, P: CrossChain.CurvePoint) => boolean;
+export declare const configureProviders: (wallet: Wallet & Resource, config: Config) => Promise<{
+    privateStateProvider: import("@midnight-ntwrk/midnight-js-types").PrivateStateProvider<"crossChainPrivateState", any>;
+    publicDataProvider: import("@midnight-ntwrk/midnight-js-types").PublicDataProvider;
+    zkConfigProvider: NodeZkConfigProvider<CrossChainCircuits>;
+    proofProvider: import("@midnight-ntwrk/midnight-js-types").ProofProvider<string>;
+    walletProvider: WalletProvider & MidnightProvider;
+    midnightProvider: WalletProvider & MidnightProvider;
+}>;
