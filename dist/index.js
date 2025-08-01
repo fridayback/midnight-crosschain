@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-07-31 17:25:00
+ * @LastEditTime: 2025-08-01 15:41:43
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -171,24 +171,48 @@ export class CrossChainApi {
             initialPrivateState: {},
         });
     }
+    newProofData(uniqueId, smgId, tokenPairId, amount, fee, toAddr, coins, signers, ttl) {
+        const uniqueId_0 = pad(uniqueId, 32);
+        const smgId_0 = pad(smgId, 32);
+        const tokenPairId_0 = BigInt(tokenPairId);
+        const amount_0 = BigInt(amount);
+        const fee_0 = BigInt(fee);
+        const toAddr_0 = { bytes: getCoinPublicKeyFromShieldAddress(toAddr) };
+        let coins_0 = this.defaultNoneMergeCoins();
+        if (coins && coins.length > coins_0.value.length) {
+            throw new Error(`Too many coins`);
+        }
+        else {
+            coins?.map((c, i) => coins_0.value[i] = (BigInt(c)));
+        }
+        let signers_0 = this.defaultSmgSignators();
+        if (signers && signers.length > signers_0.length) {
+            throw new Error(`Too many signers`);
+        }
+        else {
+            signers?.map((s, i) => signers_0[i] = (BigInt(s)));
+        }
+        const ttl_0 = BigInt(ttl);
+        return {
+            uniqueId: uniqueId_0,
+            smgId: smgId_0,
+            tokenPairId: tokenPairId_0,
+            amount: amount_0,
+            fee: fee_0,
+            toAddr: toAddr_0,
+            coins: coins_0,
+            signers: signers_0,
+            ttl: ttl_0,
+        };
+    }
     caculateHashOfProofData(proof) {
         const tokenPairIdHash = persistentHash(new CompactTypeUnsignedInteger(4294967295n, 4), proof.tokenPairId);
         const amountHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.amount);
         const feeHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.fee);
-        // const toAddrHash = persistentHash<ZswapCoinPublicKey>(proof.toAddr);
         const coinsHash = persistentHash(new CompactTypeVector(this.MaxMergeCoins, new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16)), proof.coins.value);
         const signersHash = persistentHash(new CompactTypeVector(this.MaxSmgSignators, new CompactTypeUnsignedInteger(255n, 1)), proof.signers);
         const ttlHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.ttl);
-        // return [tokenPairIdHash, amountHash, feeHash, coinsHash, signersHash, ttlHash];
-        return degradeToTransient(persistentHash(new CompactTypeVector(9, new CompactTypeBytes(32)), [proof.smgId,
-            proof.uniqueId,
-            tokenPairIdHash,
-            amountHash,
-            feeHash,
-            proof.toAddr.bytes,
-            coinsHash,
-            signersHash,
-            ttlHash]));
+        return degradeToTransient(persistentHash(new CompactTypeVector(9, new CompactTypeBytes(32)), [proof.smgId, proof.uniqueId, tokenPairIdHash, amountHash, feeHash, proof.toAddr.bytes, coinsHash, signersHash, ttlHash]));
     }
     /////////////////////////////////////////////////  Cross Tx  /////////////////////////////////////////////////////////////
     async userLock(smgID, toAddress, tokenPair, amount) {
