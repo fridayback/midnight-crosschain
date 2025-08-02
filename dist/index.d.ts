@@ -50,7 +50,7 @@ export declare class CrossChainApi {
     init(config: Config, wallet: Wallet): Promise<void>;
     deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, smgPKCount: number, signingKey: SigningKey): Promise<ContractAddress>;
     join(contractAddress: ContractAddress): Promise<void>;
-    newProofData(uniqueId: string, smgId: string, tokenPairId: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, coins: string[] | number[] | bigint[] | undefined, signers: number[] | bigint[] | undefined, ttl: string | number | bigint): CrossChain.ProofData;
+    newProofData(uniqueId: string, smgId: string, tokenPairId: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, coins: string[] | number[] | bigint[] | undefined, signers: string[] | number[] | bigint[], ttl: string | number | bigint): CrossChain.ProofData;
     caculateHashOfProofData(proof: CrossChain.ProofData): bigint;
     userLock(smgID: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "userLock">>;
     smgRelease(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, coins: string[] | number[] | bigint[], signers: string[] | number[] | bigint[], ttl: number, R: CrossChain.CurvePoint, s: string | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "smgRelease">>;

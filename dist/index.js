@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-08-01 21:38:15
+ * @LastEditTime: 2025-08-02 17:26:17
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -25,6 +25,7 @@ import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-add
 import * as Rx from 'rxjs';
 import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueString, CompactTypeUnsignedInteger, CompactTypeVector, degradeToTransient, ecAdd, ecMul, ecMulGenerator, mulField, persistentHash, sampleSigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
 import { WalletBuilder } from '@midnight-ntwrk/wallet';
+import assert from 'node:assert';
 export const CrossChainPrivateStateId = 'crossChainPrivateState';
 export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
 export const ZKConfig = {
@@ -173,7 +174,9 @@ export class CrossChainApi {
     }
     newProofData(uniqueId, smgId, tokenPairId, amount, fee, toAddr, coins, signers, ttl) {
         const uniqueId_0 = Buffer.from(uniqueId, 'hex');
+        assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
         const smgId_0 = Buffer.from(smgId, 'hex');
+        assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
         const tokenPairId_0 = BigInt(tokenPairId);
         const amount_0 = BigInt(amount);
         const fee_0 = BigInt(fee);
@@ -186,7 +189,7 @@ export class CrossChainApi {
             coins?.map((c, i) => coins_0.value[i] = (BigInt(c)));
         }
         let signers_0 = this.defaultSmgSignators();
-        if (signers && signers.length > signers_0.length) {
+        if (signers.length > signers_0.length) {
             throw new Error(`Too many signers`);
         }
         else {
@@ -223,17 +226,18 @@ export class CrossChainApi {
         return finalizedTxData;
     }
     async smgRelease(uniqueId, smgId, tokenPair, amount, fee, toAddr, coins, signers, ttl, R, s) {
-        const uniqueId_0 = pad(uniqueId, 32);
-        const smgId_0 = pad(smgId, 32);
-        const tokenPair_0 = BigInt(tokenPair);
-        const amount_0 = BigInt(amount);
-        const fee_0 = BigInt(fee);
-        const toAddr_0 = { bytes: getCoinPublicKeyFromShieldAddress(toAddr) };
-        const coins_0 = coins.map(coin => BigInt(coin));
-        const signers_0 = signers.map(signer => BigInt(signer));
-        const ttl_0 = BigInt(ttl);
+        // const uniqueId_0 = pad(uniqueId, 32);
+        // const smgId_0 = pad(smgId, 32);
+        // const tokenPair_0 = BigInt(tokenPair);
+        // const amount_0 = BigInt(amount);
+        // const fee_0 = BigInt(fee);
+        // const toAddr_0 = { bytes: getCoinPublicKeyFromShieldAddress(toAddr) };
+        // const coins_0 = coins.map(coin => BigInt(coin));
+        // const signers_0 = signers.map(signer => BigInt(signer));
+        // const ttl_0 = BigInt(ttl);
+        const proof = this.newProofData(uniqueId, smgId, tokenPair, amount, fee, toAddr, coins, signers, ttl);
         const s_0 = BigInt(s);
-        const finalizedTxData = await this.crossChainContract.callTx.smgRelease(uniqueId_0, smgId_0, tokenPair_0, amount_0, fee_0, toAddr_0, coins_0, signers_0, ttl_0, R, s_0);
+        const finalizedTxData = await this.crossChainContract.callTx.smgRelease(proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.fee, proof.toAddr, proof.coins.value, proof.signers, proof.ttl, R, s_0);
         return finalizedTxData;
     }
     async smgMint(uniqueId, smgId, tokenPair, amount, fee, toAddr, signers, ttl, R, s) {
