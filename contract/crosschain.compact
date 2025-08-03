@@ -418,8 +418,8 @@ circuit transferFee(contractFee: Uint<128>): [] {
 circuit addTreasuryCoin(coin: CoinInfo): [] {
 
   if(!treasuryCoins.member(disclose(coin.color))) {
-    treasuryCoins.insert(disclose(coin.color), default<Map<Uint<128>, QualifiedCoinInfo>>);
-    treasuryCoinCounter.insert(disclose(coin.color), default<Counter>);
+    treasuryCoins.insertDefault(disclose(coin.color));
+    treasuryCoinCounter.insertDefault(disclose(coin.color));
   }
     // index 0 is reserved for invalid cion
   treasuryCoinCounter.lookup(disclose(coin.color)).increment(1);
