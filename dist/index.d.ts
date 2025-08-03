@@ -86,7 +86,7 @@ export declare class CrossChainApi {
     updateContractAuthority(newKey: SigningKey): Promise<FinalizedTxData>;
     upgradeContract(): Promise<void>;
 }
-export declare const getTreasuryCoinsFromState: (state: CrossChain.Ledger) => void;
+export declare const getTreasuryCoinsFromState: (state: CrossChain.Ledger) => Map<string, Map<bigint, CrossChain.QualifiedCoinInfo>>;
 export declare const genSigningKey: () => string;
 export declare const genRandomBigint: () => bigint;
 export declare const signData: (hash: bigint, privateKey: bigint) => {
