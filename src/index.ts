@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-08-02 20:16:24
+ * @LastEditTime: 2025-08-03 19:14:52
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -335,7 +335,7 @@ export class CrossChainApi {
     const proof = this.newProofData(uniqueId, smgId, tokenPair, amount, fee, toAddr, coins, signers, ttl);
     const s_0 = BigInt(s);
     const finalizedTxData = await this.crossChainContract.callTx.smgRelease(
-      proof.uniqueId,proof.smgId,proof.tokenPairId,proof.amount,proof.fee,proof.toAddr,proof.coins.value,proof.signers,proof.ttl, R, s_0);
+      proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.fee, proof.toAddr, proof.coins.value, proof.signers, proof.ttl, R, s_0);
     return finalizedTxData;
   }
 
@@ -467,9 +467,9 @@ export class CrossChainApi {
     } catch (error) {
       midnigtAccount_0 = pad(midnigthTokenAccount, 32);
     }
-    
+
     const fee_0 = BigInt(fee);
-    const tokenPair :CrossChain.TokenPairInfo = {
+    const tokenPair: CrossChain.TokenPairInfo = {
       fromChainId: fromChainId_0,
       toChainId: toChainId_0,
       midnigthTokenAccount: midnigtAccount_0,
@@ -592,17 +592,28 @@ export class CrossChainApi {
 
 export const getTreasuryCoinsFromState = (state: CrossChain.Ledger) => {
   let treasuryCoins = new Map<TokenType, Map<bigint, CrossChain.QualifiedCoinInfo>>();
-  if (state?.tokenPairs) {
-    for (const [tokenPairId, tokenPair] of state?.tokenPairs) {
-      const color = tokenPair.midnigthTokenAccount;
-      const tokenType = decodeTokenType(color);
+  // if (state?.tokenPairs) {
+  //   for (const [tokenPairId, tokenPair] of state?.tokenPairs) {
+  //     const color = tokenPair.midnigthTokenAccount;
+  //     const tokenType = decodeTokenType(color);
+  //     treasuryCoins.set(tokenType, new Map<bigint, CrossChain.QualifiedCoinInfo>());
+  //     if (state.treasuryCoins.member(color)) {
+  //       for (const [coinId, coin] of state.treasuryCoins.lookup(color)) {
+  //         treasuryCoins.get(tokenType)?.set(coinId, coin);
+  //       }
+  //     }
+  //   }
+  // }
+  for (const [coinId, coin] of state.treasuryCoins) {
+    const tokenType = decodeTokenType(coin.color);
+    if (!treasuryCoins.has(tokenType)) {
       treasuryCoins.set(tokenType, new Map<bigint, CrossChain.QualifiedCoinInfo>());
-      if (state.treasuryCoins.member(color)) {
-        for (const [coinId, coin] of state.treasuryCoins.lookup(color)) {
-          treasuryCoins.get(tokenType)?.set(coinId, coin);
-        }
-      }
     }
+    treasuryCoins.get(tokenType)?.set(coinId, coin);
+    //   {
+    //   treasuryCoins.set(tokenType, new Map<bigint, CrossChain.QualifiedCoinInfo>());
+    //   treasuryCoins.get(tokenType)?.set(coinId, coin);
+    // }
   }
 }
 

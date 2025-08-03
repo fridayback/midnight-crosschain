@@ -238,21 +238,11 @@ export type Ledger = {
   treasuryCoins: {
     isEmpty(): boolean;
     size(): bigint;
-    member(key_0: Uint8Array): boolean;
-    lookup(key_0: Uint8Array): {
-      isEmpty(): boolean;
-      size(): bigint;
-      member(key_1: bigint): boolean;
-      lookup(key_1: bigint): QualifiedCoinInfo;
-      [Symbol.iterator](): Iterator<[bigint, QualifiedCoinInfo]>
-    }
+    member(key_0: bigint): boolean;
+    lookup(key_0: bigint): QualifiedCoinInfo;
+    [Symbol.iterator](): Iterator<[bigint, QualifiedCoinInfo]>
   };
-  treasuryCoinCounter: {
-    isEmpty(): boolean;
-    size(): bigint;
-    member(key_0: Uint8Array): boolean;
-    lookup(key_0: Uint8Array): { read(): bigint }
-  };
+  readonly treasuryCoinCounter: bigint;
   tokenPairs: {
     isEmpty(): boolean;
     size(): bigint;

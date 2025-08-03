@@ -29,8 +29,8 @@ export ledger smgTxSigners: Set<CurvePoint>;
 export ledger latestOutBoundCrosstxInfo: CrossOutBound;
 
 // treasury related state
-export ledger treasuryCoins: Map<Bytes<32>, Map<Uint<128>, QualifiedCoinInfo>>;
-export ledger treasuryCoinCounter: Map<Bytes<32>, Counter>;
+export ledger treasuryCoins: Map<Uint<128>, QualifiedCoinInfo>;
+export ledger treasuryCoinCounter: Counter;
 
 // token related state
 export ledger tokenPairs: Map<Uint<32>, TokenPairInfo>;
@@ -390,17 +390,18 @@ circuit verifyProof(proof:ProofData, R: CurvePoint, s: Field): Boolean {
 }
 
 circuit internalMerger(token: Bytes<32>, coins: Vector<4,Uint<128>>): CoinInfo { 
-  assert(treasuryCoins.member(token),"token required not exists");
+  // assert(treasuryCoins.member(token),"token required not exists");
+  const defaultCoinInfo = CoinInfo{ color: token, value: 0, nonce: default<Bytes<32>>};
 
   return fold((acc: CoinInfo, coinIndex: Uint<128>) => {
     if(coinIndex > 0) {
-      assert(treasuryCoins.lookup(disclose(token)).member(coinIndex),"coin required not exists");
-      const coinTmp = mergeCoinImmediate(treasuryCoins.lookup(disclose(token)).lookup(coinIndex), acc);
-      treasuryCoins.lookup(disclose(token)).remove(coinIndex);
+      assert(treasuryCoins.member(coinIndex),"coin required not exists");
+      const coinTmp = mergeCoinImmediate(treasuryCoins.lookup(coinIndex), acc);
+      treasuryCoins.remove(coinIndex);
       return coinTmp;
     }
     else return acc;
-  }, default<CoinInfo>,coins);
+  }, defaultCoinInfo,coins);
 }
 
 circuit transferFee(contractFee: Uint<128>): [] {
@@ -417,15 +418,13 @@ circuit transferFee(contractFee: Uint<128>): [] {
 
 circuit addTreasuryCoin(coin: CoinInfo): [] {
 
-  if(!treasuryCoins.member(disclose(coin.color))) {
-    treasuryCoins.insertDefault(disclose(coin.color));
-    treasuryCoinCounter.insertDefault(disclose(coin.color));
-  }
+  // if(!treasuryCoins.member(disclose(coin.color))) {
+  //   treasuryCoins.insertDefault(disclose(coin.color));
+  //   treasuryCoinCounter.insertDefault(disclose(coin.color));
+  // }
     // index 0 is reserved for invalid cion
-  treasuryCoinCounter.lookup(disclose(coin.color)).increment(1);
-
-  const coinIndex = treasuryCoinCounter.lookup(disclose(coin.color));
-  treasuryCoins.lookup(disclose(coin.color)).insertCoin(coinIndex as Field as Uint<128>, disclose(coin), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+  treasuryCoinCounter.increment(1);
+  treasuryCoins.insertCoin(treasuryCoinCounter as Field as Uint<128>, disclose(coin), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
   
 }
 
