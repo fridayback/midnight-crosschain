@@ -433,7 +433,11 @@ circuit addTreasuryCoin(coin: CoinInfo): [] {
 circuit getFee(tokenPairId: Uint<32>): Uint<128> {
   const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
   if(tokenPair.fee == 0) {
-    return feeCommonConfig.lookup(tokenPair.toChainId);
+    if(feeCommonConfig.member(tokenPair.toChainId)){
+      return feeCommonConfig.lookup(tokenPair.toChainId);
+    }else {
+      return 0;
+    }
   } else {
     return tokenPair.fee;
   }

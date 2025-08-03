@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-08-02 19:15:52
+ * @LastEditTime: 2025-08-02 20:16:24
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -461,7 +461,13 @@ export class CrossChainApi {
     const tokenPairId_0 = BigInt(tokenPairId);
     const fromChainId_0 = BigInt(fromChainId);
     const toChainId_0 = BigInt(toChainId);
-    const midnigtAccount_0 = fromHexWithOrNoPrefix(midnigthTokenAccount);
+    let midnigtAccount_0;
+    try {
+      midnigtAccount_0 = encodeTokenType(midnigthTokenAccount);
+    } catch (error) {
+      midnigtAccount_0 = pad(midnigthTokenAccount, 32);
+    }
+    
     const fee_0 = BigInt(fee);
     const tokenPair :CrossChain.TokenPairInfo = {
       fromChainId: fromChainId_0,
