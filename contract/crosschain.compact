@@ -44,7 +44,7 @@ export ledger feeReceiver: ZswapCoinPublicKey;
 export ledger smgPubkeys: Map<Uint<8>,CurvePoint>;
 export ledger smgPubkeysToIndex: Map<CurvePoint, Uint<8>>;
 export ledger smgPKThreshold: Uint<8>;
-export ledger smgPKCount: Uint<8>;
+// export ledger smgPKCount: Uint<8>;
 
 // admin related state
 export ledger admins: Map<ZswapCoinPublicKey, Boolean>;
@@ -133,7 +133,7 @@ export struct ProofData{
 constructor(
   adminThresholdInit: Uint<8>
   , smgPKThresholdInit: Uint<8>
-  , smgCount: Uint<8>
+  // , smgCount: Uint<8>
 ) {
     owner = ownPublicKey();
     mergeWorker = ownPublicKey();
@@ -141,7 +141,7 @@ constructor(
     feeReceiver = ownPublicKey();
     adminThreshold = disclose(adminThresholdInit);
     smgPKThreshold = disclose(smgPKThresholdInit);
-    smgPKCount = disclose(smgCount);
+    // smgPKCount = disclose(smgCount);
     proposalId.increment(1);
 }
 
@@ -154,15 +154,16 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
 
   const contractFee = getFee(disclose(tokenPairId));
   nonce = evolveNonce(outBoundCounter as Field as Uint<64>,nonce);
-  // if(nativeToken() == tokenPair.midnigthTokenAccount){
+
   if(nativeToken() == tokenPair.midnigthTokenAccount){
     const receivedAmount = disclose(amount) + contractFee;
     const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: receivedAmount as Field as Uint<128>, nonce: nonce};
     receive(coin);
+    
   }else{
     //check the type and amount of token received
-    const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
-    receive(coin);
+    const coin2 = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
+    receive(coin2);
     //check the fee received
     nonce = evolveNonce(outBoundCounter as Field as Uint<64>,nonce);
     receive(CoinInfo{ color: nativeToken(), value: contractFee, nonce: nonce});
@@ -170,9 +171,12 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
 
   transferFee(contractFee);
   
-  // record the new coin paid by user for crosschain
+  const coin = CoinInfo{color: nativeToken(), value: disclose(amount), nonce: nonce};
+  receive(coin);
+  addTreasuryCoin(coin);
+  record the new coin paid by user for crosschain
   nonce = evolveNonce(outBoundCounter as Field as Uint<64>,nonce);
-  const crossCoin = CoinInfo{ color: tokenPair.midnigthTokenAccount, value: amount, nonce: nonce};
+  const crossCoin = CoinInfo{ color: tokenPair.midnigthTokenAccount, value:  disclose(amount), nonce: nonce};
   addTreasuryCoin(crossCoin);
 
   // record the crosschain info
@@ -246,7 +250,7 @@ export circuit smgRelease(
 export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, amount: Uint<128>): [] {
   assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
   const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
-  // assert(tokenPair.fromAccount.is_left,"wrong token");
+
   
   const contractFee = getFee(disclose(tokenPairId));
   if(contractFee > 0){
@@ -264,7 +268,7 @@ export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
   };
   receive(receivedCoin);
 
-  nonce = evolveNonce(outBoundCounter as Field as Uint<64>,nonce);
+  // nonce = evolveNonce(outBoundCounter as Field as Uint<64>,nonce);
   const burnCoin = CoinInfo{
     color: tokenPair.midnigthTokenAccount // fromAccount or toAccount ?????
     , value: disclose(amount) as Field as Uint<128>
@@ -299,10 +303,10 @@ export circuit smgMint(uniqueId: Bytes<32>
   assert( disclose(ttl) >= inBoundCounter, "ttl expired");
   assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
   const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
-  // assert(tokenPair.toAccount.is_left,"wrong token");
+
   
-  //mint token
-  nonce = evolveNonce(inBoundCounter as Field as Uint<64>,nonce);
+  // mint token
+  nonce = evolveNonce(inBoundCounter,nonce);
   mintToken(
     tokenPair.midnigthTokenAccount,
     disclose(amount) as Field as Uint<64>,
@@ -311,7 +315,7 @@ export circuit smgMint(uniqueId: Bytes<32>
   );
 
   //mint fee
-  nonce = evolveNonce(inBoundCounter as Field as Uint<64>,nonce);
+  nonce = evolveNonce(inBoundCounter,nonce);
   mintToken(
     tokenPair.midnigthTokenAccount,
     disclose(fee) as Field as Uint<64>,
@@ -332,7 +336,7 @@ export circuit smgMint(uniqueId: Bytes<32>
     , ttl: disclose(ttl)
     };
 
-  assert( verifyProof(proof,R,s), "verify proof failed");
+  assert( verifyProof(proof,R,s) == true, "verify proof failed");
 
   inBoundCounter.increment(1);
 }
@@ -340,8 +344,8 @@ export circuit smgMint(uniqueId: Bytes<32>
 
 export pure circuit verifySignature(hash: Bytes<32>, P: CurvePoint, R: CurvePoint, s: Field): Boolean {
   return true;
-  // const hashField = degradeToTransient(disclose(hash));
-  // return ecMulGenerator(s) == ecAdd(ecMul(disclose(P), hashField), disclose(R));
+  const hashField = degradeToTransient(disclose(hash));
+  return ecMulGenerator(s) == ecAdd(ecMul(disclose(P), hashField), disclose(R));
 }
 
 // export struct ProofData{
@@ -379,20 +383,25 @@ export pure circuit hashProof(proof:ProofData): Bytes<32> {
 
 
 circuit verifyProof(proof:ProofData, R: CurvePoint, s: Field): Boolean {
+  // return true;
   const hash = hashProof(disclose(proof));
   smgTxSigners.resetToDefault();
   const P = fold((Pi:CurvePoint, index: Uint<8>)=> {
     smgTxSigners.insert(smgPubkeys.lookup(index));
     return ecAdd(Pi, smgPubkeys.lookup(index));
   }, default<CurvePoint>, disclose(proof.signers));
-  assert(smgTxSigners.size() <= smgPKThreshold, "threshold not reached");
+  assert(smgTxSigners.size() >= smgPKThreshold, "threshold not reached");
+  // return true;
   return verifySignature(hash, P, disclose(R), disclose(s));
 }
 
 circuit internalMerger(token: Bytes<32>, coins: Vector<4,Uint<128>>): CoinInfo { 
   // assert(treasuryCoins.member(token),"token required not exists");
   const defaultCoinInfo = CoinInfo{ color: token, value: 0, nonce: default<Bytes<32>>};
-
+  assert(coins[0] > 0, "coin required not exists");
+  // if(coins[1] <= 0) 
+  
+  //  return fold(mergeCoin, treasuryCoins.lookup(coins[0]), [treasuryCoins.lookup(coins[1]), treasuryCoins.lookup(coins[2]), treasuryCoins.lookup(coins[3])]);
   return fold((acc: CoinInfo, coinIndex: Uint<128>) => {
     if(coinIndex > 0) {
       assert(treasuryCoins.member(coinIndex),"coin required not exists");
@@ -409,9 +418,11 @@ circuit transferFee(contractFee: Uint<128>): [] {
     // nonce = evolveNonce(outBoundCounter as Field as Uint<64>,nonce);
     // receive(CoinInfo{ color: nativeToken(), value: contractFee, nonce: nonce});
     // fee has paid
-    nonce = evolveNonce(outBoundCounter as Field as Uint<64>,nonce);
+    // nonce = evolveNonce(outBoundCounter as Field as Uint<64>,nonce);
     const feeCoin = CoinInfo{ color: nativeToken(), value: contractFee, nonce: nonce};
-    sendImmediate( feeCoin, left<ZswapCoinPublicKey, ContractAddress>(feeReceiver), feeCoin.value);
+    const result = sendImmediate( feeCoin, left<ZswapCoinPublicKey, ContractAddress>(feeReceiver), feeCoin.value);
+    assert(result.change.is_some,"no change for crosschain value");
+    nonce = result.change.value.nonce;
   }
 }
 
@@ -471,8 +482,8 @@ export circuit setMegerWorker(newMergeWorker: ZswapCoinPublicKey): [] {
 
 export circuit mergeTreasuryCoin(token: Bytes<32>, coins: Vector<4,Uint<128>>): [] {
   assert(mergeWorker == ownPublicKey(), "only mergeWorker can merge coin");
-  const coinInfo = internalMerger(disclose(token), disclose(coins));
-  addTreasuryCoin(coinInfo);
+  // const coinInfo = internalMerger(disclose(token), disclose(coins));
+  // addTreasuryCoin(coinInfo);
 }
 
 export circuit addAdmin(admin: ZswapCoinPublicKey): [] {

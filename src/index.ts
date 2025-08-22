@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-08-03 19:26:33
+ * @LastEditTime: 2025-08-06 17:36:17
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -73,6 +73,7 @@ export interface Config {
   readonly indexerWS: string;
   readonly node: string;
   readonly proofServer: string;
+  readonly zkConfigPath: string;
 }
 
 export const crosschainContractInstance: CrossChainContract = new CrossChain.Contract(witnesses);
@@ -231,13 +232,13 @@ export class CrossChainApi {
     };
   }
 
-  async deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, smgPKCount: number, signingKey: SigningKey): Promise<ContractAddress> {
+  async deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, signingKey: SigningKey): Promise<ContractAddress> {
     this.crossChainContract = await deployContract(this.providers, {
       contract: crosschainContractInstance,
       privateStateId: CrossChainPrivateStateId,
       initialPrivateState: {},
       signingKey: signingKey,
-      args: [BigInt(adminThreshold), BigInt(smgPkThreshold), BigInt(smgPKCount)]
+      args: [BigInt(adminThreshold), BigInt(smgPkThreshold)]
     });
     // // logger.info(`Deployed contract at address: ${this.crossChainContract.deployTxData.public.contractAddress}`);
     return this.crossChainContract.deployTxData.public.contractAddress;
@@ -312,8 +313,10 @@ export class CrossChainApi {
   }
 
   /////////////////////////////////////////////////  Cross Tx  /////////////////////////////////////////////////////////////
-  async userLock(smgID: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint) {
-    const smgId_0 = pad(smgID, 32);
+  async userLock(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint) {
+    const smgId_0 = Buffer.from(smgId, 'hex');
+    assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
+
     const tokenPair_0 = BigInt(tokenPair);
     const amount_0 = BigInt(amount);
     const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, amount_0);
@@ -342,21 +345,24 @@ export class CrossChainApi {
   async smgMint(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint
     , fee: string | number | bigint, toAddr: string, signers: string[] | number[] | bigint[]
     , ttl: number, R: CrossChain.CurvePoint, s: string | bigint) {
-    const uniqueId_0 = pad(uniqueId, 32);
-    const smgId_0 = pad(smgId, 32);
-    const tokenPair_0 = BigInt(tokenPair);
-    const amount_0 = BigInt(amount);
-    const fee_0 = BigInt(fee);
-    const toAddr_0 = { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(toAddr, getZswapNetworkId())) };
-    const signers_0 = signers.map(signer => BigInt(signer));
-    const ttl_0 = BigInt(ttl);
+    // const uniqueId_0 = pad(uniqueId, 32);
+    // const smgId_0 = pad(smgId, 32);
+    // const tokenPair_0 = BigInt(tokenPair);
+    // const amount_0 = BigInt(amount);
+    // const fee_0 = BigInt(fee);
+    // const toAddr_0 = { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(toAddr, getZswapNetworkId())) };
+    // const signers_0 = signers.map(signer => BigInt(signer));
+    // const ttl_0 = BigInt(ttl);
     const s_0 = BigInt(s);
-    const finalizedTxData = await this.crossChainContract.callTx.smgMint(uniqueId_0, smgId_0, tokenPair_0, amount_0, fee_0, toAddr_0, signers_0, ttl_0, R, s_0);
+    const proof = this.newProofData(uniqueId, smgId, tokenPair, amount, fee, toAddr, undefined, signers, ttl);
+    const finalizedTxData = await this.crossChainContract.callTx.smgMint(proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.fee, proof.toAddr, proof.signers, proof.ttl, R, s_0);
     return finalizedTxData;
   }
 
-  async userBurn(smgID: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint) {
-    const smgId_0 = pad(smgID, 32);
+  async userBurn(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint) {
+    const smgId_0 = Buffer.from(smgId, 'hex');
+    assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
+   
     const tokenPair_0 = BigInt(tokenPair);
     const amount_0 = BigInt(amount);
     const finalizedTxData = await this.crossChainContract.callTx.userBurn(smgId_0, toAddress, tokenPair_0, amount_0);
