@@ -630,7 +630,7 @@
           "name": "voters",
           "type": {
             "type-name": "Vector",
-            "length": 29,
+            "length": 2,
             "type": {
               "type-name": "Struct",
               "name": "ZswapCoinPublicKey",
@@ -873,7 +873,7 @@
                 "name": "smgPubkeys",
                 "type": {
                   "type-name": "Vector",
-                  "length": 29,
+                  "length": 2,
                   "type": {
                     "type-name": "Struct",
                     "name": "ZswapCoinPublicKey",

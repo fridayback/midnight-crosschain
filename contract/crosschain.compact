@@ -89,7 +89,7 @@ export struct Proposal{
   addr: ZswapCoinPublicKey;
   threshold: Uint<128>;
   feeConfig: FeeConfig;
-  smgPubkeys: Vector<29, ZswapCoinPublicKey>;
+  smgPubkeys: Vector<2, ZswapCoinPublicKey>;
 }
 
 // owner related state
@@ -166,12 +166,12 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
   //   addTreasuryCoin(nativeTokenCoin);
   // }
 
-  // if(contractFee > 0){
-  //   accumulateFee(false,nativeToken(), contractFee);
-  //   const nativeTokenCoin = CoinInfo{ color: nativeToken(), value: contractFee, nonce: nonce};
-  //   receive(nativeTokenCoin);
-  //   addTreasuryCoin(nativeTokenCoin);
-  // }
+  if(contractFee > 0){
+    accumulateFee(false,nativeToken(), contractFee);
+    // const nativeTokenCoin = CoinInfo{ color: nativeToken(), value: contractFee, nonce: nonce};
+    // receive(nativeTokenCoin);
+    // addTreasuryCoin(nativeTokenCoin);
+  }
 
   const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
   receive(coin);
@@ -258,10 +258,10 @@ export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
     , nonce: crossCounter as Field as Uint<128>
   };
 
-  // if(contractFee > 0){
-  //   receive(CoinInfo{ color: nativeToken(), value: contractFee, nonce: nonce});
-  //   accumulateFee(false,nativeToken(), contractFee);
-  // }
+  if(contractFee > 0){
+    // receive(CoinInfo{ color: nativeToken(), value: contractFee, nonce: nonce});
+    accumulateFee(false,nativeToken(), contractFee);
+  }
 
   // crossCounter.increment(1);
 }
@@ -456,7 +456,7 @@ export circuit setAdminThreshold(threshold: Uint<8>): [] {
 
 
 
-export circuit setSmgPksks(voters: Vector<29,ZswapCoinPublicKey>): [] {
+export circuit setSmgPksks(voters: Vector<2,ZswapCoinPublicKey>): [] {
   assert(owner == ownPublicKey(), "only owner can set smg pks");
   smgTxSigners.resetToDefault();
 
