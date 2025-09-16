@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-08-06 17:36:17
+ * @LastEditTime: 2025-09-14 18:51:47
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -253,7 +253,7 @@ export class CrossChainApi {
     });
   }
 
-  newProofData(
+  checkCrossData(
     uniqueId: string,
     smgId: string,
     tokenPairId: string | number | bigint,
@@ -261,8 +261,7 @@ export class CrossChainApi {
     fee: string | number | bigint,
     toAddr: string,
     coins: string[] | number[] | bigint[] | undefined,
-    signers: string[] | number[] | bigint[],
-    ttl: string | number | bigint): CrossChain.ProofData {
+    ttl: string | number | bigint) {
     const uniqueId_0 = Buffer.from(uniqueId, 'hex');
     assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
     const smgId_0 = Buffer.from(smgId, 'hex');
@@ -277,12 +276,7 @@ export class CrossChainApi {
     } else {
       coins?.map((c, i) => coins_0.value[i] = (BigInt(c)));
     }
-    let signers_0 = this.defaultSmgSignators();
-    if (signers.length > signers_0.length) {
-      throw new Error(`Too many signers`);
-    } else {
-      signers?.map((s, i) => signers_0[i] = (BigInt(s)));
-    }
+
     const ttl_0 = BigInt(ttl);
     return {
       uniqueId: uniqueId_0,
@@ -291,26 +285,24 @@ export class CrossChainApi {
       amount: amount_0,
       fee: fee_0,
       toAddr: toAddr_0,
-      coins: coins_0,
-      signers: signers_0,
       ttl: ttl_0,
     }
 
   }
 
 
-  caculateHashOfProofData(proof: CrossChain.ProofData): bigint {
-    const tokenPairIdHash = persistentHash(new CompactTypeUnsignedInteger(4294967295n, 4), proof.tokenPairId);
-    const amountHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.amount);
-    const feeHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.fee);
-    const coinsHash = persistentHash(new CompactTypeVector(this.MaxMergeCoins, new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16)), proof.coins.value);
-    const signersHash = persistentHash(new CompactTypeVector(this.MaxSmgSignators, new CompactTypeUnsignedInteger(255n, 1)), proof.signers);
-    const ttlHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.ttl);
+  // caculateHashOfProofData(proof: CrossChain.ProofData): bigint {
+  //   const tokenPairIdHash = persistentHash(new CompactTypeUnsignedInteger(4294967295n, 4), proof.tokenPairId);
+  //   const amountHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.amount);
+  //   const feeHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.fee);
+  //   const coinsHash = persistentHash(new CompactTypeVector(this.MaxMergeCoins, new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16)), proof.coins.value);
+  //   const signersHash = persistentHash(new CompactTypeVector(this.MaxSmgSignators, new CompactTypeUnsignedInteger(255n, 1)), proof.signers);
+  //   const ttlHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.ttl);
 
-    return degradeToTransient(persistentHash(new CompactTypeVector(9, new CompactTypeBytes(32)),
-      [proof.smgId, proof.uniqueId, tokenPairIdHash, amountHash, feeHash, proof.toAddr.bytes, coinsHash, signersHash, ttlHash]
-    ));
-  }
+  //   return degradeToTransient(persistentHash(new CompactTypeVector(9, new CompactTypeBytes(32)),
+  //     [proof.smgId, proof.uniqueId, tokenPairIdHash, amountHash, feeHash, proof.toAddr.bytes, coinsHash, signersHash, ttlHash]
+  //   ));
+  // }
 
   /////////////////////////////////////////////////  Cross Tx  /////////////////////////////////////////////////////////////
   async userLock(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint) {
@@ -324,38 +316,21 @@ export class CrossChainApi {
   }
 
   async smgRelease(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint
-    , fee: string | number | bigint, toAddr: string, coins: string[] | number[] | bigint[]
-    , signers: string[] | number[] | bigint[], ttl: number, R: CrossChain.CurvePoint, s: string | bigint) {
-    // const uniqueId_0 = pad(uniqueId, 32);
-    // const smgId_0 = pad(smgId, 32);
-    // const tokenPair_0 = BigInt(tokenPair);
-    // const amount_0 = BigInt(amount);
-    // const fee_0 = BigInt(fee);
-    // const toAddr_0 = { bytes: getCoinPublicKeyFromShieldAddress(toAddr) };
-    // const coins_0 = coins.map(coin => BigInt(coin));
-    // const signers_0 = signers.map(signer => BigInt(signer));
-    // const ttl_0 = BigInt(ttl);
-    const proof = this.newProofData(uniqueId, smgId, tokenPair, amount, fee, toAddr, coins, signers, ttl);
-    const s_0 = BigInt(s);
+    , fee: string | number | bigint, toAddr: string
+    , ttl: number) {
+    
+    const proof = this.checkCrossData(uniqueId, smgId, tokenPair, amount, fee, toAddr, undefined, ttl);
     const finalizedTxData = await this.crossChainContract.callTx.smgRelease(
-      proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.fee, proof.toAddr, proof.coins.value, proof.signers, proof.ttl, R, s_0);
+      proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.toAddr,proof.fee, proof.ttl);
     return finalizedTxData;
   }
 
   async smgMint(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint
-    , fee: string | number | bigint, toAddr: string, signers: string[] | number[] | bigint[]
-    , ttl: number, R: CrossChain.CurvePoint, s: string | bigint) {
-    // const uniqueId_0 = pad(uniqueId, 32);
-    // const smgId_0 = pad(smgId, 32);
-    // const tokenPair_0 = BigInt(tokenPair);
-    // const amount_0 = BigInt(amount);
-    // const fee_0 = BigInt(fee);
-    // const toAddr_0 = { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(toAddr, getZswapNetworkId())) };
-    // const signers_0 = signers.map(signer => BigInt(signer));
-    // const ttl_0 = BigInt(ttl);
-    const s_0 = BigInt(s);
-    const proof = this.newProofData(uniqueId, smgId, tokenPair, amount, fee, toAddr, undefined, signers, ttl);
-    const finalizedTxData = await this.crossChainContract.callTx.smgMint(proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.fee, proof.toAddr, proof.signers, proof.ttl, R, s_0);
+    , fee: string | number | bigint, toAddr: string
+    , ttl: number) {
+
+    const proof = this.checkCrossData(uniqueId, smgId, tokenPair, amount, fee, toAddr, undefined, ttl);
+    const finalizedTxData = await this.crossChainContract.callTx.smgMint(proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.fee, proof.toAddr, proof.ttl);
     return finalizedTxData;
   }
 
@@ -367,6 +342,28 @@ export class CrossChainApi {
     const amount_0 = BigInt(amount);
     const finalizedTxData = await this.crossChainContract.callTx.userBurn(smgId_0, toAddress, tokenPair_0, amount_0);
     return finalizedTxData;
+  }
+
+  async voteCrossProposal(uniqueId: string) {
+    const uniqueId_0 = Buffer.from(uniqueId, 'hex');
+    assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
+    
+    const finalizedTxData = await this.crossChainContract.callTx.voteCrossProposal(uniqueId_0);
+    return finalizedTxData;
+  }
+
+  
+  async executeCrossProposal(uniqueId: string, coinIndex: string | number | bigint | undefined){
+    const uniqueId_0 = Buffer.from(uniqueId, 'hex');
+    assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
+    if(coinIndex === undefined){
+      const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposalOfMappingToken(uniqueId_0);
+      return finalizedTxData;
+    }else{
+      const coinIndex_0 = BigInt(coinIndex);
+      const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposalOfNativeToken(uniqueId_0, coinIndex_0);
+      return finalizedTxData;
+    }
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -390,15 +387,9 @@ export class CrossChainApi {
     return finalizedTxData;
   }
 
-  async updateSmgPk(id: bigint, smgPk: CrossChain.CurvePoint, privateKey: bigint) {
-    const id_0 = BigInt(id);
-    const smgPk_0 = smgPk;
-    const hash = persistentHash<CrossChain.CurvePoint>(new CompactTypeCurvePoint(), smgPk);
-
-    const { R, s } = signData(degradeToTransient(hash), privateKey);
-    // const R_0 = R;
-    // const s_0 = BigInt(s);
-    const finalizedTxData = await this.crossChainContract.callTx.updateSmgPk(id_0, smgPk_0, R, s);
+  async updateSmgPk(newVoter: CoinPublicKey) {
+    const newVoter_0 = { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(newVoter, getZswapNetworkId())) };
+    const finalizedTxData = await this.crossChainContract.callTx.updateSmgPk(newVoter_0);
     return finalizedTxData;
   }
 
@@ -420,12 +411,13 @@ export class CrossChainApi {
     return finalizedTxData;
   }
 
-  async mergeTreasuryCoin(tokenType: TokenType, coins: bigint[] | number[] | string[]) {
-    const tokenType_0 = encodeTokenType(tokenType);
+  async mergeTreasuryCoin(coins: bigint[] | number[] | string[]) {
+    if(coins.length != 2) throw 'can only merge 2 coins';
     const coins_0 = coins.map(coin => BigInt(coin));
-    const finalizedTxData = await this.crossChainContract.callTx.mergeTreasuryCoin(tokenType_0, coins_0);
+    const finalizedTxData = await this.crossChainContract.callTx.mergeTreasuryCoin(coins_0);
     return finalizedTxData;
   }
+
 
   async addAdmin(admin: CoinPublicKey) {
     const admin_0 = { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(admin, getZswapNetworkId())) };
@@ -445,8 +437,9 @@ export class CrossChainApi {
     return finalizedTxData;
   }
 
-  async setSmgPksks(pks: CrossChain.CurvePoint[]) {
-    const finalizedTxData = await this.crossChainContract.callTx.setSmgPksks(pks);
+  async setSmgPksks(voters: CoinPublicKey[]) {
+    const voters_0 = voters.map(voter => { return { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(voter, getZswapNetworkId())) } });
+    const finalizedTxData = await this.crossChainContract.callTx.setSmgPksks(voters_0);
     return finalizedTxData;
   }
 
@@ -598,18 +591,7 @@ export class CrossChainApi {
 
 export const getTreasuryCoinsFromState = (state: CrossChain.Ledger) => {
   let treasuryCoins = new Map<TokenType, Map<bigint, CrossChain.QualifiedCoinInfo>>();
-  // if (state?.tokenPairs) {
-  //   for (const [tokenPairId, tokenPair] of state?.tokenPairs) {
-  //     const color = tokenPair.midnigthTokenAccount;
-  //     const tokenType = decodeTokenType(color);
-  //     treasuryCoins.set(tokenType, new Map<bigint, CrossChain.QualifiedCoinInfo>());
-  //     if (state.treasuryCoins.member(color)) {
-  //       for (const [coinId, coin] of state.treasuryCoins.lookup(color)) {
-  //         treasuryCoins.get(tokenType)?.set(coinId, coin);
-  //       }
-  //     }
-  //   }
-  // }
+  console.log('treasuryCoins size:',state.treasuryCoins.size());
   for (const [coinId, coin] of state.treasuryCoins) {
     const tokenType = decodeTokenType(coin.color);
     if (!treasuryCoins.has(tokenType)) {

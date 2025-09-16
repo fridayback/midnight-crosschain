@@ -72,13 +72,6 @@
           }
         },
         {
-          "name": "fee",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
-          }
-        },
-        {
           "name": "toAddr",
           "type": {
             "type-name": "Struct",
@@ -95,25 +88,10 @@
           }
         },
         {
-          "name": "coins",
+          "name": "fee",
           "type": {
-            "type-name": "Vector",
-            "length": 4,
-            "type": {
-              "type-name": "Uint",
-              "maxval": 340282366920938463463374607431768211455
-            }
-          }
-        },
-        {
-          "name": "signers",
-          "type": {
-            "type-name": "Vector",
-            "length": 29,
-            "type": {
-              "type-name": "Uint",
-              "maxval": 255
-            }
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
           }
         },
         {
@@ -121,33 +99,6 @@
           "type": {
             "type-name": "Uint",
             "maxval": 340282366920938463463374607431768211455
-          }
-        },
-        {
-          "name": "R",
-          "type": {
-            "type-name": "Struct",
-            "name": "CurvePoint",
-            "elements": [
-              {
-                "name": "x",
-                "type": {
-                  "type-name": "Field"
-                }
-              },
-              {
-                "name": "y",
-                "type": {
-                  "type-name": "Field"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "name": "s",
-          "type": {
-            "type-name": "Field"
           }
         }
       ],
@@ -252,48 +203,10 @@
           }
         },
         {
-          "name": "signers",
-          "type": {
-            "type-name": "Vector",
-            "length": 29,
-            "type": {
-              "type-name": "Uint",
-              "maxval": 255
-            }
-          }
-        },
-        {
           "name": "ttl",
           "type": {
             "type-name": "Uint",
             "maxval": 340282366920938463463374607431768211455
-          }
-        },
-        {
-          "name": "R",
-          "type": {
-            "type-name": "Struct",
-            "name": "CurvePoint",
-            "elements": [
-              {
-                "name": "x",
-                "type": {
-                  "type-name": "Field"
-                }
-              },
-              {
-                "name": "y",
-                "type": {
-                  "type-name": "Field"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "name": "s",
-          "type": {
-            "type-name": "Field"
           }
         }
       ],
@@ -304,181 +217,111 @@
       }
     },
     {
-      "name": "verifySignature",
-      "pure": true,
+      "name": "voteMultiCrossProposal",
+      "pure": false,
       "arguments": [
         {
-          "name": "hash",
+          "name": "uniqueIds",
+          "type": {
+            "type-name": "Vector",
+            "length": 3,
+            "type": {
+              "type-name": "Bytes",
+              "length": 32
+            }
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "voteCrossProposal",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "uniqueId",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "executeCrossProposalOfNativeToken",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "uniqueId",
           "type": {
             "type-name": "Bytes",
             "length": 32
           }
         },
         {
-          "name": "P",
+          "name": "coinIndex",
           "type": {
-            "type-name": "Struct",
-            "name": "CurvePoint",
-            "elements": [
-              {
-                "name": "x",
-                "type": {
-                  "type-name": "Field"
-                }
-              },
-              {
-                "name": "y",
-                "type": {
-                  "type-name": "Field"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "name": "R",
-          "type": {
-            "type-name": "Struct",
-            "name": "CurvePoint",
-            "elements": [
-              {
-                "name": "x",
-                "type": {
-                  "type-name": "Field"
-                }
-              },
-              {
-                "name": "y",
-                "type": {
-                  "type-name": "Field"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "name": "s",
-          "type": {
-            "type-name": "Field"
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
           }
         }
       ],
       "result-type": {
-        "type-name": "Boolean"
+        "type-name": "Tuple",
+        "types": [
+        ]
       }
     },
     {
-      "name": "hashProof",
-      "pure": true,
+      "name": "executeCrossProposalOfMappingToken",
+      "pure": false,
       "arguments": [
         {
-          "name": "proof",
+          "name": "uniqueId",
           "type": {
-            "type-name": "Struct",
-            "name": "ProofData",
-            "elements": [
-              {
-                "name": "smgId",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "uniqueId",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "tokenPairId",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 4294967295
-                }
-              },
-              {
-                "name": "amount",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 340282366920938463463374607431768211455
-                }
-              },
-              {
-                "name": "fee",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 340282366920938463463374607431768211455
-                }
-              },
-              {
-                "name": "toAddr",
-                "type": {
-                  "type-name": "Struct",
-                  "name": "ZswapCoinPublicKey",
-                  "elements": [
-                    {
-                      "name": "bytes",
-                      "type": {
-                        "type-name": "Bytes",
-                        "length": 32
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "name": "coins",
-                "type": {
-                  "type-name": "Struct",
-                  "name": "Maybe",
-                  "elements": [
-                    {
-                      "name": "is_some",
-                      "type": {
-                        "type-name": "Boolean"
-                      }
-                    },
-                    {
-                      "name": "value",
-                      "type": {
-                        "type-name": "Vector",
-                        "length": 4,
-                        "type": {
-                          "type-name": "Uint",
-                          "maxval": 340282366920938463463374607431768211455
-                        }
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "name": "signers",
-                "type": {
-                  "type-name": "Vector",
-                  "length": 29,
-                  "type": {
-                    "type-name": "Uint",
-                    "maxval": 255
-                  }
-                }
-              },
-              {
-                "name": "ttl",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 340282366920938463463374607431768211455
-                }
-              }
-            ]
+            "type-name": "Bytes",
+            "length": 32
           }
         }
       ],
       "result-type": {
-        "type-name": "Bytes",
-        "length": 32
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "transferFeeOfNativeToken",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "token",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "coinIndex",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
       }
     },
     {
@@ -601,21 +444,99 @@
       }
     },
     {
+      "name": "test",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "coin0",
+          "type": {
+            "type-name": "Struct",
+            "name": "QualifiedCoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              },
+              {
+                "name": "mt_index",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "coin1",
+          "type": {
+            "type-name": "Struct",
+            "name": "QualifiedCoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              },
+              {
+                "name": "mt_index",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
       "name": "mergeTreasuryCoin",
       "pure": false,
       "arguments": [
         {
-          "name": "token",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
           "name": "coins",
           "type": {
             "type-name": "Vector",
-            "length": 4,
+            "length": 2,
             "type": {
               "type-name": "Uint",
               "maxval": 340282366920938463463374607431768211455
@@ -706,24 +627,19 @@
       "pure": false,
       "arguments": [
         {
-          "name": "pks",
+          "name": "voters",
           "type": {
             "type-name": "Vector",
             "length": 29,
             "type": {
               "type-name": "Struct",
-              "name": "CurvePoint",
+              "name": "ZswapCoinPublicKey",
               "elements": [
                 {
-                  "name": "x",
+                  "name": "bytes",
                   "type": {
-                    "type-name": "Field"
-                  }
-                },
-                {
-                  "name": "y",
-                  "type": {
-                    "type-name": "Field"
+                    "type-name": "Bytes",
+                    "length": 32
                   }
                 }
               ]
@@ -742,58 +658,19 @@
       "pure": false,
       "arguments": [
         {
-          "name": "id",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 255
-          }
-        },
-        {
-          "name": "newPk",
+          "name": "newVoter",
           "type": {
             "type-name": "Struct",
-            "name": "CurvePoint",
+            "name": "ZswapCoinPublicKey",
             "elements": [
               {
-                "name": "x",
+                "name": "bytes",
                 "type": {
-                  "type-name": "Field"
-                }
-              },
-              {
-                "name": "y",
-                "type": {
-                  "type-name": "Field"
+                  "type-name": "Bytes",
+                  "length": 32
                 }
               }
             ]
-          }
-        },
-        {
-          "name": "R",
-          "type": {
-            "type-name": "Struct",
-            "name": "CurvePoint",
-            "elements": [
-              {
-                "name": "x",
-                "type": {
-                  "type-name": "Field"
-                }
-              },
-              {
-                "name": "y",
-                "type": {
-                  "type-name": "Field"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "name": "signature",
-          "type": {
-            "type-name": "Field"
           }
         }
       ],
@@ -999,18 +876,13 @@
                   "length": 29,
                   "type": {
                     "type-name": "Struct",
-                    "name": "CurvePoint",
+                    "name": "ZswapCoinPublicKey",
                     "elements": [
                       {
-                        "name": "x",
+                        "name": "bytes",
                         "type": {
-                          "type-name": "Field"
-                        }
-                      },
-                      {
-                        "name": "y",
-                        "type": {
-                          "type-name": "Field"
+                          "type-name": "Bytes",
+                          "length": 32
                         }
                       }
                     ]
@@ -1063,5 +935,9 @@
         ]
       }
     }
+  ],
+  "witnesses": [
+  ],
+  "contracts": [
   ]
 }

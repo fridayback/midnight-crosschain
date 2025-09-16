@@ -10,13 +10,15 @@ export enum ProposalType { AddAdmin = 0,
                            SetSmgPKS = 7
 }
 
+export type AccFeeOfToken = { totalFee: bigint; isMappingToken: boolean };
+
 export type FeeConfig = { chainId: bigint; fee: bigint };
 
 export type Proposal = { type: ProposalType;
                          addr: ZswapCoinPublicKey;
                          threshold: bigint;
                          feeConfig: FeeConfig;
-                         smgPubkeys: CurvePoint[]
+                         smgPubkeys: ZswapCoinPublicKey[]
                        };
 
 export type TokenPairInfo = { fromChainId: bigint;
@@ -34,16 +36,14 @@ export type CrossOutBound = { smgId: Uint8Array;
                               nonce: bigint
                             };
 
-export type ProofData = { smgId: Uint8Array;
-                          uniqueId: Uint8Array;
-                          tokenPairId: bigint;
-                          amount: bigint;
-                          fee: bigint;
-                          toAddr: ZswapCoinPublicKey;
-                          coins: { is_some: boolean, value: bigint[] };
-                          signers: bigint[];
-                          ttl: bigint
-                        };
+export type CrossProposal = { smgId: Uint8Array;
+                              token: Uint8Array;
+                              isMappingToken: boolean;
+                              amount: bigint;
+                              fee: bigint;
+                              toAddr: ZswapCoinPublicKey;
+                              ttl: bigint
+                            };
 
 export type CoinInfo = { nonce: Uint8Array; color: Uint8Array; value: bigint };
 
@@ -71,13 +71,9 @@ export type ImpureCircuits<T> = {
              smgId_0: Uint8Array,
              tokenPairId_0: bigint,
              amount_0: bigint,
-             fee_0: bigint,
              toAddr_0: ZswapCoinPublicKey,
-             coins_0: bigint[],
-             signers_0: bigint[],
-             ttl_0: bigint,
-             R_0: CurvePoint,
-             s_0: bigint): __compactRuntime.CircuitResults<T, []>;
+             fee_0: bigint,
+             ttl_0: bigint): __compactRuntime.CircuitResults<T, []>;
   userBurn(context: __compactRuntime.CircuitContext<T>,
            smgId_0: Uint8Array,
            toAddr_0: string,
@@ -90,10 +86,19 @@ export type ImpureCircuits<T> = {
           amount_0: bigint,
           fee_0: bigint,
           toAddr_0: ZswapCoinPublicKey,
-          signers_0: bigint[],
-          ttl_0: bigint,
-          R_0: CurvePoint,
-          s_0: bigint): __compactRuntime.CircuitResults<T, []>;
+          ttl_0: bigint): __compactRuntime.CircuitResults<T, []>;
+  voteMultiCrossProposal(context: __compactRuntime.CircuitContext<T>,
+                         uniqueIds_0: Uint8Array[]): __compactRuntime.CircuitResults<T, []>;
+  voteCrossProposal(context: __compactRuntime.CircuitContext<T>,
+                    uniqueId_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
+  executeCrossProposalOfNativeToken(context: __compactRuntime.CircuitContext<T>,
+                                    uniqueId_0: Uint8Array,
+                                    coinIndex_0: bigint): __compactRuntime.CircuitResults<T, []>;
+  executeCrossProposalOfMappingToken(context: __compactRuntime.CircuitContext<T>,
+                                     uniqueId_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
+  transferFeeOfNativeToken(context: __compactRuntime.CircuitContext<T>,
+                           token_0: Uint8Array,
+                           coinIndex_0: bigint): __compactRuntime.CircuitResults<T, []>;
   transferOwner(context: __compactRuntime.CircuitContext<T>,
                 newOwner_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   acceptOwner(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, []>;
@@ -103,8 +108,10 @@ export type ImpureCircuits<T> = {
                   newTokenManager_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   setMegerWorker(context: __compactRuntime.CircuitContext<T>,
                  newMergeWorker_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
+  test(context: __compactRuntime.CircuitContext<T>,
+       coin0_0: QualifiedCoinInfo,
+       coin1_0: QualifiedCoinInfo): __compactRuntime.CircuitResults<T, []>;
   mergeTreasuryCoin(context: __compactRuntime.CircuitContext<T>,
-                    token_0: Uint8Array,
                     coins_0: bigint[]): __compactRuntime.CircuitResults<T, []>;
   addAdmin(context: __compactRuntime.CircuitContext<T>,
            admin_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
@@ -112,12 +119,10 @@ export type ImpureCircuits<T> = {
               admin_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   setAdminThreshold(context: __compactRuntime.CircuitContext<T>,
                     threshold_0: bigint): __compactRuntime.CircuitResults<T, []>;
-  setSmgPksks(context: __compactRuntime.CircuitContext<T>, pks_0: CurvePoint[]): __compactRuntime.CircuitResults<T, []>;
+  setSmgPksks(context: __compactRuntime.CircuitContext<T>,
+              voters_0: ZswapCoinPublicKey[]): __compactRuntime.CircuitResults<T, []>;
   updateSmgPk(context: __compactRuntime.CircuitContext<T>,
-              id_0: bigint,
-              newPk_0: CurvePoint,
-              R_0: CurvePoint,
-              signature_0: bigint): __compactRuntime.CircuitResults<T, []>;
+              newVoter_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   setSmgPKThreold(context: __compactRuntime.CircuitContext<T>,
                   threshold_0: bigint): __compactRuntime.CircuitResults<T, []>;
   setFeeCommonConfig(context: __compactRuntime.CircuitContext<T>,
@@ -136,11 +141,6 @@ export type ImpureCircuits<T> = {
 }
 
 export type PureCircuits = {
-  verifySignature(hash_0: Uint8Array,
-                  P_0: CurvePoint,
-                  R_0: CurvePoint,
-                  s_0: bigint): boolean;
-  hashProof(proof_0: ProofData): Uint8Array;
 }
 
 export type Circuits<T> = {
@@ -154,13 +154,9 @@ export type Circuits<T> = {
              smgId_0: Uint8Array,
              tokenPairId_0: bigint,
              amount_0: bigint,
-             fee_0: bigint,
              toAddr_0: ZswapCoinPublicKey,
-             coins_0: bigint[],
-             signers_0: bigint[],
-             ttl_0: bigint,
-             R_0: CurvePoint,
-             s_0: bigint): __compactRuntime.CircuitResults<T, []>;
+             fee_0: bigint,
+             ttl_0: bigint): __compactRuntime.CircuitResults<T, []>;
   userBurn(context: __compactRuntime.CircuitContext<T>,
            smgId_0: Uint8Array,
            toAddr_0: string,
@@ -173,16 +169,19 @@ export type Circuits<T> = {
           amount_0: bigint,
           fee_0: bigint,
           toAddr_0: ZswapCoinPublicKey,
-          signers_0: bigint[],
-          ttl_0: bigint,
-          R_0: CurvePoint,
-          s_0: bigint): __compactRuntime.CircuitResults<T, []>;
-  verifySignature(context: __compactRuntime.CircuitContext<T>,
-                  hash_0: Uint8Array,
-                  P_0: CurvePoint,
-                  R_0: CurvePoint,
-                  s_0: bigint): __compactRuntime.CircuitResults<T, boolean>;
-  hashProof(context: __compactRuntime.CircuitContext<T>, proof_0: ProofData): __compactRuntime.CircuitResults<T, Uint8Array>;
+          ttl_0: bigint): __compactRuntime.CircuitResults<T, []>;
+  voteMultiCrossProposal(context: __compactRuntime.CircuitContext<T>,
+                         uniqueIds_0: Uint8Array[]): __compactRuntime.CircuitResults<T, []>;
+  voteCrossProposal(context: __compactRuntime.CircuitContext<T>,
+                    uniqueId_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
+  executeCrossProposalOfNativeToken(context: __compactRuntime.CircuitContext<T>,
+                                    uniqueId_0: Uint8Array,
+                                    coinIndex_0: bigint): __compactRuntime.CircuitResults<T, []>;
+  executeCrossProposalOfMappingToken(context: __compactRuntime.CircuitContext<T>,
+                                     uniqueId_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
+  transferFeeOfNativeToken(context: __compactRuntime.CircuitContext<T>,
+                           token_0: Uint8Array,
+                           coinIndex_0: bigint): __compactRuntime.CircuitResults<T, []>;
   transferOwner(context: __compactRuntime.CircuitContext<T>,
                 newOwner_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   acceptOwner(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, []>;
@@ -192,8 +191,10 @@ export type Circuits<T> = {
                   newTokenManager_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   setMegerWorker(context: __compactRuntime.CircuitContext<T>,
                  newMergeWorker_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
+  test(context: __compactRuntime.CircuitContext<T>,
+       coin0_0: QualifiedCoinInfo,
+       coin1_0: QualifiedCoinInfo): __compactRuntime.CircuitResults<T, []>;
   mergeTreasuryCoin(context: __compactRuntime.CircuitContext<T>,
-                    token_0: Uint8Array,
                     coins_0: bigint[]): __compactRuntime.CircuitResults<T, []>;
   addAdmin(context: __compactRuntime.CircuitContext<T>,
            admin_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
@@ -201,12 +202,10 @@ export type Circuits<T> = {
               admin_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   setAdminThreshold(context: __compactRuntime.CircuitContext<T>,
                     threshold_0: bigint): __compactRuntime.CircuitResults<T, []>;
-  setSmgPksks(context: __compactRuntime.CircuitContext<T>, pks_0: CurvePoint[]): __compactRuntime.CircuitResults<T, []>;
+  setSmgPksks(context: __compactRuntime.CircuitContext<T>,
+              voters_0: ZswapCoinPublicKey[]): __compactRuntime.CircuitResults<T, []>;
   updateSmgPk(context: __compactRuntime.CircuitContext<T>,
-              id_0: bigint,
-              newPk_0: CurvePoint,
-              R_0: CurvePoint,
-              signature_0: bigint): __compactRuntime.CircuitResults<T, []>;
+              newVoter_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   setSmgPKThreold(context: __compactRuntime.CircuitContext<T>,
                   threshold_0: bigint): __compactRuntime.CircuitResults<T, []>;
   setFeeCommonConfig(context: __compactRuntime.CircuitContext<T>,
@@ -225,16 +224,24 @@ export type Circuits<T> = {
 }
 
 export type Ledger = {
-  readonly outBoundCounter: bigint;
-  readonly inBoundCounter: bigint;
+  readonly crossCounter: bigint;
   readonly nonce: Uint8Array;
   smgTxSigners: {
     isEmpty(): boolean;
     size(): bigint;
-    member(elem_0: CurvePoint): boolean;
-    [Symbol.iterator](): Iterator<CurvePoint>
+    member(key_0: ZswapCoinPublicKey): boolean;
+    lookup(key_0: ZswapCoinPublicKey): bigint;
+    [Symbol.iterator](): Iterator<[ZswapCoinPublicKey, bigint]>
   };
   readonly latestOutBoundCrosstxInfo: CrossOutBound;
+  crossProposalHis: {
+    isEmpty(): boolean;
+    size(): bigint;
+    member(key_0: Uint8Array): boolean;
+    lookup(key_0: Uint8Array): bigint;
+    [Symbol.iterator](): Iterator<[Uint8Array, bigint]>
+  };
+  readonly currentExecuteCrossProposal: Uint8Array;
   treasuryCoins: {
     isEmpty(): boolean;
     size(): bigint;
@@ -243,6 +250,13 @@ export type Ledger = {
     [Symbol.iterator](): Iterator<[bigint, QualifiedCoinInfo]>
   };
   readonly treasuryCoinCounter: bigint;
+  accFeeOfAllToken: {
+    isEmpty(): boolean;
+    size(): bigint;
+    member(key_0: Uint8Array): boolean;
+    lookup(key_0: Uint8Array): AccFeeOfToken;
+    [Symbol.iterator](): Iterator<[Uint8Array, AccFeeOfToken]>
+  };
   tokenPairs: {
     isEmpty(): boolean;
     size(): bigint;
@@ -274,7 +288,6 @@ export type Ledger = {
     [Symbol.iterator](): Iterator<[CurvePoint, bigint]>
   };
   readonly smgPKThreshold: bigint;
-  readonly smgPKCount: bigint;
   admins: {
     isEmpty(): boolean;
     size(): bigint;
@@ -303,6 +316,25 @@ export type Ledger = {
       [Symbol.iterator](): Iterator<ZswapCoinPublicKey>
     }
   };
+  crossProposal: {
+    isEmpty(): boolean;
+    size(): bigint;
+    member(key_0: Uint8Array): boolean;
+    lookup(key_0: Uint8Array): CrossProposal;
+    [Symbol.iterator](): Iterator<[Uint8Array, CrossProposal]>
+  };
+  crossProposalVoters: {
+    isEmpty(): boolean;
+    size(): bigint;
+    member(key_0: Uint8Array): boolean;
+    lookup(key_0: Uint8Array): {
+      isEmpty(): boolean;
+      size(): bigint;
+      member(elem_0: bigint): boolean;
+      [Symbol.iterator](): Iterator<bigint>
+    }
+  };
+  readonly nativeTokenReceived: bigint;
   readonly owner: ZswapCoinPublicKey;
   readonly pendingOwner: ZswapCoinPublicKey;
   readonly mergeWorker: ZswapCoinPublicKey;
@@ -319,8 +351,7 @@ export declare class Contract<T, W extends Witnesses<T> = Witnesses<T>> {
   constructor(witnesses: W);
   initialState(context: __compactRuntime.ConstructorContext<T>,
                adminThresholdInit_0: bigint,
-               smgPKThresholdInit_0: bigint,
-               smgCount_0: bigint): __compactRuntime.ConstructorResult<T>;
+               smgPKThresholdInit_0: bigint): __compactRuntime.ConstructorResult<T>;
 }
 
 export declare function ledger(state: __compactRuntime.StateValue): Ledger;
