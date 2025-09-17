@@ -1,4 +1,4 @@
-import { type CrossChainPrivateState } from './witnesses.js';
+import { type CrossChainPrivateState } from './witnesses';
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
 import { type ImpureCircuitId, type MidnightProvider, type MidnightProviders, type WalletProvider, type FinalizedTxData } from '@midnight-ntwrk/midnight-js-types';
 import { type DeployedContract, type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';

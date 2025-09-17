@@ -3,7 +3,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-17 11:43:34
+ * @LastEditTime: 2025-09-17 12:45:02
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -49,7 +49,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCoinPublicKeyFromShieldAddress = exports.configureProviders = exports.verifySignature = exports.signData = exports.genRandomBigint = exports.genSigningKey = exports.getTreasuryCoinsFromState = exports.CrossChainApi = exports.waitForSyncProgress = exports.waitForSync = exports.waitForFunds = exports.buildWalletAndWaitForFunds = exports.createWalletAndMidnightProvider = exports.crosschainContractInstance = exports.ZKConfig = exports.currentDir = exports.CrossChainPrivateStateId = void 0;
 exports.pad = pad;
 const node_path_1 = __importDefault(require("node:path"));
-const witnesses_js_1 = require("./witnesses.js");
+const witnesses_1 = require("./witnesses");
 const CrossChain = __importStar(require("./managed/crosschain/contract/index.cjs"));
 const midnight_js_types_1 = require("@midnight-ntwrk/midnight-js-types");
 const midnight_js_contracts_1 = require("@midnight-ntwrk/midnight-js-contracts");
@@ -89,7 +89,7 @@ function pad(s, n) {
     paddedArray.set(utf8Bytes);
     return paddedArray;
 }
-exports.crosschainContractInstance = new CrossChain.Contract(witnesses_js_1.witnesses);
+exports.crosschainContractInstance = new CrossChain.Contract(witnesses_1.witnesses);
 const createWalletAndMidnightProvider = async (wallet) => {
     const state = await Rx.firstValueFrom(wallet.state());
     return {
