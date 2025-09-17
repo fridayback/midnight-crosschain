@@ -137,7 +137,7 @@
     { "op": "declare_pub_input", "var": 30 },
     { "op": "declare_pub_input", "var": 29 },
     { "op": "pi_skip", "guard": 2, "count": 4 },
-    { "op": "less_than", "a": 26, "b": 29, "bits": 128 },
+    { "op": "less_than", "a": 29, "b": 26, "bits": 128 },
     { "op": "assert", "cond": 31 },
     { "op": "declare_pub_input", "var": 5 },
     { "op": "pi_skip", "guard": 2, "count": 1 },

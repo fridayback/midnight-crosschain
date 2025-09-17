@@ -3505,7 +3505,7 @@ class Contract {
                                                                  { popeq: { cached: false,
                                                                             result: undefined } }]).value);
     __compactRuntime.assert(proposal_0.ttl
-                            <
+                            >
                             _descriptor_9.fromValue(Contract._query(context,
                                                                     partialProofData,
                                                                     [

@@ -300,7 +300,7 @@ export circuit voteCrossProposal(uniqueId: Bytes<32>): [] {
   assert(crossProposal.member(disclose(uniqueId)), "proposal not exists");
 
   const proposal = crossProposal.lookup(disclose(uniqueId));
-  assert(proposal.ttl < crossCounter, "ttl expired");
+  assert(proposal.ttl > crossCounter, "ttl expired");
 
   // const voters = crossProposalVoters.lookup(disclose(uniqueId));
   assert(crossProposalVoters.lookup(disclose(uniqueId)).size() < smgPKThreshold, "already passed");
