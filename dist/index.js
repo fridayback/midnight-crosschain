@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-17 11:21:09
+ * @LastEditTime: 2025-09-17 11:33:09
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -246,7 +246,7 @@ export class CrossChainApi {
     }
     async executeCrossProposal(uniqueId, coinIndex) {
         const uniqueId_0 = Buffer.from(uniqueId, 'hex');
-        assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long, actually ${uniqueId_0.length}`);
+        assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long, actually ${uniqueId_0.length}, ${uniqueId}`);
         if (coinIndex === undefined) {
             const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposalOfMappingToken(uniqueId_0);
             return finalizedTxData;
