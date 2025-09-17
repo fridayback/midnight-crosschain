@@ -6,7 +6,7 @@
     "declaration": true,
     "lib": ["ESNext"],
     "target": "ES2022",
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
