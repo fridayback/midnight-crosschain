@@ -4,14 +4,14 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-17 16:35:08
+ * @LastEditTime: 2025-09-17 16:43:38
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // export * as CrossChain from "./managed/crosschain/contract/index.cjs";
 // export * from "./witnesses.js";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCoinPublicKeyFromShieldAddress = exports.configureProviders = exports.verifySignature = exports.signData = exports.genRandomBigint = exports.genSigningKey = exports.getTreasuryCoinsFromState = exports.CrossChainApi = exports.waitForSyncProgress = exports.waitForSync = exports.waitForFunds = exports.buildWalletAndWaitForFunds = exports.createWalletAndMidnightProvider = exports.crosschainContractInstance = exports.witnesses = exports.createCrossChainPrivateState = exports.ZKConfig = exports.currentDir = exports.CrossChainPrivateStateId = void 0;
+exports.configureProviders = exports.verifySignature = exports.signData = exports.genRandomBigint = exports.genSigningKey = exports.getTreasuryCoinsFromState = exports.CrossChainApi = exports.waitForSyncProgress = exports.waitForSync = exports.waitForFunds = exports.buildWalletAndWaitForFunds = exports.createWalletAndMidnightProvider = exports.crosschainContractInstance = exports.witnesses = exports.createCrossChainPrivateState = exports.ZKConfig = exports.currentDir = exports.CrossChainPrivateStateId = void 0;
 exports.pad = pad;
 const tslib_1 = require("tslib");
 const node_path_1 = tslib_1.__importDefault(require("node:path"));
@@ -27,7 +27,7 @@ const ledger_1 = require("@midnight-ntwrk/ledger");
 const zswap_1 = require("@midnight-ntwrk/zswap");
 const midnight_js_network_id_1 = require("@midnight-ntwrk/midnight-js-network-id");
 const midnight_js_utils_1 = require("@midnight-ntwrk/midnight-js-utils");
-const wallet_sdk_address_format_1 = require("@midnight-ntwrk/wallet-sdk-address-format");
+// import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 const Rx = tslib_1.__importStar(require("rxjs"));
 const compact_runtime_1 = require("@midnight-ntwrk/compact-runtime");
 const wallet_1 = require("@midnight-ntwrk/wallet");
@@ -521,11 +521,10 @@ const configureProviders = async (wallet, config) => {
     };
 };
 exports.configureProviders = configureProviders;
-const getCoinPublicKeyFromShieldAddress = (shieldAddr) => {
-    const tmp1 = wallet_sdk_address_format_1.MidnightBech32m.parse(shieldAddr); //fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(newOwner, getZswapNetworkId()))
-    // const tmp1 = MidnightBech32m.parse('mn_shield-addr_test10th0dtqgnpanzwmqj236zccpkmj9xxpkl7r7e7cr5e3v7k0stm5qxqxa9m6z5f4603nyuu4kw9c65ektu48hhyrtu2f07h42ycppkvw9ccyry600');
-    const tmp2 = wallet_sdk_address_format_1.ShieldedAddress.codec.decode(tmp1.network, tmp1);
-    // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
-    return tmp2.coinPublicKey.data;
-};
-exports.getCoinPublicKeyFromShieldAddress = getCoinPublicKeyFromShieldAddress;
+// export const getCoinPublicKeyFromShieldAddress = (shieldAddr: string) => {
+//   const tmp1 = MidnightBech32m.parse(shieldAddr);//fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(newOwner, getZswapNetworkId()))
+//   // const tmp1 = MidnightBech32m.parse('mn_shield-addr_test10th0dtqgnpanzwmqj236zccpkmj9xxpkl7r7e7cr5e3v7k0stm5qxqxa9m6z5f4603nyuu4kw9c65ektu48hhyrtu2f07h42ycppkvw9ccyry600');
+//   const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
+//   // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
+//   return tmp2.coinPublicKey.data;
+// }

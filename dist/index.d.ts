@@ -465,7 +465,6 @@ declare const configureProviders: (wallet: Wallet & Resource, config: Config) =>
     walletProvider: WalletProvider & MidnightProvider;
     midnightProvider: WalletProvider & MidnightProvider;
 }>;
-declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 
-export { CrossChainApi, CrossChainPrivateStateId, ZKConfig, buildWalletAndWaitForFunds, configureProviders, createCrossChainPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genRandomBigint, genSigningKey, getCoinPublicKeyFromShieldAddress, getTreasuryCoinsFromState, pad, signData, verifySignature, waitForFunds, waitForSync, waitForSyncProgress, witnesses };
+export { CrossChainApi, CrossChainPrivateStateId, ZKConfig, buildWalletAndWaitForFunds, configureProviders, createCrossChainPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genRandomBigint, genSigningKey, getTreasuryCoinsFromState, pad, signData, verifySignature, waitForFunds, waitForSync, waitForSyncProgress, witnesses };
 export type { Config, CrossChainCircuits, CrossChainContract, CrossChainPrivateState, CrossChainProviders, DeployedCrossChainContract };
