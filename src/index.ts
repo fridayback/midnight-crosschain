@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-17 21:11:56
+ * @LastEditTime: 2025-09-17 21:49:25
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -26,10 +26,10 @@ import { CoinInfo, decodeTokenType, encodeTokenType, Transaction, TransactionId,
 import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
-// import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
+import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as Rx from 'rxjs';
 import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueString, CompactTypeOpaqueUint8Array, CompactTypeUnsignedInteger, CompactTypeVector, ContractAddress, convert_Uint8Array_to_bigint, degradeToTransient, ecAdd, ecMul, ecMulGenerator, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
-// import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
+import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
 import assert from 'node:assert';
 
 export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
@@ -111,41 +111,41 @@ export const createWalletAndMidnightProvider = async (wallet: Wallet): Promise<W
   };
 };
 
-// export const buildWalletAndWaitForFunds = async (
-//   { indexer, indexerWS, node, proofServer }: Config,
-//   seed: string,
-//   filename: string,
-// ): Promise<Wallet & Resource> => {
-//   const directoryPath = process.env.SYNC_CACHE;
-//   let wallet: Wallet & Resource;
-//   wallet = await WalletBuilder.build(
-//     indexer,
-//     indexerWS,
-//     proofServer,
-//     node,
-//     seed,
-//     getZswapNetworkId(),
-//     'info',
-//   );
-//   wallet.start();
+export const buildWalletAndWaitForFunds = async (
+  { indexer, indexerWS, node, proofServer }: Config,
+  seed: string,
+  filename: string,
+): Promise<Wallet & Resource> => {
+  const directoryPath = process.env.SYNC_CACHE;
+  let wallet: Wallet & Resource;
+  wallet = await WalletBuilder.build(
+    indexer,
+    indexerWS,
+    proofServer,
+    node,
+    seed,
+    getZswapNetworkId(),
+    'info',
+  );
+  wallet.start();
 
-//   const state = await Rx.firstValueFrom(wallet.state());
-//   // logger.info(`Your wallet seed is: ${seed}`);
-//   // logger.info(`Your wallet address is: ${state.address}`);
-//   console.log(`Your wallet address is: ${state.address}`)
-//   let balance = state.balances;
-//   // let balance = state.balances;
-//   // if (balance === undefined || balance === 0n) {
-//   if (Object.keys(balance).length === 0) {
-//     // logger.info(`Your wallet balance is: 0`);
-//     // logger.info(`Waiting to receive tokens...`);
-//     balance = await waitForFunds(wallet);
-//   } else {
-//     // logger.info(`length: ${Object.keys(balance).length}, ${balance}`);
-//   }
+  const state = await Rx.firstValueFrom(wallet.state());
+  // logger.info(`Your wallet seed is: ${seed}`);
+  // logger.info(`Your wallet address is: ${state.address}`);
+  console.log(`Your wallet address is: ${state.address}`)
+  let balance = state.balances;
+  // let balance = state.balances;
+  // if (balance === undefined || balance === 0n) {
+  if (Object.keys(balance).length === 0) {
+    // logger.info(`Your wallet balance is: 0`);
+    // logger.info(`Waiting to receive tokens...`);
+    balance = await waitForFunds(wallet);
+  } else {
+    // logger.info(`length: ${Object.keys(balance).length}, ${balance}`);
+  }
 
-//   return wallet;
-// };
+  return wallet;
+};
 
 export const waitForFunds = (wallet: Wallet) =>
   Rx.firstValueFrom(
@@ -651,7 +651,7 @@ export const verifySignature = (hash: bigint, R: CrossChain.CurvePoint, s: bigin
   return expectM.x === realM.x && expectM.y === realM.y;
 }
 
-export const configureProviders = async (wallet: Wallet , config: Config) => {
+export const configureProviders = async (wallet: Wallet & Resource, config: Config) => {
   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
   // console.log('^^^^^^^^^^^^^^',ZKConfig.zkConfigPath)
   return {
@@ -666,10 +666,10 @@ export const configureProviders = async (wallet: Wallet , config: Config) => {
   };
 };
 
-// export const getCoinPublicKeyFromShieldAddress = (shieldAddr: string) => {
-//   const tmp1 = MidnightBech32m.parse(shieldAddr);//fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(newOwner, getZswapNetworkId()))
-//   // const tmp1 = MidnightBech32m.parse('mn_shield-addr_test10th0dtqgnpanzwmqj236zccpkmj9xxpkl7r7e7cr5e3v7k0stm5qxqxa9m6z5f4603nyuu4kw9c65ektu48hhyrtu2f07h42ycppkvw9ccyry600');
-//   const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
-//   // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
-//   return tmp2.coinPublicKey.data;
-// }
+export const getCoinPublicKeyFromShieldAddress = (shieldAddr: string) => {
+  const tmp1 = MidnightBech32m.parse(shieldAddr);//fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(newOwner, getZswapNetworkId()))
+  // const tmp1 = MidnightBech32m.parse('mn_shield-addr_test10th0dtqgnpanzwmqj236zccpkmj9xxpkl7r7e7cr5e3v7k0stm5qxqxa9m6z5f4603nyuu4kw9c65ektu48hhyrtu2f07h42ycppkvw9ccyry600');
+  const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
+  // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
+  return tmp2.coinPublicKey.data;
+}
