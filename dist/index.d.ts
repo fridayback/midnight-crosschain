@@ -10,8 +10,6 @@ import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config
 import { NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { Resource } from '@midnight-ntwrk/wallet';
 
-type CrossChainPrivateState = {};
-
 declare enum ProposalType { AddAdmin = 0,
                            RemoveAdmin = 1,
                            UpdateFeeReceiver = 2,
@@ -367,6 +365,9 @@ declare const ZKConfig: {
     privateStateStoreName: string;
     zkConfigPath: string;
 };
+type CrossChainPrivateState = {};
+declare const createCrossChainPrivateState: () => {};
+declare const witnesses: {};
 declare function pad(s: string, n: number): Uint8Array;
 interface Config {
     readonly logDir: string;
@@ -466,5 +467,5 @@ declare const configureProviders: (wallet: Wallet & Resource, config: Config) =>
 }>;
 declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 
-export { CrossChainApi, CrossChainPrivateStateId, ZKConfig, buildWalletAndWaitForFunds, configureProviders, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genRandomBigint, genSigningKey, getCoinPublicKeyFromShieldAddress, getTreasuryCoinsFromState, pad, signData, verifySignature, waitForFunds, waitForSync, waitForSyncProgress };
-export type { Config, CrossChainCircuits, CrossChainContract, CrossChainProviders, DeployedCrossChainContract };
+export { CrossChainApi, CrossChainPrivateStateId, ZKConfig, buildWalletAndWaitForFunds, configureProviders, createCrossChainPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genRandomBigint, genSigningKey, getCoinPublicKeyFromShieldAddress, getTreasuryCoinsFromState, pad, signData, verifySignature, waitForFunds, waitForSync, waitForSyncProgress, witnesses };
+export type { Config, CrossChainCircuits, CrossChainContract, CrossChainPrivateState, CrossChainProviders, DeployedCrossChainContract };

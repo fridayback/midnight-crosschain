@@ -2,18 +2,18 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-17 12:45:02
+ * @LastEditTime: 2025-09-17 15:22:31
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // export * as CrossChain from "./managed/crosschain/contract/index.cjs";
 // export * from "./witnesses.js";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCoinPublicKeyFromShieldAddress = exports.configureProviders = exports.verifySignature = exports.signData = exports.genRandomBigint = exports.genSigningKey = exports.getTreasuryCoinsFromState = exports.CrossChainApi = exports.waitForSyncProgress = exports.waitForSync = exports.waitForFunds = exports.buildWalletAndWaitForFunds = exports.createWalletAndMidnightProvider = exports.crosschainContractInstance = exports.ZKConfig = exports.currentDir = exports.CrossChainPrivateStateId = void 0;
+exports.getCoinPublicKeyFromShieldAddress = exports.configureProviders = exports.verifySignature = exports.signData = exports.genRandomBigint = exports.genSigningKey = exports.getTreasuryCoinsFromState = exports.CrossChainApi = exports.waitForSyncProgress = exports.waitForSync = exports.waitForFunds = exports.buildWalletAndWaitForFunds = exports.createWalletAndMidnightProvider = exports.crosschainContractInstance = exports.witnesses = exports.createCrossChainPrivateState = exports.ZKConfig = exports.currentDir = exports.CrossChainPrivateStateId = void 0;
 exports.pad = pad;
 const tslib_1 = require("tslib");
 const node_path_1 = tslib_1.__importDefault(require("node:path"));
-const witnesses_1 = require("./witnesses");
+// import { witnesses, type CrossChainPrivateState } from './witnesses';
 const CrossChain = tslib_1.__importStar(require("./managed/crosschain/contract/index.cjs"));
 const midnight_js_types_1 = require("@midnight-ntwrk/midnight-js-types");
 const midnight_js_contracts_1 = require("@midnight-ntwrk/midnight-js-contracts");
@@ -37,6 +37,11 @@ exports.ZKConfig = {
     privateStateStoreName: 'crosschain-private-state',
     zkConfigPath: node_path_1.default.resolve(exports.currentDir, 'managed', 'crosschain'),
 };
+const createCrossChainPrivateState = () => ({});
+exports.createCrossChainPrivateState = createCrossChainPrivateState;
+exports.witnesses = {
+// TODO: Add witnesses
+};
 const fromHexWithOrNoPrefix = (hex) => {
     if (hex.startsWith('0x')) {
         return (0, midnight_js_utils_1.fromHex)(hex.slice(2));
@@ -53,7 +58,7 @@ function pad(s, n) {
     paddedArray.set(utf8Bytes);
     return paddedArray;
 }
-exports.crosschainContractInstance = new CrossChain.Contract(witnesses_1.witnesses);
+exports.crosschainContractInstance = new CrossChain.Contract(exports.witnesses);
 const createWalletAndMidnightProvider = async (wallet) => {
     const state = await Rx.firstValueFrom(wallet.state());
     return {
