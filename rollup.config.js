@@ -1,32 +1,36 @@
-/*
- * @Author: liulin blue-sky-dl5@163.com
- * @Date: 2025-09-17 14:43:52
- * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-17 15:18:19
- * @FilePath: /midnight-crosschain/rollup.config.js
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
-import typescript from '@rollup/plugin-typescript';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import { dts } from 'rollup-plugin-dts';
 
-export default [
-  {
-    input: 'src/index.ts',
-    output: [
-      { file: 'dist/index.cjs', format: 'cjs' },
-      { file: 'dist/index.mjs', format: 'es' }
-    ],
-    plugins: [
-        resolve(),
-        commonjs(),
-        typescript()
-    ]
+import typescript from '@rollup/plugin-typescript';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
+
+export default {
+  input: 'src/index.ts',
+  output: {
+    dir: 'dist/cjs',
+    format: 'cjs',
+    exports: 'auto',
+    preserveModules: true,
+    entryFileNames: '[name].cjs'
   },
-  {
-    input: 'src/index.ts',
-    output: [{ file: 'dist/index.d.ts', format: 'es' }],
-    plugins: [dts()]
-  }
-];
+  plugins: [
+    nodeResolve({
+      preferBuiltins: true,
+      exportConditions: ['require'] // 强制CJS解析
+    }),
+    commonjs({
+      include: /node_modules/,
+      requireReturnsDefault: 'auto'
+    }),
+    json(),
+    typescript({
+      tsconfig: './tsconfig.json',
+      compilerOptions: {
+        module: 'ESNext',
+        target: 'ES2022',
+        esModuleInterop: true
+      }
+    })
+  ],
+  external: id => /node_modules/.test(id)
+};
