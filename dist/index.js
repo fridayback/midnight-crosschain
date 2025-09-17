@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-17 23:27:48
+ * @LastEditTime: 2025-09-17 23:30:26
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -27,8 +27,8 @@ import { addField, CompactTypeOpaqueString, ecAdd, ecMul, ecMulGenerator, mulFie
 import { WalletBuilder } from '@midnight-ntwrk/wallet';
 import assert from 'node:assert';
 export const CrossChainPrivateStateId = 'crossChainPrivateState';
-// export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
-export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
+export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
+// export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
 export const ZKConfig = {
     privateStateStoreName: 'crosschain-private-state',
     zkConfigPath: path.resolve(currentDir, 'managed', 'crosschain'),
