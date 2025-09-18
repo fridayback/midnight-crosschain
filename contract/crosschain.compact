@@ -142,12 +142,14 @@ constructor(
     proposalId.increment(1);
 }
 
-export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, amount: Uint<128>): [] {
+// export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, amount: Uint<128>): [] {
+export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, coin: CoinInfo): [] {
   assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
   const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
+  assert(tokenPair.midnigthTokenAccount == disclose(coin.color), "token color not match");
 
   const contractFee = getFee(disclose(tokenPairId));
-  nonce = evolveNonce(crossCounter,nonce);
+  // nonce = evolveNonce(crossCounter,nonce);
 
   // const nativeTokenColor = nativeToken();
   // if(nativeTokenColor == tokenPair.midnigthTokenAccount){
@@ -173,9 +175,11 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
     // addTreasuryCoin(nativeTokenCoin);
   }
 
-  const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
-  receive(coin);
-  addTreasuryCoin(coin);
+  // const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
+  // receive(coin);
+  // addTreasuryCoin(coin);
+  receive(disclose(coin));
+  addTreasuryCoin(disclose(coin));
 
   // record the crosschain info
   latestOutBoundCrosstxInfo = CrossOutBound{
@@ -183,7 +187,7 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
     , fromAddr: ownPublicKey()
     , toAddr: disclose(toAddr)
     , tokenPairId: disclose(tokenPairId)
-    , amount: disclose(amount)
+    , amount: disclose(coin.value)
     , fee: contractFee 
     , nonce: crossCounter as Field as Uint<128>
   };
@@ -237,15 +241,20 @@ export circuit smgRelease(
   addCrossProposal(disclose(uniqueId), disclose(smgId), disclose(tokenPairId), disclose(amount), disclose(toAddr), disclose(fee), disclose(ttl), false);
 }
 
-export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, amount: Uint<128>): [] {
+// export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, amount: Uint<128>): [] {
+export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, coin: CoinInfo): [] {
   assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
   const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
+  assert(tokenPair.midnigthTokenAccount == disclose(coin.color), "token color not match");
+
   const contractFee = getFee(disclose(tokenPairId));
   
-  nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
-  const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
-  receive(coin);
-  sendImmediate(coin, burnAddress(), coin.value);
+  // nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
+  // const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
+  // receive(coin);
+  // sendImmediate(coin, burnAddress(), coin.value);
+  receive(disclose(coin));
+  sendImmediate(disclose(coin), burnAddress(), disclose(coin.value));
 
     // record the crosschain info
   latestOutBoundCrosstxInfo = CrossOutBound{
@@ -253,7 +262,7 @@ export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
     , fromAddr: ownPublicKey()
     , toAddr: disclose(toAddr)
     , tokenPairId: disclose(tokenPairId)
-    , amount: coin.value
+    , amount: disclose(coin.value)
     , fee: contractFee
     , nonce: crossCounter as Field as Uint<128>
   };

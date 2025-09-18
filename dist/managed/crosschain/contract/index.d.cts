@@ -65,7 +65,7 @@ export type ImpureCircuits<T> = {
            smgId_0: Uint8Array,
            toAddr_0: string,
            tokenPairId_0: bigint,
-           amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
+           coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   smgRelease(context: __compactRuntime.CircuitContext<T>,
              uniqueId_0: Uint8Array,
              smgId_0: Uint8Array,
@@ -78,7 +78,7 @@ export type ImpureCircuits<T> = {
            smgId_0: Uint8Array,
            toAddr_0: string,
            tokenPairId_0: bigint,
-           amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
+           coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   smgMint(context: __compactRuntime.CircuitContext<T>,
           uniqueId_0: Uint8Array,
           smgId_0: Uint8Array,
@@ -148,7 +148,7 @@ export type Circuits<T> = {
            smgId_0: Uint8Array,
            toAddr_0: string,
            tokenPairId_0: bigint,
-           amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
+           coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   smgRelease(context: __compactRuntime.CircuitContext<T>,
              uniqueId_0: Uint8Array,
              smgId_0: Uint8Array,
@@ -161,7 +161,7 @@ export type Circuits<T> = {
            smgId_0: Uint8Array,
            toAddr_0: string,
            tokenPairId_0: bigint,
-           amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
+           coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   smgMint(context: __compactRuntime.CircuitContext<T>,
           uniqueId_0: Uint8Array,
           smgId_0: Uint8Array,

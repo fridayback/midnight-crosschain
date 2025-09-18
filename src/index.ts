@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-18 10:21:28
+ * @LastEditTime: 2025-09-18 16:22:35
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -22,14 +22,14 @@ import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-p
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { Address, CoinPublicKey, Wallet } from '@midnight-ntwrk/wallet-api';
-import { CoinInfo, decodeTokenType, encodeTokenType, Transaction, TransactionId, tokenType, communicationCommitmentRandomness, sampleCoinPublicKey, createCoinInfo, nativeToken } from '@midnight-ntwrk/ledger';
+import { CoinInfo, decodeTokenType, encodeTokenType, Transaction, TransactionId, tokenType, communicationCommitmentRandomness, sampleCoinPublicKey, createCoinInfo } from '@midnight-ntwrk/ledger';
 import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
-// import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
-// import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
+import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
+import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as Rx from 'rxjs';
 import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueString, CompactTypeOpaqueUint8Array, CompactTypeUnsignedInteger, CompactTypeVector, ContractAddress, convert_Uint8Array_to_bigint, degradeToTransient, ecAdd, ecMul, ecMulGenerator, encodeCoinInfo, EncodedCoinInfo, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
-// import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
+import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
 import assert from 'node:assert';
 
 export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
@@ -60,9 +60,6 @@ export const createCrossChainPrivateState = () => ({
 
 export const witnesses = {
     // TODO: Add witnesses
-}
-const fromHex = function (hex: string) {
-  return Buffer.from(hex,'hex');
 }
 const fromHexWithOrNoPrefix = (hex: string) => {
   if (hex.startsWith('0x')) {
@@ -114,41 +111,41 @@ export const createWalletAndMidnightProvider = async (wallet: Wallet): Promise<W
   };
 };
 
-// export const buildWalletAndWaitForFunds = async (
-//   { indexer, indexerWS, node, proofServer }: Config,
-//   seed: string,
-//   filename: string,
-// ): Promise<Wallet & Resource> => {
-//   const directoryPath = process.env.SYNC_CACHE;
-//   let wallet: Wallet & Resource;
-//   wallet = await WalletBuilder.build(
-//     indexer,
-//     indexerWS,
-//     proofServer,
-//     node,
-//     seed,
-//     getZswapNetworkId(),
-//     'info',
-//   );
-//   wallet.start();
+export const buildWalletAndWaitForFunds = async (
+  { indexer, indexerWS, node, proofServer }: Config,
+  seed: string,
+  filename: string,
+): Promise<Wallet & Resource> => {
+  const directoryPath = process.env.SYNC_CACHE;
+  let wallet: Wallet & Resource;
+  wallet = await WalletBuilder.build(
+    indexer,
+    indexerWS,
+    proofServer,
+    node,
+    seed,
+    getZswapNetworkId(),
+    'info',
+  );
+  wallet.start();
 
-//   const state = await Rx.firstValueFrom(wallet.state());
-//   // logger.info(`Your wallet seed is: ${seed}`);
-//   // logger.info(`Your wallet address is: ${state.address}`);
-//   console.log(`Your wallet address is: ${state.address}`)
-//   let balance = state.balances;
-//   // let balance = state.balances;
-//   // if (balance === undefined || balance === 0n) {
-//   if (Object.keys(balance).length === 0) {
-//     // logger.info(`Your wallet balance is: 0`);
-//     // logger.info(`Waiting to receive tokens...`);
-//     balance = await waitForFunds(wallet);
-//   } else {
-//     // logger.info(`length: ${Object.keys(balance).length}, ${balance}`);
-//   }
+  const state = await Rx.firstValueFrom(wallet.state());
+  // logger.info(`Your wallet seed is: ${seed}`);
+  // logger.info(`Your wallet address is: ${state.address}`);
+  console.log(`Your wallet address is: ${state.address}`)
+  let balance = state.balances;
+  // let balance = state.balances;
+  // if (balance === undefined || balance === 0n) {
+  if (Object.keys(balance).length === 0) {
+    // logger.info(`Your wallet balance is: 0`);
+    // logger.info(`Waiting to receive tokens...`);
+    balance = await waitForFunds(wallet);
+  } else {
+    // logger.info(`length: ${Object.keys(balance).length}, ${balance}`);
+  }
 
-//   return wallet;
-// };
+  return wallet;
+};
 
 export const waitForFunds = (wallet: Wallet) =>
   Rx.firstValueFrom(
@@ -284,8 +281,7 @@ export class CrossChainApi {
     const tokenPairId_0 = BigInt(tokenPairId);
     const amount_0 = BigInt(amount);
     const fee_0 = BigInt(fee);
-    // const toAddr_0 = { bytes: getCoinPublicKeyFromShieldAddress(toAddr) };
-    const toAddr_0 = { bytes: Buffer.from(toAddr,'hex') };
+    const toAddr_0 = { bytes: getCoinPublicKeyFromShieldAddress(toAddr) };
     let coins_0 = this.defaultNoneMergeCoins();
     if (coins && coins.length > coins_0.value.length) {
       throw new Error(`Too many coins`);
@@ -327,8 +323,10 @@ export class CrossChainApi {
 
     const tokenPair_0 = BigInt(tokenPair);
     const amount_0 = BigInt(amount);
-    // const coin_0 = coinInfo(nativeToken(),amount_0);
-    const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, amount_0);
+    const tokenType = await this.getTokenTypeByTokenPairId(tokenPair_0);
+    assert(tokenType !== undefined, `tokenType is undefined`);
+    const coin_0 = coinInfo(tokenType,amount_0);
+    const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, coin_0);
     return finalizedTxData;
   }
 
@@ -357,9 +355,23 @@ export class CrossChainApi {
    
     const tokenPair_0 = BigInt(tokenPair);
     const amount_0 = BigInt(amount);
-    const coin_0 = coinInfo(nativeToken(),amount_0);
-    const finalizedTxData = await this.crossChainContract.callTx.userBurn(smgId_0, toAddress, tokenPair_0, amount_0);
+    const tokenType = await this.getTokenTypeByTokenPairId(tokenPair_0);
+    assert(tokenType !== undefined, `tokenType is undefined`);
+    const coin_0 = coinInfo(tokenType,amount_0);
+    const finalizedTxData = await this.crossChainContract.callTx.userBurn(smgId_0, toAddress, tokenPair_0, coin_0);
     return finalizedTxData;
+  }
+
+  async getTokenTypeByTokenPairId(tokenPairId: string | number | bigint): Promise<TokenType|undefined> {
+    const state = await this.getLedgerState();
+    const pair = state?.tokenPairs.lookup(BigInt(tokenPairId));
+    const color = pair?.midnigthTokenAccount;
+    if (color) {
+      return decodeTokenType(color);
+    }else{
+      return undefined;
+    }
+    
   }
 
   async voteCrossProposal(uniqueId: string) {
@@ -386,21 +398,18 @@ export class CrossChainApi {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   async getLedgerState(): Promise<CrossChain.Ledger | null> {
-    // assertIsContractAddress(this.crossChainContract?.deployTxData.public.contractAddress);
+    assertIsContractAddress(this.crossChainContract?.deployTxData.public.contractAddress);
     const state = await this.providers.publicDataProvider
       .queryContractState(this.crossChainContract?.deployTxData.public.contractAddress)
       .then((contractState) => (contractState != null ? CrossChain.ledger(contractState.data) : null));
     return state;
   }
 
-  // async getTokenPair(): Promise<Map<> | null> {
-  // }
-
   ///////////////////////////////////////////////        management      ////////////////////////////////////////////////////////
   async transferOwner(newOwner: Address) {
-    // const newOwner_0 = { bytes: getCoinPublicKeyFromShieldAddress(newOwner) };
-    // const finalizedTxData = await this.crossChainContract.callTx.transferOwner(newOwner_0);
-    // return finalizedTxData;
+    const newOwner_0 = { bytes: getCoinPublicKeyFromShieldAddress(newOwner) };
+    const finalizedTxData = await this.crossChainContract.callTx.transferOwner(newOwner_0);
+    return finalizedTxData;
   }
 
   async acceptOwner() {
@@ -409,27 +418,27 @@ export class CrossChainApi {
   }
 
   async updateSmgPk(newVoter: Address) {
-    // const newVoter_0 = { bytes: getCoinPublicKeyFromShieldAddress(newVoter) };
-    // const finalizedTxData = await this.crossChainContract.callTx.updateSmgPk(newVoter_0);
-    // return finalizedTxData;
+    const newVoter_0 = { bytes: getCoinPublicKeyFromShieldAddress(newVoter) };
+    const finalizedTxData = await this.crossChainContract.callTx.updateSmgPk(newVoter_0);
+    return finalizedTxData;
   }
 
   async setFeeReceiver(feeReceiver: Address) {
-    // const feeReceiver_0 = { bytes: getCoinPublicKeyFromShieldAddress(feeReceiver) };
-    // const finalizedTxData = await this.crossChainContract.callTx.setFeeReceiver(feeReceiver_0);
-    // return finalizedTxData;
+    const feeReceiver_0 = { bytes: getCoinPublicKeyFromShieldAddress(feeReceiver) };
+    const finalizedTxData = await this.crossChainContract.callTx.setFeeReceiver(feeReceiver_0);
+    return finalizedTxData;
   }
 
   async setTokenManager(tokenManager: Address) {
-    // const tokenManager_0 = { bytes: getCoinPublicKeyFromShieldAddress(tokenManager) };
-    // const finalizedTxData = await this.crossChainContract.callTx.setTokenManager(tokenManager_0);
-    // return finalizedTxData;
+    const tokenManager_0 = { bytes: getCoinPublicKeyFromShieldAddress(tokenManager) };
+    const finalizedTxData = await this.crossChainContract.callTx.setTokenManager(tokenManager_0);
+    return finalizedTxData;
   }
 
   async setMegerWorker(mergeWorker: Address) {
-    // const megerWorker_0 = { bytes: getCoinPublicKeyFromShieldAddress(mergeWorker) };
-    // const finalizedTxData = await this.crossChainContract.callTx.setMegerWorker(megerWorker_0);
-    // return finalizedTxData;
+    const megerWorker_0 = { bytes: getCoinPublicKeyFromShieldAddress(mergeWorker) };
+    const finalizedTxData = await this.crossChainContract.callTx.setMegerWorker(megerWorker_0);
+    return finalizedTxData;
   }
 
   async mergeTreasuryCoin(coins: bigint[] | number[] | string[]) {
@@ -441,15 +450,15 @@ export class CrossChainApi {
 
 
   async addAdmin(admin: Address) {
-    // const admin_0 = { bytes: getCoinPublicKeyFromShieldAddress(admin) };
-    // const finalizedTxData = await this.crossChainContract.callTx.addAdmin(admin_0);
-    // return finalizedTxData;
+    const admin_0 = { bytes: getCoinPublicKeyFromShieldAddress(admin) };
+    const finalizedTxData = await this.crossChainContract.callTx.addAdmin(admin_0);
+    return finalizedTxData;
   }
 
   async removeAdmin(admin: Address) {
-    // const admin_0 = { bytes: getCoinPublicKeyFromShieldAddress(admin) };
-    // const finalizedTxData = await this.crossChainContract.callTx.removeAdmin(admin_0);
-    // return finalizedTxData;
+    const admin_0 = { bytes: getCoinPublicKeyFromShieldAddress(admin) };
+    const finalizedTxData = await this.crossChainContract.callTx.removeAdmin(admin_0);
+    return finalizedTxData;
   }
 
   async setAdminThreshold(threshold: number | string | bigint) {
@@ -459,12 +468,12 @@ export class CrossChainApi {
   }
 
   async setSmgPksks(voters: Address[]) {
-    // const voters_0 = voters.map(voter => { 
-    //   return { bytes: getCoinPublicKeyFromShieldAddress(voter) } 
-    //   // return { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(voter, getZswapNetworkId())) } 
-    // });
-    // const finalizedTxData = await this.crossChainContract.callTx.setSmgPksks(voters_0);
-    // return finalizedTxData;
+    const voters_0 = voters.map(voter => { 
+      return { bytes: getCoinPublicKeyFromShieldAddress(voter) } 
+      // return { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(voter, getZswapNetworkId())) } 
+    });
+    const finalizedTxData = await this.crossChainContract.callTx.setSmgPksks(voters_0);
+    return finalizedTxData;
   }
 
   async setSmgPKThreold(threshold: number | string | bigint) {
@@ -515,39 +524,39 @@ export class CrossChainApi {
 
   async addAdminProposal(addr: Address) {
     // const addr_0 = { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(addr, getZswapNetworkId())) };
-    // const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
-    // let proposal = this.defaultProsal();
-    // proposal.type = CrossChain.ProposalType.AddAdmin;
-    // proposal.addr = addr_0;
+    const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
+    let proposal = this.defaultProsal();
+    proposal.type = CrossChain.ProposalType.AddAdmin;
+    proposal.addr = addr_0;
 
-    // return await this.crossChainContract.callTx.newProposal(proposal);
+    return await this.crossChainContract.callTx.newProposal(proposal);
   }
 
   async removeAdminProposal(addr: Address) {
-    // const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
-    // let proposal = this.defaultProsal();
-    // proposal.type = CrossChain.ProposalType.RemoveAdmin;
-    // proposal.addr = addr_0;
+    const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
+    let proposal = this.defaultProsal();
+    proposal.type = CrossChain.ProposalType.RemoveAdmin;
+    proposal.addr = addr_0;
 
-    // return await this.crossChainContract.callTx.newProposal(proposal);
+    return await this.crossChainContract.callTx.newProposal(proposal);
   }
 
   async updateFeeReceiverProposal(addr: Address) {
-    // const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
-    // let proposal = this.defaultProsal();
-    // proposal.type = CrossChain.ProposalType.UpdateFeeReceiver;
-    // proposal.addr = addr_0;
+    const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
+    let proposal = this.defaultProsal();
+    proposal.type = CrossChain.ProposalType.UpdateFeeReceiver;
+    proposal.addr = addr_0;
 
-    // return await this.crossChainContract.callTx.newProposal(proposal);
+    return await this.crossChainContract.callTx.newProposal(proposal);
   }
 
   async updateTokenManagerProposal(addr: Address) {
-    // const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
-    // let proposal = this.defaultProsal();
-    // proposal.type = CrossChain.ProposalType.UpdateTokenManager;
-    // proposal.addr = addr_0;
+    const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
+    let proposal = this.defaultProsal();
+    proposal.type = CrossChain.ProposalType.UpdateTokenManager;
+    proposal.addr = addr_0;
 
-    // return await this.crossChainContract.callTx.newProposal(proposal);
+    return await this.crossChainContract.callTx.newProposal(proposal);
   }
 
   async updateAdminThresholdProposal(threshold: number | string | bigint) {
@@ -660,27 +669,27 @@ export const verifySignature = (hash: bigint, R: CrossChain.CurvePoint, s: bigin
   return expectM.x === realM.x && expectM.y === realM.y;
 }
 
-// export const configureProviders = async (wallet: Wallet & Resource, config: Config) => {
-//   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-//   // console.log('^^^^^^^^^^^^^^',ZKConfig.zkConfigPath)
-//   return {
-//     privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
-//       privateStateStoreName: ZKConfig.privateStateStoreName,
-//     }),
-//     publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
-//     zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
-//     proofProvider: httpClientProofProvider(config.proofServer),
-//     walletProvider: walletAndMidnightProvider,
-//     midnightProvider: walletAndMidnightProvider,
-//   };
-// };
+export const configureProviders = async (wallet: Wallet & Resource, config: Config) => {
+  const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+  // console.log('^^^^^^^^^^^^^^',ZKConfig.zkConfigPath)
+  return {
+    privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
+      privateStateStoreName: ZKConfig.privateStateStoreName,
+    }),
+    publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+    zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
+    proofProvider: httpClientProofProvider(config.proofServer),
+    walletProvider: walletAndMidnightProvider,
+    midnightProvider: walletAndMidnightProvider,
+  };
+};
 
-// export const getCoinPublicKeyFromShieldAddress = (shieldAddr: string) => {
-//   const tmp1 = MidnightBech32m.parse(shieldAddr);
-//   // const tmp1 = MidnightBech32m.parse('mn_shield-addr_test10th0dtqgnpanzwmqj236zccpkmj9xxpkl7r7e7cr5e3v7k0stm5qxqxa9m6z5f4603nyuu4kw9c65ektu48hhyrtu2f07h42ycppkvw9ccyry600');
-//   const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
-//   // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
-//   return tmp2.coinPublicKey.data;
-// }
+export const getCoinPublicKeyFromShieldAddress = (shieldAddr: string) => {
+  const tmp1 = MidnightBech32m.parse(shieldAddr);
+  // const tmp1 = MidnightBech32m.parse('mn_shield-addr_test10th0dtqgnpanzwmqj236zccpkmj9xxpkl7r7e7cr5e3v7k0stm5qxqxa9m6z5f4603nyuu4kw9c65ektu48hhyrtu2f07h42ycppkvw9ccyry600');
+  const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
+  // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
+  return tmp2.coinPublicKey.data;
+}
 
 const coinInfo = (token: TokenType, value: bigint): EncodedCoinInfo => encodeCoinInfo(createCoinInfo(token, value));
