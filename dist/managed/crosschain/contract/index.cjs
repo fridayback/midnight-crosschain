@@ -2687,7 +2687,6 @@ class Contract {
               tokenPairId_0,
               coin_0)
   {
-    this._receive_0(context, partialProofData, coin_0);
     const tmp_0 = 1n;
     Contract._query(context,
                     partialProofData,
@@ -2707,6 +2706,7 @@ class Contract {
                                               .value
                                           )) } },
                      { ins: { cached: true, n: 2 } }]);
+    this._receive_0(context, partialProofData, coin_0);
     const tmp_1 = ((t1) => {
                     if (t1 > 340282366920938463463374607431768211455n) {
                       throw new __compactRuntime.CompactError('crosschain.compact line 201 char 28: cast from field value to Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');

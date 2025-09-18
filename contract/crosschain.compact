@@ -196,8 +196,8 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
 
   // crossCounter.increment(1);
 
-  receive(disclose(coin));
   treasuryCoinCounter.increment(1);
+  receive(disclose(coin));
   treasuryCoins.insertCoin(treasuryCoinCounter as Field as Uint<128>, disclose(coin), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
 
 }
@@ -443,15 +443,15 @@ export circuit setMegerWorker(newMergeWorker: ZswapCoinPublicKey): [] {
 
 export circuit mergeTreasuryCoin(coins: Vector<2,Uint<128>>): [] {
   assert(mergeWorker == ownPublicKey(), "only mergeWorker can merge coin");
-  assert(treasuryCoins.member(disclose(coins[0])), "coin 0 not exists");
-  assert(treasuryCoins.member(disclose(coins[1])), "coin 1 not exists");
+  // assert(treasuryCoins.member(disclose(coins[0])), "coin 0 not exists");
+  // assert(treasuryCoins.member(disclose(coins[1])), "coin 1 not exists");
 
-  const coin0 = treasuryCoins.lookup(disclose(coins[0]));
-  const coin1 = treasuryCoins.lookup(disclose(coins[1]));
-  const coinInfo = mergeCoin(disclose(coin0), disclose(coin1));
-  treasuryCoins.remove(disclose(coins[0]));
-  treasuryCoins.remove(disclose(coins[1]));
-  addTreasuryCoin(coinInfo);
+  // const coin0 = treasuryCoins.lookup(disclose(coins[0]));
+  // const coin1 = treasuryCoins.lookup(disclose(coins[1]));
+  // const coinInfo = mergeCoin(disclose(coin0), disclose(coin1));
+  // treasuryCoins.remove(disclose(coins[0]));
+  // treasuryCoins.remove(disclose(coins[1]));
+  // addTreasuryCoin(coinInfo);
 }
 
 export circuit addAdmin(admin: ZswapCoinPublicKey): [] {
