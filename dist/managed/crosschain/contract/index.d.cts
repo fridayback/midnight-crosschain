@@ -108,9 +108,6 @@ export type ImpureCircuits<T> = {
                   newTokenManager_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   setMegerWorker(context: __compactRuntime.CircuitContext<T>,
                  newMergeWorker_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
-  test(context: __compactRuntime.CircuitContext<T>,
-       coin0_0: QualifiedCoinInfo,
-       coin1_0: QualifiedCoinInfo): __compactRuntime.CircuitResults<T, []>;
   mergeTreasuryCoin(context: __compactRuntime.CircuitContext<T>,
                     coins_0: bigint[]): __compactRuntime.CircuitResults<T, []>;
   addAdmin(context: __compactRuntime.CircuitContext<T>,
@@ -191,9 +188,6 @@ export type Circuits<T> = {
                   newTokenManager_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   setMegerWorker(context: __compactRuntime.CircuitContext<T>,
                  newMergeWorker_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
-  test(context: __compactRuntime.CircuitContext<T>,
-       coin0_0: QualifiedCoinInfo,
-       coin1_0: QualifiedCoinInfo): __compactRuntime.CircuitResults<T, []>;
   mergeTreasuryCoin(context: __compactRuntime.CircuitContext<T>,
                     coins_0: bigint[]): __compactRuntime.CircuitResults<T, []>;
   addAdmin(context: __compactRuntime.CircuitContext<T>,
