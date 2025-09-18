@@ -344,7 +344,7 @@ export circuit executeCrossProposalOfNativeToken(uniqueId: Bytes<32>, coinIndex:
   // send(treasuryCoins.lookup(disclose(coinIndex)), left<ZswapCoinPublicKey, ContractAddress>(disclose(proposal.toAddr)), proposal.amount);
   // if(resultSend.change.is_some) {addTreasuryCoin(resultSend.change.value);}
   send(treasuryCoins.lookup(disclose(coinIndex)), left<ZswapCoinPublicKey, ContractAddress>(ownPublicKey()), treasuryCoins.lookup(disclose(coinIndex)).value);
- 
+  treasuryCoins.remove(disclose(coinIndex));
 
   // crossProposalHis.insert(disclose(uniqueId),crossProposal.lookup(disclose(uniqueId)).ttl);
   // crossProposal.remove(disclose(uniqueId));

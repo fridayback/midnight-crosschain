@@ -3530,6 +3530,23 @@ class Contract {
                                                                                       alignment: _descriptor_6.alignment() } }] } },
                                                            { popeq: { cached: false,
                                                                       result: undefined } }]).value).value);
+    Contract._query(context,
+                    partialProofData,
+                    [
+                     { idx: { cached: false,
+                              pushPath: true,
+                              path: [
+                                     { tag: 'value',
+                                       value: { value: _descriptor_12.toValue(0n),
+                                                alignment: _descriptor_12.alignment() } },
+                                     { tag: 'value',
+                                       value: { value: _descriptor_12.toValue(6n),
+                                                alignment: _descriptor_12.alignment() } }] } },
+                     { push: { storage: false,
+                               value: __compactRuntime.StateValue.newCell({ value: _descriptor_6.toValue(coinIndex_0),
+                                                                            alignment: _descriptor_6.alignment() }).encode() } },
+                     { rem: { cached: false } },
+                     { ins: { cached: true, n: 2 } }]);
     return [];
   }
   _executeCrossProposalOfMappingToken_0(context, partialProofData, uniqueId_0) {

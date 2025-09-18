@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-18 16:22:35
+ * @LastEditTime: 2025-09-18 17:54:46
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -22,7 +22,7 @@ import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-p
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { Address, CoinPublicKey, Wallet } from '@midnight-ntwrk/wallet-api';
-import { CoinInfo, decodeTokenType, encodeTokenType, Transaction, TransactionId, tokenType, communicationCommitmentRandomness, sampleCoinPublicKey, createCoinInfo } from '@midnight-ntwrk/ledger';
+import { CoinInfo, decodeTokenType, encodeTokenType, Transaction, TransactionId, tokenType, communicationCommitmentRandomness, sampleCoinPublicKey, createCoinInfo, nativeToken } from '@midnight-ntwrk/ledger';
 import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
@@ -325,7 +325,7 @@ export class CrossChainApi {
     const amount_0 = BigInt(amount);
     const tokenType = await this.getTokenTypeByTokenPairId(tokenPair_0);
     assert(tokenType !== undefined, `tokenType is undefined`);
-    const coin_0 = coinInfo(tokenType,amount_0);
+    const coin_0 = coinInfo(nativeToken(),amount_0);
     const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, coin_0);
     return finalizedTxData;
   }
@@ -390,6 +390,7 @@ export class CrossChainApi {
       const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposalOfMappingToken(uniqueId_0);
       return finalizedTxData;
     }else{
+      console.log('executeCrossProposalOfNativeToken',uniqueId_0,BigInt(coinIndex));
       const coinIndex_0 = BigInt(coinIndex);
       const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposalOfNativeToken(uniqueId_0, coinIndex_0);
       return finalizedTxData;
