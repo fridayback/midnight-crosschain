@@ -147,7 +147,7 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
   const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
 
   const contractFee = getFee(disclose(tokenPairId));
-  nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
+  nonce = evolveNonce(crossCounter,nonce);
 
   // const nativeTokenColor = nativeToken();
   // if(nativeTokenColor == tokenPair.midnigthTokenAccount){
@@ -323,9 +323,9 @@ export circuit executeCrossProposalOfNativeToken(uniqueId: Bytes<32>, coinIndex:
   const proposal = crossProposal.lookup(disclose(uniqueId));
   assert( proposal.isMappingToken == false, "only native token can be executed");
 
-  const coinInput = treasuryCoins.lookup(disclose(coinIndex));
-  assert(coinInput.value == proposal.amount, "coin value not match");
-  const resultSend = send(coinInput, left<ZswapCoinPublicKey, ContractAddress>(disclose(proposal.toAddr)), proposal.amount);
+  // const coinInput = treasuryCoins.lookup(disclose(coinIndex));
+  assert(treasuryCoins.lookup(disclose(coinIndex)).value == proposal.amount, "coin value not match");
+  const resultSend = send(treasuryCoins.lookup(disclose(coinIndex)), left<ZswapCoinPublicKey, ContractAddress>(disclose(proposal.toAddr)), proposal.amount);
   // if(resultSend.change.is_some) {addTreasuryCoin(resultSend.change.value);}
 
   crossProposalHis.insert(disclose(uniqueId),crossProposal.lookup(disclose(uniqueId)).ttl);

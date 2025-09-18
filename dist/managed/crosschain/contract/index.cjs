@@ -2778,26 +2778,21 @@ class Contract {
     const contractFee_0 = this._getFee_0(context,
                                          partialProofData,
                                          tokenPairId_0);
-    const tmp_0 = this._evolveNonce_0(((t1) => {
-                                        if (t1 > 18446744073709551615n) {
-                                          throw new __compactRuntime.CompactError('crosschain.compact line 150 char 23: cast from field value to Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
-                                        }
-                                        return t1;
-                                      })(_descriptor_9.fromValue(Contract._query(context,
-                                                                                 partialProofData,
-                                                                                 [
-                                                                                  { dup: { n: 0 } },
-                                                                                  { idx: { cached: false,
-                                                                                           pushPath: false,
-                                                                                           path: [
-                                                                                                  { tag: 'value',
-                                                                                                    value: { value: _descriptor_12.toValue(0n),
-                                                                                                             alignment: _descriptor_12.alignment() } },
-                                                                                                  { tag: 'value',
-                                                                                                    value: { value: _descriptor_12.toValue(0n),
-                                                                                                             alignment: _descriptor_12.alignment() } }] } },
-                                                                                  { popeq: { cached: true,
-                                                                                             result: undefined } }]).value)),
+    const tmp_0 = this._evolveNonce_0(_descriptor_9.fromValue(Contract._query(context,
+                                                                              partialProofData,
+                                                                              [
+                                                                               { dup: { n: 0 } },
+                                                                               { idx: { cached: false,
+                                                                                        pushPath: false,
+                                                                                        path: [
+                                                                                               { tag: 'value',
+                                                                                                 value: { value: _descriptor_12.toValue(0n),
+                                                                                                          alignment: _descriptor_12.alignment() } },
+                                                                                               { tag: 'value',
+                                                                                                 value: { value: _descriptor_12.toValue(0n),
+                                                                                                          alignment: _descriptor_12.alignment() } }] } },
+                                                                               { popeq: { cached: true,
+                                                                                          result: undefined } }]).value),
                                       _descriptor_1.fromValue(Contract._query(context,
                                                                               partialProofData,
                                                                               [
@@ -3774,32 +3769,52 @@ class Contract {
                                                                             result: undefined } }]).value);
     __compactRuntime.assert(proposal_0.isMappingToken === false,
                             'only native token can be executed');
-    const coinInput_0 = _descriptor_13.fromValue(Contract._query(context,
-                                                                 partialProofData,
-                                                                 [
-                                                                  { dup: { n: 0 } },
-                                                                  { idx: { cached: false,
-                                                                           pushPath: false,
-                                                                           path: [
-                                                                                  { tag: 'value',
-                                                                                    value: { value: _descriptor_12.toValue(0n),
-                                                                                             alignment: _descriptor_12.alignment() } },
-                                                                                  { tag: 'value',
-                                                                                    value: { value: _descriptor_12.toValue(6n),
-                                                                                             alignment: _descriptor_12.alignment() } }] } },
-                                                                  { idx: { cached: false,
-                                                                           pushPath: false,
-                                                                           path: [
-                                                                                  { tag: 'value',
-                                                                                    value: { value: _descriptor_5.toValue(coinIndex_0),
-                                                                                             alignment: _descriptor_5.alignment() } }] } },
-                                                                  { popeq: { cached: false,
-                                                                             result: undefined } }]).value);
-    __compactRuntime.assert(this._equal_4(coinInput_0.value, proposal_0.amount),
+    __compactRuntime.assert(this._equal_4(_descriptor_13.fromValue(Contract._query(context,
+                                                                                   partialProofData,
+                                                                                   [
+                                                                                    { dup: { n: 0 } },
+                                                                                    { idx: { cached: false,
+                                                                                             pushPath: false,
+                                                                                             path: [
+                                                                                                    { tag: 'value',
+                                                                                                      value: { value: _descriptor_12.toValue(0n),
+                                                                                                               alignment: _descriptor_12.alignment() } },
+                                                                                                    { tag: 'value',
+                                                                                                      value: { value: _descriptor_12.toValue(6n),
+                                                                                                               alignment: _descriptor_12.alignment() } }] } },
+                                                                                    { idx: { cached: false,
+                                                                                             pushPath: false,
+                                                                                             path: [
+                                                                                                    { tag: 'value',
+                                                                                                      value: { value: _descriptor_5.toValue(coinIndex_0),
+                                                                                                               alignment: _descriptor_5.alignment() } }] } },
+                                                                                    { popeq: { cached: false,
+                                                                                               result: undefined } }]).value).value,
+                                          proposal_0.amount),
                             'coin value not match');
     const resultSend_0 = this._send_0(context,
                                       partialProofData,
-                                      coinInput_0,
+                                      _descriptor_13.fromValue(Contract._query(context,
+                                                                               partialProofData,
+                                                                               [
+                                                                                { dup: { n: 0 } },
+                                                                                { idx: { cached: false,
+                                                                                         pushPath: false,
+                                                                                         path: [
+                                                                                                { tag: 'value',
+                                                                                                  value: { value: _descriptor_12.toValue(0n),
+                                                                                                           alignment: _descriptor_12.alignment() } },
+                                                                                                { tag: 'value',
+                                                                                                  value: { value: _descriptor_12.toValue(6n),
+                                                                                                           alignment: _descriptor_12.alignment() } }] } },
+                                                                                { idx: { cached: false,
+                                                                                         pushPath: false,
+                                                                                         path: [
+                                                                                                { tag: 'value',
+                                                                                                  value: { value: _descriptor_5.toValue(coinIndex_0),
+                                                                                                           alignment: _descriptor_5.alignment() } }] } },
+                                                                                { popeq: { cached: false,
+                                                                                           result: undefined } }]).value),
                                       this._left_0(proposal_0.toAddr),
                                       proposal_0.amount);
     const tmp_0 = _descriptor_18.fromValue(Contract._query(context,
