@@ -2,14 +2,14 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-16 15:59:11
+ * @LastEditTime: 2025-09-19 11:51:06
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // export * as CrossChain from "./managed/crosschain/contract/index.cjs";
 // export * from "./witnesses.js";
 import path from 'node:path';
-import { witnesses } from './witnesses.js';
+// import { witnesses, type CrossChainPrivateState } from './witnesses.js';
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
 import { createBalancedTx } from '@midnight-ntwrk/midnight-js-types';
 import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
@@ -27,10 +27,15 @@ import { addField, CompactTypeOpaqueString, ecAdd, ecMul, ecMulGenerator, mulFie
 import { WalletBuilder } from '@midnight-ntwrk/wallet';
 import assert from 'node:assert';
 export const CrossChainPrivateStateId = 'crossChainPrivateState';
+// export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
 export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
 export const ZKConfig = {
     privateStateStoreName: 'crosschain-private-state',
     zkConfigPath: path.resolve(currentDir, 'managed', 'crosschain'),
+};
+export const createCrossChainPrivateState = () => ({});
+export const witnesses = {
+// TODO: Add witnesses
 };
 const fromHexWithOrNoPrefix = (hex) => {
     if (hex.startsWith('0x')) {
