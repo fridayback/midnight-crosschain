@@ -229,13 +229,6 @@ export type Ledger = {
     [Symbol.iterator](): Iterator<[ZswapCoinPublicKey, bigint]>
   };
   readonly latestOutBoundCrosstxInfo: CrossOutBound;
-  crossProposalHis: {
-    isEmpty(): boolean;
-    size(): bigint;
-    member(key_0: Uint8Array): boolean;
-    lookup(key_0: Uint8Array): bigint;
-    [Symbol.iterator](): Iterator<[Uint8Array, bigint]>
-  };
   readonly currentExecuteCrossProposal: Uint8Array;
   treasuryCoins: {
     isEmpty(): boolean;
