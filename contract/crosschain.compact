@@ -327,6 +327,7 @@ export circuit executeCrossProposalOfNativeToken(uniqueId: Bytes<32>, coinIndex:
   assert(coinInput.value == proposal.amount, "coin value not match");
   const resultSend = send(coinInput, left<ZswapCoinPublicKey, ContractAddress>(disclose(proposal.toAddr)), proposal.amount);
   // if(resultSend.change.is_some) {addTreasuryCoin(resultSend.change.value);}
+  treasuryCoins.remove(disclose(coinIndex));
 
   crossProposalHis.insert(disclose(uniqueId),crossProposal.lookup(disclose(uniqueId)).ttl);
   crossProposal.remove(disclose(uniqueId));
@@ -359,6 +360,7 @@ export circuit transferFeeOfNativeToken(token: Bytes<32>,coinIndex: Uint<128>): 
   assert(coinInput.value == feeInfo.totalFee, "coin value not match");
   const resultSend = send(coinInput, left<ZswapCoinPublicKey, ContractAddress>(feeReceiver), feeInfo.totalFee);
   // if(resultSend.change.is_some) {addTreasuryCoin(resultSend.change.value);}
+  treasuryCoins.remove(disclose(coinIndex));
 
   // if(feeInfo.isMappingToken){
   //   nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
