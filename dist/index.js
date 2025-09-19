@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-19 11:51:06
+ * @LastEditTime: 2025-09-19 15:44:22
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -17,7 +17,7 @@ import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-pri
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
-import { decodeTokenType, encodeTokenType, Transaction, sampleCoinPublicKey } from '@midnight-ntwrk/ledger';
+import { decodeTokenType, encodeTokenType, Transaction, tokenType, sampleCoinPublicKey } from '@midnight-ntwrk/ledger';
 import { Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex } from '@midnight-ntwrk/midnight-js-utils';
@@ -341,22 +341,28 @@ export class CrossChainApi {
         const finalizedTxData = await this.crossChainContract.callTx.setFeeCommonConfig(chainId_0, fee_0);
         return finalizedTxData;
     }
-    async addTokenPair(tokenPairId, fromChainId, toChainId, midnigthTokenAccount, fee) {
+    getTokenTypeBydomainSep(domainSep) {
+        return tokenType(pad(domainSep, 32), this.crossChainContract.deployTxData.public.contractAddress);
+    }
+    async addTokenPair(tokenPairId, fromChainId, toChainId, token, isMappingToken, fee) {
         const tokenPairId_0 = BigInt(tokenPairId);
         const fromChainId_0 = BigInt(fromChainId);
         const toChainId_0 = BigInt(toChainId);
         let midnigtAccount_0;
-        try {
-            midnigtAccount_0 = encodeTokenType(midnigthTokenAccount);
+        let domainSep = pad('', 32);
+        if (isMappingToken) {
+            domainSep = pad(token, 32);
+            midnigtAccount_0 = encodeTokenType(this.getTokenTypeBydomainSep(token));
         }
-        catch (error) {
-            midnigtAccount_0 = pad(midnigthTokenAccount, 32);
+        else {
+            midnigtAccount_0 = encodeTokenType(token);
         }
         const fee_0 = BigInt(fee);
         const tokenPair = {
             fromChainId: fromChainId_0,
             toChainId: toChainId_0,
             midnigthTokenAccount: midnigtAccount_0,
+            domainSep: domainSep,
             fee: fee_0
         };
         const finalizedTxData = await this.crossChainContract.callTx.addTokenPair(tokenPairId_0, tokenPair);

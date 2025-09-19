@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-19 11:51:06
+ * @LastEditTime: 2025-09-19 15:44:22
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -472,22 +472,29 @@ export class CrossChainApi {
     return finalizedTxData;
   }
 
-  async addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, midnigthTokenAccount: string, fee: number | string | bigint) {
+  getTokenTypeBydomainSep(domainSep: string){
+    return tokenType(pad(domainSep, 32),this.crossChainContract.deployTxData.public.contractAddress);
+  }
+
+  async addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, token: string,isMappingToken: boolean, fee: number | string | bigint) {
     const tokenPairId_0 = BigInt(tokenPairId);
     const fromChainId_0 = BigInt(fromChainId);
     const toChainId_0 = BigInt(toChainId);
     let midnigtAccount_0;
-    try {
-      midnigtAccount_0 = encodeTokenType(midnigthTokenAccount);
-    } catch (error) {
-      midnigtAccount_0 = pad(midnigthTokenAccount, 32);
+    let domainSep = pad('',32);
+    if(isMappingToken){
+      domainSep = pad(token, 32);
+      midnigtAccount_0 = encodeTokenType(this.getTokenTypeBydomainSep(token));
+    }else{
+      midnigtAccount_0 = encodeTokenType(token);
     }
-
+    
     const fee_0 = BigInt(fee);
     const tokenPair: CrossChain.TokenPairInfo = {
       fromChainId: fromChainId_0,
       toChainId: toChainId_0,
       midnigthTokenAccount: midnigtAccount_0,
+      domainSep: domainSep,
       fee: fee_0
     }
     const finalizedTxData = await this.crossChainContract.callTx.addTokenPair(tokenPairId_0, tokenPair);

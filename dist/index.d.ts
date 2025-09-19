@@ -83,7 +83,8 @@ export declare class CrossChainApi {
     setSmgPksks(voters: Address[]): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "setSmgPksks">>;
     setSmgPKThreold(threshold: number | string | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "setSmgPKThreold">>;
     setFeeCommonConfig(chainId: number | string | bigint, fee: number | string | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "setFeeCommonConfig">>;
-    addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, midnigthTokenAccount: string, fee: number | string | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "addTokenPair">>;
+    getTokenTypeBydomainSep(domainSep: string): string;
+    addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, token: string, isMappingToken: boolean, fee: number | string | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "addTokenPair">>;
     removeTokenPair(tokenPairId: number | string | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "removeTokenPair">>;
     newProposal(proposal: CrossChain.Proposal): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "newProposal">>;
     addAdminProposal(addr: Address): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "newProposal">>;

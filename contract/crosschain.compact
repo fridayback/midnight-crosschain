@@ -104,6 +104,7 @@ export struct TokenPairInfo {
   // fromAccount: Either<Bytes<32>, Opaque<"string">>;
   // toAccount: Either<Bytes<32>, Opaque<"string">>;
   midnigthTokenAccount: Bytes<32>;
+  domainSep: Bytes<32>;
   fee: Uint<128>; 
 }
 
@@ -125,7 +126,7 @@ export struct CrossProposal{
   amount: Uint<128>;
   fee: Uint<128>;
   toAddr: ZswapCoinPublicKey;
-  ttl: Uint<128>;
+  ttl: Uint<64>;
 }
 
 
@@ -198,19 +199,19 @@ circuit addCrossProposal(
   , amount: Uint<128>
   , toAddr: ZswapCoinPublicKey
   , fee: Uint<128>
-  , ttl: Uint<128>
+  , ttl: Uint<64>
   , isMappingToken: Boolean
 ): [] {
   assert(smgTxSigners.member(ownPublicKey()), "not smg member");
   assert(!crossProposal.member(disclose(uniqueId)), "proposal already exists");
-  assert( disclose(ttl) >= crossCounter, "ttl expired");
+  assert( blockTimeLt(disclose(ttl)), "ttl expired");
   assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
 
   const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
   
   const newCrossProposal = CrossProposal{ 
     smgId: disclose(smgId)
-    , token: tokenPair.midnigthTokenAccount
+    , token: isMappingToken?tokenPair.domainSep :tokenPair.midnigthTokenAccount
     , isMappingToken: isMappingToken
     , amount: disclose(amount)
     , fee: disclose(fee)
@@ -222,6 +223,9 @@ circuit addCrossProposal(
  
   crossProposal.insert(disclose(uniqueId),newCrossProposal);
   crossProposalVoters.insert(disclose(uniqueId),default<Set<Uint<8>>>);
+
+  const voterIndex = smgTxSigners.lookup(ownPublicKey());
+  crossProposalVoters.lookup(disclose(uniqueId)).insert(voterIndex);
   crossCounter.increment(1);
 }
 
@@ -232,7 +236,7 @@ export circuit smgRelease(
   , amount: Uint<128>
   , toAddr: ZswapCoinPublicKey
   , fee: Uint<128>
-  , ttl: Uint<128>): [] {
+  , ttl: Uint<64>): [] {
   
   addCrossProposal(disclose(uniqueId), disclose(smgId), disclose(tokenPairId), disclose(amount), disclose(toAddr), disclose(fee), disclose(ttl), false);
 }
@@ -243,6 +247,7 @@ export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
   const contractFee = getFee(disclose(tokenPairId));
   
   nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
+  // const color = tokenType(tokenPair.midnigthTokenAccount,kernel.self());
   const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
   receive(coin);
   sendImmediate(coin, burnAddress(), coin.value);
@@ -272,7 +277,7 @@ export circuit smgMint(uniqueId: Bytes<32>
   , amount: Uint<128>
   , fee: Uint<128>
   , toAddr: ZswapCoinPublicKey
-  , ttl: Uint<128>): [] {
+  , ttl: Uint<64>): [] {
   addCrossProposal(disclose(uniqueId), disclose(smgId), disclose(tokenPairId), disclose(amount), disclose(toAddr), disclose(fee), disclose(ttl), true);
 }
 
@@ -300,8 +305,12 @@ export circuit voteCrossProposal(uniqueId: Bytes<32>): [] {
   assert(crossProposal.member(disclose(uniqueId)), "proposal not exists");
 
   const proposal = crossProposal.lookup(disclose(uniqueId));
-  assert(proposal.ttl > crossCounter, "ttl expired");
-
+  // assert(blockTimeLt(proposal.ttl), "ttl expired");
+  if(blockTimeGte(proposal.ttl)){
+    crossProposal.remove(disclose(uniqueId));
+    crossProposalVoters.remove(disclose(uniqueId));
+    return;
+  }
   // const voters = crossProposalVoters.lookup(disclose(uniqueId));
   assert(crossProposalVoters.lookup(disclose(uniqueId)).size() < smgPKThreshold, "already passed");
 
@@ -419,11 +428,6 @@ export circuit setMegerWorker(newMergeWorker: ZswapCoinPublicKey): [] {
   mergeWorker = disclose(newMergeWorker);
 }
 
-export circuit test(coin0: QualifiedCoinInfo,coin1: QualifiedCoinInfo):[] {
-  // const resultSend = send(disclose(coin), left<ZswapCoinPublicKey, ContractAddress>(disclose(feeReceiver)), 100000);
-  // if(resultSend.change.is_some) {addTreasuryCoin(resultSend.change.value);}
-  const coinInfo = mergeCoin(disclose(coin0), disclose(coin1));
-}
 
 export circuit mergeTreasuryCoin(coins: Vector<2,Uint<128>>): [] {
   assert(mergeWorker == ownPublicKey(), "only mergeWorker can merge coin");
@@ -503,6 +507,10 @@ export circuit addTokenPair(
   , pairInfo: TokenPairInfo): [] {
   assert(tokenManager == ownPublicKey() || checkAdminAuthorized(), "not authorized");
   assert(!tokenPairs.member(disclose(tokenPairId)), "token pair already exists");
+  if(disclose(pairInfo.domainSep) != default<Bytes<32>>) {
+    const expectColor = tokenType(disclose(pairInfo.domainSep),kernel.self());
+    assert((disclose(pairInfo.midnigthTokenAccount) == expectColor), "midnigthTokenAccount is not valid");
+  }
   tokenPairs.insert(disclose(tokenPairId), disclose(pairInfo));
 }
 
