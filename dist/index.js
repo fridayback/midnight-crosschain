@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-21 10:47:59
+ * @LastEditTime: 2025-09-21 11:03:14
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -361,7 +361,8 @@ export class CrossChainApi {
         const midnigtAccount_0 = encodeTokenType(midnigthTokenAccount);
         const domainSep_0 = pad(domainSep, 32);
         if (domainSep == '') {
-            assert(tokenType(domainSep_0, this.crossChainContract.deployTxData.public.contractAddress) == midnigthTokenAccount, 'token type not match');
+            const expectedTokenType = tokenType(domainSep_0, this.crossChainContract.deployTxData.public.contractAddress);
+            assert(expectedTokenType == midnigthTokenAccount, `token type not match ,${expectedTokenType} expected but got ${midnigthTokenAccount}`);
         }
         const fee_0 = BigInt(fee);
         const tokenPair = {
