@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-19 11:51:06
+ * @LastEditTime: 2025-09-21 10:47:59
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -17,7 +17,7 @@ import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-pri
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
-import { decodeTokenType, encodeTokenType, Transaction, sampleCoinPublicKey } from '@midnight-ntwrk/ledger';
+import { decodeTokenType, encodeTokenType, Transaction, tokenType, sampleCoinPublicKey, encodeCoinInfo, createCoinInfo } from '@midnight-ntwrk/ledger';
 import { Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex } from '@midnight-ntwrk/midnight-js-utils';
@@ -37,6 +37,7 @@ export const createCrossChainPrivateState = () => ({});
 export const witnesses = {
 // TODO: Add witnesses
 };
+const coinInfo = (token, value) => encodeCoinInfo(createCoinInfo(token, value));
 const fromHexWithOrNoPrefix = (hex) => {
     if (hex.startsWith('0x')) {
         return fromHex(hex.slice(2));
@@ -216,13 +217,21 @@ export class CrossChainApi {
     //     [proof.smgId, proof.uniqueId, tokenPairIdHash, amountHash, feeHash, proof.toAddr.bytes, coinsHash, signersHash, ttlHash]
     //   ));
     // }
+    async getTokenPairInfo(tokenPairId) {
+        const ledger = await this.getLedgerState();
+        return ledger?.tokenPairs.lookup(BigInt(tokenPairId));
+    }
     /////////////////////////////////////////////////  Cross Tx  /////////////////////////////////////////////////////////////
     async userLock(smgId, toAddress, tokenPair, amount) {
         const smgId_0 = Buffer.from(smgId, 'hex');
         assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
         const tokenPair_0 = BigInt(tokenPair);
+        const pairInfo = await this.getTokenPairInfo(tokenPair_0);
+        assert(pairInfo, `tokenPairId ${tokenPair} not found`);
         const amount_0 = BigInt(amount);
-        const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, amount_0);
+        const token = decodeTokenType(pairInfo.midnigthTokenAccount);
+        const coin_0 = coinInfo(token, amount_0);
+        const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, coin_0);
         return finalizedTxData;
     }
     async smgRelease(uniqueId, smgId, tokenPair, amount, fee, toAddr, ttl) {
@@ -239,8 +248,12 @@ export class CrossChainApi {
         const smgId_0 = Buffer.from(smgId, 'hex');
         assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
         const tokenPair_0 = BigInt(tokenPair);
+        const pairInfo = await this.getTokenPairInfo(tokenPair_0);
+        assert(pairInfo, `tokenPairId ${tokenPair} not found`);
         const amount_0 = BigInt(amount);
-        const finalizedTxData = await this.crossChainContract.callTx.userBurn(smgId_0, toAddress, tokenPair_0, amount_0);
+        const token = decodeTokenType(pairInfo.midnigthTokenAccount);
+        const coin_0 = coinInfo(token, amount_0);
+        const finalizedTxData = await this.crossChainContract.callTx.userBurn(smgId_0, toAddress, tokenPair_0, coin_0);
         return finalizedTxData;
     }
     async voteCrossProposal(uniqueId) {
@@ -341,22 +354,21 @@ export class CrossChainApi {
         const finalizedTxData = await this.crossChainContract.callTx.setFeeCommonConfig(chainId_0, fee_0);
         return finalizedTxData;
     }
-    async addTokenPair(tokenPairId, fromChainId, toChainId, midnigthTokenAccount, fee) {
+    async addTokenPair(tokenPairId, fromChainId, toChainId, midnigthTokenAccount, domainSep, fee) {
         const tokenPairId_0 = BigInt(tokenPairId);
         const fromChainId_0 = BigInt(fromChainId);
         const toChainId_0 = BigInt(toChainId);
-        let midnigtAccount_0;
-        try {
-            midnigtAccount_0 = encodeTokenType(midnigthTokenAccount);
-        }
-        catch (error) {
-            midnigtAccount_0 = pad(midnigthTokenAccount, 32);
+        const midnigtAccount_0 = encodeTokenType(midnigthTokenAccount);
+        const domainSep_0 = pad(domainSep, 32);
+        if (domainSep == '') {
+            assert(tokenType(domainSep_0, this.crossChainContract.deployTxData.public.contractAddress) == midnigthTokenAccount, 'token type not match');
         }
         const fee_0 = BigInt(fee);
         const tokenPair = {
             fromChainId: fromChainId_0,
             toChainId: toChainId_0,
             midnigthTokenAccount: midnigtAccount_0,
+            domainSep: domainSep_0,
             fee: fee_0
         };
         const finalizedTxData = await this.crossChainContract.callTx.addTokenPair(tokenPairId_0, tokenPair);

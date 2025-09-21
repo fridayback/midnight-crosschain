@@ -3,6 +3,7 @@ import { type ImpureCircuitId, type MidnightProvider, type MidnightProviders, ty
 import { type DeployedContract, type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { Address, Wallet } from '@midnight-ntwrk/wallet-api';
+import { TokenType } from '@midnight-ntwrk/zswap';
 import { NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { ContractAddress, SigningKey } from '@midnight-ntwrk/compact-runtime';
 import { Resource } from '@midnight-ntwrk/wallet';
@@ -63,6 +64,7 @@ export declare class CrossChainApi {
         };
         ttl: bigint;
     };
+    getTokenPairInfo(tokenPairId: bigint | string | number): Promise<CrossChain.TokenPairInfo | undefined>;
     userLock(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "userLock">>;
     smgRelease(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, ttl: number): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "smgRelease">>;
     smgMint(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, ttl: number): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "smgMint">>;
@@ -83,7 +85,7 @@ export declare class CrossChainApi {
     setSmgPksks(voters: Address[]): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "setSmgPksks">>;
     setSmgPKThreold(threshold: number | string | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "setSmgPKThreold">>;
     setFeeCommonConfig(chainId: number | string | bigint, fee: number | string | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "setFeeCommonConfig">>;
-    addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, midnigthTokenAccount: string, fee: number | string | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "addTokenPair">>;
+    addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, midnigthTokenAccount: TokenType, domainSep: string, fee: number | string | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "addTokenPair">>;
     removeTokenPair(tokenPairId: number | string | bigint): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "removeTokenPair">>;
     newProposal(proposal: CrossChain.Proposal): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "newProposal">>;
     addAdminProposal(addr: Address): Promise<import("@midnight-ntwrk/midnight-js-contracts").FinalizedCallTxData<CrossChainContract, "newProposal">>;

@@ -24,6 +24,7 @@ export type Proposal = { type: ProposalType;
 export type TokenPairInfo = { fromChainId: bigint;
                               toChainId: bigint;
                               midnigthTokenAccount: Uint8Array;
+                              domainSep: Uint8Array;
                               fee: bigint
                             };
 
@@ -65,7 +66,7 @@ export type ImpureCircuits<T> = {
            smgId_0: Uint8Array,
            toAddr_0: string,
            tokenPairId_0: bigint,
-           amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
+           coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   smgRelease(context: __compactRuntime.CircuitContext<T>,
              uniqueId_0: Uint8Array,
              smgId_0: Uint8Array,
@@ -78,7 +79,7 @@ export type ImpureCircuits<T> = {
            smgId_0: Uint8Array,
            toAddr_0: string,
            tokenPairId_0: bigint,
-           amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
+           coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   smgMint(context: __compactRuntime.CircuitContext<T>,
           uniqueId_0: Uint8Array,
           smgId_0: Uint8Array,
@@ -108,9 +109,6 @@ export type ImpureCircuits<T> = {
                   newTokenManager_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   setMegerWorker(context: __compactRuntime.CircuitContext<T>,
                  newMergeWorker_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
-  test(context: __compactRuntime.CircuitContext<T>,
-       coin0_0: QualifiedCoinInfo,
-       coin1_0: QualifiedCoinInfo): __compactRuntime.CircuitResults<T, []>;
   mergeTreasuryCoin(context: __compactRuntime.CircuitContext<T>,
                     coins_0: bigint[]): __compactRuntime.CircuitResults<T, []>;
   addAdmin(context: __compactRuntime.CircuitContext<T>,
@@ -148,7 +146,7 @@ export type Circuits<T> = {
            smgId_0: Uint8Array,
            toAddr_0: string,
            tokenPairId_0: bigint,
-           amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
+           coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   smgRelease(context: __compactRuntime.CircuitContext<T>,
              uniqueId_0: Uint8Array,
              smgId_0: Uint8Array,
@@ -161,7 +159,7 @@ export type Circuits<T> = {
            smgId_0: Uint8Array,
            toAddr_0: string,
            tokenPairId_0: bigint,
-           amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
+           coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   smgMint(context: __compactRuntime.CircuitContext<T>,
           uniqueId_0: Uint8Array,
           smgId_0: Uint8Array,
@@ -191,9 +189,6 @@ export type Circuits<T> = {
                   newTokenManager_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
   setMegerWorker(context: __compactRuntime.CircuitContext<T>,
                  newMergeWorker_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<T, []>;
-  test(context: __compactRuntime.CircuitContext<T>,
-       coin0_0: QualifiedCoinInfo,
-       coin1_0: QualifiedCoinInfo): __compactRuntime.CircuitResults<T, []>;
   mergeTreasuryCoin(context: __compactRuntime.CircuitContext<T>,
                     coins_0: bigint[]): __compactRuntime.CircuitResults<T, []>;
   addAdmin(context: __compactRuntime.CircuitContext<T>,
@@ -234,13 +229,6 @@ export type Ledger = {
     [Symbol.iterator](): Iterator<[ZswapCoinPublicKey, bigint]>
   };
   readonly latestOutBoundCrosstxInfo: CrossOutBound;
-  crossProposalHis: {
-    isEmpty(): boolean;
-    size(): bigint;
-    member(key_0: Uint8Array): boolean;
-    lookup(key_0: Uint8Array): bigint;
-    [Symbol.iterator](): Iterator<[Uint8Array, bigint]>
-  };
   readonly currentExecuteCrossProposal: Uint8Array;
   treasuryCoins: {
     isEmpty(): boolean;

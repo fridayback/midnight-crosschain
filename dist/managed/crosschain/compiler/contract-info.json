@@ -26,10 +26,33 @@
           }
         },
         {
-          "name": "amount",
+          "name": "coin",
           "type": {
-            "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
+            "type-name": "Struct",
+            "name": "CoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              }
+            ]
           }
         }
       ],
@@ -98,7 +121,7 @@
           "name": "ttl",
           "type": {
             "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
+            "maxval": 18446744073709551615
           }
         }
       ],
@@ -134,10 +157,33 @@
           }
         },
         {
-          "name": "amount",
+          "name": "coin",
           "type": {
-            "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
+            "type-name": "Struct",
+            "name": "CoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              }
+            ]
           }
         }
       ],
@@ -206,7 +252,7 @@
           "name": "ttl",
           "type": {
             "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
+            "maxval": 18446744073709551615
           }
         }
       ],
@@ -431,91 +477,6 @@
                 "type": {
                   "type-name": "Bytes",
                   "length": 32
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "test",
-      "pure": false,
-      "arguments": [
-        {
-          "name": "coin0",
-          "type": {
-            "type-name": "Struct",
-            "name": "QualifiedCoinInfo",
-            "elements": [
-              {
-                "name": "nonce",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "color",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "value",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 340282366920938463463374607431768211455
-                }
-              },
-              {
-                "name": "mt_index",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 18446744073709551615
-                }
-              }
-            ]
-          }
-        },
-        {
-          "name": "coin1",
-          "type": {
-            "type-name": "Struct",
-            "name": "QualifiedCoinInfo",
-            "elements": [
-              {
-                "name": "nonce",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "color",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "value",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 340282366920938463463374607431768211455
-                }
-              },
-              {
-                "name": "mt_index",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 18446744073709551615
                 }
               }
             ]
@@ -756,6 +717,13 @@
               },
               {
                 "name": "midnigthTokenAccount",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "domainSep",
                 "type": {
                   "type-name": "Bytes",
                   "length": 32

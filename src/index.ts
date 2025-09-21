@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-19 11:51:06
+ * @LastEditTime: 2025-09-21 10:47:59
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -22,13 +22,13 @@ import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-p
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { Address, CoinPublicKey, Wallet } from '@midnight-ntwrk/wallet-api';
-import { CoinInfo, decodeTokenType, encodeTokenType, Transaction, TransactionId, tokenType, communicationCommitmentRandomness, sampleCoinPublicKey } from '@midnight-ntwrk/ledger';
+import { CoinInfo, decodeTokenType, encodeTokenType, Transaction, TransactionId, tokenType, communicationCommitmentRandomness, sampleCoinPublicKey, encodeCoinInfo, createCoinInfo } from '@midnight-ntwrk/ledger';
 import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
 import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as Rx from 'rxjs';
-import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueString, CompactTypeOpaqueUint8Array, CompactTypeUnsignedInteger, CompactTypeVector, ContractAddress, convert_Uint8Array_to_bigint, degradeToTransient, ecAdd, ecMul, ecMulGenerator, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
+import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueString, CompactTypeOpaqueUint8Array, CompactTypeUnsignedInteger, CompactTypeVector, ContractAddress, convert_Uint8Array_to_bigint, degradeToTransient, ecAdd, ecMul, ecMulGenerator, EncodedCoinInfo, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
 import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
 import assert from 'node:assert';
 
@@ -61,6 +61,7 @@ export const createCrossChainPrivateState = () => ({
 export const witnesses = {
     // TODO: Add witnesses
 }
+const coinInfo = (token: TokenType, value: bigint): EncodedCoinInfo => encodeCoinInfo(createCoinInfo(token, value));
 
 const fromHexWithOrNoPrefix = (hex: string) => {
   if (hex.startsWith('0x')) {
@@ -317,14 +318,23 @@ export class CrossChainApi {
   //   ));
   // }
 
+  async getTokenPairInfo(tokenPairId: bigint | string | number): Promise<CrossChain.TokenPairInfo | undefined> {
+    const ledger = await this.getLedgerState();
+    return ledger?.tokenPairs.lookup(BigInt(tokenPairId));
+  }
+
   /////////////////////////////////////////////////  Cross Tx  /////////////////////////////////////////////////////////////
   async userLock(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint) {
     const smgId_0 = Buffer.from(smgId, 'hex');
     assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
 
     const tokenPair_0 = BigInt(tokenPair);
+    const pairInfo = await this.getTokenPairInfo(tokenPair_0);
+    assert(pairInfo, `tokenPairId ${tokenPair} not found`);
     const amount_0 = BigInt(amount);
-    const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, amount_0);
+    const token = decodeTokenType(pairInfo.midnigthTokenAccount);
+    const coin_0 = coinInfo(token,amount_0);
+    const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, coin_0);
     return finalizedTxData;
   }
 
@@ -352,8 +362,12 @@ export class CrossChainApi {
     assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
    
     const tokenPair_0 = BigInt(tokenPair);
+    const pairInfo = await this.getTokenPairInfo(tokenPair_0);
+    assert(pairInfo, `tokenPairId ${tokenPair} not found`);
     const amount_0 = BigInt(amount);
-    const finalizedTxData = await this.crossChainContract.callTx.userBurn(smgId_0, toAddress, tokenPair_0, amount_0);
+    const token = decodeTokenType(pairInfo.midnigthTokenAccount);
+    const coin_0 = coinInfo(token,amount_0);
+    const finalizedTxData = await this.crossChainContract.callTx.userBurn(smgId_0, toAddress, tokenPair_0, coin_0);
     return finalizedTxData;
   }
 
@@ -472,15 +486,14 @@ export class CrossChainApi {
     return finalizedTxData;
   }
 
-  async addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, midnigthTokenAccount: string, fee: number | string | bigint) {
+  async addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, midnigthTokenAccount: TokenType,domainSep:string, fee: number | string | bigint) {
     const tokenPairId_0 = BigInt(tokenPairId);
     const fromChainId_0 = BigInt(fromChainId);
     const toChainId_0 = BigInt(toChainId);
-    let midnigtAccount_0;
-    try {
-      midnigtAccount_0 = encodeTokenType(midnigthTokenAccount);
-    } catch (error) {
-      midnigtAccount_0 = pad(midnigthTokenAccount, 32);
+    const midnigtAccount_0 = encodeTokenType(midnigthTokenAccount);
+    const domainSep_0 = pad(domainSep, 32);
+    if(domainSep == '') {
+      assert(tokenType(domainSep_0,this.crossChainContract.deployTxData.public.contractAddress) == midnigthTokenAccount,'token type not match');
     }
 
     const fee_0 = BigInt(fee);
@@ -488,6 +501,7 @@ export class CrossChainApi {
       fromChainId: fromChainId_0,
       toChainId: toChainId_0,
       midnigthTokenAccount: midnigtAccount_0,
+      domainSep: domainSep_0,
       fee: fee_0
     }
     const finalizedTxData = await this.crossChainContract.callTx.addTokenPair(tokenPairId_0, tokenPair);
