@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",          // 编译目标JS版本
+    "module": "CommonJS",     // 关键：指定模块系统为CommonJS
+    "outDir": "./dist",       // 输出目录
+    "rootDir": "./src",       // 源代码目录
+    "strict": true,           // 启用严格类型检查
+    "esModuleInterop": true,  // 允许CommonJS/ES模块互操作
+    "skipLibCheck": true      // 跳过库类型检查（可选）
+  },
+  "include": ["src/**/*"],    // 编译范围
+  "exclude": ["node_modules"]
+}

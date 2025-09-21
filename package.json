@@ -14,7 +14,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compact": "compactc --vscode  contract/crosschain.compact src/managed/crosschain",
-    "build": "rm -rf dist && npx tsc --project tsconfig.build.json && cp -Rf ./src/managed ./dist/managed",
+    "build": "npx tsc --project tsconfig.build.json && cp -Rf ./src/managed ./dist/managed",
+    "build-cjs": "rm -rf dist && npx tsc --project tsconfig.cjs.json && cp -Rf ./src/managed ./dist/managed",
     "lint": "eslint src",
     "typecheck": "npx tsc -p tsconfig.json --noEmit"
   },
