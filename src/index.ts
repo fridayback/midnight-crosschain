@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-21 21:16:14
+ * @LastEditTime: 2025-09-23 16:11:23
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -42,8 +42,8 @@ export type CrossChainContract = CrossChain.Contract<CrossChainPrivateState>;
 
 export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
 
-export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
-// export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
+// export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
+export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
 
 export const ZKConfig = {
   privateStateStoreName: 'crosschain-private-state',
