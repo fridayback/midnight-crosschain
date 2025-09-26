@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-23 16:11:23
+ * @LastEditTime: 2025-09-26 21:54:22
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,13 +16,13 @@ import path from 'node:path';
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
 
 import { createBalancedTx, type BalancedTransaction, type ImpureCircuitId, type MidnightProvider, type MidnightProviders, type UnbalancedTransaction, type WalletProvider, type FinalizedTxData, SucceedEntirely } from '@midnight-ntwrk/midnight-js-types';
-import { deployContract, findDeployedContract, type DeployedContract, type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
+import { deployContract, FinalizedCallTxData, findDeployedContract, type DeployedContract, type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { Address, CoinPublicKey, Wallet } from '@midnight-ntwrk/wallet-api';
-import { CoinInfo, decodeTokenType, encodeTokenType, Transaction, TransactionId, tokenType, communicationCommitmentRandomness, sampleCoinPublicKey, encodeCoinInfo, createCoinInfo } from '@midnight-ntwrk/ledger';
+import { CoinInfo, decodeTokenType, encodeTokenType, Transaction, TransactionId, tokenType, communicationCommitmentRandomness, sampleCoinPublicKey, encodeCoinInfo, createCoinInfo, ContractState, nativeToken } from '@midnight-ntwrk/ledger';
 import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
@@ -52,14 +52,14 @@ export const ZKConfig = {
 
 
 export type CrossChainPrivateState = {
-    
+
 }
 
 export const createCrossChainPrivateState = () => ({
 });
 
 export const witnesses = {
-    // TODO: Add witnesses
+  // TODO: Add witnesses
 }
 const coinInfo = (token: TokenType, value: bigint): EncodedCoinInfo => encodeCoinInfo(createCoinInfo(token, value));
 
@@ -81,7 +81,7 @@ export function pad(s: string, n: number): Uint8Array {
 }
 
 export interface Config {
-  readonly logDir: string;
+  // readonly logDir: string;
   readonly indexer: string;
   readonly indexerWS: string;
   readonly node: string;
@@ -323,8 +323,67 @@ export class CrossChainApi {
     return ledger?.tokenPairs.lookup(BigInt(tokenPairId));
   }
 
+  static parseContractState(stateHex: string): CrossChain.Ledger | undefined {
+    const state = ContractState.deserialize(fromHex(stateHex), getZswapNetworkId());
+    return CrossChain.ledger(state.data);
+  }
+
+  static currentExecuteCrossProposal(ledger: CrossChain.Ledger): string {
+    return toHex(ledger.currentExecuteCrossProposal);
+  }
+
+  static latestOutBoundCrosstxInfo(ledger: CrossChain.Ledger) {
+    return {
+      smgId: toHex(ledger.latestOutBoundCrosstxInfo.smgId),
+      fromAddr: toHex(ledger.latestOutBoundCrosstxInfo.fromAddr.bytes),
+      toAddr: ledger.latestOutBoundCrosstxInfo.toAddr,
+      tokenPairId: ledger.latestOutBoundCrosstxInfo.tokenPairId.toString(10),
+      amount: ledger.latestOutBoundCrosstxInfo.amount.toString(10),
+      fee: ledger.latestOutBoundCrosstxInfo.fee.toString(10),
+      nonce: ledger.latestOutBoundCrosstxInfo.nonce.toString(10),
+    }
+  }
+
+  async getUnVotedCrossProposal(ledger: CrossChain.Ledger): Promise<string[]> {
+    const selfPk = this.providers.walletProvider.coinPublicKey;
+    const voterIndex = ledger.smgTxSigners.lookup({ bytes: fromHex(selfPk) });
+    let res = [];
+    for (const [uniquId, _] of ledger.crossProposal) {
+      const voters = ledger.crossProposalVoters.lookup(uniquId);
+      if (voters.member(voterIndex)) continue;
+      else {
+        res.push(toHex(uniquId));
+      }
+    }
+    return res;
+  }
+
+  async getUnExecuteCrossProposal(ledger: CrossChain.Ledger) {
+    const selfPk = this.providers.walletProvider.coinPublicKey;
+    const voterIndex = ledger.smgTxSigners.lookup({ bytes: fromHex(selfPk) });
+    let res = [];
+    for (const [uniquId, crossProposal] of ledger.crossProposal) {
+      const voters = ledger.crossProposalVoters.lookup(uniquId);
+      if (voters.size() >= ledger.smgPKThreshold) {
+        res.push({
+          uniqueId: toHex(uniquId),
+          smgId: toHex(crossProposal.smgId),
+          tokenPairId: toHex(crossProposal.token),
+          amount: crossProposal.amount.toString(10),
+          fee: crossProposal.fee.toString(10),
+          toAddr: toHex(crossProposal.toAddr.bytes),
+          ttl: crossProposal.ttl.toString(10)
+        })
+      }
+    }
+
+    return res;
+  }
+
+
   /////////////////////////////////////////////////  Cross Tx  /////////////////////////////////////////////////////////////
-  async userLock(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint) {
+  async userLock(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "userLock">
+  > {
     const smgId_0 = Buffer.from(smgId, 'hex');
     assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
 
@@ -333,64 +392,164 @@ export class CrossChainApi {
     assert(pairInfo, `tokenPairId ${tokenPair} not found`);
     const amount_0 = BigInt(amount);
     const token = decodeTokenType(pairInfo.midnigthTokenAccount);
-    const coin_0 = coinInfo(token,amount_0);
+    const coin_0 = coinInfo(token, amount_0);
     const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, coin_0);
     return finalizedTxData;
   }
 
   async smgRelease(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint
     , fee: string | number | bigint, toAddr: string
-    , ttl: number) {
-    
+    , ttl: number): Promise<FinalizedCallTxData<CrossChainContract, "smgRelease">> {
+
     const proof = this.checkCrossData(uniqueId, smgId, tokenPair, amount, fee, toAddr, undefined, ttl);
     const finalizedTxData = await this.crossChainContract.callTx.smgRelease(
-      proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.toAddr,proof.fee, proof.ttl);
+      proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.toAddr, proof.fee, proof.ttl);
     return finalizedTxData;
   }
 
   async smgMint(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint
     , fee: string | number | bigint, toAddr: string
-    , ttl: number) {
+    , ttl: number): Promise<FinalizedCallTxData<CrossChainContract, "smgMint">> {
 
     const proof = this.checkCrossData(uniqueId, smgId, tokenPair, amount, fee, toAddr, undefined, ttl);
     const finalizedTxData = await this.crossChainContract.callTx.smgMint(proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.fee, proof.toAddr, proof.ttl);
     return finalizedTxData;
   }
 
-  async userBurn(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint) {
+  async userBurn(smgId: string, toAddress: string, tokenPair: string | number | bigint
+    , amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "userBurn">> {
     const smgId_0 = Buffer.from(smgId, 'hex');
     assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
-   
+
     const tokenPair_0 = BigInt(tokenPair);
     const pairInfo = await this.getTokenPairInfo(tokenPair_0);
     assert(pairInfo, `tokenPairId ${tokenPair} not found`);
     const amount_0 = BigInt(amount);
     const token = decodeTokenType(pairInfo.midnigthTokenAccount);
-    const coin_0 = coinInfo(token,amount_0);
+    const coin_0 = coinInfo(token, amount_0);
     const finalizedTxData = await this.crossChainContract.callTx.userBurn(smgId_0, toAddress, tokenPair_0, coin_0);
     return finalizedTxData;
   }
 
-  async voteCrossProposal(uniqueId: string) {
+  async voteCrossProposal(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "voteCrossProposal">> {
     const uniqueId_0 = Buffer.from(uniqueId, 'hex');
     assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
-    
+
     const finalizedTxData = await this.crossChainContract.callTx.voteCrossProposal(uniqueId_0);
     return finalizedTxData;
   }
 
-  
-  async executeCrossProposal(uniqueId: string, coinIndex: string | number | bigint | undefined){
+  async voteMultiCrossProposal(uniqueIds: string[]): Promise<FinalizedCallTxData<CrossChainContract, "voteMultiCrossProposal">> {
+    const uniqueIds_0 = uniqueIds.map((uniqueId) => {
+      const ret = Buffer.from(uniqueId, 'hex');
+      assert(ret.length === 32, `uniqueId(${uniqueId}) must be 32 bytes long`);
+      return ret;
+    });
+    assert(uniqueIds_0.length <= 5 && uniqueIds_0.length > 0, `uniqueIds must be between 1 and 5`);
+    for (let index = uniqueIds_0.length - 1; index < 5; index++) {
+      uniqueIds_0.push(Buffer.alloc(32));
+    }
+
+    const finalizedTxData = await this.crossChainContract.callTx.voteMultiCrossProposal(uniqueIds_0);
+    return finalizedTxData;
+  }
+
+
+  async executeCrossProposal(uniqueId: string, coinIndex: string | number | bigint | undefined): Promise<FinalizedCallTxData<CrossChainContract, "executeCrossProposal">> {
     const uniqueId_0 = Buffer.from(uniqueId, 'hex');
     assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
-    if(coinIndex === undefined){
-      const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposalOfMappingToken(uniqueId_0);
-      return finalizedTxData;
-    }else{
-      const coinIndex_0 = BigInt(coinIndex);
-      const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposalOfNativeToken(uniqueId_0, coinIndex_0);
-      return finalizedTxData;
+    let coinIndex_0 = BigInt(0);
+    if (coinIndex) {
+      coinIndex_0 = BigInt(coinIndex);
     }
+    const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposal(uniqueId_0, coinIndex_0);
+    return finalizedTxData;
+  }
+
+  async executeMultiCrossProposal(uniqueIds: ({ uniqueId: string, coinIndex: string | number | bigint | undefined })[]): Promise<FinalizedCallTxData<CrossChainContract, "executeMultiCrossProposal">> {
+    const uniqueIds_0 = uniqueIds.map((item) => {
+      const uniqueId_0 = Buffer.from(item.uniqueId, 'hex');
+      assert(uniqueId_0.length === 32, `uniqueId(${item.uniqueId}) must be 32 bytes long`);
+      let coinIndex_0 = BigInt(0);
+      if (item.coinIndex) {
+        coinIndex_0 = BigInt(item.coinIndex);
+      }
+      return { uniqueId: uniqueId_0, coinIndex: coinIndex_0 };
+    });
+    assert(uniqueIds_0.length <= 5 && uniqueIds_0.length > 0, `uniqueIds must be between 1 and 5`);
+    for (let index = uniqueIds_0.length - 1; index < 5; index++) {
+      uniqueIds_0.push({ uniqueId: Buffer.alloc(32), coinIndex: BigInt(0) });
+    }
+
+    const finalizedTxData = await this.crossChainContract.callTx.executeMultiCrossProposal(uniqueIds_0);
+    return finalizedTxData;
+  }
+
+  async userRechargeForFee(amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "userRechargeForFee">> {
+    const amount_0 = BigInt(amount);
+    const coin_0 = coinInfo(nativeToken(), amount_0);
+    const finalizedTxData = await this.crossChainContract.callTx.userRechargeForFee(coin_0);
+    return finalizedTxData;
+  }
+
+  async approveUserWithdrawFee(user: Address, coinIndex: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "approveUserWithdrawFee">> {
+    const key_0 = { bytes: getCoinPublicKeyFromShieldAddress(user) };
+    const ledgerState = await this.getLedgerState();
+    assert(ledgerState != null, `ledgerState is null`);
+
+    const balance_0 = ledgerState.userFeeBalance.lookup(key_0);
+    assert(balance_0 != null, `user ${user} has no fee balance`);
+    const coin = ledgerState.treasuryCoins.lookup(BigInt(coinIndex));
+    assert(coin != null, `coin ${coinIndex} not found`);
+    assert(coin.value >= balance_0, `coin ${coinIndex} balance is not enough`);
+    const coin_0 = coinInfo(nativeToken(), coin.value - balance_0);
+    const finalizedTxData = await this.crossChainContract.callTx.approveUserWithdrawFee(key_0, coin_0, BigInt(coinIndex));
+    return finalizedTxData;
+  }
+
+  async userClaim(uniqueId: string, isMappingToken: boolean) {
+    if (isMappingToken) {
+      return this.userClaimMappintToken(uniqueId);
+    } else {
+      return this.userClaimCoin(uniqueId);
+    }
+  }
+
+  async userClaimCoin(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "userClaimCoin">> {
+    const uniqueId_0 = Buffer.from(uniqueId, 'hex');
+    assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
+
+    const finalizedTxData = await this.crossChainContract.callTx.userClaimCoin(uniqueId_0);
+    return finalizedTxData;
+  }
+
+  async userClaimMappintToken(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "userClaimMappingToken">> {
+    const uniqueId_0 = Buffer.from(uniqueId, 'hex');
+    assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
+
+    const finalizedTxData = await this.crossChainContract.callTx.userClaimMappingToken(uniqueId_0);
+    return finalizedTxData;
+  }
+
+
+  async addReserve(token: TokenType, amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "addReserve">> {
+    const amount_0 = BigInt(amount);
+    const coin_0 = coinInfo(token, amount_0);
+    const finalizedTxData = await this.crossChainContract.callTx.addReserve(coin_0);
+    return finalizedTxData;
+  }
+
+  async withdrawReserveOfNativeToken(token: TokenType, coinIndex: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "withdrawReserveOfNativeToken">> {
+    const coinIndex_0 = BigInt(coinIndex);
+    const token_0 = encodeTokenType(token);
+    const finalizedTxData = await this.crossChainContract.callTx.withdrawReserveOfNativeToken(token_0, coinIndex_0);
+    return finalizedTxData;
+  }
+
+  async withdrawReserveOfMappingToken(domainSep: string): Promise<FinalizedCallTxData<CrossChainContract, "withdrawReserveOfMappingToken">> {
+    const token_0 = pad(domainSep, 32);
+    const finalizedTxData = await this.crossChainContract.callTx.withdrawReserveOfMappingToken(token_0);
+    return finalizedTxData;
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -403,98 +562,102 @@ export class CrossChainApi {
   }
 
   ///////////////////////////////////////////////        management      ////////////////////////////////////////////////////////
-  async transferOwner(newOwner: Address) {
+  async transferOwner(newOwner: Address): Promise<FinalizedCallTxData<CrossChainContract, "transferOwner">> {
     const newOwner_0 = { bytes: getCoinPublicKeyFromShieldAddress(newOwner) };
     const finalizedTxData = await this.crossChainContract.callTx.transferOwner(newOwner_0);
     return finalizedTxData;
   }
 
-  async acceptOwner() {
+  async acceptOwner(): Promise<FinalizedCallTxData<CrossChainContract, "acceptOwner">> {
     const finalizedTxData = await this.crossChainContract.callTx.acceptOwner();
     return finalizedTxData;
   }
 
-  async updateSmgPk(newVoter: Address) {
+  async updateSmgPk(newVoter: Address): Promise<FinalizedCallTxData<CrossChainContract, "updateSmgPk">> {
     const newVoter_0 = { bytes: getCoinPublicKeyFromShieldAddress(newVoter) };
     const finalizedTxData = await this.crossChainContract.callTx.updateSmgPk(newVoter_0);
     return finalizedTxData;
   }
 
-  async setFeeReceiver(feeReceiver: Address) {
+  async setFeeReceiver(feeReceiver: Address): Promise<FinalizedCallTxData<CrossChainContract, "setFeeReceiver">> {
     const feeReceiver_0 = { bytes: getCoinPublicKeyFromShieldAddress(feeReceiver) };
     const finalizedTxData = await this.crossChainContract.callTx.setFeeReceiver(feeReceiver_0);
     return finalizedTxData;
   }
 
-  async setTokenManager(tokenManager: Address) {
+  async setTokenManager(tokenManager: Address): Promise<FinalizedCallTxData<CrossChainContract, "setTokenManager">> {
     const tokenManager_0 = { bytes: getCoinPublicKeyFromShieldAddress(tokenManager) };
     const finalizedTxData = await this.crossChainContract.callTx.setTokenManager(tokenManager_0);
     return finalizedTxData;
   }
 
-  async setMegerWorker(mergeWorker: Address) {
+  async setMegerWorker(mergeWorker: Address): Promise<FinalizedCallTxData<CrossChainContract, "setMegerWorker">> {
     const megerWorker_0 = { bytes: getCoinPublicKeyFromShieldAddress(mergeWorker) };
     const finalizedTxData = await this.crossChainContract.callTx.setMegerWorker(megerWorker_0);
     return finalizedTxData;
   }
 
-  async mergeTreasuryCoin(coins: bigint[] | number[] | string[]) {
-    if(coins.length != 2) throw 'can only merge 2 coins';
-    const coins_0 = coins.map(coin => BigInt(coin));
-    const finalizedTxData = await this.crossChainContract.callTx.mergeTreasuryCoin(coins_0);
-    return finalizedTxData;
-  }
+  // async mergeTreasuryCoin(coins: bigint[] | number[] | string[]): Promise<FinalizedCallTxData<CrossChainContract, "mergeTreasuryCoin">>{
+  //   if (coins.length != 2) throw 'can only merge 2 coins';
+  //   const coins_0 = coins.map(coin => BigInt(coin));
+  //   const finalizedTxData = await this.crossChainContract.callTx.mergeTreasuryCoin(coins_0);
+  //   return finalizedTxData;
+  // }
 
 
-  async addAdmin(admin: Address) {
+  async addAdmin(admin: Address): Promise<FinalizedCallTxData<CrossChainContract, "addAdmin">> {
     const admin_0 = { bytes: getCoinPublicKeyFromShieldAddress(admin) };
     const finalizedTxData = await this.crossChainContract.callTx.addAdmin(admin_0);
     return finalizedTxData;
   }
 
-  async removeAdmin(admin: Address) {
+  async removeAdmin(admin: Address): Promise<FinalizedCallTxData<CrossChainContract, "removeAdmin">> {
     const admin_0 = { bytes: getCoinPublicKeyFromShieldAddress(admin) };
     const finalizedTxData = await this.crossChainContract.callTx.removeAdmin(admin_0);
     return finalizedTxData;
   }
 
-  async setAdminThreshold(threshold: number | string | bigint) {
+  async setAdminThreshold(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "setAdminThreshold">> {
     const threshold_0 = BigInt(threshold);
+    if (threshold_0 < 1n) throw 'threshold must be greater than 0';
     const finalizedTxData = await this.crossChainContract.callTx.setAdminThreshold(threshold_0);
     return finalizedTxData;
   }
 
-  async setSmgPksks(voters: Address[]) {
-    const voters_0 = voters.map(voter => { 
-      return { bytes: getCoinPublicKeyFromShieldAddress(voter) } 
+  async setSmgPksks(voters: Address[]): Promise<FinalizedCallTxData<CrossChainContract, "setSmgPksks">> {
+    assert(voters.length > 0, 'voters must not be empty');
+    const voters_0 = voters.map(voter => {
+      return { bytes: getCoinPublicKeyFromShieldAddress(voter) }
       // return { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(voter, getZswapNetworkId())) } 
     });
     const finalizedTxData = await this.crossChainContract.callTx.setSmgPksks(voters_0);
     return finalizedTxData;
   }
 
-  async setSmgPKThreold(threshold: number | string | bigint) {
+  async setSmgPKThreold(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "setSmgPKThreold">> {
     const threshold_0 = BigInt(threshold);
     const finalizedTxData = await this.crossChainContract.callTx.setSmgPKThreold(threshold_0);
     return finalizedTxData;
   }
 
-  async setFeeCommonConfig(chainId: number | string | bigint, fee: number | string | bigint) {
+  async setFeeCommonConfig(chainId: number | string | bigint, fee: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "setFeeCommonConfig">> {
     const chainId_0 = BigInt(chainId);
     const fee_0 = BigInt(fee);
     const finalizedTxData = await this.crossChainContract.callTx.setFeeCommonConfig(chainId_0, fee_0);
     return finalizedTxData;
   }
 
-  async addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, midnigthTokenAccount: TokenType,domainSep:string, fee: number | string | bigint) {
+  async addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint
+    , toChainId: number | string | bigint, midnigthTokenAccount: TokenType
+    , domainSep: string, fee: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "addTokenPair">> {
     const tokenPairId_0 = BigInt(tokenPairId);
     const fromChainId_0 = BigInt(fromChainId);
     const toChainId_0 = BigInt(toChainId);
     const midnigtAccount_0 = encodeTokenType(midnigthTokenAccount);
     const domainSep_0 = pad(domainSep, 32);
-    if(domainSep == '') {
-      const expectedTokenType = tokenType(domainSep_0,this.crossChainContract.deployTxData.public.contractAddress);
-      assert(expectedTokenType == midnigthTokenAccount,`token type not match ,${expectedTokenType} expected but got ${midnigthTokenAccount}`);
+    if (domainSep == '') {
+      const expectedTokenType = tokenType(domainSep_0, this.crossChainContract.deployTxData.public.contractAddress);
+      assert(expectedTokenType == midnigthTokenAccount, `token type not match ,${expectedTokenType} expected but got ${midnigthTokenAccount}`);
     }
 
     const fee_0 = BigInt(fee);
@@ -509,18 +672,18 @@ export class CrossChainApi {
     return finalizedTxData;
   }
 
-  async removeTokenPair(tokenPairId: number | string | bigint) {
+  async removeTokenPair(tokenPairId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "removeTokenPair">> {
     const tokenPairId_0 = BigInt(tokenPairId);
     const finalizedTxData = await this.crossChainContract.callTx.removeTokenPair(tokenPairId_0);
     return finalizedTxData;
   }
 
-  async newProposal(proposal: CrossChain.Proposal) {
+  async newProposal(proposal: CrossChain.Proposal): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">> {
     const finalizedTxData = await this.crossChainContract.callTx.newProposal(proposal);
     return finalizedTxData;
   }
 
-  async addAdminProposal(addr: Address) {
+  async addAdminProposal(addr: Address): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">> {
     // const addr_0 = { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(addr, getZswapNetworkId())) };
     const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
     let proposal = this.defaultProsal();
@@ -612,8 +775,9 @@ export class CrossChainApi {
     return await this.crossChainContract.contractMaintenanceTx.replaceAuthority(newKey);
   }
 
-  async upgradeContract() {
-    // return await this.crossChainContract.circuitMaintenanceTx.setFeeReceiver.insertVerifierKey(newVK);
+  async upgradeContract(circiut: string, newCircuit: string) {
+    // const newVK = VerifierKey.fromHex(newCircuit);
+    // return await this.crossChainContract.circuitMaintenanceTx.userBurn.insertVerifierKey(newVK);
     // await this.crossChainContract.circuitMaintenanceTx.newProposal.removeVerifierKey();
     // const newVK = 
     // return await this.crossChainContract.circuitMaintenanceTx.newProposal.insertVerifierKey();
@@ -623,7 +787,7 @@ export class CrossChainApi {
 
 export const getTreasuryCoinsFromState = (state: CrossChain.Ledger) => {
   let treasuryCoins = new Map<TokenType, Map<bigint, CrossChain.QualifiedCoinInfo>>();
-  console.log('treasuryCoins size:',state.treasuryCoins.size());
+  console.log('treasuryCoins size:', state.treasuryCoins.size());
   for (const [coinId, coin] of state.treasuryCoins) {
     const tokenType = decodeTokenType(coin.color);
     if (!treasuryCoins.has(tokenType)) {

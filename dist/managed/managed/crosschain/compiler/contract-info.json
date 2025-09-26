@@ -132,68 +132,6 @@
       }
     },
     {
-      "name": "userBurn",
-      "pure": false,
-      "arguments": [
-        {
-          "name": "smgId",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "toAddr",
-          "type": {
-            "type-name": "Opaque",
-            "tsType": "string"
-          }
-        },
-        {
-          "name": "tokenPairId",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 4294967295
-          }
-        },
-        {
-          "name": "coin",
-          "type": {
-            "type-name": "Struct",
-            "name": "CoinInfo",
-            "elements": [
-              {
-                "name": "nonce",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "color",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "value",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 340282366920938463463374607431768211455
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
       "name": "smgMint",
       "pure": false,
       "arguments": [
@@ -263,6 +201,68 @@
       }
     },
     {
+      "name": "userBurn",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "smgId",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "toAddr",
+          "type": {
+            "type-name": "Opaque",
+            "tsType": "string"
+          }
+        },
+        {
+          "name": "tokenPairId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        },
+        {
+          "name": "coin",
+          "type": {
+            "type-name": "Struct",
+            "name": "CoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
       "name": "voteMultiCrossProposal",
       "pure": false,
       "arguments": [
@@ -270,7 +270,7 @@
           "name": "uniqueIds",
           "type": {
             "type-name": "Vector",
-            "length": 3,
+            "length": 5,
             "type": {
               "type-name": "Bytes",
               "length": 32
@@ -303,7 +303,45 @@
       }
     },
     {
-      "name": "executeCrossProposalOfNativeToken",
+      "name": "executeMultiCrossProposal",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "mutiEx",
+          "type": {
+            "type-name": "Vector",
+            "length": 5,
+            "type": {
+              "type-name": "Struct",
+              "name": "ExecuteCrossProposalInfo",
+              "elements": [
+                {
+                  "name": "uniqueId",
+                  "type": {
+                    "type-name": "Bytes",
+                    "length": 32
+                  }
+                },
+                {
+                  "name": "coinIndex",
+                  "type": {
+                    "type-name": "Uint",
+                    "maxval": 340282366920938463463374607431768211455
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "executeCrossProposal",
       "pure": false,
       "arguments": [
         {
@@ -328,11 +366,52 @@
       }
     },
     {
-      "name": "executeCrossProposalOfMappingToken",
+      "name": "userRechargeForFee",
       "pure": false,
       "arguments": [
         {
-          "name": "uniqueId",
+          "name": "coin",
+          "type": {
+            "type-name": "Struct",
+            "name": "CoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "userClaimCoin",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "id",
           "type": {
             "type-name": "Bytes",
             "length": 32
@@ -346,7 +425,130 @@
       }
     },
     {
-      "name": "transferFeeOfNativeToken",
+      "name": "userClaimMappingToken",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "id",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "addReserve",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "coin",
+          "type": {
+            "type-name": "Struct",
+            "name": "CoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "approveUserWithdrawFee",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "user",
+          "type": {
+            "type-name": "Struct",
+            "name": "ZswapCoinPublicKey",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "coinGap",
+          "type": {
+            "type-name": "Struct",
+            "name": "CoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "coinIndexOfTreasuryCoin",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "withdrawReserveOfNativeToken",
       "pure": false,
       "arguments": [
         {
@@ -361,6 +563,24 @@
           "type": {
             "type-name": "Uint",
             "maxval": 340282366920938463463374607431768211455
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "withdrawReserveOfMappingToken",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "domainSep",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
           }
         }
       ],
@@ -491,7 +711,7 @@
     },
     {
       "name": "mergeTreasuryCoin",
-      "pure": false,
+      "pure": true,
       "arguments": [
         {
           "name": "coins",

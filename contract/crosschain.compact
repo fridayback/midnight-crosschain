@@ -18,7 +18,10 @@ pragma language_version >= 0.15.0;
 import CompactStandardLibrary;
 
 
-export { CoinInfo, QualifiedCoinInfo, CurvePoint, ZswapCoinPublicKey,TokenPairInfo,FeeConfig,ProposalType,Proposal,CrossOutBound, CrossProposal}
+export { CoinInfo, QualifiedCoinInfo, CurvePoint, ZswapCoinPublicKey
+,TokenPairInfo,FeeConfig,ProposalType,Proposal,CrossOutBound
+, CrossProposal,ClaimMappingTokenInfo,ClaimCoinInfo,ReserveOfToken
+,ExecuteCrossProposalInfo}
 
 
 // cross tx related state
@@ -32,7 +35,7 @@ export ledger currentExecuteCrossProposal: Bytes<32>;
 // treasury related state
 export ledger treasuryCoins: Map<Uint<128>, QualifiedCoinInfo>;
 export ledger treasuryCoinCounter: Counter;
-export ledger accFeeOfAllToken: Map<Bytes<32>, AccFeeOfToken>;
+export ledger reserveOfAllToken: Map<Bytes<32>, ReserveOfToken>;
 
 // token related state
 export ledger tokenPairs: Map<Uint<32>, TokenPairInfo>;
@@ -61,7 +64,22 @@ export ledger proposalVoters: Map<Uint<32>, Set<ZswapCoinPublicKey>>;
 export ledger crossProposal: Map<Bytes<32>,CrossProposal>;
 export ledger crossProposalVoters: Map<Bytes<32>, Set<Uint<8>>>;
 
-export ledger nativeTokenReceived: Uint<128>;
+export ledger crossProposalHis: Map<Bytes<32>, Uint<64>>;
+export ledger userFeeBalance: Map<ZswapCoinPublicKey, Uint<128>>;
+export ledger coinToBeClaimed: Map<Bytes<32>, ClaimCoinInfo>;
+export ledger mappintTokenToBeClaim: Map<Bytes<32>, ClaimMappingTokenInfo>;
+
+// export ledger nativeTokenReceived: Uint<128>;
+export struct ClaimCoinInfo{
+  receiver: ZswapCoinPublicKey;
+  coin: QualifiedCoinInfo;
+}
+
+export struct ClaimMappingTokenInfo{
+  receiver: ZswapCoinPublicKey;
+  domainSep: Bytes<32>;
+  amount: Uint<128>;
+}
 
 export enum ProposalType{
   AddAdmin,
@@ -74,8 +92,8 @@ export enum ProposalType{
   SetSmgPKS
 }
 
-export struct AccFeeOfToken{
-  totalFee: Uint<128>;
+export struct ReserveOfToken{
+  total: Uint<128>;
   isMappingToken: Boolean;
 }
 
@@ -129,6 +147,11 @@ export struct CrossProposal{
   ttl: Uint<64>;
 }
 
+export struct ExecuteCrossProposalInfo{
+  uniqueId: Bytes<32>;
+  coinIndex: Uint<128>;
+}
+
 
 constructor(
   adminThresholdInit: Uint<8>
@@ -142,6 +165,11 @@ constructor(
     smgPKThreshold = disclose(smgPKThresholdInit);
     proposalId.increment(1);
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////                                                             //////////////////////////////////////
+/////////////////////////////////////                       Cross TX Functions                    //////////////////////////////////////
+/////////////////////////////////////                                                             //////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, coin: CoinInfo): [] {
   assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
@@ -149,33 +177,13 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
   assert(tokenPair.midnigthTokenAccount == disclose(coin.color), "token color not match");
 
   const contractFee = getFee(disclose(tokenPairId));
-  // nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
-
-  // const nativeTokenColor = nativeToken();
-  // if(nativeTokenColor == tokenPair.midnigthTokenAccount){
-  //   nativeTokenReceived = (disclose(amount) + contractFee) as Uint<128>;
-  // }else{
-  //   nativeTokenReceived = contractFee;
-  //   //check the type and amount of token received
-  //   const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
-  //   receive(coin);
-  //   addTreasuryCoin(coin);
-  // }
-  
-  // if(nativeTokenReceived > 0){
-  //   const nativeTokenCoin = CoinInfo{ color: nativeTokenColor, value: nativeTokenReceived, nonce: nonce};
-  //   receive(nativeTokenCoin);
-  //   addTreasuryCoin(nativeTokenCoin);
-  // }
 
   if(contractFee > 0){
-    accumulateFee(false,nativeToken(), contractFee);
-    // const nativeTokenCoin = CoinInfo{ color: nativeToken(), value: contractFee, nonce: nonce};
-    // receive(nativeTokenCoin);
-    // addTreasuryCoin(nativeTokenCoin);
+    updateUserFee(ownPublicKey(), contractFee, false);
+    updateReserve(false,nativeToken(), contractFee,true);
+
   }
 
-  // const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
   receive(disclose(coin));
   addTreasuryCoin(disclose(coin));
 
@@ -189,6 +197,59 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
     , fee: contractFee 
     , nonce: crossCounter as Field as Uint<128>
   };
+
+  // crossCounter.increment(1);
+}
+
+export circuit smgRelease(
+  uniqueId: Bytes<32>
+  , smgId: Bytes<32>
+  , tokenPairId: Uint<32>
+  , amount: Uint<128>
+  , toAddr: ZswapCoinPublicKey
+  , fee: Uint<128>
+  , ttl: Uint<64>): [] {
+  
+  addCrossProposal(disclose(uniqueId), disclose(smgId), disclose(tokenPairId), disclose(amount), disclose(toAddr), disclose(fee), disclose(ttl), false);
+}
+
+export circuit smgMint(uniqueId: Bytes<32>
+  , smgId: Bytes<32>
+  , tokenPairId: Uint<32>
+  , amount: Uint<128>
+  , fee: Uint<128>
+  , toAddr: ZswapCoinPublicKey
+  , ttl: Uint<64>): [] {
+  addCrossProposal(disclose(uniqueId), disclose(smgId), disclose(tokenPairId), disclose(amount), disclose(toAddr), disclose(fee), disclose(ttl), true);
+}
+
+export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, coin: CoinInfo): [] {
+  assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
+  const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
+  assert(tokenPair.midnigthTokenAccount == disclose(coin.color), "token color not match");
+  const contractFee = getFee(disclose(tokenPairId));
+  
+  // nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
+  // const color = tokenType(tokenPair.midnigthTokenAccount,kernel.self());
+  // const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
+  receive(disclose(coin));
+  sendImmediate(disclose(coin), burnAddress(), disclose(coin.value));
+
+    // record the crosschain info
+  latestOutBoundCrosstxInfo = CrossOutBound{
+    smgId: disclose(smgId)
+    , fromAddr: ownPublicKey()
+    , toAddr: disclose(toAddr)
+    , tokenPairId: disclose(tokenPairId)
+    , amount: disclose(coin.value)
+    , fee: contractFee
+    , nonce: crossCounter as Field as Uint<128>
+  };
+
+  if(contractFee > 0){
+    updateUserFee(ownPublicKey(), contractFee, false);
+    updateReserve(false,nativeToken(), contractFee, true);
+  }
 
   // crossCounter.increment(1);
 }
@@ -229,71 +290,7 @@ circuit addCrossProposal(
   crossCounter.increment(1);
 }
 
-export circuit smgRelease(
-  uniqueId: Bytes<32>
-  , smgId: Bytes<32>
-  , tokenPairId: Uint<32>
-  , amount: Uint<128>
-  , toAddr: ZswapCoinPublicKey
-  , fee: Uint<128>
-  , ttl: Uint<64>): [] {
-  
-  addCrossProposal(disclose(uniqueId), disclose(smgId), disclose(tokenPairId), disclose(amount), disclose(toAddr), disclose(fee), disclose(ttl), false);
-}
-
-export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, coin: CoinInfo): [] {
-  assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
-  const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
-  assert(tokenPair.midnigthTokenAccount == disclose(coin.color), "token color not match");
-  const contractFee = getFee(disclose(tokenPairId));
-  
-  // nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
-  // const color = tokenType(tokenPair.midnigthTokenAccount,kernel.self());
-  // const coin = CoinInfo{color: tokenPair.midnigthTokenAccount, value: disclose(amount), nonce: nonce};
-  receive(disclose(coin));
-  sendImmediate(disclose(coin), burnAddress(), disclose(coin.value));
-
-    // record the crosschain info
-  latestOutBoundCrosstxInfo = CrossOutBound{
-    smgId: disclose(smgId)
-    , fromAddr: ownPublicKey()
-    , toAddr: disclose(toAddr)
-    , tokenPairId: disclose(tokenPairId)
-    , amount: disclose(coin.value)
-    , fee: contractFee
-    , nonce: crossCounter as Field as Uint<128>
-  };
-
-  if(contractFee > 0){
-    // receive(CoinInfo{ color: nativeToken(), value: contractFee, nonce: nonce});
-    accumulateFee(false,nativeToken(), contractFee);
-  }
-
-  // crossCounter.increment(1);
-}
-
-export circuit smgMint(uniqueId: Bytes<32>
-  , smgId: Bytes<32>
-  , tokenPairId: Uint<32>
-  , amount: Uint<128>
-  , fee: Uint<128>
-  , toAddr: ZswapCoinPublicKey
-  , ttl: Uint<64>): [] {
-  addCrossProposal(disclose(uniqueId), disclose(smgId), disclose(tokenPairId), disclose(amount), disclose(toAddr), disclose(fee), disclose(ttl), true);
-}
-
-circuit accumulateFee(isMappingToken: Boolean,token: Bytes<32>, fee: Uint<128>): [] {
-  if(accFeeOfAllToken.member(disclose(token))) {
-    const accFee = accFeeOfAllToken.lookup(disclose(token));
-    const accAmount = accFee.totalFee + disclose(fee);
-    accFeeOfAllToken.remove(disclose(token));
-    accFeeOfAllToken.insert(disclose(token), AccFeeOfToken{isMappingToken:disclose(isMappingToken), totalFee: accAmount as Uint<128>});
-  }else{
-    accFeeOfAllToken.insert(disclose(token),AccFeeOfToken{isMappingToken:disclose(isMappingToken), totalFee: disclose(fee)});
-  }
-}
-
-export circuit voteMultiCrossProposal(uniqueIds: Vector<3, Bytes<32>>): [] {
+export circuit voteMultiCrossProposal(uniqueIds: Vector<5, Bytes<32>>): [] {
   for (const uniqueId of disclose(uniqueIds)) {
     if(uniqueId != default<Bytes<32>>) {
       voteCrossProposal(uniqueId);
@@ -323,63 +320,39 @@ export circuit voteCrossProposal(uniqueId: Bytes<32>): [] {
   crossProposalVoters.lookup(disclose(uniqueId)).insert(voterIndex);
 
   if(crossProposalVoters.lookup(disclose(uniqueId)).size() >= smgPKThreshold && proposal.fee > 0){
-    accumulateFee(proposal.isMappingToken,proposal.token,proposal.fee);
+    updateReserve(proposal.isMappingToken,proposal.token,proposal.fee,true);
   }
 }
 
+export circuit executeMultiCrossProposal(mutiEx: Vector<5,ExecuteCrossProposalInfo>): [] {
+  for (const exCp of disclose(mutiEx)) {
+    if(exCp.uniqueId != default<Bytes<32>>) {
+      executeCrossProposal(exCp.uniqueId, exCp.coinIndex);
+    }
+  }
+}
 
-export circuit executeCrossProposalOfNativeToken(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
+export circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
   assert(mergeWorker == ownPublicKey(), "only mergeWorker can executeCrossProposal ");
   assert( crossProposal.member(disclose(uniqueId)),"crossproposal not exists");
   assert(crossProposalVoters.lookup(disclose(uniqueId)).size() >= smgPKThreshold, "not enough votes");
   const proposal = crossProposal.lookup(disclose(uniqueId));
-  assert( proposal.isMappingToken == false, "only native token can be executed");
 
-  const coinInput = treasuryCoins.lookup(disclose(coinIndex));
-  assert(coinInput.value == proposal.amount, "coin value not match");
-  const resultSend = send(coinInput, left<ZswapCoinPublicKey, ContractAddress>(disclose(proposal.toAddr)), proposal.amount);
-  // if(resultSend.change.is_some) {addTreasuryCoin(resultSend.change.value);}
-  treasuryCoins.remove(disclose(coinIndex));
-
-  // crossProposalHis.insert(disclose(uniqueId),crossProposal.lookup(disclose(uniqueId)).ttl);
-  crossProposal.remove(disclose(uniqueId));
-  crossProposalVoters.remove(disclose(uniqueId));
-  currentExecuteCrossProposal = disclose(uniqueId);
-}
-export circuit executeCrossProposalOfMappingToken(uniqueId: Bytes<32>): [] {
-  // assert(mergeWorker == ownPublicKey(), "only mergeWorker can executeCrossProposal ");
-  assert( crossProposal.member(disclose(uniqueId)),"crossproposal not exists");
-  assert(crossProposalVoters.lookup(disclose(uniqueId)).size() >= smgPKThreshold, "not enough votes");
-  const proposal = crossProposal.lookup(disclose(uniqueId));
-  assert( proposal.isMappingToken == true, "only mappint token can be executed");
-
-  nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
-  mintToken(proposal.token, proposal.amount as Uint<64>, nonce,left<ZswapCoinPublicKey, ContractAddress>(disclose(proposal.toAddr)));
-
-  // crossProposalHis.insert(disclose(uniqueId),crossProposal.lookup(disclose(uniqueId)).ttl);
-  crossProposal.remove(disclose(uniqueId));
-  crossProposalVoters.remove(disclose(uniqueId));
-  currentExecuteCrossProposal = disclose(uniqueId);
-  
-}
-
-export circuit transferFeeOfNativeToken(token: Bytes<32>,coinIndex: Uint<128>): [] {
-  assert(accFeeOfAllToken.member(disclose(token)), "fee of specified token not exists");
-  const feeInfo = accFeeOfAllToken.lookup(disclose(token));
-  assert(feeInfo.isMappingToken == false, "only native token can be executed");
-
-  const coinInput = treasuryCoins.lookup(disclose(coinIndex));
-  assert(coinInput.value == feeInfo.totalFee, "coin value not match");
-  const resultSend = send(coinInput, left<ZswapCoinPublicKey, ContractAddress>(feeReceiver), feeInfo.totalFee);
-  // if(resultSend.change.is_some) {addTreasuryCoin(resultSend.change.value);}
-  treasuryCoins.remove(disclose(coinIndex));
-
-  // if(feeInfo.isMappingToken){
-  //   nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
-  //   mintToken(disclose(token), feeInfo.totalFee as Uint<64>, nonce,left<ZswapCoinPublicKey, ContractAddress>(feeReceiver));
-  // }else{
+  if(proposal.isMappingToken == false){
+    assert( treasuryCoins.member(disclose(coinIndex)),"coin not exists");
+    const coinInput = treasuryCoins.lookup(disclose(coinIndex));
+    assert(coinInput.value == proposal.amount, "coin value not match");
     
-  // }
+    coinToBeClaimed.insert(disclose(uniqueId),ClaimCoinInfo{coin:coinInput,receiver:proposal.toAddr});
+    treasuryCoins.remove(disclose(coinIndex));
+  }else{
+    mappintTokenToBeClaim.insert(disclose(uniqueId),ClaimMappingTokenInfo{domainSep:proposal.token,amount:proposal.amount,receiver:proposal.toAddr});
+  }
+
+  crossProposalHis.insert(disclose(uniqueId),proposal.ttl);
+  crossProposal.remove(disclose(uniqueId));
+  crossProposalVoters.remove(disclose(uniqueId));
+  currentExecuteCrossProposal = disclose(uniqueId);
 }
 
 
@@ -404,8 +377,118 @@ circuit getFee(tokenPairId: Uint<32>): Uint<128> {
   }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////                                                              /////////////////////////////////////
+////////////////////////////////////                       User Functions                         /////////////////////////////////////
+////////////////////////////////////                                                              /////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//-------------------------------------------------------------------------------------------------------------------
+export circuit userRechargeForFee(coin :CoinInfo): [] {
+  assert(disclose(coin.color) == nativeToken(), "wrong coin color");
+  receive(disclose(coin));
+  addTreasuryCoin(disclose(coin));
+  updateUserFee(ownPublicKey(), disclose(coin.value), true);
+}
+
+//TODO: implement withdraw cross-chain asserts or fee for user
+export circuit userClaimCoin(id: Bytes<32>): [] {
+  assert(coinToBeClaimed.member(disclose(id)), "coin not exists");
+  const claimCoinInfo = coinToBeClaimed.lookup(disclose(id));
+  assert(claimCoinInfo.receiver == ownPublicKey(), "not receiver");
+  send(claimCoinInfo.coin, left<ZswapCoinPublicKey, ContractAddress>(claimCoinInfo.receiver), claimCoinInfo.coin.value);
+  coinToBeClaimed.remove(disclose(id));
+}
+
+export circuit userClaimMappingToken(id: Bytes<32>): [] {
+  assert(mappintTokenToBeClaim.member(disclose(id)), "mapping token not exists");
+  const claimMappingTokenInfo = mappintTokenToBeClaim.lookup(disclose(id));
+  assert(claimMappingTokenInfo.receiver == ownPublicKey(), "not receiver");
+  nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
+  mintToken(claimMappingTokenInfo.domainSep,claimMappingTokenInfo.amount as Uint<64>,nonce, left<ZswapCoinPublicKey, ContractAddress>(claimMappingTokenInfo.receiver));
+}
+
+circuit updateUserFee(user: ZswapCoinPublicKey, delta: Uint<128>,isAdd: Boolean): [] {
+  assert(delta > 0, "delta must be positive");
+  const oldBalance = userFeeBalance.member(ownPublicKey())?userFeeBalance.lookup(ownPublicKey()) : 0;
+  assert( isAdd || oldBalance >= delta, "userFeeBalance not enough");
+  
+  const newBalance = isAdd?(oldBalance + delta) : (oldBalance - delta);
+  if(newBalance == 0){
+    userFeeBalance.remove(ownPublicKey());
+  }else{
+    userFeeBalance.insert(ownPublicKey(), newBalance as Uint<128>);
+  }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////                                                              ////////////////////////////////////
+////////////////////////////////////                      Reserve Functions                       ////////////////////////////////////
+////////////////////////////////////                                                              ////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export circuit addReserve(coin: CoinInfo): [] {
+  receive(disclose(coin));
+  addTreasuryCoin(disclose(coin));
+  updateReserve(false, disclose(coin.color), disclose(coin.value), true);
+}
+
+circuit updateReserve(isMappingToken: Boolean,token: Bytes<32>, delta: Uint<128>, isAdd: Boolean): [] {
+  assert(delta > 0, "delta must be positive");
+  const oldAmount = reserveOfAllToken.member(disclose(token))? reserveOfAllToken.lookup(disclose(token)).total : 0;
+  assert(isAdd || oldAmount >= delta, "delta must be less than or equal to oldAmount");
+
+  const newAmount = isAdd ? oldAmount + delta : oldAmount - delta;
+
+  if(newAmount == 0){
+    reserveOfAllToken.remove(disclose(token));
+  }else{
+    reserveOfAllToken.insert(disclose(token),ReserveOfToken{total: newAmount as Uint<128>,isMappingToken: isMappingToken});
+  }
+}
+
+export circuit approveUserWithdrawFee(user: ZswapCoinPublicKey, coinGap: CoinInfo, coinIndexOfTreasuryCoin: Uint<128>): [] {
+  assert(ownPublicKey() == mergeWorker, "only mergeWorker can approveUserWithDrawFee");//TODO: who has the right to approve
+  assert(treasuryCoins.member(disclose(coinIndexOfTreasuryCoin)), "coinIndexOfTreasuryCoin not exists");
+  assert(userFeeBalance.member(disclose(user)), "userFeeBalance not exists");
+
+  const coinInfo = treasuryCoins.lookup(disclose(coinIndexOfTreasuryCoin));
+  const userFeeBalanceInfo = userFeeBalance.lookup(disclose(user));
+  assert(coinInfo.value == coinGap.value + userFeeBalanceInfo, "coinGap not correct");
+
+  nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
+  crossCounter.increment(1);
+  coinToBeClaimed.insert(nonce,ClaimCoinInfo{coin: coinInfo, receiver: disclose(user)});
+  userFeeBalance.remove(disclose(user));
+  treasuryCoins.remove(disclose(coinIndexOfTreasuryCoin));
+}
+
+export circuit withdrawReserveOfNativeToken(token: Bytes<32>,coinIndex: Uint<128>): [] {
+  assert(ownPublicKey() == mergeWorker, "only mergeWorker can withdrawReserveOfNativeToken");
+  assert(reserveOfAllToken.member(disclose(token)), "fee of specified token not exists");
+  const reserveInfo = reserveOfAllToken.lookup(disclose(token));
+  assert(reserveInfo.isMappingToken == false, "only native token can be executed");
+
+  const coinInput = treasuryCoins.lookup(disclose(coinIndex));
+  assert(coinInput.value <= reserveInfo.total, "not enough reserve");
+  const resultSend = send(coinInput, left<ZswapCoinPublicKey, ContractAddress>(feeReceiver), coinInput.value);
+
+  treasuryCoins.remove(disclose(coinIndex));
+  updateReserve(false,token,disclose(coinInput.value),false);
+}
+
+export circuit  withdrawReserveOfMappingToken(domainSep: Bytes<32>): [] {
+  assert(ownPublicKey() == mergeWorker, "only mergeWorker can withdrawReserveOfMappingToken");
+  assert(reserveOfAllToken.member(disclose(domainSep)), "reserver of specified domainSep not exists");
+  const reserveInfo = reserveOfAllToken.lookup(disclose(domainSep));
+  assert(reserveInfo.isMappingToken == true, "only mapping token can be executed");
+
+  nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
+  mintToken(disclose(domainSep), reserveInfo.total as Uint<64>, nonce,left<ZswapCoinPublicKey, ContractAddress>(feeReceiver));
+  updateReserve(true,domainSep,reserveInfo.total,false);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////                                                             //////////////////////////////////////
+/////////////////////////////////////                    Management Functions                     //////////////////////////////////////
+/////////////////////////////////////                                                             //////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export circuit transferOwner(newOwner: ZswapCoinPublicKey): [] {
   assert(owner == ownPublicKey(), "only owner can transfer ownership");
   pendingOwner = disclose(newOwner);
@@ -433,16 +516,16 @@ export circuit setMegerWorker(newMergeWorker: ZswapCoinPublicKey): [] {
 
 
 export circuit mergeTreasuryCoin(coins: Vector<2,Uint<128>>): [] {
-  assert(mergeWorker == ownPublicKey(), "only mergeWorker can merge coin");
-  assert(treasuryCoins.member(disclose(coins[0])), "coin 0 not exists");
-  assert(treasuryCoins.member(disclose(coins[1])), "coin 1 not exists");
+  // assert(mergeWorker == ownPublicKey(), "only mergeWorker can merge coin");
+  // assert(treasuryCoins.member(disclose(coins[0])), "coin 0 not exists");
+  // assert(treasuryCoins.member(disclose(coins[1])), "coin 1 not exists");
 
-  const coin0 = treasuryCoins.lookup(disclose(coins[0]));
-  const coin1 = treasuryCoins.lookup(disclose(coins[1]));
-  const coinInfo = mergeCoin(disclose(coin0), disclose(coin1));
-  treasuryCoins.remove(disclose(coins[0]));
-  treasuryCoins.remove(disclose(coins[1]));
-  addTreasuryCoin(coinInfo);
+  // const coin0 = treasuryCoins.lookup(disclose(coins[0]));
+  // const coin1 = treasuryCoins.lookup(disclose(coins[1]));
+  // const coinInfo = mergeCoin(disclose(coin0), disclose(coin1));
+  // treasuryCoins.remove(disclose(coins[0]));
+  // treasuryCoins.remove(disclose(coins[1]));
+  // addTreasuryCoin(coinInfo);
 }
 
 export circuit addAdmin(admin: ZswapCoinPublicKey): [] {
@@ -462,8 +545,6 @@ export circuit setAdminThreshold(threshold: Uint<8>): [] {
   assert(disclose(threshold) <= admins.size(), "threshold must be less than or equal to the number of admins");
   adminThreshold = disclose(threshold);
 }
-
-
 
 export circuit setSmgPksks(voters: Vector<2,ZswapCoinPublicKey>): [] {
   assert(owner == ownPublicKey(), "only owner can set smg pks");
