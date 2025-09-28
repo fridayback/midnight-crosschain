@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-26 21:54:22
+ * @LastEditTime: 2025-09-28 17:23:46
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -113,71 +113,44 @@ export const createWalletAndMidnightProvider = async (wallet: Wallet): Promise<W
   };
 };
 
-export const buildWalletAndWaitForFunds = async (
-  { indexer, indexerWS, node, proofServer }: Config,
-  seed: string,
-  filename: string,
-): Promise<Wallet & Resource> => {
-  const directoryPath = process.env.SYNC_CACHE;
-  let wallet: Wallet & Resource;
-  wallet = await WalletBuilder.build(
-    indexer,
-    indexerWS,
-    proofServer,
-    node,
-    seed,
-    getZswapNetworkId(),
-    'info',
-  );
-  wallet.start();
+// export const buildWalletAndWaitForFunds = async (
+//   { indexer, indexerWS, node, proofServer }: Config,
+//   seed: string,
+//   serializedState: string,
+//   discardTxHistory: boolean = true,
+// ): Promise<Wallet & Resource> => {
+//   let wallet: Wallet & Resource;
+//   if (serializedState) {
+//     wallet = await WalletBuilder.restore(indexer, indexerWS, proofServer, node, seed, serializedState);
+//   } else {
+//     wallet = await WalletBuilder.build(indexer, indexerWS, proofServer, node, seed,getZswapNetworkId(),'info',discardTxHistory);
+//   }
 
-  const state = await Rx.firstValueFrom(wallet.state());
-  // logger.info(`Your wallet seed is: ${seed}`);
-  // logger.info(`Your wallet address is: ${state.address}`);
-  console.log(`Your wallet address is: ${state.address}`)
-  let balance = state.balances;
-  // let balance = state.balances;
-  // if (balance === undefined || balance === 0n) {
-  if (Object.keys(balance).length === 0) {
-    // logger.info(`Your wallet balance is: 0`);
-    // logger.info(`Waiting to receive tokens...`);
-    balance = await waitForFunds(wallet);
-  } else {
-    // logger.info(`length: ${Object.keys(balance).length}, ${balance}`);
-  }
+//   wallet.start();
 
-  return wallet;
-};
+//   const state = await Rx.firstValueFrom(wallet.state());
+//   console.log(`Your wallet address is: ${state.address}`)
+//   let balance = state.balances;
+//   // let balance = state.balances;
+//   // if (balance === undefined || balance === 0n) {
+//   if (Object.keys(balance).length === 0) {
+//     // logger.info(`Your wallet balance is: 0`);
+//     // logger.info(`Waiting to receive tokens...`);
+//     balance = await waitForFunds(wallet);
+//   } else {
+//     // logger.info(`length: ${Object.keys(balance).length}, ${balance}`);
+//   }
 
-export const waitForFunds = (wallet: Wallet) =>
-  Rx.firstValueFrom(
-    wallet.state().pipe(
-      Rx.throttleTime(10_000),
-      Rx.tap((state) => {
-        const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
-        const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
-        // logger.info(`Waiting for funds. Backend lag: ${sourceGap}, wallet lag: ${applyGap}, transactions=${state.transactionHistory.length}`,);
-      }),
-      Rx.filter((state) => {
-        // Let's allow progress only if wallet is synced
-        // logger.info(`wallet ZswapCoinPublicKey: ${parseCoinPublicKeyToHex(state.coinPublicKey, getLedgerNetworkId())},${state.coinPublicKey}`);
-        return state.syncProgress?.synced === true;
-      }),
-      // Rx.map((s) => s.balances[nativeToken()] ?? 0n),
-      Rx.map((s) => s.balances),
-      Rx.filter((balance) => balance ? true : false),
-    ),
-  );
-
+//   return wallet;
+// };
 
 export const waitForSync = (wallet: Wallet) =>
   Rx.firstValueFrom(
     wallet.state().pipe(
-      Rx.throttleTime(5_000),
+      Rx.throttleTime(1_000),
       Rx.tap((state) => {
         const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
         const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
-        // logger.info(`Waiting for funds. Backend lag: ${sourceGap}, wallet lag: ${applyGap}, transactions=${state.transactionHistory.length}`,);
       }),
       Rx.filter((state) => {
         // Let's allow progress only if wallet is synced fully
@@ -189,11 +162,10 @@ export const waitForSync = (wallet: Wallet) =>
 export const waitForSyncProgress = async (wallet: Wallet) =>
   await Rx.firstValueFrom(
     wallet.state().pipe(
-      Rx.throttleTime(5_000),
+      Rx.throttleTime(1_000),
       Rx.tap((state) => {
         const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
         const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
-        // logger.info(`Waiting for funds. Backend lag: ${sourceGap}, wallet lag: ${applyGap}, transactions=${state.transactionHistory.length}`,);
       }),
       Rx.filter((state) => {
         // Let's allow progress only if syncProgress is defined
@@ -202,6 +174,95 @@ export const waitForSyncProgress = async (wallet: Wallet) =>
     ),
   );
 
+export const waitForFunds = (wallet: Wallet) =>
+  Rx.firstValueFrom(
+    wallet.state().pipe(
+      Rx.throttleTime(10_000),
+      Rx.tap((state) => {
+        const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
+        const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
+      }),
+      Rx.filter((state) => {
+        // Let's allow progress only if wallet is synced
+        return state.syncProgress?.synced === true;
+      }),
+      Rx.map((s) => s.balances[nativeToken()] ?? 0n),
+      Rx.filter((balance) => balance > 0n),
+    ),
+  );
+
+export const buildWalletAndWaitForFunds = async (
+  { indexer, indexerWS, node, proofServer }: Config,
+  seed: string,
+  serializedState: string | undefined,
+): Promise<Wallet & Resource> => {
+  let wallet: Wallet & Resource;
+
+  if (serializedState) {
+    wallet = await WalletBuilder.restore(indexer, indexerWS, proofServer, node, seed, serializedState, 'info');
+    wallet.start();
+    const stateObject = JSON.parse(serializedState);
+    if ((await isAnotherChain(wallet, Number(stateObject.offset))) === true) {
+      console.warn('The chain was reset, building wallet from scratch');
+      wallet = await WalletBuilder.build(
+        indexer,
+        indexerWS,
+        proofServer,
+        node,
+        seed,
+        getZswapNetworkId(),
+        'info',
+      );
+      wallet.start();
+    } else {
+      const newState = await waitForSync(wallet);
+      // allow for situations when there's no new index in the network between runs
+      if (newState.syncProgress?.synced) {
+        console.info('Wallet was able to sync from restored state');
+      } else {
+        throw new Error('Wallet was not able to sync from restored state');
+      }
+    }
+      
+  } else {
+    console.log('Wallet save file not found, building wallet from scratch');
+    wallet = await WalletBuilder.build(
+      indexer,
+      indexerWS,
+      proofServer,
+      node,
+      seed,
+      getZswapNetworkId(),
+      'info',
+    );
+    wallet.start();
+  }
+
+  const state = await Rx.firstValueFrom(wallet.state());
+  console.info(`Your wallet address is: ${state.address}`);
+  let balance = state.balances[nativeToken()];
+  if (balance === undefined || balance === 0n) {
+    console.info(`Your wallet balance is: 0`);
+    console.info(`Waiting to receive tokens...`);
+    balance = await waitForFunds(wallet);
+  }
+  console.info(`Your wallet balance is: ${balance}`);
+  return wallet;
+};
+
+export const isAnotherChain = async (wallet: Wallet, offset: number) => {
+  await waitForSyncProgress(wallet);
+  // Here wallet does not expose the offset block it is synced to, that is why this workaround
+  const walletOffset = Number(JSON.parse(await wallet.serializeState()).offset);
+  if (walletOffset < offset - 1) {
+    console.info(`Your offset offset is: ${walletOffset} restored offset: ${offset} so it is another chain`);
+    return true;
+  } else {
+    console.info(`Your offset offset is: ${walletOffset} restored offset: ${offset} ok`);
+    return false;
+  }
+};
+
 export class CrossChainApi {
   providers!: CrossChainProviders;
   crossChainContract!: DeployedCrossChainContract;
@@ -209,27 +270,6 @@ export class CrossChainApi {
   MaxMergeCoins = 4;
   constructor(networkId: NetworkId = NetworkId.TestNet) {
     setNetworkId(networkId);
-  }
-
-  defaultSmgSignators() {
-    return Array.from({ length: this.MaxSmgSignators }, () => 0n);
-  }
-
-  defaultNoneMergeCoins() {
-    return {
-      is_some: false,
-      value: Array.from({ length: this.MaxMergeCoins }, () => 0n),
-    };
-  }
-
-  toMergerCoins(coins: string[] | number[] | bigint[] | undefined) {
-    if (coins === undefined) {
-      return this.defaultNoneMergeCoins();
-    }
-    return {
-      is_some: true,
-      value: coins.map((c) => BigInt(c)),
-    };
   }
 
   async init(config: Config, wallet: Wallet) {
@@ -284,12 +324,6 @@ export class CrossChainApi {
     const amount_0 = BigInt(amount);
     const fee_0 = BigInt(fee);
     const toAddr_0 = { bytes: getCoinPublicKeyFromShieldAddress(toAddr) };
-    let coins_0 = this.defaultNoneMergeCoins();
-    if (coins && coins.length > coins_0.value.length) {
-      throw new Error(`Too many coins`);
-    } else {
-      coins?.map((c, i) => coins_0.value[i] = (BigInt(c)));
-    }
 
     const ttl_0 = BigInt(ttl);
     return {
@@ -303,20 +337,6 @@ export class CrossChainApi {
     }
 
   }
-
-
-  // caculateHashOfProofData(proof: CrossChain.ProofData): bigint {
-  //   const tokenPairIdHash = persistentHash(new CompactTypeUnsignedInteger(4294967295n, 4), proof.tokenPairId);
-  //   const amountHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.amount);
-  //   const feeHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.fee);
-  //   const coinsHash = persistentHash(new CompactTypeVector(this.MaxMergeCoins, new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16)), proof.coins.value);
-  //   const signersHash = persistentHash(new CompactTypeVector(this.MaxSmgSignators, new CompactTypeUnsignedInteger(255n, 1)), proof.signers);
-  //   const ttlHash = persistentHash(new CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16), proof.ttl);
-
-  //   return degradeToTransient(persistentHash(new CompactTypeVector(9, new CompactTypeBytes(32)),
-  //     [proof.smgId, proof.uniqueId, tokenPairIdHash, amountHash, feeHash, proof.toAddr.bytes, coinsHash, signersHash, ttlHash]
-  //   ));
-  // }
 
   async getTokenPairInfo(tokenPairId: bigint | string | number): Promise<CrossChain.TokenPairInfo | undefined> {
     const ledger = await this.getLedgerState();

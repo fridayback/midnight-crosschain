@@ -30,25 +30,17 @@ export interface Config {
 }
 export declare const crosschainContractInstance: CrossChainContract;
 export declare const createWalletAndMidnightProvider: (wallet: Wallet) => Promise<WalletProvider & MidnightProvider>;
-export declare const buildWalletAndWaitForFunds: ({ indexer, indexerWS, node, proofServer }: Config, seed: string, filename: string) => Promise<Wallet & Resource>;
-export declare const waitForFunds: (wallet: Wallet) => Promise<Record<string, bigint>>;
 export declare const waitForSync: (wallet: Wallet) => Promise<import("@midnight-ntwrk/wallet-api").WalletState>;
 export declare const waitForSyncProgress: (wallet: Wallet) => Promise<import("@midnight-ntwrk/wallet-api").WalletState>;
+export declare const waitForFunds: (wallet: Wallet) => Promise<bigint>;
+export declare const buildWalletAndWaitForFunds: ({ indexer, indexerWS, node, proofServer }: Config, seed: string, serializedState: string | undefined) => Promise<Wallet & Resource>;
+export declare const isAnotherChain: (wallet: Wallet, offset: number) => Promise<boolean>;
 export declare class CrossChainApi {
     providers: CrossChainProviders;
     crossChainContract: DeployedCrossChainContract;
     MaxSmgSignators: number;
     MaxMergeCoins: number;
     constructor(networkId?: NetworkId);
-    defaultSmgSignators(): bigint[];
-    defaultNoneMergeCoins(): {
-        is_some: boolean;
-        value: bigint[];
-    };
-    toMergerCoins(coins: string[] | number[] | bigint[] | undefined): {
-        is_some: boolean;
-        value: bigint[];
-    };
     init(config: Config, wallet: Wallet): Promise<void>;
     deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, signingKey: SigningKey): Promise<ContractAddress>;
     join(contractAddress: ContractAddress): Promise<void>;
