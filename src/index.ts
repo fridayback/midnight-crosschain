@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-28 18:49:23
+ * @LastEditTime: 2025-09-28 21:20:46
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -231,6 +231,20 @@ export const isAnotherChain = async (wallet: Wallet, offset: number) => {
     return false;
   }
 };
+
+export const getSerializeWalletState = async (wallet: Wallet): Promise<string> => {
+  return await wallet.serializeState();
+};
+
+export const walletAddress = async (wallet: Wallet): Promise<string> => {
+  const state = await Rx.firstValueFrom(wallet.state());
+  return state.address;
+}
+
+export const walletBalance = async (wallet: Wallet): Promise<Record<string,bigint>> => {
+  const state = await Rx.firstValueFrom(wallet.state());
+  return state.balances;
+}
 
 export class CrossChainApi {
   providers!: CrossChainProviders;
@@ -843,6 +857,7 @@ export const getCoinPublicKeyFromShieldAddress = (shieldAddr: string) => {
   return tmp2.coinPublicKey.data;
 }
 
+//only support 0-MainNet, 1-TestNet, 2-DevNet, 3-Undeployed
 export const initNetwork = (networkId: number) => {
   let network = NetworkId.TestNet;
   switch (networkId) {

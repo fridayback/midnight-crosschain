@@ -34,6 +34,9 @@ export declare const waitForSyncProgress: (wallet: Wallet) => Promise<import("@m
 export declare const waitForFunds: (wallet: Wallet) => Promise<bigint>;
 export declare const buildWalletAndWaitForFunds: ({ indexer, indexerWS, node, proofServer }: Config, seed: string, serializedState: string | undefined) => Promise<Wallet & Resource>;
 export declare const isAnotherChain: (wallet: Wallet, offset: number) => Promise<boolean>;
+export declare const getSerializeWalletState: (wallet: Wallet) => Promise<string>;
+export declare const walletAddress: (wallet: Wallet) => Promise<string>;
+export declare const walletBalance: (wallet: Wallet) => Promise<Record<string, bigint>>;
 export declare class CrossChainApi {
     providers: CrossChainProviders;
     crossChainContract: DeployedCrossChainContract;
