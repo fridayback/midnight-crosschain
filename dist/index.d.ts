@@ -33,7 +33,7 @@ export declare const createWalletAndMidnightProvider: (wallet: Wallet) => Promis
 export declare const waitForSync: (wallet: Wallet) => Promise<import("@midnight-ntwrk/wallet-api").WalletState>;
 export declare const waitForSyncProgress: (wallet: Wallet) => Promise<import("@midnight-ntwrk/wallet-api").WalletState>;
 export declare const waitForFunds: (wallet: Wallet) => Promise<bigint>;
-export declare const buildWalletAndWaitForFunds: ({ indexer, indexerWS, node, proofServer }: Config, seed: string, serializedState: string | undefined) => Promise<Wallet & Resource>;
+export declare const buildWalletAndWaitForFunds: ({ indexer, indexerWS, node, proofServer }: Config, seed: string, serializedState: string | undefined, networkId?: NetworkId) => Promise<Wallet & Resource>;
 export declare const isAnotherChain: (wallet: Wallet, offset: number) => Promise<boolean>;
 export declare class CrossChainApi {
     providers: CrossChainProviders;
@@ -143,3 +143,4 @@ export declare const configureProviders: (wallet: Wallet & Resource, config: Con
     midnightProvider: WalletProvider & MidnightProvider;
 }>;
 export declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
+export declare const initNetwork: (networkId: NetworkId) => void;

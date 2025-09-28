@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-28 17:23:46
+ * @LastEditTime: 2025-09-28 18:29:00
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -72,33 +72,6 @@ export const createWalletAndMidnightProvider = async (wallet) => {
         },
     };
 };
-// export const buildWalletAndWaitForFunds = async (
-//   { indexer, indexerWS, node, proofServer }: Config,
-//   seed: string,
-//   serializedState: string,
-//   discardTxHistory: boolean = true,
-// ): Promise<Wallet & Resource> => {
-//   let wallet: Wallet & Resource;
-//   if (serializedState) {
-//     wallet = await WalletBuilder.restore(indexer, indexerWS, proofServer, node, seed, serializedState);
-//   } else {
-//     wallet = await WalletBuilder.build(indexer, indexerWS, proofServer, node, seed,getZswapNetworkId(),'info',discardTxHistory);
-//   }
-//   wallet.start();
-//   const state = await Rx.firstValueFrom(wallet.state());
-//   console.log(`Your wallet address is: ${state.address}`)
-//   let balance = state.balances;
-//   // let balance = state.balances;
-//   // if (balance === undefined || balance === 0n) {
-//   if (Object.keys(balance).length === 0) {
-//     // logger.info(`Your wallet balance is: 0`);
-//     // logger.info(`Waiting to receive tokens...`);
-//     balance = await waitForFunds(wallet);
-//   } else {
-//     // logger.info(`length: ${Object.keys(balance).length}, ${balance}`);
-//   }
-//   return wallet;
-// };
 export const waitForSync = (wallet) => Rx.firstValueFrom(wallet.state().pipe(Rx.throttleTime(1_000), Rx.tap((state) => {
     const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
     const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
@@ -120,7 +93,8 @@ export const waitForFunds = (wallet) => Rx.firstValueFrom(wallet.state().pipe(Rx
     // Let's allow progress only if wallet is synced
     return state.syncProgress?.synced === true;
 }), Rx.map((s) => s.balances[nativeToken()] ?? 0n), Rx.filter((balance) => balance > 0n)));
-export const buildWalletAndWaitForFunds = async ({ indexer, indexerWS, node, proofServer }, seed, serializedState) => {
+export const buildWalletAndWaitForFunds = async ({ indexer, indexerWS, node, proofServer }, seed, serializedState, networkId = NetworkId.TestNet) => {
+    setNetworkId(networkId);
     let wallet;
     if (serializedState) {
         wallet = await WalletBuilder.restore(indexer, indexerWS, proofServer, node, seed, serializedState, 'info');
@@ -677,4 +651,5 @@ export const getCoinPublicKeyFromShieldAddress = (shieldAddr) => {
     // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
     return tmp2.coinPublicKey.data;
 };
+export const initNetwork = (networkId) => setNetworkId(networkId);
 //# sourceMappingURL=index.js.map
