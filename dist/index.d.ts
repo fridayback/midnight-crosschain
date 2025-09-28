@@ -4,7 +4,6 @@ import { FinalizedCallTxData, type DeployedContract, type FoundContract } from '
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { Address, Wallet } from '@midnight-ntwrk/wallet-api';
 import { TokenType } from '@midnight-ntwrk/zswap';
-import { NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { ContractAddress, SigningKey } from '@midnight-ntwrk/compact-runtime';
 import { Resource } from '@midnight-ntwrk/wallet';
 export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
@@ -143,4 +142,4 @@ export declare const configureProviders: (wallet: Wallet & Resource, config: Con
     midnightProvider: WalletProvider & MidnightProvider;
 }>;
 export declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
-export declare const initNetwork: (networkId: NetworkId) => void;
+export declare const initNetwork: (networkId: number) => void;
