@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-28 18:29:00
+ * @LastEditTime: 2025-09-28 18:31:30
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -19,7 +19,7 @@ import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { decodeTokenType, encodeTokenType, Transaction, tokenType, sampleCoinPublicKey, encodeCoinInfo, createCoinInfo, ContractState, nativeToken } from '@midnight-ntwrk/ledger';
 import { Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
-import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { getLedgerNetworkId, getZswapNetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
 import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as Rx from 'rxjs';
@@ -93,8 +93,7 @@ export const waitForFunds = (wallet) => Rx.firstValueFrom(wallet.state().pipe(Rx
     // Let's allow progress only if wallet is synced
     return state.syncProgress?.synced === true;
 }), Rx.map((s) => s.balances[nativeToken()] ?? 0n), Rx.filter((balance) => balance > 0n)));
-export const buildWalletAndWaitForFunds = async ({ indexer, indexerWS, node, proofServer }, seed, serializedState, networkId = NetworkId.TestNet) => {
-    setNetworkId(networkId);
+export const buildWalletAndWaitForFunds = async ({ indexer, indexerWS, node, proofServer }, seed, serializedState) => {
     let wallet;
     if (serializedState) {
         wallet = await WalletBuilder.restore(indexer, indexerWS, proofServer, node, seed, serializedState, 'info');
@@ -150,8 +149,8 @@ export class CrossChainApi {
     crossChainContract;
     MaxSmgSignators = 29;
     MaxMergeCoins = 4;
-    constructor(networkId = NetworkId.TestNet) {
-        setNetworkId(networkId);
+    constructor() {
+        // setNetworkId(networkId);
     }
     async init(config, wallet) {
         const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
