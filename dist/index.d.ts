@@ -130,12 +130,6 @@ export declare class CrossChainApi {
 export declare const getTreasuryCoinsFromState: (state: CrossChain.Ledger) => Map<string, Map<bigint, CrossChain.QualifiedCoinInfo>>;
 export declare const genSigningKey: () => string;
 export declare const genRandomBigint: () => bigint;
-export declare const signData: (hash: bigint, privateKey: bigint) => {
-    R: import("@midnight-ntwrk/compact-runtime").CurvePoint;
-    s: bigint;
-    P: import("@midnight-ntwrk/compact-runtime").CurvePoint;
-};
-export declare const verifySignature: (hash: bigint, R: CrossChain.CurvePoint, s: bigint, P: CrossChain.CurvePoint) => boolean;
 export declare const configureProviders: (wallet: Wallet & Resource, config: Config) => Promise<{
     privateStateProvider: import("@midnight-ntwrk/midnight-js-types").PrivateStateProvider<"crossChainPrivateState", any>;
     publicDataProvider: import("@midnight-ntwrk/midnight-js-types").PublicDataProvider;
@@ -146,3 +140,17 @@ export declare const configureProviders: (wallet: Wallet & Resource, config: Con
 }>;
 export declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 export declare const initNetwork: (networkId: number) => void;
+export declare class MidnightWalletSDK {
+    readonly config: Config;
+    private walletObj?;
+    private walletAddress;
+    private bActiveFlag;
+    constructor(config: Config);
+    initWallet(strSeed: string, strSerializedState?: string): Promise<void>;
+    getAccountAddress(): string;
+    getBalances(): Promise<any[]>;
+    getAvailableCoins(): Promise<import("@midnight-ntwrk/zswap").QualifiedCoinInfo[]>;
+    uninitWallet(): void;
+    getWalletInstance(): (Wallet & Resource) | undefined;
+    getSerializedWalletState(): Promise<string> | "";
+}

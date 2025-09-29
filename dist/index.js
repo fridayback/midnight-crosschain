@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-28 21:20:46
+ * @LastEditTime: 2025-09-29 11:37:44
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -23,7 +23,7 @@ import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId } from '
 import { assertIsContractAddress, fromHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
 import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as Rx from 'rxjs';
-import { addField, CompactTypeOpaqueString, ecAdd, ecMul, ecMulGenerator, mulField, sampleSigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
+import { CompactTypeOpaqueString, sampleSigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
 import { WalletBuilder } from '@midnight-ntwrk/wallet';
 import assert from 'node:assert';
 export const CrossChainPrivateStateId = 'crossChainPrivateState';
@@ -624,22 +624,6 @@ export const genRandomBigint = () => {
     const r = transientHash(new CompactTypeOpaqueString(), sampleCoinPublicKey());
     return r;
 };
-export const signData = (hash, privateKey) => {
-    const k = BigInt(privateKey);
-    const r = genRandomBigint();
-    const R = ecMulGenerator(r);
-    const P = ecMulGenerator(k);
-    const m = BigInt(hash);
-    const tmp = mulField(k, m);
-    const s = addField(r, tmp);
-    return { R, s, P };
-};
-export const verifySignature = (hash, R, s, P) => {
-    const m = BigInt(hash);
-    const expectM = ecAdd(R, ecMul(P, m));
-    const realM = ecMulGenerator(s);
-    return expectM.x === realM.x && expectM.y === realM.y;
-};
 export const configureProviders = async (wallet, config) => {
     const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
     // console.log('^^^^^^^^^^^^^^',ZKConfig.zkConfigPath)
@@ -682,4 +666,75 @@ export const initNetwork = (networkId) => {
     }
     setNetworkId(network);
 };
+export class MidnightWalletSDK {
+    config;
+    // private NetWorkId: NetworkId;
+    walletObj;
+    walletAddress;
+    bActiveFlag;
+    constructor(config) {
+        this.config = config;
+        this.walletAddress = '';
+        this.bActiveFlag = false;
+    }
+    //////////////////////////////////////////
+    // to generate a wallet instance
+    //////////////////////////////////////////
+    async initWallet(strSeed, strSerializedState) {
+        this.walletObj = await buildWalletAndWaitForFunds(this.config, strSeed, strSerializedState);
+        const state = await Rx.firstValueFrom(this.walletObj.state());
+        this.walletAddress = state.address;
+    }
+    // to get the wallet address
+    getAccountAddress() {
+        return this.walletAddress;
+    }
+    async getBalances() {
+        assert(this.walletObj, "walletObj is not initialized!");
+        let curState = await Rx.firstValueFrom(this.walletObj.state());
+        // console.log("\n\n...getAccountBalance...curState: ", curState);
+        // balances: Record<TokenType, bigint>;
+        let aryBalance = new Array();
+        let curBalance = curState.balances;
+        // console.log("\n\n...getAccountBalance...curBalance: ", curBalance);
+        // in case the balances is an object instance
+        for (const coinType in curBalance) {
+            if (curBalance.hasOwnProperty(coinType)) {
+                // console.log("\n\n...getAccountBalance...coinType: ", coinType);
+                let coinAmount = curBalance[coinType];
+                // console.log("\n\n...getAccountBalance...amount : ", coinAmount);
+                let item = {
+                    "coinType": coinType,
+                    "amount": coinAmount
+                };
+                aryBalance.push(item);
+            }
+        }
+        return aryBalance;
+    }
+    async getAvailableCoins() {
+        assert(this.walletObj, "walletObj is not initialized!");
+        let curState = await Rx.firstValueFrom(this.walletObj.state());
+        // console.log("\n\n...getAvailableCoins...curState: ", curState);
+        //QualifiedCoinInfo = { type: TokenType, nonce: Nonce, value: bigint, mt_index: bigint };
+        let availableCoins = curState.availableCoins;
+        // console.log("\n\n...getAvailableCoins...curBalance: ", availableCoins);
+        return availableCoins;
+    }
+    uninitWallet() {
+        if (true === this.bActiveFlag) {
+            this.walletObj?.close();
+        }
+        this.bActiveFlag = false;
+        console.log("\n\n...wallet close done!");
+    }
+    getWalletInstance() {
+        return this.walletObj;
+    }
+    getSerializedWalletState() {
+        if (!this.walletObj)
+            return '';
+        return getSerializeWalletState(this.walletObj);
+    }
+}
 //# sourceMappingURL=index.js.map
