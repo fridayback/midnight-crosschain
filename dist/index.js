@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-29 15:12:33
+ * @LastEditTime: 2025-09-29 15:56:33
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -688,7 +688,7 @@ export class MidnightWalletSDK {
         this.walletAddress = state.address;
         const callBack = async () => {
             const ret = await selfWallet.serializeState();
-            await store.storeWallet(ret);
+            await store(ret);
             console.log('wallet state saved!');
             clearTimeout(this.storeTimer);
             this.storeTimer = setTimeout(callBack, 5000);

@@ -141,7 +141,7 @@ export declare const configureProviders: (wallet: Wallet & Resource, config: Con
 export declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 export declare const initNetwork: (networkId: number) => void;
 export interface WalletStore {
-    storeWallet(walletState: string): Promise<void>;
+    (walletState: string): Promise<void>;
 }
 export declare class MidnightWalletSDK {
     readonly config: Config;
