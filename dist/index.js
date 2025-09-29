@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-29 15:56:33
+ * @LastEditTime: 2025-09-29 16:34:33
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -104,21 +104,21 @@ export const buildWalletAndWaitForFunds = async ({ indexer, indexerWS, node, pro
             wallet = await WalletBuilder.build(indexer, indexerWS, proofServer, node, seed, getZswapNetworkId(), 'info');
             wallet.start();
         }
-        else {
-            const newState = await waitForSync(wallet);
-            // allow for situations when there's no new index in the network between runs
-            if (newState.syncProgress?.synced) {
-                console.info('Wallet was able to sync from restored state');
-            }
-            else {
-                throw new Error('Wallet was not able to sync from restored state');
-            }
-        }
     }
     else {
         console.log('Wallet save file not found, building wallet from scratch');
         wallet = await WalletBuilder.build(indexer, indexerWS, proofServer, node, seed, getZswapNetworkId(), 'info');
         wallet.start();
+    }
+    {
+        const newState = await waitForSync(wallet);
+        // allow for situations when there's no new index in the network between runs
+        if (newState.syncProgress?.synced) {
+            console.info('Wallet was able to sync from restored state');
+        }
+        else {
+            throw new Error('Wallet was not able to sync from restored state');
+        }
     }
     const state = await Rx.firstValueFrom(wallet.state());
     console.info(`Your wallet address is: ${state.address}`);
