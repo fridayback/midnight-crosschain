@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-29 11:37:44
+ * @LastEditTime: 2025-09-29 15:12:33
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -672,6 +672,7 @@ export class MidnightWalletSDK {
     walletObj;
     walletAddress;
     bActiveFlag;
+    storeTimer;
     constructor(config) {
         this.config = config;
         this.walletAddress = '';
@@ -680,10 +681,21 @@ export class MidnightWalletSDK {
     //////////////////////////////////////////
     // to generate a wallet instance
     //////////////////////////////////////////
-    async initWallet(strSeed, strSerializedState) {
+    async initWallet(strSeed, store, strSerializedState) {
         this.walletObj = await buildWalletAndWaitForFunds(this.config, strSeed, strSerializedState);
+        const selfWallet = this.walletObj;
         const state = await Rx.firstValueFrom(this.walletObj.state());
         this.walletAddress = state.address;
+        const callBack = async () => {
+            const ret = await selfWallet.serializeState();
+            await store.storeWallet(ret);
+            console.log('wallet state saved!');
+            clearTimeout(this.storeTimer);
+            this.storeTimer = setTimeout(callBack, 5000);
+        };
+        this.storeTimer = setTimeout(async () => {
+            await callBack();
+        }, 5000);
     }
     // to get the wallet address
     getAccountAddress() {
@@ -722,6 +734,9 @@ export class MidnightWalletSDK {
         return availableCoins;
     }
     uninitWallet() {
+        if (this.storeTimer) {
+            clearTimeout(this.storeTimer);
+        }
         if (true === this.bActiveFlag) {
             this.walletObj?.close();
         }

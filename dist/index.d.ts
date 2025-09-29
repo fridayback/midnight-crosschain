@@ -140,13 +140,17 @@ export declare const configureProviders: (wallet: Wallet & Resource, config: Con
 }>;
 export declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 export declare const initNetwork: (networkId: number) => void;
+export interface WalletStore {
+    storeWallet(walletState: string): Promise<void>;
+}
 export declare class MidnightWalletSDK {
     readonly config: Config;
     private walletObj?;
     private walletAddress;
     private bActiveFlag;
+    private storeTimer?;
     constructor(config: Config);
-    initWallet(strSeed: string, strSerializedState?: string): Promise<void>;
+    initWallet(strSeed: string, store: WalletStore, strSerializedState?: string): Promise<void>;
     getAccountAddress(): string;
     getBalances(): Promise<any[]>;
     getAvailableCoins(): Promise<import("@midnight-ntwrk/zswap").QualifiedCoinInfo[]>;
