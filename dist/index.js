@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-29 16:34:33
+ * @LastEditTime: 2025-09-30 16:22:48
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -681,7 +681,7 @@ export class MidnightWalletSDK {
     //////////////////////////////////////////
     // to generate a wallet instance
     //////////////////////////////////////////
-    async initWallet(strSeed, store, strSerializedState) {
+    async initWallet(strSeed, store, strSerializedState, saveInterval = 600000) {
         this.walletObj = await buildWalletAndWaitForFunds(this.config, strSeed, strSerializedState);
         const selfWallet = this.walletObj;
         const state = await Rx.firstValueFrom(this.walletObj.state());
@@ -691,11 +691,11 @@ export class MidnightWalletSDK {
             await store(ret);
             console.log('wallet state saved!');
             clearTimeout(this.storeTimer);
-            this.storeTimer = setTimeout(callBack, 5000);
+            this.storeTimer = setTimeout(callBack, saveInterval);
         };
         this.storeTimer = setTimeout(async () => {
             await callBack();
-        }, 5000);
+        }, 1000);
     }
     // to get the wallet address
     getAccountAddress() {
