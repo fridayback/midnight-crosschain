@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-09 11:53:26
+ * @LastEditTime: 2025-10-09 16:14:16
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -155,8 +155,8 @@ export const waitForFunds = (wallet: Wallet) =>
         // Let's allow progress only if wallet is synced
         return state.syncProgress?.synced === true;
       }),
-      Rx.map((s) => s.balances[nativeToken()] ?? 0n),
-      Rx.filter((balance) => balance > 0n),
+      Rx.map((s) => s.balances),
+      // Rx.filter((balances) => token? balances[token]:balances),
     ),
   );
 
@@ -215,7 +215,7 @@ export const buildWalletAndWaitForFunds = async (
   if (balance === undefined || balance === 0n) {
     console.info(`Your wallet balance is: 0`);
     console.info(`Waiting to receive tokens...`);
-    balance = await waitForFunds(wallet);
+    balance = (await waitForFunds(wallet))[nativeToken()];
   }
   console.info(`Your wallet balance is: ${balance}`);
   return wallet;
