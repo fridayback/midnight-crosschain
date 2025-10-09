@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-09-30 16:22:48
+ * @LastEditTime: 2025-10-09 11:23:38
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -169,7 +169,7 @@ export const buildWalletAndWaitForFunds = async (
 
   if (serializedState) {
     wallet = await WalletBuilder.restore(indexer, indexerWS, proofServer, node, seed, serializedState, 'info');
-    wallet.start();
+    // wallet.start();
     const stateObject = JSON.parse(serializedState);
     if ((await isAnotherChain(wallet, Number(stateObject.offset))) === true) {
       console.warn('The chain was reset, building wallet from scratch');
@@ -182,8 +182,10 @@ export const buildWalletAndWaitForFunds = async (
         getZswapNetworkId(),
         'info',
       );
-      wallet.start();
+      // wallet.start();
+      console.log('Wallet was built from scratch 1');
     }
+    wallet.start();
   } else {
     console.log('Wallet save file not found, building wallet from scratch');
     wallet = await WalletBuilder.build(
@@ -196,6 +198,7 @@ export const buildWalletAndWaitForFunds = async (
       'info',
     );
     wallet.start();
+    console.log('Wallet was built from scratch 2');
   }
 
   {
