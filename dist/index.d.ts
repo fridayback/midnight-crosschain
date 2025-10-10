@@ -91,7 +91,7 @@ export declare class CrossChainApi {
         coinIndex: string | number | bigint | undefined;
     })[]): Promise<FinalizedCallTxData<CrossChainContract, "executeMultiCrossProposal">>;
     userRechargeForFee(amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "userRechargeForFee">>;
-    approveUserWithdrawFee(user: Address, coinIndex: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "approveUserWithdrawFee">>;
+    approveUserWithdrawFee(user: Address, amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "approveUserWithdrawFee">>;
     userClaim(uniqueId: string, isMappingToken: boolean): Promise<FinalizedCallTxData<CrossChainContract, "userClaimMappingToken">>;
     userClaimCoin(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "userClaimCoin">>;
     userClaimMappingToken(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "userClaimMappingToken">>;

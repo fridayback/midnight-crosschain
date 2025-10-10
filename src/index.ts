@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-10 11:49:00
+ * @LastEditTime: 2025-10-10 17:29:23
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -497,18 +497,17 @@ export class CrossChainApi {
     return finalizedTxData;
   }
 
-  async approveUserWithdrawFee(user: Address, coinIndex: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "approveUserWithdrawFee">> {
+  async approveUserWithdrawFee(user: Address, amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "approveUserWithdrawFee">> {
     const key_0 = { bytes: getCoinPublicKeyFromShieldAddress(user) };
     const ledgerState = await this.getLedgerState();
     assert(ledgerState != null, `ledgerState is null`);
 
+    const amount_0 = BigInt(amount);
     const balance_0 = ledgerState.userFeeBalance.lookup(key_0);
-    assert(balance_0 != null, `user ${user} has no fee balance`);
-    const coin = ledgerState.treasuryCoins.lookup(BigInt(coinIndex));
-    assert(coin != null, `coin ${coinIndex} not found`);
-    assert(coin.value >= balance_0, `coin ${coinIndex} balance is not enough`);
-    const coin_0 = coinInfo(nativeToken(), coin.value - balance_0);
-    const finalizedTxData = await this.crossChainContract.callTx.approveUserWithdrawFee(key_0, coin_0, BigInt(coinIndex));
+    assert(balance_0 >= amount_0, `user ${user} has not enough fee balance real (${balance_0}) vs withdraw ${amount_0}`);
+
+    const coin_0 = coinInfo(nativeToken(), BigInt(amount));
+    const finalizedTxData = await this.crossChainContract.callTx.approveUserWithdrawFee(key_0, coin_0);
     return finalizedTxData;
   }
 

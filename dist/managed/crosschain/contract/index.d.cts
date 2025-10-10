@@ -117,8 +117,7 @@ export type ImpureCircuits<T> = {
   addReserve(context: __compactRuntime.CircuitContext<T>, coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   approveUserWithdrawFee(context: __compactRuntime.CircuitContext<T>,
                          user_0: ZswapCoinPublicKey,
-                         coinGap_0: CoinInfo,
-                         coinIndexOfTreasuryCoin_0: bigint): __compactRuntime.CircuitResults<T, []>;
+                         coinApprove_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   withdrawReserveOfNativeToken(context: __compactRuntime.CircuitContext<T>,
                                token_0: Uint8Array,
                                coinIndex_0: bigint): __compactRuntime.CircuitResults<T, []>;
@@ -208,8 +207,7 @@ export type Circuits<T> = {
   addReserve(context: __compactRuntime.CircuitContext<T>, coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   approveUserWithdrawFee(context: __compactRuntime.CircuitContext<T>,
                          user_0: ZswapCoinPublicKey,
-                         coinGap_0: CoinInfo,
-                         coinIndexOfTreasuryCoin_0: bigint): __compactRuntime.CircuitResults<T, []>;
+                         coinApprove_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   withdrawReserveOfNativeToken(context: __compactRuntime.CircuitContext<T>,
                                token_0: Uint8Array,
                                coinIndex_0: bigint): __compactRuntime.CircuitResults<T, []>;
@@ -378,7 +376,7 @@ export type Ledger = {
     lookup(key_0: Uint8Array): ClaimCoinInfo;
     [Symbol.iterator](): Iterator<[Uint8Array, ClaimCoinInfo]>
   };
-  mappintTokenToBeClaim: {
+  mappingTokenToBeClaim: {
     isEmpty(): boolean;
     size(): bigint;
     member(key_0: Uint8Array): boolean;

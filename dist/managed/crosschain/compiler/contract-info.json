@@ -504,7 +504,7 @@
           }
         },
         {
-          "name": "coinGap",
+          "name": "coinApprove",
           "type": {
             "type-name": "Struct",
             "name": "CoinInfo",
@@ -531,13 +531,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "name": "coinIndexOfTreasuryCoin",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
           }
         }
       ],

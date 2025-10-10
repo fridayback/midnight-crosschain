@@ -67,7 +67,7 @@ export ledger crossProposalVoters: Map<Bytes<32>, Set<Uint<8>>>;
 export ledger crossProposalHis: Map<Bytes<32>, Uint<64>>;
 export ledger userFeeBalance: Map<ZswapCoinPublicKey, Uint<128>>;
 export ledger coinToBeClaimed: Map<Bytes<32>, ClaimCoinInfo>;
-export ledger mappintTokenToBeClaim: Map<Bytes<32>, ClaimMappingTokenInfo>;
+export ledger mappingTokenToBeClaim: Map<Bytes<32>, ClaimMappingTokenInfo>;
 
 // export ledger nativeTokenReceived: Uint<128>;
 export struct ClaimCoinInfo{
@@ -346,7 +346,7 @@ export circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): 
     coinToBeClaimed.insert(disclose(uniqueId),ClaimCoinInfo{coin:coinInput,receiver:proposal.toAddr});
     treasuryCoins.remove(disclose(coinIndex));
   }else{
-    mappintTokenToBeClaim.insert(disclose(uniqueId),ClaimMappingTokenInfo{domainSep:proposal.token,amount:proposal.amount,receiver:proposal.toAddr});
+    mappingTokenToBeClaim.insert(disclose(uniqueId),ClaimMappingTokenInfo{domainSep:proposal.token,amount:proposal.amount,receiver:proposal.toAddr});
   }
 
   crossProposalHis.insert(disclose(uniqueId),proposal.ttl);
@@ -400,11 +400,12 @@ export circuit userClaimCoin(id: Bytes<32>): [] {
 }
 
 export circuit userClaimMappingToken(id: Bytes<32>): [] {
-  assert(mappintTokenToBeClaim.member(disclose(id)), "mapping token not exists");
-  const claimMappingTokenInfo = mappintTokenToBeClaim.lookup(disclose(id));
+  assert(mappingTokenToBeClaim.member(disclose(id)), "mapping token not exists");
+  const claimMappingTokenInfo = mappingTokenToBeClaim.lookup(disclose(id));
   assert(claimMappingTokenInfo.receiver == ownPublicKey(), "not receiver");
   nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
   mintToken(claimMappingTokenInfo.domainSep,claimMappingTokenInfo.amount as Uint<64>,nonce, left<ZswapCoinPublicKey, ContractAddress>(claimMappingTokenInfo.receiver));
+  mappingTokenToBeClaim.remove(disclose(id));
 }
 
 circuit updateUserFee(user: ZswapCoinPublicKey, delta: Uint<128>,isAdd: Boolean): [] {
@@ -444,21 +445,41 @@ circuit updateReserve(isMappingToken: Boolean,token: Bytes<32>, delta: Uint<128>
   }
 }
 
-export circuit approveUserWithdrawFee(user: ZswapCoinPublicKey, coinGap: CoinInfo, coinIndexOfTreasuryCoin: Uint<128>): [] {
+export circuit approveUserWithdrawFee(user: ZswapCoinPublicKey, coinApprove: CoinInfo): []{
   assert(ownPublicKey() == mergeWorker, "only mergeWorker can approveUserWithDrawFee");//TODO: who has the right to approve
-  assert(treasuryCoins.member(disclose(coinIndexOfTreasuryCoin)), "coinIndexOfTreasuryCoin not exists");
+  assert(disclose(coinApprove.color) == nativeToken(),"wrong coin color");
   assert(userFeeBalance.member(disclose(user)), "userFeeBalance not exists");
-
-  const coinInfo = treasuryCoins.lookup(disclose(coinIndexOfTreasuryCoin));
   const userFeeBalanceInfo = userFeeBalance.lookup(disclose(user));
-  assert(coinInfo.value == coinGap.value + userFeeBalanceInfo, "coinGap not correct");
+  assert(userFeeBalanceInfo >= disclose(coinApprove.value), "coinApprove.value must <= userFeeBalance");
+
+  receive(disclose(coinApprove));
+  addTreasuryCoin(disclose(coinApprove));
+
+  const coinIndex = treasuryCoinCounter as Field as Uint<128>;
+  const coinOfTreasury = treasuryCoins.lookup(coinIndex);
+  updateUserFee(user, disclose(coinApprove.value), false);
+  updateReserve(false, disclose(coinApprove.color), disclose(coinApprove.value), true);
 
   nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
-  crossCounter.increment(1);
-  coinToBeClaimed.insert(nonce,ClaimCoinInfo{coin: coinInfo, receiver: disclose(user)});
-  userFeeBalance.remove(disclose(user));
-  treasuryCoins.remove(disclose(coinIndexOfTreasuryCoin));
+  coinToBeClaimed.insert(nonce,ClaimCoinInfo{coin: coinOfTreasury, receiver: disclose(user)});
+  treasuryCoins.remove(coinIndex);
 }
+
+// export circuit approveUserWithdrawFee(user: ZswapCoinPublicKey, coinGap: CoinInfo, coinIndexOfTreasuryCoin: Uint<128>): [] {
+//   assert(ownPublicKey() == mergeWorker, "only mergeWorker can approveUserWithDrawFee");//TODO: who has the right to approve
+//   assert(treasuryCoins.member(disclose(coinIndexOfTreasuryCoin)), "coinIndexOfTreasuryCoin not exists");
+//   assert(userFeeBalance.member(disclose(user)), "userFeeBalance not exists");
+
+//   const coinInfo = treasuryCoins.lookup(disclose(coinIndexOfTreasuryCoin));
+//   const userFeeBalanceInfo = userFeeBalance.lookup(disclose(user));
+//   assert(coinInfo.value == coinGap.value + userFeeBalanceInfo, "coinGap not correct");
+
+//   nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
+//   crossCounter.increment(1);
+//   coinToBeClaimed.insert(nonce,ClaimCoinInfo{coin: coinInfo, receiver: disclose(user)});
+//   userFeeBalance.remove(disclose(user));
+//   treasuryCoins.remove(disclose(coinIndexOfTreasuryCoin));
+// }
 
 export circuit withdrawReserveOfNativeToken(token: Bytes<32>,coinIndex: Uint<128>): [] {
   assert(ownPublicKey() == mergeWorker, "only mergeWorker can withdrawReserveOfNativeToken");
