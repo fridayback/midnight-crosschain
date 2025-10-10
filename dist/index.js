@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-09 16:14:16
+ * @LastEditTime: 2025-10-10 11:49:00
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -375,7 +375,7 @@ export class CrossChainApi {
     }
     async userClaim(uniqueId, isMappingToken) {
         if (isMappingToken) {
-            return this.userClaimMappintToken(uniqueId);
+            return this.userClaimMappingToken(uniqueId);
         }
         else {
             return this.userClaimCoin(uniqueId);
@@ -387,7 +387,7 @@ export class CrossChainApi {
         const finalizedTxData = await this.crossChainContract.callTx.userClaimCoin(uniqueId_0);
         return finalizedTxData;
     }
-    async userClaimMappintToken(uniqueId) {
+    async userClaimMappingToken(uniqueId) {
         const uniqueId_0 = Buffer.from(uniqueId, 'hex');
         assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
         const finalizedTxData = await this.crossChainContract.callTx.userClaimMappingToken(uniqueId_0);
