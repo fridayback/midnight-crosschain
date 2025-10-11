@@ -125,7 +125,7 @@ export declare class CrossChainApi {
     voteProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "voteProposal">>;
     executeProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "executeProposal">>;
     updateContractAuthority(newKey: SigningKey): Promise<FinalizedTxData>;
-    upgradeContract(circiut: string, newCircuit: string): Promise<void>;
+    upgradeContract(circuit: CrossChainCircuits, newCircuit: string | undefined): Promise<FinalizedTxData>;
 }
 export declare const getTreasuryCoinsFromState: (state: CrossChain.Ledger) => Map<string, Map<bigint, CrossChain.QualifiedCoinInfo>>;
 export declare const genSigningKey: () => string;

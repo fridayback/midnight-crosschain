@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-10 17:29:23
+ * @LastEditTime: 2025-10-11 17:45:53
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -15,7 +15,7 @@ import path from 'node:path';
 // import { witnesses, type CrossChainPrivateState } from './witnesses.js';
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
 
-import { createBalancedTx, type BalancedTransaction, type ImpureCircuitId, type MidnightProvider, type MidnightProviders, type UnbalancedTransaction, type WalletProvider, type FinalizedTxData, SucceedEntirely } from '@midnight-ntwrk/midnight-js-types';
+import { createBalancedTx, type BalancedTransaction, type ImpureCircuitId, type MidnightProvider, type MidnightProviders, type UnbalancedTransaction, type WalletProvider, type FinalizedTxData, SucceedEntirely, getImpureCircuitIds } from '@midnight-ntwrk/midnight-js-types';
 import { deployContract, FinalizedCallTxData, findDeployedContract, type DeployedContract, type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
@@ -30,6 +30,7 @@ import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-add
 import * as Rx from 'rxjs';
 import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueString, CompactTypeOpaqueUint8Array, CompactTypeUnsignedInteger, CompactTypeVector, ContractAddress, convert_Uint8Array_to_bigint, degradeToTransient, ecAdd, ecMul, ecMulGenerator, EncodedCoinInfo, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
 import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
+import {createVerifierKey, type VerifierKey} from '@midnight-ntwrk/midnight-js-types';
 import assert from 'node:assert';
 
 export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
@@ -779,12 +780,17 @@ export class CrossChainApi {
     return await this.crossChainContract.contractMaintenanceTx.replaceAuthority(newKey);
   }
 
-  async upgradeContract(circiut: string, newCircuit: string) {
-    // const newVK = VerifierKey.fromHex(newCircuit);
-    // return await this.crossChainContract.circuitMaintenanceTx.userBurn.insertVerifierKey(newVK);
-    // await this.crossChainContract.circuitMaintenanceTx.newProposal.removeVerifierKey();
-    // const newVK = 
-    // return await this.crossChainContract.circuitMaintenanceTx.newProposal.insertVerifierKey();
+  async upgradeContract(circuit: CrossChainCircuits, newCircuit: string | undefined) {
+    let newVK;
+    if(newCircuit){
+      newVK = createVerifierKey(fromHex(newCircuit));
+    }else{
+      newVK = await this.providers.zkConfigProvider.getVerifierKey(circuit);
+    }
+    
+    const res1 = await this.crossChainContract.circuitMaintenanceTx[circuit].removeVerifierKey();
+    const res2 = await this.crossChainContract.circuitMaintenanceTx[circuit].insertVerifierKey(newVK);
+    return res2;
   }
 
 }
