@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-11 17:45:53
+ * @LastEditTime: 2025-10-13 15:55:12
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -154,10 +154,13 @@ export const waitForFunds = (wallet: Wallet) =>
       }),
       Rx.filter((state) => {
         // Let's allow progress only if wallet is synced
+        for( const token in state.balances){
+          console.log('*******',token, state.balances[token])
+        }
         return state.syncProgress?.synced === true;
       }),
       Rx.map((s) => s.balances),
-      // Rx.filter((balances) => token? balances[token]:balances),
+      // Rx.filter((balance) => balance.balance > 0n),
     ),
   );
 
@@ -848,20 +851,20 @@ export const getCoinPublicKeyFromShieldAddress = (shieldAddr: string) => {
 export const initNetwork = (networkId: number) => {
   let network = NetworkId.TestNet;
   switch (networkId) {
-    case 1:
-      network = NetworkId.TestNet;
-      break;
     case 0:
-      network = NetworkId.MainNet;
-      break;
-    case 2:
-      network = NetworkId.DevNet;
-      break;
-    case 3:
       network = NetworkId.Undeployed;
       break;
+    case 1:
+      network = NetworkId.DevNet;
+      break;
+    case 2:
+      network = NetworkId.TestNet;
+      break;
+    case 3:
+      network = NetworkId.MainNet;
+      break;
     default:
-      throw new Error('Unknown networkId, only support 0-MainNet, 1-TestNet, 2-DevNet, 3-Undeployed');
+      throw new Error('Unknown networkId, only support 0-Undeployed, 1-DevNet, 2-TestNet, 3-MainNet');
   }
   setNetworkId(network);
 }
@@ -901,7 +904,7 @@ export class MidnightWalletSDK {
     }
     this.storeTimer = setTimeout(async () => {
       await callBack();
-    }, 1000);
+    }, saveInterval);
 
   }
 
