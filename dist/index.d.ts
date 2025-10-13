@@ -152,7 +152,7 @@ export declare class MidnightWalletSDK {
     constructor(config: Config);
     initWallet(strSeed: string, store: WalletStore, strSerializedState?: string, saveInterval?: number): Promise<void>;
     getAccountAddress(): string;
-    getBalances(): Promise<any[]>;
+    getBalances(): Promise<Record<string, bigint>>;
     getAvailableCoins(): Promise<import("@midnight-ntwrk/zswap").QualifiedCoinInfo[]>;
     uninitWallet(): void;
     getWalletInstance(): (Wallet & Resource) | undefined;
