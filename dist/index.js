@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-13 16:20:22
+ * @LastEditTime: 2025-10-14 16:42:05
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -19,7 +19,7 @@ import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { decodeTokenType, encodeTokenType, Transaction, tokenType, sampleCoinPublicKey, encodeCoinInfo, createCoinInfo, ContractState, nativeToken } from '@midnight-ntwrk/ledger';
 import { Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
-import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId, getRuntimeNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
 import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as Rx from 'rxjs';
@@ -226,7 +226,7 @@ export class CrossChainApi {
         return ledger?.tokenPairs.lookup(BigInt(tokenPairId));
     }
     static parseContractState(stateHex) {
-        const state = ContractState.deserialize(fromHex(stateHex), getZswapNetworkId());
+        const state = ContractState.deserialize(Buffer.from(stateHex, 'hex'), getRuntimeNetworkId());
         return CrossChain.ledger(state.data);
     }
     static currentExecuteCrossProposal(ledger) {
@@ -715,23 +715,23 @@ export class MidnightWalletSDK {
         let curState = await Rx.firstValueFrom(this.walletObj.state());
         // console.log("\n\n...getAccountBalance...curState: ", curState);
         // balances: Record<TokenType, bigint>;
-        // let aryBalance = new Array();
-        // let curBalance = curState.balances;
+        let aryBalance = new Array();
+        let curBalance = curState.balances;
         // console.log("\n\n...getAccountBalance...curBalance: ", curBalance);
-        // // in case the balances is an object instance
-        // for (const coinType in curBalance) {
-        //   if (curBalance.hasOwnProperty(coinType)) {
-        //     // console.log("\n\n...getAccountBalance...coinType: ", coinType);
-        //     let coinAmount = curBalance[coinType];
-        //     // console.log("\n\n...getAccountBalance...amount : ", coinAmount);
-        //     let item = {
-        //       "coinType": coinType,
-        //       "amount": coinAmount
-        //     }
-        //     aryBalance.push(item);
-        //   }
-        // }
-        return curState.balances;
+        // in case the balances is an object instance
+        for (const coinType in curBalance) {
+            if (curBalance.hasOwnProperty(coinType)) {
+                // console.log("\n\n...getAccountBalance...coinType: ", coinType);
+                let coinAmount = curBalance[coinType];
+                // console.log("\n\n...getAccountBalance...amount : ", coinAmount);
+                let item = {
+                    "coinType": coinType,
+                    "amount": coinAmount
+                };
+                aryBalance.push(item);
+            }
+        }
+        return aryBalance;
     }
     async getAvailableCoins() {
         assert(this.walletObj, "walletObj is not initialized!");
