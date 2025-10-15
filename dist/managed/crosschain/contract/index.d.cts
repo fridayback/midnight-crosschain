@@ -48,6 +48,7 @@ export type CrossOutBound = { smgId: Uint8Array;
 
 export type CrossProposal = { smgId: Uint8Array;
                               token: Uint8Array;
+                              tokenPairId: bigint;
                               isMappingToken: boolean;
                               amount: bigint;
                               fee: bigint;
@@ -74,19 +75,6 @@ export type Witnesses<T> = {
 }
 
 export type ImpureCircuits<T> = {
-  userLock(context: __compactRuntime.CircuitContext<T>,
-           smgId_0: Uint8Array,
-           toAddr_0: string,
-           tokenPairId_0: bigint,
-           coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
-  smgRelease(context: __compactRuntime.CircuitContext<T>,
-             uniqueId_0: Uint8Array,
-             smgId_0: Uint8Array,
-             tokenPairId_0: bigint,
-             amount_0: bigint,
-             toAddr_0: ZswapCoinPublicKey,
-             fee_0: bigint,
-             ttl_0: bigint): __compactRuntime.CircuitResults<T, []>;
   smgMint(context: __compactRuntime.CircuitContext<T>,
           uniqueId_0: Uint8Array,
           smgId_0: Uint8Array,
@@ -106,9 +94,6 @@ export type ImpureCircuits<T> = {
                     uniqueId_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
   executeMultiCrossProposal(context: __compactRuntime.CircuitContext<T>,
                             mutiEx_0: ExecuteCrossProposalInfo[]): __compactRuntime.CircuitResults<T, []>;
-  executeCrossProposal(context: __compactRuntime.CircuitContext<T>,
-                       uniqueId_0: Uint8Array,
-                       coinIndex_0: bigint): __compactRuntime.CircuitResults<T, []>;
   userRechargeForFee(context: __compactRuntime.CircuitContext<T>,
                      coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   userClaimCoin(context: __compactRuntime.CircuitContext<T>, id_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
@@ -160,6 +145,17 @@ export type ImpureCircuits<T> = {
 }
 
 export type PureCircuits = {
+  userLock(smgId_0: Uint8Array,
+           toAddr_0: string,
+           tokenPairId_0: bigint,
+           coin_0: CoinInfo): [];
+  smgRelease(uniqueId_0: Uint8Array,
+             smgId_0: Uint8Array,
+             tokenPairId_0: bigint,
+             amount_0: bigint,
+             toAddr_0: ZswapCoinPublicKey,
+             fee_0: bigint,
+             ttl_0: bigint): [];
   mergeTreasuryCoin(coins_0: bigint[]): [];
 }
 
@@ -196,9 +192,6 @@ export type Circuits<T> = {
                     uniqueId_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
   executeMultiCrossProposal(context: __compactRuntime.CircuitContext<T>,
                             mutiEx_0: ExecuteCrossProposalInfo[]): __compactRuntime.CircuitResults<T, []>;
-  executeCrossProposal(context: __compactRuntime.CircuitContext<T>,
-                       uniqueId_0: Uint8Array,
-                       coinIndex_0: bigint): __compactRuntime.CircuitResults<T, []>;
   userRechargeForFee(context: __compactRuntime.CircuitContext<T>,
                      coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   userClaimCoin(context: __compactRuntime.CircuitContext<T>, id_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
@@ -262,7 +255,12 @@ export type Ledger = {
     [Symbol.iterator](): Iterator<[ZswapCoinPublicKey, bigint]>
   };
   readonly latestOutBoundCrosstxInfo: CrossOutBound;
-  readonly currentExecuteCrossProposal: Uint8Array;
+  currentExecuteCrossProposal: {
+    isEmpty(): boolean;
+    size(): bigint;
+    member(elem_0: Uint8Array): boolean;
+    [Symbol.iterator](): Iterator<Uint8Array>
+  };
   treasuryCoins: {
     isEmpty(): boolean;
     size(): bigint;
@@ -383,6 +381,7 @@ export type Ledger = {
     lookup(key_0: Uint8Array): ClaimMappingTokenInfo;
     [Symbol.iterator](): Iterator<[Uint8Array, ClaimMappingTokenInfo]>
   };
+  readonly maxRemainedHisOfTtl: bigint;
   readonly owner: ZswapCoinPublicKey;
   readonly pendingOwner: ZswapCoinPublicKey;
   readonly mergeWorker: ZswapCoinPublicKey;

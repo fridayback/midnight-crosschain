@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-15 06:57:53
+ * @LastEditTime: 2025-10-15 16:45:04
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -225,12 +225,38 @@ export class CrossChainApi {
         const ledger = await this.getLedgerState();
         return ledger?.tokenPairs.lookup(BigInt(tokenPairId));
     }
+    static getCurrentInBoundCrossTxs(ledger) {
+        let res = [];
+        for (const uniqueId of ledger.currentExecuteCrossProposal) {
+            res.push(toHex(uniqueId));
+        }
+        return res;
+    }
+    static getCrossTxInfo(ledger, uniqueId) {
+        const uniquId_0 = Buffer.from(uniqueId, 'hex');
+        if (ledger.crossProposal.member(uniquId_0)) {
+            const crossTxInfo = ledger.crossProposal.lookup(uniquId_0);
+            return {
+                smgId: toHex(crossTxInfo.smgId),
+                token: toHex(crossTxInfo.token),
+                tokenPairId: crossTxInfo.tokenPairId.toString(10),
+                amount: crossTxInfo.amount.toString(10),
+                fee: crossTxInfo.fee.toString(10),
+                toAddr: crossTxInfo.toAddr,
+                ttl: crossTxInfo.ttl.toString(10),
+            };
+        }
+    }
     static parseContractState(stateHex) {
         const state = ContractState.deserialize(Buffer.from(stateHex, 'hex'), getRuntimeNetworkId());
         return CrossChain.ledger(state.data);
     }
     static currentExecuteCrossProposal(ledger) {
-        return toHex(ledger.currentExecuteCrossProposal);
+        let ret = [];
+        for (const uniqueId of ledger.currentExecuteCrossProposal) {
+            ret.push(toHex(uniqueId));
+        }
+        return ret;
     }
     static latestOutBoundCrosstxInfo(ledger) {
         return {
@@ -243,23 +269,32 @@ export class CrossChainApi {
             nonce: ledger.latestOutBoundCrosstxInfo.nonce.toString(10),
         };
     }
-    async getUnVotedCrossProposal(ledger) {
-        const selfPk = this.providers.walletProvider.coinPublicKey;
-        const voterIndex = ledger.smgTxSigners.lookup({ bytes: fromHex(selfPk) });
+    async getUnVotedCrossProposal(ledger, voter) {
+        let voterPK;
+        if (voter) {
+            voterPK = getCoinPublicKeyFromShieldAddress(voter);
+        }
+        else {
+            voterPK = fromHex(this.providers.walletProvider.coinPublicKey);
+        }
+        const voterIndex = ledger.smgTxSigners.lookup({ bytes: voterPK });
         let res = [];
         for (const [uniquId, _] of ledger.crossProposal) {
             const voters = ledger.crossProposalVoters.lookup(uniquId);
+            if (voters.size() >= ledger.smgPKThreshold)
+                continue;
             if (voters.member(voterIndex))
                 continue;
             else {
-                res.push(toHex(uniquId));
+                const crossTxInfo = CrossChainApi.getCrossTxInfo(ledger, toHex(uniquId));
+                res.push(crossTxInfo);
             }
         }
         return res;
     }
     async getUnExecuteCrossProposal(ledger) {
-        const selfPk = this.providers.walletProvider.coinPublicKey;
-        const voterIndex = ledger.smgTxSigners.lookup({ bytes: fromHex(selfPk) });
+        // const selfPk = this.providers.walletProvider.coinPublicKey;
+        // const voterIndex = ledger.smgTxSigners.lookup({ bytes: fromHex(selfPk) });
         let res = [];
         for (const [uniquId, crossProposal] of ledger.crossProposal) {
             const voters = ledger.crossProposalVoters.lookup(uniquId);
@@ -279,21 +314,22 @@ export class CrossChainApi {
     }
     /////////////////////////////////////////////////  Cross Tx  /////////////////////////////////////////////////////////////
     async userLock(smgId, toAddress, tokenPair, amount) {
-        const smgId_0 = Buffer.from(smgId, 'hex');
-        assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
-        const tokenPair_0 = BigInt(tokenPair);
-        const pairInfo = await this.getTokenPairInfo(tokenPair_0);
-        assert(pairInfo, `tokenPairId ${tokenPair} not found`);
-        const amount_0 = BigInt(amount);
-        const token = decodeTokenType(pairInfo.midnigthTokenAccount);
-        const coin_0 = coinInfo(token, amount_0);
-        const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, coin_0);
-        return finalizedTxData;
+        // const smgId_0 = Buffer.from(smgId, 'hex');
+        // assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
+        // const tokenPair_0 = BigInt(tokenPair);
+        // const pairInfo = await this.getTokenPairInfo(tokenPair_0);
+        // assert(pairInfo, `tokenPairId ${tokenPair} not found`);
+        // const amount_0 = BigInt(amount);
+        // const token = decodeTokenType(pairInfo.midnigthTokenAccount);
+        // const coin_0 = coinInfo(token, amount_0);
+        // const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, coin_0);
+        // return finalizedTxData;
     }
     async smgRelease(uniqueId, smgId, tokenPair, amount, fee, toAddr, ttl) {
-        const proof = this.checkCrossData(uniqueId, smgId, tokenPair, amount, fee, toAddr, undefined, ttl);
-        const finalizedTxData = await this.crossChainContract.callTx.smgRelease(proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.toAddr, proof.fee, proof.ttl);
-        return finalizedTxData;
+        // const proof = this.checkCrossData(uniqueId, smgId, tokenPair, amount, fee, toAddr, undefined, ttl);
+        // const finalizedTxData = await this.crossChainContract.callTx.smgRelease(
+        //   proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.toAddr, proof.fee, proof.ttl);
+        // return finalizedTxData;
     }
     async smgMint(uniqueId, smgId, tokenPair, amount, fee, toAddr, ttl) {
         const proof = this.checkCrossData(uniqueId, smgId, tokenPair, amount, fee, toAddr, undefined, ttl);
@@ -332,14 +368,14 @@ export class CrossChainApi {
         return finalizedTxData;
     }
     async executeCrossProposal(uniqueId, coinIndex) {
-        const uniqueId_0 = Buffer.from(uniqueId, 'hex');
-        assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
-        let coinIndex_0 = BigInt(0);
-        if (coinIndex) {
-            coinIndex_0 = BigInt(coinIndex);
-        }
-        const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposal(uniqueId_0, coinIndex_0);
-        return finalizedTxData;
+        // const uniqueId_0 = Buffer.from(uniqueId, 'hex');
+        // assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
+        // let coinIndex_0 = BigInt(0);
+        // if (coinIndex) {
+        //   coinIndex_0 = BigInt(coinIndex);
+        // }
+        // const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposal(uniqueId_0, coinIndex_0);
+        // return finalizedTxData;
     }
     async executeMultiCrossProposal(uniqueIds) {
         const uniqueIds_0 = uniqueIds.map((item) => {

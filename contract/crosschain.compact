@@ -30,7 +30,7 @@ export ledger nonce: Bytes<32>;
 export ledger smgTxSigners: Map<ZswapCoinPublicKey, Uint<8>>;
 export ledger latestOutBoundCrosstxInfo: CrossOutBound;
 // export ledger crossProposalHis: Map<Bytes<32>, Uint<128>>;
-export ledger currentExecuteCrossProposal: Bytes<32>;
+export ledger currentExecuteCrossProposal: Set<Bytes<32>>;
 
 // treasury related state
 export ledger treasuryCoins: Map<Uint<128>, QualifiedCoinInfo>;
@@ -68,6 +68,7 @@ export ledger crossProposalHis: Map<Bytes<32>, Uint<64>>;
 export ledger userFeeBalance: Map<ZswapCoinPublicKey, Uint<128>>;
 export ledger coinToBeClaimed: Map<Bytes<32>, ClaimCoinInfo>;
 export ledger mappingTokenToBeClaim: Map<Bytes<32>, ClaimMappingTokenInfo>;
+export ledger maxRemainedHisOfTtl: Uint<64>;
 
 // export ledger nativeTokenReceived: Uint<128>;
 export struct ClaimCoinInfo{
@@ -140,6 +141,7 @@ export struct CrossOutBound {
 export struct CrossProposal{
   smgId: Bytes<32>;
   token: Bytes<32>;
+  tokenPairId: Uint<32>;
   isMappingToken: Boolean;
   amount: Uint<128>;
   fee: Uint<128>;
@@ -164,6 +166,7 @@ constructor(
     adminThreshold = disclose(adminThresholdInit);
     smgPKThreshold = disclose(smgPKThresholdInit);
     proposalId.increment(1);
+    maxRemainedHisOfTtl = 3600 * 24 * 30 * 2;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////                                                             //////////////////////////////////////
@@ -172,33 +175,33 @@ constructor(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, coin: CoinInfo): [] {
-  assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
-  const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
-  assert(tokenPair.midnigthTokenAccount == disclose(coin.color), "token color not match");
+  // assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
+  // const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
+  // assert(tokenPair.midnigthTokenAccount == disclose(coin.color), "token color not match");
 
-  const contractFee = getFee(disclose(tokenPairId));
+  // const contractFee = getFee(disclose(tokenPairId));
 
-  if(contractFee > 0){
-    updateUserFee(ownPublicKey(), contractFee, false);
-    updateReserve(false,nativeToken(), contractFee,true);
+  // if(contractFee > 0){
+  //   updateUserFee(ownPublicKey(), contractFee, false);
+  //   updateReserve(false,nativeToken(), contractFee,true);
 
-  }
+  // }
 
-  receive(disclose(coin));
-  addTreasuryCoin(disclose(coin));
+  // receive(disclose(coin));
+  // addTreasuryCoin(disclose(coin));
 
-  // record the crosschain info
-  latestOutBoundCrosstxInfo = CrossOutBound{
-    smgId: disclose(smgId)
-    , fromAddr: ownPublicKey()
-    , toAddr: disclose(toAddr)
-    , tokenPairId: disclose(tokenPairId)
-    , amount: disclose(disclose(coin).value)
-    , fee: contractFee 
-    , nonce: crossCounter as Field as Uint<128>
-  };
+  // // record the crosschain info
+  // latestOutBoundCrosstxInfo = CrossOutBound{
+  //   smgId: disclose(smgId)
+  //   , fromAddr: ownPublicKey()
+  //   , toAddr: disclose(toAddr)
+  //   , tokenPairId: disclose(tokenPairId)
+  //   , amount: disclose(disclose(coin).value)
+  //   , fee: contractFee 
+  //   , nonce: crossCounter as Field as Uint<128>
+  // };
 
-  // crossCounter.increment(1);
+  // // crossCounter.increment(1);
 }
 
 export circuit smgRelease(
@@ -210,7 +213,7 @@ export circuit smgRelease(
   , fee: Uint<128>
   , ttl: Uint<64>): [] {
   
-  addCrossProposal(disclose(uniqueId), disclose(smgId), disclose(tokenPairId), disclose(amount), disclose(toAddr), disclose(fee), disclose(ttl), false);
+  // addCrossProposal(disclose(uniqueId), disclose(smgId), disclose(tokenPairId), disclose(amount), disclose(toAddr), disclose(fee), disclose(ttl), false);
 }
 
 export circuit smgMint(uniqueId: Bytes<32>
@@ -264,9 +267,18 @@ circuit addCrossProposal(
   , ttl: Uint<64>
   , isMappingToken: Boolean
 ): [] {
+  assert(crossProposalHis.member(disclose(uniqueId)) == false, "crossTx has finished");
   assert(smgTxSigners.member(ownPublicKey()), "not smg member");
-  assert(!crossProposal.member(disclose(uniqueId)), "proposal already exists");
-  // assert( blockTimeLt(disclose(ttl)), "ttl expired");
+
+  if(crossProposal.member(disclose(uniqueId))){
+     if(blockTimeLt(crossProposal.lookup(disclose(uniqueId)).ttl)){
+       assert(false,"proposal exists");
+     }else{
+       crossProposal.remove(disclose(uniqueId));
+       crossProposalVoters.remove(disclose(uniqueId));
+     }
+  }
+  assert( blockTimeLt(disclose(ttl)), "ttl expired");
   assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
 
   const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
@@ -274,6 +286,7 @@ circuit addCrossProposal(
   const newCrossProposal = CrossProposal{ 
     smgId: disclose(smgId)
     , token: isMappingToken?tokenPair.domainSep :tokenPair.midnigthTokenAccount
+    , tokenPairId: disclose(tokenPairId)
     , isMappingToken: isMappingToken
     , amount: disclose(amount)
     , fee: disclose(fee)
@@ -305,14 +318,14 @@ export circuit voteCrossProposal(uniqueId: Bytes<32>): [] {
   const proposal = crossProposal.lookup(disclose(uniqueId));
   
 
-  assert(crossProposalVoters.lookup(disclose(uniqueId)).size() < smgPKThreshold, "already passed");
-
   // if ttl is expired and not enough voters, remove the proposal
   if(blockTimeGte(proposal.ttl)){
     crossProposal.remove(disclose(uniqueId));
     crossProposalVoters.remove(disclose(uniqueId));
     return;
   }
+
+  assert(crossProposalVoters.lookup(disclose(uniqueId)).size() < smgPKThreshold, "already passed");
 
   const voterIndex = smgTxSigners.lookup(ownPublicKey());
   assert(!crossProposalVoters.lookup(disclose(uniqueId)).member(voterIndex), "already voted");
@@ -325,6 +338,7 @@ export circuit voteCrossProposal(uniqueId: Bytes<32>): [] {
 }
 
 export circuit executeMultiCrossProposal(mutiEx: Vector<5,ExecuteCrossProposalInfo>): [] {
+  currentExecuteCrossProposal.resetToDefault();
   for (const exCp of disclose(mutiEx)) {
     if(exCp.uniqueId != default<Bytes<32>>) {
       executeCrossProposal(exCp.uniqueId, exCp.coinIndex);
@@ -332,7 +346,7 @@ export circuit executeMultiCrossProposal(mutiEx: Vector<5,ExecuteCrossProposalIn
   }
 }
 
-export circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
+circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
   assert(mergeWorker == ownPublicKey(), "only mergeWorker can executeCrossProposal ");
   assert( crossProposal.member(disclose(uniqueId)),"crossproposal not exists");
   assert(crossProposalVoters.lookup(disclose(uniqueId)).size() >= smgPKThreshold, "not enough votes");
@@ -352,7 +366,7 @@ export circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): 
   crossProposalHis.insert(disclose(uniqueId),proposal.ttl);
   crossProposal.remove(disclose(uniqueId));
   crossProposalVoters.remove(disclose(uniqueId));
-  currentExecuteCrossProposal = disclose(uniqueId);
+  currentExecuteCrossProposal.insert(disclose(uniqueId));
 }
 
 

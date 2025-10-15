@@ -2,7 +2,7 @@
   "circuits": [
     {
       "name": "userLock",
-      "pure": false,
+      "pure": true,
       "arguments": [
         {
           "name": "smgId",
@@ -64,7 +64,7 @@
     },
     {
       "name": "smgRelease",
-      "pure": false,
+      "pure": true,
       "arguments": [
         {
           "name": "uniqueId",
@@ -331,31 +331,6 @@
                 }
               ]
             }
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "executeCrossProposal",
-      "pure": false,
-      "arguments": [
-        {
-          "name": "uniqueId",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "coinIndex",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
           }
         }
       ],

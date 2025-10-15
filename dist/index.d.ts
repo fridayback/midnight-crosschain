@@ -58,8 +58,18 @@ export declare class CrossChainApi {
         ttl: bigint;
     };
     getTokenPairInfo(tokenPairId: bigint | string | number): Promise<CrossChain.TokenPairInfo | undefined>;
+    static getCurrentInBoundCrossTxs(ledger: CrossChain.Ledger): string[];
+    static getCrossTxInfo(ledger: CrossChain.Ledger, uniqueId: string): {
+        smgId: string;
+        token: string;
+        tokenPairId: string;
+        amount: string;
+        fee: string;
+        toAddr: CrossChain.ZswapCoinPublicKey;
+        ttl: string;
+    } | undefined;
     static parseContractState(stateHex: string): CrossChain.Ledger | undefined;
-    static currentExecuteCrossProposal(ledger: CrossChain.Ledger): string;
+    static currentExecuteCrossProposal(ledger: CrossChain.Ledger): string[];
     static latestOutBoundCrosstxInfo(ledger: CrossChain.Ledger): {
         smgId: string;
         fromAddr: string;
@@ -69,7 +79,15 @@ export declare class CrossChainApi {
         fee: string;
         nonce: string;
     };
-    getUnVotedCrossProposal(ledger: CrossChain.Ledger): Promise<string[]>;
+    getUnVotedCrossProposal(ledger: CrossChain.Ledger, voter: Address | undefined): Promise<({
+        smgId: string;
+        token: string;
+        tokenPairId: string;
+        amount: string;
+        fee: string;
+        toAddr: CrossChain.ZswapCoinPublicKey;
+        ttl: string;
+    } | undefined)[]>;
     getUnExecuteCrossProposal(ledger: CrossChain.Ledger): Promise<{
         uniqueId: string;
         smgId: string;
@@ -79,13 +97,13 @@ export declare class CrossChainApi {
         toAddr: string;
         ttl: string;
     }[]>;
-    userLock(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "userLock">>;
-    smgRelease(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, ttl: number): Promise<FinalizedCallTxData<CrossChainContract, "smgRelease">>;
+    userLock(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint): Promise<void>;
+    smgRelease(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, ttl: number): Promise<void>;
     smgMint(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, ttl: number): Promise<FinalizedCallTxData<CrossChainContract, "smgMint">>;
     userBurn(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "userBurn">>;
     voteCrossProposal(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "voteCrossProposal">>;
     voteMultiCrossProposal(uniqueIds: string[]): Promise<FinalizedCallTxData<CrossChainContract, "voteMultiCrossProposal">>;
-    executeCrossProposal(uniqueId: string, coinIndex: string | number | bigint | undefined): Promise<FinalizedCallTxData<CrossChainContract, "executeCrossProposal">>;
+    executeCrossProposal(uniqueId: string, coinIndex: string | number | bigint | undefined): Promise<void>;
     executeMultiCrossProposal(uniqueIds: ({
         uniqueId: string;
         coinIndex: string | number | bigint | undefined;
