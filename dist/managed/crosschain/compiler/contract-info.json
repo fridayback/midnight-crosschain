@@ -1090,6 +1090,28 @@
         "types": [
         ]
       }
+    },
+    {
+      "name": "removeExpiredHisTxs",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "txs",
+          "type": {
+            "type-name": "Vector",
+            "length": 20,
+            "type": {
+              "type-name": "Bytes",
+              "length": 32
+            }
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
     }
   ],
   "witnesses": [

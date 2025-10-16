@@ -142,6 +142,8 @@ export type ImpureCircuits<T> = {
   voteProposal(context: __compactRuntime.CircuitContext<T>, proposalId_0: bigint): __compactRuntime.CircuitResults<T, []>;
   executeProposal(context: __compactRuntime.CircuitContext<T>,
                   proposalId_0: bigint): __compactRuntime.CircuitResults<T, []>;
+  removeExpiredHisTxs(context: __compactRuntime.CircuitContext<T>,
+                      txs_0: Uint8Array[]): __compactRuntime.CircuitResults<T, []>;
 }
 
 export type PureCircuits = {
@@ -242,6 +244,8 @@ export type Circuits<T> = {
   voteProposal(context: __compactRuntime.CircuitContext<T>, proposalId_0: bigint): __compactRuntime.CircuitResults<T, []>;
   executeProposal(context: __compactRuntime.CircuitContext<T>,
                   proposalId_0: bigint): __compactRuntime.CircuitResults<T, []>;
+  removeExpiredHisTxs(context: __compactRuntime.CircuitContext<T>,
+                      txs_0: Uint8Array[]): __compactRuntime.CircuitResults<T, []>;
 }
 
 export type Ledger = {
@@ -381,7 +385,6 @@ export type Ledger = {
     lookup(key_0: Uint8Array): ClaimMappingTokenInfo;
     [Symbol.iterator](): Iterator<[Uint8Array, ClaimMappingTokenInfo]>
   };
-  readonly maxRemainedHisOfTtl: bigint;
   readonly owner: ZswapCoinPublicKey;
   readonly pendingOwner: ZswapCoinPublicKey;
   readonly mergeWorker: ZswapCoinPublicKey;

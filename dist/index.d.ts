@@ -142,6 +142,7 @@ export declare class CrossChainApi {
     updateFeeCommonConfigProposal(chainId: number | string | bigint, fee: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     voteProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "voteProposal">>;
     executeProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "executeProposal">>;
+    removeExpiredHisTxs(txs: string[]): Promise<FinalizedCallTxData<CrossChainContract, "removeExpiredHisTxs">>;
     updateContractAuthority(newKey: SigningKey): Promise<FinalizedTxData>;
     upgradeContract(circuit: CrossChainCircuits, newCircuit: string | undefined): Promise<FinalizedTxData>;
 }

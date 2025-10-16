@@ -68,7 +68,6 @@ export ledger crossProposalHis: Map<Bytes<32>, Uint<64>>;
 export ledger userFeeBalance: Map<ZswapCoinPublicKey, Uint<128>>;
 export ledger coinToBeClaimed: Map<Bytes<32>, ClaimCoinInfo>;
 export ledger mappingTokenToBeClaim: Map<Bytes<32>, ClaimMappingTokenInfo>;
-export ledger maxRemainedHisOfTtl: Uint<64>;
 
 // export ledger nativeTokenReceived: Uint<128>;
 export struct ClaimCoinInfo{
@@ -166,7 +165,7 @@ constructor(
     adminThreshold = disclose(adminThresholdInit);
     smgPKThreshold = disclose(smgPKThresholdInit);
     proposalId.increment(1);
-    maxRemainedHisOfTtl = 3600 * 24 * 30 * 2;
+    // maxRemainedHisOfTtl = 3600 * 24 * 30 * 2;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////                                                             //////////////////////////////////////
@@ -683,4 +682,15 @@ export circuit executeProposal(proposalId: Uint<32>): [] {
   proposalVoters.remove(disclose(proposalId));
 }
 
+export circuit removeExpiredHisTxs(txs: Vector<20,Bytes<32>>): []{
+  assert(owner == ownPublicKey(), "not admin authorized");
+  for(const tx of disclose(txs)){
+    removeExpiredHisTx(tx);
+  }
+}
 
+circuit removeExpiredHisTx(tx:Bytes<32>): []{
+  if(crossProposalHis.member(tx) && blockTimeGte ((crossProposalHis.lookup(tx)+ 3600 * 24 * 60) as Uint<64>)) {
+    crossProposalHis.remove(tx);
+  }
+}

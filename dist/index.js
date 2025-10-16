@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-15 17:12:31
+ * @LastEditTime: 2025-10-16 11:50:41
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -628,6 +628,15 @@ export class CrossChainApi {
     async executeProposal(proposalId) {
         const proposalId_0 = BigInt(proposalId);
         const finalizedTxData = await this.crossChainContract.callTx.executeProposal(proposalId_0);
+        return finalizedTxData;
+    }
+    async removeExpiredHisTxs(txs) {
+        assert(txs.length <= 20, 'txs length should be less than 20');
+        const txs_0 = txs.map((tx) => Buffer.from(tx, 'hex'));
+        for (let index = txs_0.length; index < 20; index++) {
+            txs_0.push(Buffer.alloc(32));
+        }
+        const finalizedTxData = await this.crossChainContract.callTx.removeExpiredHisTxs(txs_0);
         return finalizedTxData;
     }
     async updateContractAuthority(newKey) {
