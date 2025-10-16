@@ -69,6 +69,8 @@ export ledger userFeeBalance: Map<ZswapCoinPublicKey, Uint<128>>;
 export ledger coinToBeClaimed: Map<Bytes<32>, ClaimCoinInfo>;
 export ledger mappingTokenToBeClaim: Map<Bytes<32>, ClaimMappingTokenInfo>;
 
+export ledger mappintTokenTotalSupply: Map<Bytes<32>, Uint<128>>;
+
 // export ledger nativeTokenReceived: Uint<128>;
 export struct ClaimCoinInfo{
   receiver: ZswapCoinPublicKey;
@@ -255,6 +257,7 @@ export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
     updateReserve(false,nativeToken(), contractFee, true);
   }
 
+  updateTokenTotalSupply(tokenPair.midnigthTokenAccount, disclose(coin.value), false);
   // crossCounter.increment(1);
 }
 
@@ -347,6 +350,20 @@ export circuit executeMultiCrossProposal(mutiEx: Vector<5,ExecuteCrossProposalIn
   }
 }
 
+circuit updateTokenTotalSupply(token: Bytes<32>, delta: Uint<128>, isAdd: Boolean): [] {
+  assert(delta > 0, "delta must be positive");
+  const oldTotalSupply = mappintTokenTotalSupply.member(disclose(token)) ? mappintTokenTotalSupply.lookup(disclose(token)) : 0;
+  assert(isAdd || oldTotalSupply >= delta, "delta must be less than or equal to oldTotalSupply");
+
+  const newTotalSupply = isAdd ? (oldTotalSupply + delta) : (oldTotalSupply - delta);
+
+  if(newTotalSupply == 0){
+    mappintTokenTotalSupply.remove(disclose(token));
+  }else{
+    mappintTokenTotalSupply.insert(disclose(token),newTotalSupply as Uint<128>);
+  }
+}
+
 circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
   assert(mergeWorker == ownPublicKey(), "only mergeWorker can executeCrossProposal ");
   assert( crossProposal.member(disclose(uniqueId)),"crossproposal not exists");
@@ -362,6 +379,8 @@ circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
     treasuryCoins.remove(disclose(coinIndex));
   }else{
     mappingTokenToBeClaim.insert(disclose(uniqueId),ClaimMappingTokenInfo{domainSep:proposal.token,amount:proposal.amount,receiver:proposal.toAddr});
+    const tokenPair = tokenPairs.lookup(proposal.tokenPairId);
+    updateTokenTotalSupply(tokenPair.midnigthTokenAccount, proposal.amount, true);
   }
 
   crossProposalHis.insert(disclose(uniqueId),proposal.ttl);

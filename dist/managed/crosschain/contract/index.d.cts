@@ -386,6 +386,13 @@ export type Ledger = {
     lookup(key_0: Uint8Array): ClaimMappingTokenInfo;
     [Symbol.iterator](): Iterator<[Uint8Array, ClaimMappingTokenInfo]>
   };
+  mappintTokenTotalSupply: {
+    isEmpty(): boolean;
+    size(): bigint;
+    member(key_0: Uint8Array): boolean;
+    lookup(key_0: Uint8Array): bigint;
+    [Symbol.iterator](): Iterator<[Uint8Array, bigint]>
+  };
   readonly owner: ZswapCoinPublicKey;
   readonly pendingOwner: ZswapCoinPublicKey;
   readonly mergeWorker: ZswapCoinPublicKey;

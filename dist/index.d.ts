@@ -58,6 +58,10 @@ export declare class CrossChainApi {
         ttl: bigint;
     };
     getTokenPairInfo(tokenPairId: bigint | string | number): Promise<CrossChain.TokenPairInfo | undefined>;
+    getTokensTotalSupply(tokens: string[]): Promise<{
+        token: string;
+        totalSupply: string;
+    }[]>;
     static getCurrentInBoundCrossTxs(ledger: CrossChain.Ledger): string[];
     static getCrossTxInfo(ledger: CrossChain.Ledger, uniqueId: string): {
         smgId: string;
