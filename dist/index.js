@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-16 11:50:41
+ * @LastEditTime: 2025-10-16 16:09:24
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -161,6 +161,7 @@ export const walletBalance = async (wallet) => {
     const state = await Rx.firstValueFrom(wallet.state());
     return state.balances;
 };
+const MAX_SIGNER_COUNT = 29;
 export class CrossChainApi {
     providers;
     crossChainContract;
@@ -259,15 +260,21 @@ export class CrossChainApi {
         return ret;
     }
     static latestOutBoundCrosstxInfo(ledger) {
-        return {
-            smgId: toHex(ledger.latestOutBoundCrosstxInfo.smgId),
-            fromAddr: toHex(ledger.latestOutBoundCrosstxInfo.fromAddr.bytes),
-            toAddr: ledger.latestOutBoundCrosstxInfo.toAddr,
-            tokenPairId: ledger.latestOutBoundCrosstxInfo.tokenPairId.toString(10),
-            amount: ledger.latestOutBoundCrosstxInfo.amount.toString(10),
-            fee: ledger.latestOutBoundCrosstxInfo.fee.toString(10),
-            nonce: ledger.latestOutBoundCrosstxInfo.nonce.toString(10),
-        };
+        if (ledger.latestOutBoundCrosstxInfo.nonce === 0n) {
+            return;
+        }
+        else {
+            return {
+                smgId: toHex(ledger.latestOutBoundCrosstxInfo.smgId),
+                fromAddr: toHex(ledger.latestOutBoundCrosstxInfo.fromAddr.bytes),
+                toAddr: ledger.latestOutBoundCrosstxInfo.toAddr,
+                tokenPairId: ledger.latestOutBoundCrosstxInfo.tokenPairId.toString(10),
+                tokenAccount: ledger.latestOutBoundCrosstxInfo.tokenAccount,
+                amount: ledger.latestOutBoundCrosstxInfo.amount.toString(10),
+                fee: ledger.latestOutBoundCrosstxInfo.fee.toString(10),
+                nonce: ledger.latestOutBoundCrosstxInfo.nonce.toString(10),
+            };
+        }
     }
     async getUnVotedCrossProposal(ledger, voter) {
         let voterPK;
@@ -515,6 +522,9 @@ export class CrossChainApi {
             return { bytes: getCoinPublicKeyFromShieldAddress(voter) };
             // return { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(voter, getZswapNetworkId())) } 
         });
+        for (let index = voters_0.length; index < MAX_SIGNER_COUNT; index++) {
+            voters_0.push({ bytes: Buffer.alloc(32) });
+        }
         const finalizedTxData = await this.crossChainContract.callTx.setSmgPksks(voters_0);
         return finalizedTxData;
     }

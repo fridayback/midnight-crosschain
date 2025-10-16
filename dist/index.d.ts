@@ -75,10 +75,11 @@ export declare class CrossChainApi {
         fromAddr: string;
         toAddr: string;
         tokenPairId: string;
+        tokenAccount: Uint8Array<ArrayBufferLike>;
         amount: string;
         fee: string;
         nonce: string;
-    };
+    } | undefined;
     getUnVotedCrossProposal(ledger: CrossChain.Ledger, voter: Address | undefined): Promise<({
         smgId: string;
         token: string;

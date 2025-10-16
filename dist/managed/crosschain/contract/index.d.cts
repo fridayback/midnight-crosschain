@@ -41,6 +41,7 @@ export type CrossOutBound = { smgId: Uint8Array;
                               fromAddr: ZswapCoinPublicKey;
                               toAddr: string;
                               tokenPairId: bigint;
+                              tokenAccount: Uint8Array;
                               amount: bigint;
                               fee: bigint;
                               nonce: bigint

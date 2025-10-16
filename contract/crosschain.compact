@@ -107,7 +107,7 @@ export struct Proposal{
   addr: ZswapCoinPublicKey;
   threshold: Uint<128>;
   feeConfig: FeeConfig;
-  smgPubkeys: Vector<2, ZswapCoinPublicKey>;
+  smgPubkeys: Vector<29, ZswapCoinPublicKey>;
 }
 
 // owner related state
@@ -132,6 +132,7 @@ export struct CrossOutBound {
   fromAddr: ZswapCoinPublicKey;
   toAddr: Opaque<"string">;
   tokenPairId: Uint<32>;
+  tokenAccount: Bytes<32>;
   amount: Uint<128>;
   fee: Uint<128>;
   nonce: Uint<128>; // equal to crossCounter
@@ -243,6 +244,7 @@ export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
     , fromAddr: ownPublicKey()
     , toAddr: disclose(toAddr)
     , tokenPairId: disclose(tokenPairId)
+    , tokenAccount: tokenPair.midnigthTokenAccount
     , amount: disclose(coin.value)
     , fee: contractFee
     , nonce: crossCounter as Field as Uint<128>
@@ -580,14 +582,18 @@ export circuit setAdminThreshold(threshold: Uint<8>): [] {
   adminThreshold = disclose(threshold);
 }
 
-export circuit setSmgPksks(voters: Vector<2,ZswapCoinPublicKey>): [] {
+export circuit setSmgPksks(voters: Vector<29,ZswapCoinPublicKey>): [] {
   assert(owner == ownPublicKey(), "only owner can set smg pks");
   smgTxSigners.resetToDefault();
 
   fold( (index: Uint<8>, voter: ZswapCoinPublicKey) =>{
     assert(!smgTxSigners.member(voter), "smg voter Repeatedly adding");
-    smgTxSigners.insert(disclose(voter),index);
-    return (index + 1) as Uint<8>;
+    if(voter != default<ZswapCoinPublicKey>){
+      smgTxSigners.insert(disclose(voter),index);
+      return (index + 1) as Uint<8>;
+    }else{
+      return index as Uint<8>;
+    }
   }, 0, disclose(voters));
 }
 
