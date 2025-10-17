@@ -57,6 +57,8 @@ export type CrossProposal = { smgId: Uint8Array;
                               ttl: bigint
                             };
 
+export type SmgEvent = { uniqueId: Uint8Array; crossProposal: CrossProposal };
+
 export type ExecuteCrossProposalInfo = { uniqueId: Uint8Array; coinIndex: bigint
                                        };
 
@@ -263,8 +265,8 @@ export type Ledger = {
   currentExecuteCrossProposal: {
     isEmpty(): boolean;
     size(): bigint;
-    member(elem_0: Uint8Array): boolean;
-    [Symbol.iterator](): Iterator<Uint8Array>
+    member(elem_0: SmgEvent): boolean;
+    [Symbol.iterator](): Iterator<SmgEvent>
   };
   treasuryCoins: {
     isEmpty(): boolean;

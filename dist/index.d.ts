@@ -62,7 +62,6 @@ export declare class CrossChainApi {
         token: string;
         totalSupply: string;
     }[]>;
-    static getCurrentInBoundCrossTxs(ledger: CrossChain.Ledger): string[];
     static getCrossTxInfo(ledger: CrossChain.Ledger, uniqueId: string): {
         smgId: string;
         token: string;
@@ -73,7 +72,17 @@ export declare class CrossChainApi {
         ttl: string;
     } | undefined;
     static parseContractState(stateHex: string): CrossChain.Ledger | undefined;
-    static currentExecuteCrossProposal(ledger: CrossChain.Ledger): string[];
+    static currentExecuteCrossProposal(ledger: CrossChain.Ledger): {
+        smgId: string;
+        uniqueId: string;
+        token: string;
+        tokenPairId: string;
+        isMappingToken: boolean;
+        amount: string;
+        fee: string;
+        toAddr: string;
+        ttl: string;
+    }[];
     static latestOutBoundCrosstxInfo(ledger: CrossChain.Ledger): {
         smgId: string;
         fromAddr: string;

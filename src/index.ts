@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-17 11:05:47
+ * @LastEditTime: 2025-10-17 17:02:00
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -345,13 +345,23 @@ export class CrossChainApi {
   }
 
 
-  static getCurrentInBoundCrossTxs(ledger: CrossChain.Ledger): string[] {
-    let res = [];
-    for (const uniqueId of ledger.currentExecuteCrossProposal) {
-      res.push(toHex(uniqueId));
-    }
-    return res;
-  }
+  // static getCurrentInBoundCrossTxs(ledger: CrossChain.Ledger) {
+  //   let res = [];
+  //   for (const smgEvent of ledger.currentExecuteCrossProposal) {
+  //     res.push({
+  //       smgId: toHex(smgEvent.crossProposal.smgId)
+  //     , uniqueId: toHex(smgEvent.uniqueId)
+  //     , token: toHex(smgEvent.crossProposal.token)
+  //     , tokenPairId: smgEvent.crossProposal.tokenPairId.toString(10)
+  //     , isMappingToken: smgEvent.crossProposal.isMappingToken
+  //     , amount: smgEvent.crossProposal.amount.toString(10)
+  //     , fee: smgEvent.crossProposal.fee.toString(10)
+  //     , toAddr: toHex(smgEvent.crossProposal.toAddr.bytes)
+  //     , ttl: smgEvent.crossProposal.ttl.toString(10)
+  //     });
+  //   }
+  //   return res;
+  // }
 
   static getCrossTxInfo(ledger: CrossChain.Ledger, uniqueId: string) {
     const uniquId_0 = Buffer.from(uniqueId, 'hex');
@@ -374,12 +384,22 @@ export class CrossChainApi {
     return CrossChain.ledger(state.data);
   }
 
-  static currentExecuteCrossProposal(ledger: CrossChain.Ledger): string[] {
-    let ret = [];
-    for (const uniqueId of ledger.currentExecuteCrossProposal) {
-      ret.push(toHex(uniqueId));
+  static currentExecuteCrossProposal(ledger: CrossChain.Ledger) {
+    let res = [];
+    for (const smgEvent of ledger.currentExecuteCrossProposal) {
+      res.push({
+        smgId: toHex(smgEvent.crossProposal.smgId)
+      , uniqueId: toHex(smgEvent.uniqueId)
+      , token: toHex(smgEvent.crossProposal.token)
+      , tokenPairId: smgEvent.crossProposal.tokenPairId.toString(10)
+      , isMappingToken: smgEvent.crossProposal.isMappingToken
+      , amount: smgEvent.crossProposal.amount.toString(10)
+      , fee: smgEvent.crossProposal.fee.toString(10)
+      , toAddr: toHex(smgEvent.crossProposal.toAddr.bytes)
+      , ttl: smgEvent.crossProposal.ttl.toString(10)
+      });
     }
-    return ret;
+    return res;
   }
 
   static latestOutBoundCrosstxInfo(ledger: CrossChain.Ledger) {

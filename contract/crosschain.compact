@@ -30,7 +30,7 @@ export ledger nonce: Bytes<32>;
 export ledger smgTxSigners: Map<ZswapCoinPublicKey, Uint<8>>;
 export ledger latestOutBoundCrosstxInfo: CrossOutBound;
 // export ledger crossProposalHis: Map<Bytes<32>, Uint<128>>;
-export ledger currentExecuteCrossProposal: Set<Bytes<32>>;
+export ledger currentExecuteCrossProposal: Set<SmgEvent>;
 
 // treasury related state
 export ledger treasuryCoins: Map<Uint<128>, QualifiedCoinInfo>;
@@ -149,6 +149,11 @@ export struct CrossProposal{
   fee: Uint<128>;
   toAddr: ZswapCoinPublicKey;
   ttl: Uint<64>;
+}
+
+export struct SmgEvent{
+  uniqueId: Bytes<32>;
+  crossProposal: CrossProposal;
 }
 
 export struct ExecuteCrossProposalInfo{
@@ -383,10 +388,11 @@ circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
     updateTokenTotalSupply(tokenPair.midnigthTokenAccount, proposal.amount, true);
   }
 
+  currentExecuteCrossProposal.insert(SmgEvent{uniqueId:disclose(uniqueId),crossProposal:proposal});
   crossProposalHis.insert(disclose(uniqueId),proposal.ttl);
   crossProposal.remove(disclose(uniqueId));
   crossProposalVoters.remove(disclose(uniqueId));
-  currentExecuteCrossProposal.insert(disclose(uniqueId));
+  
 }
 
 
