@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-16 18:12:32
+ * @LastEditTime: 2025-10-17 10:43:17
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -376,8 +376,8 @@ export class CrossChainApi {
             assert(ret.length === 32, `uniqueId(${uniqueId}) must be 32 bytes long`);
             return ret;
         });
-        assert(uniqueIds_0.length <= 5 && uniqueIds_0.length > 0, `uniqueIds must be between 1 and 5`);
-        for (let index = uniqueIds_0.length - 1; index < 5; index++) {
+        assert(uniqueIds_0.length <= 5 && uniqueIds_0.length > 0, `uniqueIds length must be between 1 and 5`);
+        for (let index = uniqueIds_0.length; index < 5; index++) {
             uniqueIds_0.push(Buffer.alloc(32));
         }
         const finalizedTxData = await this.crossChainContract.callTx.voteMultiCrossProposal(uniqueIds_0);
