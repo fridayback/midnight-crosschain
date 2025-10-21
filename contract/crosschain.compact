@@ -21,7 +21,7 @@ import CompactStandardLibrary;
 export { CoinInfo, QualifiedCoinInfo, CurvePoint, ZswapCoinPublicKey
 ,TokenPairInfo,FeeConfig,ProposalType,Proposal,CrossOutBound
 , CrossProposal,ClaimMappingTokenInfo,ClaimCoinInfo,ReserveOfToken
-,ExecuteCrossProposalInfo}
+,ExecuteCrossProposalInfo,SmgEvent}
 
 
 // cross tx related state
