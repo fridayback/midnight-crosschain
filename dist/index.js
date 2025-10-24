@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-24 10:25:41
+ * @LastEditTime: 2025-10-24 14:55:11
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -181,6 +181,14 @@ export class CrossChainApi {
             publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
             zkConfigProvider: new NodeZkConfigProvider(ZKConfig.zkConfigPath),
             proofProvider: httpClientProofProvider(config.proofServer),
+            walletProvider: walletAndMidnightProvider,
+            midnightProvider: walletAndMidnightProvider,
+        };
+    }
+    async setWallet(wallet) {
+        const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+        this.providers = {
+            ...this.providers,
             walletProvider: walletAndMidnightProvider,
             midnightProvider: walletAndMidnightProvider,
         };

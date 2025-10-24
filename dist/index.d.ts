@@ -44,6 +44,7 @@ export declare class CrossChainApi {
     MaxMergeCoins: number;
     constructor();
     init(config: Config, wallet: Wallet): Promise<void>;
+    setWallet(wallet: Wallet): Promise<void>;
     deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, signingKey: SigningKey): Promise<ContractAddress>;
     join(contractAddress: ContractAddress): Promise<void>;
     checkCrossData(uniqueId: string, smgId: string, tokenPairId: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, coins: string[] | number[] | bigint[] | undefined, ttl: string | number | bigint): {
