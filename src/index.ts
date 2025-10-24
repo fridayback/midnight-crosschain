@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-17 17:02:00
+ * @LastEditTime: 2025-10-24 10:25:41
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -32,6 +32,7 @@ import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueStr
 import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
 import { createVerifierKey, type VerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import assert from 'node:assert';
+import { fileURLToPath } from 'url'; 
 
 export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
 
@@ -44,7 +45,8 @@ export type CrossChainContract = CrossChain.Contract<CrossChainPrivateState>;
 export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
 
 // export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
-export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
+// export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
+export const currentDir = path.dirname(fileURLToPath(import.meta.url));
 
 export const ZKConfig = {
   privateStateStoreName: 'crosschain-private-state',
