@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-24 14:55:11
+ * @LastEditTime: 2025-10-26 09:16:37
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -394,21 +394,23 @@ export class CrossChainApi {
         const finalizedTxData = await this.crossChainContract.callTx.userBurn(smgId_0, toAddress, tokenPair_0, coin_0);
         return finalizedTxData;
     }
-    async voteCrossProposal(uniqueId) {
+    async voteCrossProposal(uniqueId, ttl) {
         const uniqueId_0 = Buffer.from(uniqueId, 'hex');
+        const ttl_0 = BigInt(ttl);
         assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
-        const finalizedTxData = await this.crossChainContract.callTx.voteCrossProposal(uniqueId_0);
+        const finalizedTxData = await this.crossChainContract.callTx.voteCrossProposal({ uniqueId: uniqueId_0, ttl: ttl_0 });
         return finalizedTxData;
     }
     async voteMultiCrossProposal(uniqueIds) {
-        const uniqueIds_0 = uniqueIds.map((uniqueId) => {
-            const ret = Buffer.from(uniqueId, 'hex');
-            assert(ret.length === 32, `uniqueId(${uniqueId}) must be 32 bytes long`);
-            return ret;
+        const uniqueIds_0 = uniqueIds.map((item) => {
+            const uniqueId_0 = Buffer.from(item.uniqueId, 'hex');
+            const ttl_0 = BigInt(item.ttl);
+            assert(uniqueId_0.length === 32, `uniqueId(${uniqueId_0}) must be 32 bytes long`);
+            return { uniqueId: uniqueId_0, ttl: ttl_0 };
         });
         assert(uniqueIds_0.length <= 5 && uniqueIds_0.length > 0, `uniqueIds length must be between 1 and 5`);
         for (let index = uniqueIds_0.length; index < 5; index++) {
-            uniqueIds_0.push(Buffer.alloc(32));
+            uniqueIds_0.push({ uniqueId: Buffer.alloc(32), ttl: BigInt(0) });
         }
         const finalizedTxData = await this.crossChainContract.callTx.voteMultiCrossProposal(uniqueIds_0);
         return finalizedTxData;

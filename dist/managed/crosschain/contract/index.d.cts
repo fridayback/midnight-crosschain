@@ -59,6 +59,8 @@ export type CrossProposal = { smgId: Uint8Array;
 
 export type SmgEvent = { uniqueId: Uint8Array; crossProposal: CrossProposal };
 
+export type VoteForCrossPropasal = { uniqueId: Uint8Array; ttl: bigint };
+
 export type ExecuteCrossProposalInfo = { uniqueId: Uint8Array; coinIndex: bigint
                                        };
 
@@ -92,9 +94,9 @@ export type ImpureCircuits<T> = {
            tokenPairId_0: bigint,
            coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   voteMultiCrossProposal(context: __compactRuntime.CircuitContext<T>,
-                         uniqueIds_0: Uint8Array[]): __compactRuntime.CircuitResults<T, []>;
+                         uniqueIds_0: VoteForCrossPropasal[]): __compactRuntime.CircuitResults<T, []>;
   voteCrossProposal(context: __compactRuntime.CircuitContext<T>,
-                    uniqueId_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
+                    target_0: VoteForCrossPropasal): __compactRuntime.CircuitResults<T, []>;
   executeMultiCrossProposal(context: __compactRuntime.CircuitContext<T>,
                             mutiEx_0: ExecuteCrossProposalInfo[]): __compactRuntime.CircuitResults<T, []>;
   userRechargeForFee(context: __compactRuntime.CircuitContext<T>,
@@ -192,9 +194,9 @@ export type Circuits<T> = {
            tokenPairId_0: bigint,
            coin_0: CoinInfo): __compactRuntime.CircuitResults<T, []>;
   voteMultiCrossProposal(context: __compactRuntime.CircuitContext<T>,
-                         uniqueIds_0: Uint8Array[]): __compactRuntime.CircuitResults<T, []>;
+                         uniqueIds_0: VoteForCrossPropasal[]): __compactRuntime.CircuitResults<T, []>;
   voteCrossProposal(context: __compactRuntime.CircuitContext<T>,
-                    uniqueId_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
+                    target_0: VoteForCrossPropasal): __compactRuntime.CircuitResults<T, []>;
   executeMultiCrossProposal(context: __compactRuntime.CircuitContext<T>,
                             mutiEx_0: ExecuteCrossProposalInfo[]): __compactRuntime.CircuitResults<T, []>;
   userRechargeForFee(context: __compactRuntime.CircuitContext<T>,

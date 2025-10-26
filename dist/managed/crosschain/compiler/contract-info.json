@@ -272,8 +272,24 @@
             "type-name": "Vector",
             "length": 5,
             "type": {
-              "type-name": "Bytes",
-              "length": 32
+              "type-name": "Struct",
+              "name": "VoteForCrossPropasal",
+              "elements": [
+                {
+                  "name": "uniqueId",
+                  "type": {
+                    "type-name": "Bytes",
+                    "length": 32
+                  }
+                },
+                {
+                  "name": "ttl",
+                  "type": {
+                    "type-name": "Uint",
+                    "maxval": 18446744073709551615
+                  }
+                }
+              ]
             }
           }
         }
@@ -289,10 +305,26 @@
       "pure": false,
       "arguments": [
         {
-          "name": "uniqueId",
+          "name": "target",
           "type": {
-            "type-name": "Bytes",
-            "length": 32
+            "type-name": "Struct",
+            "name": "VoteForCrossPropasal",
+            "elements": [
+              {
+                "name": "uniqueId",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "ttl",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              }
+            ]
           }
         }
       ],

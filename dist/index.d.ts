@@ -116,8 +116,11 @@ export declare class CrossChainApi {
     smgRelease(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, ttl: number): Promise<void>;
     smgMint(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, ttl: number): Promise<FinalizedCallTxData<CrossChainContract, "smgMint">>;
     userBurn(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "userBurn">>;
-    voteCrossProposal(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "voteCrossProposal">>;
-    voteMultiCrossProposal(uniqueIds: string[]): Promise<FinalizedCallTxData<CrossChainContract, "voteMultiCrossProposal">>;
+    voteCrossProposal(uniqueId: string, ttl: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "voteCrossProposal">>;
+    voteMultiCrossProposal(uniqueIds: {
+        uniqueId: string;
+        ttl: string | number | bigint;
+    }[]): Promise<FinalizedCallTxData<CrossChainContract, "voteMultiCrossProposal">>;
     executeCrossProposal(uniqueId: string, coinIndex: string | number | bigint | undefined): Promise<void>;
     executeMultiCrossProposal(uniqueIds: ({
         uniqueId: string;

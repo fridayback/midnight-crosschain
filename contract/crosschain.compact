@@ -156,6 +156,11 @@ export struct SmgEvent{
   crossProposal: CrossProposal;
 }
 
+export struct VoteForCrossPropasal{
+  uniqueId: Bytes<32>;
+  ttl: Uint<64>;
+}
+
 export struct ExecuteCrossProposalInfo{
   uniqueId: Bytes<32>;
   coinIndex: Uint<128>;
@@ -308,40 +313,41 @@ circuit addCrossProposal(
   crossProposal.insert(disclose(uniqueId),newCrossProposal);
   crossProposalVoters.insert(disclose(uniqueId),default<Set<Uint<8>>>);
 
-  voteCrossProposal(disclose(uniqueId));
+  voteCrossProposal(VoteForCrossPropasal{uniqueId: disclose(uniqueId), ttl: disclose(ttl)});
   crossCounter.increment(1);
 }
 
-export circuit voteMultiCrossProposal(uniqueIds: Vector<5, Bytes<32>>): [] {
-  for (const uniqueId of disclose(uniqueIds)) {
-    if(uniqueId != default<Bytes<32>>) {
-      voteCrossProposal(uniqueId);
+export circuit voteMultiCrossProposal(uniqueIds: Vector<5, VoteForCrossPropasal>): [] {
+  for (const target of disclose(uniqueIds)) {
+    if(target.uniqueId != default<Bytes<32>>) {
+      voteCrossProposal(target);
     }
   }
 }
 
-export circuit voteCrossProposal(uniqueId: Bytes<32>): [] {
+export circuit voteCrossProposal(target: VoteForCrossPropasal): [] {
   assert(smgTxSigners.member(ownPublicKey()), "not smg member");
-  assert(crossProposal.member(disclose(uniqueId)), "proposal not exists");
+  assert(crossProposal.member(disclose(target.uniqueId)), "proposal not exists");
 
-  const proposal = crossProposal.lookup(disclose(uniqueId));
+  const proposal = crossProposal.lookup(disclose(target.uniqueId));
+  assert(proposal.ttl == target.ttl, "ttl not match");
   
 
   // if ttl is expired and not enough voters, remove the proposal
   if(blockTimeGte(proposal.ttl)){
-    crossProposal.remove(disclose(uniqueId));
-    crossProposalVoters.remove(disclose(uniqueId));
+    crossProposal.remove(disclose(target.uniqueId));
+    crossProposalVoters.remove(disclose(target.uniqueId));
     return;
   }
 
-  assert(crossProposalVoters.lookup(disclose(uniqueId)).size() < smgPKThreshold, "already passed");
+  assert(crossProposalVoters.lookup(disclose(target.uniqueId)).size() < smgPKThreshold, "already passed");
 
   const voterIndex = smgTxSigners.lookup(ownPublicKey());
-  assert(!crossProposalVoters.lookup(disclose(uniqueId)).member(voterIndex), "already voted");
+  assert(!crossProposalVoters.lookup(disclose(target.uniqueId)).member(voterIndex), "already voted");
 
-  crossProposalVoters.lookup(disclose(uniqueId)).insert(voterIndex);
+  crossProposalVoters.lookup(disclose(target.uniqueId)).insert(voterIndex);
 
-  if(crossProposalVoters.lookup(disclose(uniqueId)).size() >= smgPKThreshold && proposal.fee > 0){
+  if(crossProposalVoters.lookup(disclose(target.uniqueId)).size() >= smgPKThreshold && proposal.fee > 0){
     updateReserve(proposal.isMappingToken,proposal.token,proposal.fee,true);
   }
 }
@@ -486,7 +492,7 @@ circuit updateReserve(isMappingToken: Boolean,token: Bytes<32>, delta: Uint<128>
 }
 
 export circuit approveUserWithdrawFee(user: ZswapCoinPublicKey, coinApprove: CoinInfo): []{
-  assert(ownPublicKey() == mergeWorker, "only mergeWorker can approveUserWithDrawFee");//TODO: who has the right to approve
+  assert(ownPublicKey() == feeReceiver, "only feeReceiver can approveUserWithDrawFee");//TODO: who has the right to approve
   assert(disclose(coinApprove.color) == nativeToken(),"wrong coin color");
   assert(userFeeBalance.member(disclose(user)), "userFeeBalance not exists");
   const userFeeBalanceInfo = userFeeBalance.lookup(disclose(user));
@@ -522,7 +528,7 @@ export circuit approveUserWithdrawFee(user: ZswapCoinPublicKey, coinApprove: Coi
 // }
 
 export circuit withdrawReserveOfNativeToken(token: Bytes<32>,coinIndex: Uint<128>): [] {
-  assert(ownPublicKey() == mergeWorker, "only mergeWorker can withdrawReserveOfNativeToken");
+  assert(ownPublicKey() == feeReceiver, "only feeReceiver can withdrawReserveOfNativeToken");
   assert(reserveOfAllToken.member(disclose(token)), "fee of specified token not exists");
   const reserveInfo = reserveOfAllToken.lookup(disclose(token));
   assert(reserveInfo.isMappingToken == false, "only native token can be executed");
@@ -536,7 +542,7 @@ export circuit withdrawReserveOfNativeToken(token: Bytes<32>,coinIndex: Uint<128
 }
 
 export circuit  withdrawReserveOfMappingToken(domainSep: Bytes<32>): [] {
-  assert(ownPublicKey() == mergeWorker, "only mergeWorker can withdrawReserveOfMappingToken");
+  assert(ownPublicKey() == feeReceiver, "only feeReceiver can withdrawReserveOfMappingToken");
   assert(reserveOfAllToken.member(disclose(domainSep)), "reserver of specified domainSep not exists");
   const reserveInfo = reserveOfAllToken.lookup(disclose(domainSep));
   assert(reserveInfo.isMappingToken == true, "only mapping token can be executed");
@@ -644,7 +650,8 @@ export circuit setSmgPKThreold(threshold: Uint<8>): [] {
 }
 
 export circuit setFeeCommonConfig(chainId: Uint<32>, fee: Uint<128>): [] {
-  assert(checkAdminAuthorized(), "not admin authorized");
+  // assert(checkAdminAuthorized(), "not admin authorized");
+  assert(ownPublicKey() == tokenManager, "not tokenManager");
   if(feeCommonConfig.member(disclose(chainId))) {
     feeCommonConfig.remove(disclose(chainId));
   } 
