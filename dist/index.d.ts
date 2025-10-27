@@ -165,6 +165,7 @@ export declare class CrossChainApi {
     upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<FinalizedTxData>;
 }
 export declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<FinalizedTxData>;
+export declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string) => Promise<FinalizedTxData>;
 export declare const getTreasuryCoinsFromState: (state: CrossChain.Ledger) => Map<string, Map<bigint, CrossChain.QualifiedCoinInfo>>;
 export declare const genSigningKey: () => string;
 export declare const genRandomBigint: () => bigint;

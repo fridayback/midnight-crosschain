@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-27 11:13:26
+ * @LastEditTime: 2025-10-27 13:03:26
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,7 +16,7 @@ import path from 'node:path';
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
 
 import { createBalancedTx, type BalancedTransaction, type ImpureCircuitId, type MidnightProvider, type MidnightProviders, type UnbalancedTransaction, type WalletProvider, type FinalizedTxData, SucceedEntirely, getImpureCircuitIds } from '@midnight-ntwrk/midnight-js-types';
-import { deployContract, FinalizedCallTxData, findDeployedContract, type DeployedContract, submitInsertVerifierKeyTx, type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
+import { deployContract, FinalizedCallTxData, findDeployedContract, type DeployedContract, submitInsertVerifierKeyTx, type FoundContract, submitRemoveVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
@@ -904,6 +904,11 @@ export const upgradeContractCircuit = async (providers: MidnightProviders,contra
     newVk = await providers.zkConfigProvider.getVerifierKey(circuitId as CrossChainCircuits);
   }
   return await submitInsertVerifierKeyTx(providers, contractAddress, circuitId, newVk);
+}
+
+export const removeContractCircuit = async (providers: MidnightProviders, contractAddress: Address, circuitId: string) => {
+    assertIsContractAddress(contractAddress);
+    return await submitRemoveVerifierKeyTx(providers, contractAddress, circuitId);
 }
 
 
