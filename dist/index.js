@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-26 09:16:37
+ * @LastEditTime: 2025-10-27 11:13:26
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -12,7 +12,7 @@ import path from 'node:path';
 // import { witnesses, type CrossChainPrivateState } from './witnesses.js';
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
 import { createBalancedTx } from '@midnight-ntwrk/midnight-js-types';
-import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
+import { deployContract, findDeployedContract, submitInsertVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
@@ -693,19 +693,30 @@ export class CrossChainApi {
     async updateContractAuthority(newKey) {
         return await this.crossChainContract.contractMaintenanceTx.replaceAuthority(newKey);
     }
-    async upgradeContract(circuit, newCircuit) {
+    async upgradeContract(circuitId, newCircuitHex) {
         let newVK;
-        if (newCircuit) {
-            newVK = createVerifierKey(fromHex(newCircuit));
+        if (newCircuitHex) {
+            newVK = createVerifierKey(fromHex(newCircuitHex));
         }
         else {
-            newVK = await this.providers.zkConfigProvider.getVerifierKey(circuit);
+            newVK = await this.providers.zkConfigProvider.getVerifierKey(circuitId);
         }
-        const res1 = await this.crossChainContract.circuitMaintenanceTx[circuit].removeVerifierKey();
-        const res2 = await this.crossChainContract.circuitMaintenanceTx[circuit].insertVerifierKey(newVK);
+        const res1 = await this.crossChainContract.circuitMaintenanceTx[circuitId].removeVerifierKey();
+        const res2 = await this.crossChainContract.circuitMaintenanceTx[circuitId].insertVerifierKey(newVK);
         return res2;
     }
 }
+export const upgradeContractCircuit = async (providers, contractAddress, circuitId, newVkHex) => {
+    assertIsContractAddress(contractAddress);
+    let newVk;
+    if (newVkHex) {
+        newVk = createVerifierKey(fromHex(newVkHex));
+    }
+    else {
+        newVk = await providers.zkConfigProvider.getVerifierKey(circuitId);
+    }
+    return await submitInsertVerifierKeyTx(providers, contractAddress, circuitId, newVk);
+};
 export const getTreasuryCoinsFromState = (state) => {
     let treasuryCoins = new Map();
     console.log('treasuryCoins size:', state.treasuryCoins.size());

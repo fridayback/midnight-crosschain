@@ -162,8 +162,9 @@ export declare class CrossChainApi {
     executeProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "executeProposal">>;
     removeExpiredHisTxs(txs: string[]): Promise<FinalizedCallTxData<CrossChainContract, "removeExpiredHisTxs">>;
     updateContractAuthority(newKey: SigningKey): Promise<FinalizedTxData>;
-    upgradeContract(circuit: CrossChainCircuits, newCircuit: string | undefined): Promise<FinalizedTxData>;
+    upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<FinalizedTxData>;
 }
+export declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<FinalizedTxData>;
 export declare const getTreasuryCoinsFromState: (state: CrossChain.Ledger) => Map<string, Map<bigint, CrossChain.QualifiedCoinInfo>>;
 export declare const genSigningKey: () => string;
 export declare const genRandomBigint: () => bigint;
