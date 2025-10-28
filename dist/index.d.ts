@@ -107,6 +107,7 @@ export declare class CrossChainApi {
         uniqueId: string;
         smgId: string;
         tokenPairId: string;
+        token: string;
         amount: string;
         fee: string;
         toAddr: string;
