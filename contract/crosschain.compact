@@ -60,6 +60,7 @@ export ledger proposalId: Counter;
 export ledger proposals: Map<Uint<32>, Proposal>;
 export ledger currentExcuteProposalId: Uint<32>;
 export ledger proposalVoters: Map<Uint<32>, Set<ZswapCoinPublicKey>>;
+// export ledger validProposalVoterCount: Uint<8>;
 
 export ledger crossProposal: Map<Bytes<32>,CrossProposal>;
 export ledger crossProposalVoters: Map<Bytes<32>, Set<Uint<8>>>;
@@ -333,6 +334,7 @@ export circuit voteCrossProposal(target: VoteForCrossPropasal): [] {
   assert(proposal.ttl == target.ttl, "ttl not match");
   
 
+  if(crossProposalVoters.lookup(disclose(target.uniqueId)).size() >= smgPKThreshold) return;
   // if ttl is expired and not enough voters, remove the proposal
   if(blockTimeGte(proposal.ttl)){
     crossProposal.remove(disclose(target.uniqueId));
@@ -340,7 +342,6 @@ export circuit voteCrossProposal(target: VoteForCrossPropasal): [] {
     return;
   }
 
-  assert(crossProposalVoters.lookup(disclose(target.uniqueId)).size() < smgPKThreshold, "already passed");
 
   const voterIndex = smgTxSigners.lookup(ownPublicKey());
   assert(!crossProposalVoters.lookup(disclose(target.uniqueId)).member(voterIndex), "already voted");
@@ -614,7 +615,7 @@ export circuit setAdminThreshold(threshold: Uint<8>): [] {
 }
 
 export circuit setSmgPksks(voters: Vector<29,ZswapCoinPublicKey>): [] {
-  assert(owner == ownPublicKey(), "only owner can set smg pks");
+  assert(checkAdminAuthorized(), "only owner can set smg pks");
   smgTxSigners.resetToDefault();
 
   fold( (index: Uint<8>, voter: ZswapCoinPublicKey) =>{
@@ -636,6 +637,19 @@ export circuit updateSmgPk(newVoter: ZswapCoinPublicKey): [] {
   smgTxSigners.remove(disclose(ownPublicKey()));
   smgTxSigners.insert(disclose(newVoter),index);
 }
+
+// circuit validVotersCountOfProposal(proposalId: Uint<32>): Uint<8> {
+//   assert(proposalVoters.member(proposalId), "proposal does not exist");
+//   validProposalVoterCount = 0;
+//   fold((count: Uint<8>, voter: ZswapCoinPublicKey) =>{
+//     validProposalVoterCount = (count + (admins.member(voter) ? 1 : 0)) as Uint<8>;
+//     return validProposalVoterCount;
+//   },0,proposalVoters.lookup(proposalId));
+
+//   const validCount = validProposalVoterCount;
+//   validProposalVoterCount= 0;
+//   return validCount;
+// }
 
 circuit checkAdminAuthorized(): Boolean {
   const isOwner = owner == ownPublicKey();
@@ -661,7 +675,7 @@ export circuit setFeeCommonConfig(chainId: Uint<32>, fee: Uint<128>): [] {
 export circuit addTokenPair(
   tokenPairId: Uint<32>
   , pairInfo: TokenPairInfo): [] {
-  assert(tokenManager == ownPublicKey() || checkAdminAuthorized(), "not authorized");
+  assert(tokenManager == ownPublicKey(), "not authorized");
   assert(!tokenPairs.member(disclose(tokenPairId)), "token pair already exists");
   if(disclose(pairInfo.domainSep) != default<Bytes<32>>) {
     const expectColor = tokenType(disclose(pairInfo.domainSep),kernel.self());
@@ -671,16 +685,19 @@ export circuit addTokenPair(
 }
 
 export circuit removeTokenPair(tokenPairId: Uint<32>): [] {
-  assert(tokenManager == ownPublicKey() || checkAdminAuthorized(), "not authorized");
+  assert(tokenManager == ownPublicKey(), "not authorized");
   assert(tokenPairs.member(disclose(tokenPairId)), "token pair does not exist");
   tokenPairs.remove(disclose(tokenPairId));
 }
 
 export circuit newProposal(newProposal: Proposal): [] {
-  proposals.insert(proposalId as Field as Uint<32>, disclose(newProposal));
-  proposalVoters.insertDefault(proposalId as Field as Uint<32>);
-  voteProposal(proposalId as Field as Uint<32>);
+  assert(disclose(newProposal.type) != ProposalType.UpdateFeeCommonConfig && disclose(newProposal.type) != ProposalType.UpdateTokenManager, "ProposalType not supoorted");
   proposalId.increment(1);
+
+  proposals.insert(proposalId as Field as Uint<32>, disclose(newProposal));
+  proposalVoters.insertDefault(proposalId as Field as Uint<32>); 
+  voteProposal(proposalId as Field as Uint<32>);
+  
 }
 
 export circuit voteProposal(proposalId: Uint<32>): [] {
@@ -691,7 +708,7 @@ export circuit voteProposal(proposalId: Uint<32>): [] {
   proposalVoters.lookup(disclose(proposalId)).insert(ownPublicKey());
 }
 
- 
+
 export circuit executeProposal(proposalId: Uint<32>): [] {
   assert(proposalVoters.member(disclose(proposalId)), "proposal does not exist");
   currentExcuteProposalId = disclose(proposalId);
@@ -718,6 +735,12 @@ export circuit executeProposal(proposalId: Uint<32>): [] {
 
   proposals.remove(disclose(proposalId));
   proposalVoters.remove(disclose(proposalId));
+  currentExcuteProposalId = 0;
+  
+  if(currentProposal.type == ProposalType.RemoveAdmin){
+    proposals.resetToDefault();
+    proposalVoters.resetToDefault();
+  }
 }
 
 export circuit removeExpiredHisTxs(txs: Vector<20,Bytes<32>>): []{
