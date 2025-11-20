@@ -1,10 +1,12 @@
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
-import { type MidnightProvider, type MidnightProviders, type WalletProvider } from '@midnight-ntwrk/midnight-js-types';
+import { type MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
 import { FinalizedCallTxData } from '@midnight-ntwrk/midnight-js-contracts';
-import { Address, Wallet } from '@midnight-ntwrk/wallet-api';
+import { Address } from '@midnight-ntwrk/wallet-api';
 import { TokenType } from '@midnight-ntwrk/zswap';
 import { ContractAddress, SigningKey } from '@midnight-ntwrk/compact-runtime';
 import { CrossChainCircuits, CrossChainProviders, DeployedCrossChainContract, type CrossChainContract } from './common-types';
+export * from './witnesses';
+export * from './common-types';
 export declare function pad(s: string, n: number): Uint8Array;
 export interface Config {
     readonly indexer: string;
@@ -14,18 +16,13 @@ export interface Config {
     readonly zkConfigPath: string;
 }
 export declare const crosschainContractInstance: CrossChainContract;
-export declare const createWalletAndMidnightProvider: (wallet: Wallet) => Promise<WalletProvider & MidnightProvider>;
-export declare const getSerializeWalletState: (wallet: Wallet) => Promise<string>;
-export declare const walletAddress: (wallet: Wallet) => Promise<string>;
-export declare const walletBalance: (wallet: Wallet) => Promise<Record<string, bigint>>;
 export declare class CrossChainApi {
     providers: CrossChainProviders;
     crossChainContract: DeployedCrossChainContract;
     MaxSmgSignators: number;
     MaxMergeCoins: number;
     constructor();
-    init(config: Config, wallet: Wallet): Promise<void>;
-    setWallet(wallet: Wallet): Promise<void>;
+    init(providers: CrossChainProviders): Promise<void>;
     deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, signingKey: SigningKey): Promise<ContractAddress>;
     join(contractAddress: ContractAddress): Promise<void>;
     checkCrossData(uniqueId: string, smgId: string, tokenPairId: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, coins: string[] | number[] | bigint[] | undefined, ttl: string | number | bigint): {

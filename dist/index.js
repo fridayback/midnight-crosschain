@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-11-20 21:04:21
+ * @LastEditTime: 2025-11-20 21:55:54
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,25 +11,20 @@
 // import path from 'node:path';
 // import { witnesses, type CrossChainPrivateState } from './witnesses.js';
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
-import { createBalancedTx } from '@midnight-ntwrk/midnight-js-types';
 import { deployContract, findDeployedContract, submitInsertVerifierKeyTx, submitRemoveVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
-import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
-import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
-// import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
-import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
-import { decodeTokenType, encodeTokenType, Transaction, tokenType, sampleCoinPublicKey, encodeCoinInfo, createCoinInfo, nativeToken } from '@midnight-ntwrk/ledger';
-import { Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
-import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId, getRuntimeNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { decodeTokenType, encodeTokenType, tokenType, sampleCoinPublicKey, encodeCoinInfo, createCoinInfo, nativeToken } from '@midnight-ntwrk/ledger';
+import { NetworkId, setNetworkId, getRuntimeNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
 import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
-import * as Rx from 'rxjs';
 import { CompactTypeOpaqueString, ContractState, sampleSigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
 // import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
 import { createVerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import assert from 'node:assert';
 import { CrossChainPrivateStateId } from './common-types';
-import { newZkProvider } from './newZkProvider';
+// import {newZkProvider} from './newZkProvider';
 import { witnesses } from "./witnesses";
+export * from './witnesses';
+export * from './common-types';
 // import { fileURLToPath } from 'url'; 
 // export type CrossChainPrivateState = {
 // }
@@ -68,23 +63,26 @@ export function pad(s, n) {
     return paddedArray;
 }
 export const crosschainContractInstance = new CrossChain.Contract(witnesses);
-export const createWalletAndMidnightProvider = async (wallet) => {
-    const state = await Rx.firstValueFrom(wallet.state());
-    return {
-        coinPublicKey: state.coinPublicKey,
-        encryptionPublicKey: state.encryptionPublicKey,
-        balanceTx(tx, newCoins) {
-            return wallet
-                .balanceTransaction(ZswapTransaction.deserialize(tx.serialize(getLedgerNetworkId()), getZswapNetworkId()), newCoins)
-                .then((tx) => wallet.proveTransaction(tx))
-                .then((zswapTx) => Transaction.deserialize(zswapTx.serialize(getZswapNetworkId()), getLedgerNetworkId()))
-                .then(createBalancedTx);
-        },
-        submitTx(tx) {
-            return wallet.submitTransaction(tx);
-        },
-    };
-};
+// export const createWalletAndMidnightProvider = async (wallet: Wallet): Promise<WalletProvider & MidnightProvider> => {
+//   const state = await Rx.firstValueFrom(wallet.state());
+//   return {
+//     coinPublicKey: state.coinPublicKey,
+//     encryptionPublicKey: state.encryptionPublicKey,
+//     balanceTx(tx: UnbalancedTransaction, newCoins: CoinInfo[]): Promise<BalancedTransaction> {
+//       return wallet
+//         .balanceTransaction(
+//           ZswapTransaction.deserialize(tx.serialize(getLedgerNetworkId()), getZswapNetworkId()),
+//           newCoins,
+//         )
+//         .then((tx) => wallet.proveTransaction(tx))
+//         .then((zswapTx) => Transaction.deserialize(zswapTx.serialize(getZswapNetworkId()), getLedgerNetworkId()))
+//         .then(createBalancedTx);
+//     },
+//     submitTx(tx: BalancedTransaction): Promise<TransactionId> {
+//       return wallet.submitTransaction(tx);
+//     },
+//   };
+// };
 // export const waitForSync = (wallet: Wallet) =>
 //   Rx.firstValueFrom(
 //     wallet.state().pipe(
@@ -204,17 +202,17 @@ export const createWalletAndMidnightProvider = async (wallet) => {
 //     return false;
 //   }
 // };
-export const getSerializeWalletState = async (wallet) => {
-    return await wallet.serializeState();
-};
-export const walletAddress = async (wallet) => {
-    const state = await Rx.firstValueFrom(wallet.state());
-    return state.address;
-};
-export const walletBalance = async (wallet) => {
-    const state = await Rx.firstValueFrom(wallet.state());
-    return state.balances;
-};
+// export const getSerializeWalletState = async (wallet: Wallet): Promise<string> => {
+//   return await wallet.serializeState();
+// };
+// export const walletAddress = async (wallet: Wallet): Promise<string> => {
+//   const state = await Rx.firstValueFrom(wallet.state());
+//   return state.address;
+// }
+// export const walletBalance = async (wallet: Wallet): Promise<Record<string, bigint>> => {
+//   const state = await Rx.firstValueFrom(wallet.state());
+//   return state.balances;
+// }
 const MAX_SIGNER_COUNT = 29;
 export class CrossChainApi {
     providers;
@@ -224,27 +222,28 @@ export class CrossChainApi {
     constructor() {
         // setNetworkId(networkId);
     }
-    async init(config, wallet) {
-        const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-        this.providers = {
-            privateStateProvider: levelPrivateStateProvider({
-                privateStateStoreName: 'CCPSSN',
-            }),
-            publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
-            zkConfigProvider: newZkProvider(),
-            proofProvider: httpClientProofProvider(config.proofServer),
-            walletProvider: walletAndMidnightProvider,
-            midnightProvider: walletAndMidnightProvider,
-        };
+    async init(providers) {
+        this.providers = providers;
+        // const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+        // this.providers = {
+        //   privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
+        //     privateStateStoreName: 'CCPSSN',
+        //   }),
+        //   publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+        //   zkConfigProvider: newZkProvider() as ZKConfigProvider<CrossChainCircuitKeys>,
+        //   proofProvider: httpClientProofProvider(config.proofServer),
+        //   walletProvider: walletAndMidnightProvider,
+        //   midnightProvider: walletAndMidnightProvider,
+        // };
     }
-    async setWallet(wallet) {
-        const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-        this.providers = {
-            ...this.providers,
-            walletProvider: walletAndMidnightProvider,
-            midnightProvider: walletAndMidnightProvider,
-        };
-    }
+    // async setWallet(wallet: Wallet) {
+    //   // const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+    //   // this.providers = {
+    //   //   ...this.providers,
+    //   //   walletProvider: walletAndMidnightProvider,
+    //   //   midnightProvider: walletAndMidnightProvider,
+    //   // };
+    //   }
     async deployContract(adminThreshold, smgPkThreshold, signingKey) {
         this.crossChainContract = await deployContract(this.providers, {
             contract: crosschainContractInstance,
