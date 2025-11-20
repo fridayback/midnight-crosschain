@@ -2,11 +2,6 @@ import { CrossChainPrivateState } from './witnesses';
 import { Contract, Witnesses } from './managed/crosschain/contract/index.cjs';
 import { type MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
 import { type FoundContract, type DeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
-export declare const currentDir: string;
-export declare const ZKConfig: {
-    privateStateStoreName: string;
-    zkConfigPath: string;
-};
 export declare const CrossChainPrivateStateId = "crossChainPrivateState";
 export type PrivateStateId = typeof CrossChainPrivateStateId;
 export type CrossChainContract = Contract<CrossChainPrivateState, Witnesses<CrossChainPrivateState>>;
