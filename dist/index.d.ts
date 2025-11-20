@@ -1,13 +1,10 @@
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
-import { type MidnightProvider, type MidnightProviders, type WalletProvider, type FinalizedTxData } from '@midnight-ntwrk/midnight-js-types';
+import { type MidnightProvider, type MidnightProviders, type WalletProvider } from '@midnight-ntwrk/midnight-js-types';
 import { FinalizedCallTxData } from '@midnight-ntwrk/midnight-js-contracts';
 import { Address, Wallet } from '@midnight-ntwrk/wallet-api';
 import { TokenType } from '@midnight-ntwrk/zswap';
 import { ContractAddress, SigningKey } from '@midnight-ntwrk/compact-runtime';
-import { Resource } from '@midnight-ntwrk/wallet';
 import { CrossChainCircuits, CrossChainProviders, DeployedCrossChainContract, type CrossChainContract } from './common-types';
-export declare const createCrossChainPrivateState: () => {};
-export declare const witnesses: {};
 export declare function pad(s: string, n: number): Uint8Array;
 export interface Config {
     readonly indexer: string;
@@ -18,11 +15,6 @@ export interface Config {
 }
 export declare const crosschainContractInstance: CrossChainContract;
 export declare const createWalletAndMidnightProvider: (wallet: Wallet) => Promise<WalletProvider & MidnightProvider>;
-export declare const waitForSync: (wallet: Wallet) => Promise<import("@midnight-ntwrk/wallet-api").WalletState>;
-export declare const waitForSyncProgress: (wallet: Wallet) => Promise<import("@midnight-ntwrk/wallet-api").WalletState>;
-export declare const waitForFunds: (wallet: Wallet) => Promise<Record<string, bigint>>;
-export declare const buildWalletAndWaitForFunds: ({ indexer, indexerWS, node, proofServer }: Config, seed: string, serializedState: string | undefined) => Promise<Wallet & Resource>;
-export declare const isAnotherChain: (wallet: Wallet, offset: number) => Promise<boolean>;
 export declare const getSerializeWalletState: (wallet: Wallet) => Promise<string>;
 export declare const walletAddress: (wallet: Wallet) => Promise<string>;
 export declare const walletBalance: (wallet: Wallet) => Promise<Record<string, bigint>>;
@@ -151,11 +143,11 @@ export declare class CrossChainApi {
     voteProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "voteProposal">>;
     executeProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "executeProposal">>;
     removeExpiredHisTxs(txs: string[]): Promise<FinalizedCallTxData<CrossChainContract, "removeExpiredHisTxs">>;
-    updateContractAuthority(newKey: SigningKey): Promise<FinalizedTxData>;
-    upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<FinalizedTxData>;
+    updateContractAuthority(newKey: SigningKey): Promise<import("@midnight-ntwrk/midnight-js-types").FinalizedTxData>;
+    upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<import("@midnight-ntwrk/midnight-js-types").FinalizedTxData>;
 }
-export declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<FinalizedTxData>;
-export declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string) => Promise<FinalizedTxData>;
+export declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<import("@midnight-ntwrk/midnight-js-types").FinalizedTxData>;
+export declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string) => Promise<import("@midnight-ntwrk/midnight-js-types").FinalizedTxData>;
 export declare const getTreasuryCoinsFromState: (state: CrossChain.Ledger) => Map<string, Map<bigint, CrossChain.QualifiedCoinInfo>>;
 export declare const genSigningKey: () => string;
 export declare const genRandomBigint: () => bigint;
@@ -163,19 +155,4 @@ export declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => 
 export declare const initNetwork: (networkId: number) => void;
 export interface WalletStore {
     (walletState: string): Promise<void>;
-}
-export declare class MidnightWalletSDK {
-    readonly config: Config;
-    private walletObj?;
-    private walletAddress;
-    private bActiveFlag;
-    private storeTimer?;
-    constructor(config: Config);
-    initWallet(strSeed: string, store: WalletStore, strSerializedState?: string, saveInterval?: number): Promise<void>;
-    getAccountAddress(): string;
-    getBalances(): Promise<any[]>;
-    getAvailableCoins(): Promise<import("@midnight-ntwrk/zswap").QualifiedCoinInfo[]>;
-    uninitWallet(): void;
-    getWalletInstance(): (Wallet & Resource) | undefined;
-    getSerializedWalletState(): Promise<string> | "";
 }

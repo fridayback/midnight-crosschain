@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-11-20 18:53:15
+ * @LastEditTime: 2025-11-20 21:04:21
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -24,11 +24,12 @@ import { assertIsContractAddress, fromHex, toHex } from '@midnight-ntwrk/midnigh
 import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as Rx from 'rxjs';
 import { CompactTypeOpaqueString, ContractState, sampleSigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
-import { WalletBuilder } from '@midnight-ntwrk/wallet';
+// import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
 import { createVerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import assert from 'node:assert';
 import { CrossChainPrivateStateId } from './common-types';
 import { newZkProvider } from './newZkProvider';
+import { witnesses } from "./witnesses";
 // import { fileURLToPath } from 'url'; 
 // export type CrossChainPrivateState = {
 // }
@@ -44,10 +45,11 @@ import { newZkProvider } from './newZkProvider';
 //   privateStateStoreName: 'crosschain-private-state',
 //   zkConfigPath: path.resolve(currentDir, 'managed', 'crosschain'),
 // };
-export const createCrossChainPrivateState = () => ({});
-export const witnesses = {
-// TODO: Add witnesses
-};
+// export const createCrossChainPrivateState = () => ({
+// });
+// export const witnesses = {
+//   // TODO: Add witnesses
+// }
 const coinInfo = (token, value) => encodeCoinInfo(createCoinInfo(token, value));
 const fromHexWithOrNoPrefix = (hex) => {
     if (hex.startsWith('0x')) {
@@ -83,83 +85,125 @@ export const createWalletAndMidnightProvider = async (wallet) => {
         },
     };
 };
-export const waitForSync = (wallet) => Rx.firstValueFrom(wallet.state().pipe(Rx.throttleTime(1_000), Rx.tap((state) => {
-    const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
-    const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
-}), Rx.filter((state) => {
-    // Let's allow progress only if wallet is synced fully
-    return state.syncProgress !== undefined && state.syncProgress.synced;
-})));
-export const waitForSyncProgress = async (wallet) => await Rx.firstValueFrom(wallet.state().pipe(Rx.throttleTime(1_000), Rx.tap((state) => {
-    const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
-    const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
-}), Rx.filter((state) => {
-    // Let's allow progress only if syncProgress is defined
-    return state.syncProgress !== undefined;
-})));
-export const waitForFunds = (wallet) => Rx.firstValueFrom(wallet.state().pipe(Rx.throttleTime(10_000), Rx.tap((state) => {
-    const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
-    const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
-}), Rx.filter((state) => {
-    // Let's allow progress only if wallet is synced
-    // for( const token in state.balances){
-    //   console.log('*******',token, state.balances[token])
-    // }
-    return state.syncProgress?.synced === true;
-}), Rx.map((s) => s.balances)));
-export const buildWalletAndWaitForFunds = async ({ indexer, indexerWS, node, proofServer }, seed, serializedState) => {
-    let wallet;
-    if (serializedState) {
-        wallet = await WalletBuilder.restore(indexer, indexerWS, proofServer, node, seed, serializedState, 'info', true);
-        wallet.start();
-        const stateObject = JSON.parse(serializedState);
-        if ((await isAnotherChain(wallet, Number(stateObject.offset))) === true) {
-            console.warn('The chain was reset, building wallet from scratch');
-            wallet = await WalletBuilder.build(indexer, indexerWS, proofServer, node, seed, getZswapNetworkId(), 'info', true);
-            wallet.start();
-            console.log('Wallet was built from scratch 1');
-        }
-    }
-    else {
-        console.log('Wallet save file not found, building wallet from scratch');
-        wallet = await WalletBuilder.build(indexer, indexerWS, proofServer, node, seed, getZswapNetworkId(), 'info', true);
-        wallet.start();
-        console.log('Wallet was built from scratch 2');
-    }
-    {
-        const newState = await waitForSync(wallet);
-        // allow for situations when there's no new index in the network between runs
-        if (newState.syncProgress?.synced) {
-            console.info('Wallet was able to sync from restored state');
-        }
-        else {
-            throw new Error('Wallet was not able to sync from restored state');
-        }
-    }
-    const state = await Rx.firstValueFrom(wallet.state());
-    console.info(`Your wallet address is: ${state.address}`);
-    let balance = state.balances[nativeToken()];
-    if (balance === undefined || balance === 0n) {
-        console.info(`Your wallet balance is: 0`);
-        console.info(`Waiting to receive tokens...`);
-        balance = (await waitForFunds(wallet))[nativeToken()];
-    }
-    console.info(`Your wallet balance is: ${balance}`);
-    return wallet;
-};
-export const isAnotherChain = async (wallet, offset) => {
-    await waitForSyncProgress(wallet);
-    // Here wallet does not expose the offset block it is synced to, that is why this workaround
-    const walletOffset = Number(JSON.parse(await wallet.serializeState()).offset);
-    if (walletOffset < offset - 1) {
-        console.info(`Your offset offset is: ${walletOffset} restored offset: ${offset} so it is another chain`);
-        return true;
-    }
-    else {
-        console.info(`Your offset offset is: ${walletOffset} restored offset: ${offset} ok`);
-        return false;
-    }
-};
+// export const waitForSync = (wallet: Wallet) =>
+//   Rx.firstValueFrom(
+//     wallet.state().pipe(
+//       Rx.throttleTime(1_000),
+//       Rx.tap((state) => {
+//         const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
+//         const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
+//       }),
+//       Rx.filter((state) => {
+//         // Let's allow progress only if wallet is synced fully
+//         return state.syncProgress !== undefined && state.syncProgress.synced;
+//       }),
+//     ),
+//   );
+// export const waitForSyncProgress = async (wallet: Wallet) =>
+//   await Rx.firstValueFrom(
+//     wallet.state().pipe(
+//       Rx.throttleTime(1_000),
+//       Rx.tap((state) => {
+//         const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
+//         const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
+//       }),
+//       Rx.filter((state) => {
+//         // Let's allow progress only if syncProgress is defined
+//         return state.syncProgress !== undefined;
+//       }),
+//     ),
+//   );
+// export const waitForFunds = (wallet: Wallet) =>
+//   Rx.firstValueFrom(
+//     wallet.state().pipe(
+//       Rx.throttleTime(10_000),
+//       Rx.tap((state) => {
+//         const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
+//         const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
+//       }),
+//       Rx.filter((state) => {
+//         // Let's allow progress only if wallet is synced
+//         // for( const token in state.balances){
+//         //   console.log('*******',token, state.balances[token])
+//         // }
+//         return state.syncProgress?.synced === true;
+//       }),
+//       Rx.map((s) => s.balances),
+//       // Rx.filter((balance) => balance.balance > 0n),
+//     ),
+//   );
+// export const buildWalletAndWaitForFunds = async (
+//   { indexer, indexerWS, node, proofServer }: Config,
+//   seed: string,
+//   serializedState: string | undefined
+// ): Promise<Wallet & Resource> => {
+//   let wallet: Wallet & Resource;
+//   if (serializedState) {
+//     wallet = await WalletBuilder.restore(indexer, indexerWS, proofServer, node, seed, serializedState, 'info', true);
+//     wallet.start();
+//     const stateObject = JSON.parse(serializedState);
+//     if ((await isAnotherChain(wallet, Number(stateObject.offset))) === true) {
+//       console.warn('The chain was reset, building wallet from scratch');
+//       wallet = await WalletBuilder.build(
+//         indexer,
+//         indexerWS,
+//         proofServer,
+//         node,
+//         seed,
+//         getZswapNetworkId(),
+//         'info',
+//         true
+//       );
+//       wallet.start();
+//       console.log('Wallet was built from scratch 1');
+//     }
+//   } else {
+//     console.log('Wallet save file not found, building wallet from scratch');
+//     wallet = await WalletBuilder.build(
+//       indexer,
+//       indexerWS,
+//       proofServer,
+//       node,
+//       seed,
+//       getZswapNetworkId(),
+//       'info',
+//       true
+//     );
+//     wallet.start();
+//     console.log('Wallet was built from scratch 2');
+//   }
+//   {
+//     const newState = await waitForSync(wallet);
+//     // allow for situations when there's no new index in the network between runs
+//     if (newState.syncProgress?.synced) {
+//       console.info('Wallet was able to sync from restored state');
+//     } else {
+//       throw new Error('Wallet was not able to sync from restored state');
+//     }
+//   }
+//   const state = await Rx.firstValueFrom(wallet.state());
+//   console.info(`Your wallet address is: ${state.address}`);
+//   let balance = state.balances[nativeToken()];
+//   if (balance === undefined || balance === 0n) {
+//     console.info(`Your wallet balance is: 0`);
+//     console.info(`Waiting to receive tokens...`);
+//     balance = (await waitForFunds(wallet))[nativeToken()];
+//   }
+//   console.info(`Your wallet balance is: ${balance}`);
+//   return wallet;
+// };
+// export const isAnotherChain = async (wallet: Wallet, offset: number) => {
+//   await waitForSyncProgress(wallet);
+//   // Here wallet does not expose the offset block it is synced to, that is why this workaround
+//   const walletOffset = Number(JSON.parse(await wallet.serializeState()).offset);
+//   if (walletOffset < offset - 1) {
+//     console.info(`Your offset offset is: ${walletOffset} restored offset: ${offset} so it is another chain`);
+//     return true;
+//   } else {
+//     console.info(`Your offset offset is: ${walletOffset} restored offset: ${offset} ok`);
+//     return false;
+//   }
+// };
 export const getSerializeWalletState = async (wallet) => {
     return await wallet.serializeState();
 };
@@ -795,90 +839,89 @@ export const initNetwork = (networkId) => {
     }
     setNetworkId(network);
 };
-export class MidnightWalletSDK {
-    config;
-    // private NetWorkId: NetworkId;
-    walletObj;
-    walletAddress;
-    bActiveFlag;
-    storeTimer;
-    constructor(config) {
-        this.config = config;
-        this.walletAddress = '';
-        this.bActiveFlag = false;
-    }
-    //////////////////////////////////////////
-    // to generate a wallet instance
-    //////////////////////////////////////////
-    async initWallet(strSeed, store, strSerializedState, saveInterval = 600000) {
-        this.walletObj = await buildWalletAndWaitForFunds(this.config, strSeed, strSerializedState);
-        const selfWallet = this.walletObj;
-        const state = await Rx.firstValueFrom(this.walletObj.state());
-        this.walletAddress = state.address;
-        const callBack = async () => {
-            const ret = await selfWallet.serializeState();
-            await store(ret);
-            console.log('wallet state saved!');
-            clearTimeout(this.storeTimer);
-            this.storeTimer = setTimeout(callBack, saveInterval);
-        };
-        this.storeTimer = setTimeout(async () => {
-            await callBack();
-        }, saveInterval);
-    }
-    // to get the wallet address
-    getAccountAddress() {
-        return this.walletAddress;
-    }
-    async getBalances() {
-        assert(this.walletObj, "walletObj is not initialized!");
-        let curState = await Rx.firstValueFrom(this.walletObj.state());
-        // console.log("\n\n...getAccountBalance...curState: ", curState);
-        // balances: Record<TokenType, bigint>;
-        let aryBalance = new Array();
-        let curBalance = curState.balances;
-        // console.log("\n\n...getAccountBalance...curBalance: ", curBalance);
-        // in case the balances is an object instance
-        for (const coinType in curBalance) {
-            if (curBalance.hasOwnProperty(coinType)) {
-                // console.log("\n\n...getAccountBalance...coinType: ", coinType);
-                let coinAmount = curBalance[coinType];
-                // console.log("\n\n...getAccountBalance...amount : ", coinAmount);
-                let item = {
-                    "coinType": coinType,
-                    "amount": coinAmount
-                };
-                aryBalance.push(item);
-            }
-        }
-        return aryBalance;
-    }
-    async getAvailableCoins() {
-        assert(this.walletObj, "walletObj is not initialized!");
-        let curState = await Rx.firstValueFrom(this.walletObj.state());
-        // console.log("\n\n...getAvailableCoins...curState: ", curState);
-        //QualifiedCoinInfo = { type: TokenType, nonce: Nonce, value: bigint, mt_index: bigint };
-        let availableCoins = curState.availableCoins;
-        // console.log("\n\n...getAvailableCoins...curBalance: ", availableCoins);
-        return availableCoins;
-    }
-    uninitWallet() {
-        if (this.storeTimer) {
-            clearTimeout(this.storeTimer);
-        }
-        if (true === this.bActiveFlag) {
-            this.walletObj?.close();
-        }
-        this.bActiveFlag = false;
-        console.log("\n\n...wallet close done!");
-    }
-    getWalletInstance() {
-        return this.walletObj;
-    }
-    getSerializedWalletState() {
-        if (!this.walletObj)
-            return '';
-        return getSerializeWalletState(this.walletObj);
-    }
-}
+// export class MidnightWalletSDK {
+//   readonly config: Config;
+//   // private NetWorkId: NetworkId;
+//   private walletObj?: Wallet & Resource;
+//   private walletAddress: string;
+//   private bActiveFlag: boolean;
+//   private storeTimer?: NodeJS.Timeout;
+//   constructor(config: Config) {
+//     this.config = config;
+//     this.walletAddress = '';
+//     this.bActiveFlag = false;
+//   }
+//   //////////////////////////////////////////
+//   // to generate a wallet instance
+//   //////////////////////////////////////////
+//   async initWallet(strSeed: string, store: WalletStore, strSerializedState?: string, saveInterval: number = 600000) {
+//     this.walletObj = await buildWalletAndWaitForFunds(this.config, strSeed, strSerializedState);
+//     const selfWallet = this.walletObj;
+//     const state = await Rx.firstValueFrom(this.walletObj.state());
+//     this.walletAddress = state.address;
+//     const callBack = async () => {
+//       const ret = await selfWallet.serializeState();
+//       await store(ret);
+//       console.log('wallet state saved!');
+//       clearTimeout(this.storeTimer);
+//       this.storeTimer = setTimeout(callBack, saveInterval);
+//     }
+//     this.storeTimer = setTimeout(async () => {
+//       await callBack();
+//     }, saveInterval);
+//   }
+//   // to get the wallet address
+//   getAccountAddress() {
+//     return this.walletAddress;
+//   }
+//   async getBalances() {
+//     assert(this.walletObj, "walletObj is not initialized!");
+//     let curState = await Rx.firstValueFrom(this.walletObj.state());
+//     // console.log("\n\n...getAccountBalance...curState: ", curState);
+//     // balances: Record<TokenType, bigint>;
+//     let aryBalance = new Array();
+//     let curBalance = curState.balances;
+//     // console.log("\n\n...getAccountBalance...curBalance: ", curBalance);
+//     // in case the balances is an object instance
+//     for (const coinType in curBalance) {
+//       if (curBalance.hasOwnProperty(coinType)) {
+//         // console.log("\n\n...getAccountBalance...coinType: ", coinType);
+//         let coinAmount = curBalance[coinType];
+//         // console.log("\n\n...getAccountBalance...amount : ", coinAmount);
+//         let item = {
+//           "coinType": coinType,
+//           "amount": coinAmount
+//         }
+//         aryBalance.push(item);
+//       }
+//     }
+//     return aryBalance;
+//   }
+//   async getAvailableCoins() {
+//     assert(this.walletObj, "walletObj is not initialized!");
+//     let curState = await Rx.firstValueFrom(this.walletObj.state());
+//     // console.log("\n\n...getAvailableCoins...curState: ", curState);
+//     //QualifiedCoinInfo = { type: TokenType, nonce: Nonce, value: bigint, mt_index: bigint };
+//     let availableCoins = curState.availableCoins;
+//     // console.log("\n\n...getAvailableCoins...curBalance: ", availableCoins);
+//     return availableCoins;
+//   }
+//   uninitWallet() {
+//     if (this.storeTimer) {
+//       clearTimeout(this.storeTimer);
+//     }
+//     if (true === this.bActiveFlag) {
+//       this.walletObj?.close();
+//     }
+//     this.bActiveFlag = false;
+//     console.log("\n\n...wallet close done!");
+//   }
+//   getWalletInstance() {
+//     return this.walletObj;
+//   }
+//   getSerializedWalletState() {
+//     if (!this.walletObj) return '';
+//     return getSerializeWalletState(this.walletObj);
+//   }
+// }
 //# sourceMappingURL=index.js.map
