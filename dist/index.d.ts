@@ -1,22 +1,11 @@
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
-import { type ImpureCircuitId, type MidnightProvider, type MidnightProviders, type WalletProvider, type FinalizedTxData } from '@midnight-ntwrk/midnight-js-types';
-import { FinalizedCallTxData, type DeployedContract, type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
-import { FetchZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
+import { type MidnightProvider, type MidnightProviders, type WalletProvider, type FinalizedTxData } from '@midnight-ntwrk/midnight-js-types';
+import { FinalizedCallTxData } from '@midnight-ntwrk/midnight-js-contracts';
 import { Address, Wallet } from '@midnight-ntwrk/wallet-api';
 import { TokenType } from '@midnight-ntwrk/zswap';
 import { ContractAddress, SigningKey } from '@midnight-ntwrk/compact-runtime';
 import { Resource } from '@midnight-ntwrk/wallet';
-export type CrossChainPrivateState = {};
-export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState, CrossChain.Witnesses<CrossChainPrivateState>>>;
-export declare const CrossChainPrivateStateId = "crossChainPrivateState";
-export type CrossChainProviders = MidnightProviders<CrossChainCircuits, typeof CrossChainPrivateStateId, CrossChainPrivateState>;
-export type CrossChainContract = CrossChain.Contract<CrossChainPrivateState>;
-export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
-export declare const currentDir: string;
-export declare const ZKConfig: {
-    privateStateStoreName: string;
-    zkConfigPath: string;
-};
+import { CrossChainCircuits, CrossChainProviders, DeployedCrossChainContract, type CrossChainContract } from './common-types';
 export declare const createCrossChainPrivateState: () => {};
 export declare const witnesses: {};
 export declare function pad(s: string, n: number): Uint8Array;
@@ -163,20 +152,13 @@ export declare class CrossChainApi {
     executeProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "executeProposal">>;
     removeExpiredHisTxs(txs: string[]): Promise<FinalizedCallTxData<CrossChainContract, "removeExpiredHisTxs">>;
     updateContractAuthority(newKey: SigningKey): Promise<FinalizedTxData>;
-    upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<void>;
+    upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<FinalizedTxData>;
 }
+export declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<FinalizedTxData>;
 export declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string) => Promise<FinalizedTxData>;
 export declare const getTreasuryCoinsFromState: (state: CrossChain.Ledger) => Map<string, Map<bigint, CrossChain.QualifiedCoinInfo>>;
 export declare const genSigningKey: () => string;
 export declare const genRandomBigint: () => bigint;
-export declare const configureProviders: (wallet: Wallet & Resource, config: Config) => Promise<{
-    privateStateProvider: import("@midnight-ntwrk/midnight-js-types").PrivateStateProvider<"crossChainPrivateState", any>;
-    publicDataProvider: import("@midnight-ntwrk/midnight-js-types").PublicDataProvider;
-    zkConfigProvider: FetchZkConfigProvider<CrossChainCircuits>;
-    proofProvider: import("@midnight-ntwrk/midnight-js-types").ProofProvider<string>;
-    walletProvider: WalletProvider & MidnightProvider;
-    midnightProvider: WalletProvider & MidnightProvider;
-}>;
 export declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 export declare const initNetwork: (networkId: number) => void;
 export interface WalletStore {

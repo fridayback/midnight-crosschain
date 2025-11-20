@@ -2,21 +2,20 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-11-20 18:06:08
+ * @LastEditTime: 2025-11-20 18:53:15
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // export * as CrossChain from "./managed/crosschain/contract/index.cjs";
 // export * from "./witnesses.js";
-import path from 'node:path';
+// import path from 'node:path';
 // import { witnesses, type CrossChainPrivateState } from './witnesses.js';
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
 import { createBalancedTx } from '@midnight-ntwrk/midnight-js-types';
-import { deployContract, findDeployedContract, submitRemoveVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
+import { deployContract, findDeployedContract, submitInsertVerifierKeyTx, submitRemoveVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 // import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
-import { FetchZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { decodeTokenType, encodeTokenType, Transaction, tokenType, sampleCoinPublicKey, encodeCoinInfo, createCoinInfo, nativeToken } from '@midnight-ntwrk/ledger';
 import { Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
@@ -26,16 +25,25 @@ import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-add
 import * as Rx from 'rxjs';
 import { CompactTypeOpaqueString, ContractState, sampleSigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
 import { WalletBuilder } from '@midnight-ntwrk/wallet';
+import { createVerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import assert from 'node:assert';
-import { fileURLToPath } from 'url';
-export const CrossChainPrivateStateId = 'crossChainPrivateState';
+import { CrossChainPrivateStateId } from './common-types';
+import { newZkProvider } from './newZkProvider';
+// import { fileURLToPath } from 'url'; 
+// export type CrossChainPrivateState = {
+// }
+// export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState,CrossChain.Witnesses<CrossChainPrivateState>>>;
+// export const CrossChainPrivateStateId = 'crossChainPrivateState';
+// export type CrossChainProviders = MidnightProviders<CrossChainCircuits, typeof CrossChainPrivateStateId, CrossChainPrivateState>;
+// export type CrossChainContract = CrossChain.Contract<CrossChainPrivateState>;
+// export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
 // export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
 // export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
-export const currentDir = path.dirname(fileURLToPath(import.meta.url));
-export const ZKConfig = {
-    privateStateStoreName: 'crosschain-private-state',
-    zkConfigPath: path.resolve(currentDir, 'managed', 'crosschain'),
-};
+// export const currentDir = path.dirname(fileURLToPath(import.meta.url));
+// export const ZKConfig = {
+//   privateStateStoreName: 'crosschain-private-state',
+//   zkConfigPath: path.resolve(currentDir, 'managed', 'crosschain'),
+// };
 export const createCrossChainPrivateState = () => ({});
 export const witnesses = {
 // TODO: Add witnesses
@@ -179,7 +187,7 @@ export class CrossChainApi {
                 privateStateStoreName: 'CCPSSN',
             }),
             publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
-            zkConfigProvider: new FetchZkConfigProvider(ZKConfig.zkConfigPath),
+            zkConfigProvider: newZkProvider(),
             proofProvider: httpClientProofProvider(config.proofServer),
             walletProvider: walletAndMidnightProvider,
             midnightProvider: walletAndMidnightProvider,
@@ -695,27 +703,29 @@ export class CrossChainApi {
         return await this.crossChainContract.contractMaintenanceTx.replaceAuthority(newKey);
     }
     async upgradeContract(circuitId, newCircuitHex) {
-        // let newVK;
-        // if (newCircuitHex) {
-        //   newVK = createVerifierKey(fromHex(newCircuitHex));
-        // } else {
-        //   newVK = await this.providers.zkConfigProvider.getVerifierKey(circuitId as CrossChainCircuits);
-        // }
-        // const res1 = await this.crossChainContract.circuitMaintenanceTx[circuitId].removeVerifierKey();
-        // const res2 = await this.crossChainContract.circuitMaintenanceTx[circuitId].insertVerifierKey(newVK);
-        // return res2;
+        let newVK;
+        if (newCircuitHex) {
+            newVK = createVerifierKey(fromHex(newCircuitHex));
+        }
+        else {
+            newVK = await this.providers.zkConfigProvider.getVerifierKey(circuitId);
+        }
+        const res1 = await this.crossChainContract.circuitMaintenanceTx[circuitId].removeVerifierKey();
+        const res2 = await this.crossChainContract.circuitMaintenanceTx[circuitId].insertVerifierKey(newVK);
+        return res2;
     }
 }
-// export const upgradeContractCircuit = async (providers: MidnightProviders,contractAddress: Address, circuitId: string, newVkHex: string| undefined) => {
-//   assertIsContractAddress(contractAddress);
-//   let newVk;
-//   if(newVkHex){
-//     newVk = createVerifierKey(fromHex(newVkHex));
-//   }else{
-//     newVk = await providers.zkConfigProvider.getVerifierKey(circuitId as CrossChainCircuits);
-//   }
-//   return await submitInsertVerifierKeyTx(providers, contractAddress, circuitId, newVk);
-// }
+export const upgradeContractCircuit = async (providers, contractAddress, circuitId, newVkHex) => {
+    assertIsContractAddress(contractAddress);
+    let newVk;
+    if (newVkHex) {
+        newVk = createVerifierKey(fromHex(newVkHex));
+    }
+    else {
+        newVk = await providers.zkConfigProvider.getVerifierKey(circuitId);
+    }
+    return await submitInsertVerifierKeyTx(providers, contractAddress, circuitId, newVk);
+};
 export const removeContractCircuit = async (providers, contractAddress, circuitId) => {
     assertIsContractAddress(contractAddress);
     return await submitRemoveVerifierKeyTx(providers, contractAddress, circuitId);
@@ -743,20 +753,20 @@ export const genRandomBigint = () => {
     const r = transientHash(new CompactTypeOpaqueString(), sampleCoinPublicKey());
     return r;
 };
-export const configureProviders = async (wallet, config) => {
-    const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-    // console.log('^^^^^^^^^^^^^^',ZKConfig.zkConfigPath)
-    return {
-        privateStateProvider: levelPrivateStateProvider({
-            privateStateStoreName: ZKConfig.privateStateStoreName,
-        }),
-        publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
-        zkConfigProvider: new FetchZkConfigProvider(ZKConfig.zkConfigPath),
-        proofProvider: httpClientProofProvider(config.proofServer),
-        walletProvider: walletAndMidnightProvider,
-        midnightProvider: walletAndMidnightProvider,
-    };
-};
+// export const configureProviders = async (wallet: Wallet & Resource, config: Config) => {
+//   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+//   // console.log('^^^^^^^^^^^^^^',ZKConfig.zkConfigPath)
+//   return {
+//     privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
+//       privateStateStoreName: ZKConfig.privateStateStoreName,
+//     }),
+//     publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+//     zkConfigProvider: new FetchZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
+//     proofProvider: httpClientProofProvider(config.proofServer),
+//     walletProvider: walletAndMidnightProvider,
+//     midnightProvider: walletAndMidnightProvider,
+//   };
+// };
 export const getCoinPublicKeyFromShieldAddress = (shieldAddr) => {
     const tmp1 = MidnightBech32m.parse(shieldAddr);
     // const tmp1 = MidnightBech32m.parse('mn_shield-addr_test10th0dtqgnpanzwmqj236zccpkmj9xxpkl7r7e7cr5e3v7k0stm5qxqxa9m6z5f4603nyuu4kw9c65ektu48hhyrtu2f07h42ycppkvw9ccyry600');
