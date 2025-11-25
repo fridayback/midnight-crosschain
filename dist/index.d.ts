@@ -13,7 +13,7 @@ export interface Config {
     readonly zkConfigPath?: string;
 }
 export declare const crosschainContractInstance: CrossChainContract;
-export declare class CrossChainApi {
+export declare class CrossChainStateApi {
     provider?: PublicDataProvider;
     crossChainContract?: ContractAddress;
     MaxSmgSignators: number;
