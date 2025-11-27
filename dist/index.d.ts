@@ -1,9 +1,19 @@
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
 import { ContractAddress } from '@midnight-ntwrk/compact-runtime';
 import { PublicDataProvider } from '@midnight-ntwrk/midnight-js-types';
-import { type CrossChainContract } from './common-types';
-export * from './witnesses';
-export * from './common-types';
+import { Contract, Witnesses } from './managed/crosschain/contract/index.cjs';
+import { type MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
+import { type FoundContract, type DeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
+export type CrossChainPrivateState = {};
+export declare const createCrossChainPrivateState: () => {};
+export declare const witnesses: {};
+export declare const CrossChainPrivateStateId = "crossChainPrivateState";
+export type PrivateStateId = typeof CrossChainPrivateStateId;
+export type CrossChainContract = Contract<CrossChainPrivateState, Witnesses<CrossChainPrivateState>>;
+export type CrossChainCircuitKeys = Exclude<keyof CrossChainContract['impureCircuits'], number | symbol>;
+export type CrossChainProviders = MidnightProviders<CrossChainCircuitKeys, PrivateStateId, CrossChainPrivateState>;
+export type CrossChainCircuits = Exclude<keyof CrossChainContract['impureCircuits'], number | symbol>;
+export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
 export declare function pad(s: string, n: number): Uint8Array;
 export interface Config {
     readonly indexer?: string;

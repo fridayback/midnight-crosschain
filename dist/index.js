@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-11-25 16:20:50
+ * @LastEditTime: 2025-11-27 09:11:03
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -19,30 +19,9 @@ import { assertIsContractAddress, fromHex, toHex } from '@midnight-ntwrk/midnigh
 import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 // import * as Rx from 'rxjs';
 import { CompactTypeOpaqueString, ContractState, sampleSigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
-// import {newZkProvider} from './newZkProvider';
-import { witnesses } from "./witnesses";
-export * from './witnesses';
-export * from './common-types';
-// import { fileURLToPath } from 'url'; 
-// export type CrossChainPrivateState = {
-// }
-// export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState,CrossChain.Witnesses<CrossChainPrivateState>>>;
-// export const CrossChainPrivateStateId = 'crossChainPrivateState';
-// export type CrossChainProviders = MidnightProviders<CrossChainCircuits, typeof CrossChainPrivateStateId, CrossChainPrivateState>;
-// export type CrossChainContract = CrossChain.Contract<CrossChainPrivateState>;
-// export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
-// export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
-// export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
-// export const currentDir = path.dirname(fileURLToPath(import.meta.url));
-// export const ZKConfig = {
-//   privateStateStoreName: 'crosschain-private-state',
-//   zkConfigPath: path.resolve(currentDir, 'managed', 'crosschain'),
-// };
-// export const createCrossChainPrivateState = () => ({
-// });
-// export const witnesses = {
-//   // TODO: Add witnesses
-// }
+export const createCrossChainPrivateState = () => ({});
+export const witnesses = {};
+export const CrossChainPrivateStateId = 'crossChainPrivateState';
 const coinInfo = (token, value) => encodeCoinInfo(createCoinInfo(token, value));
 const fromHexWithOrNoPrefix = (hex) => {
     if (hex.startsWith('0x')) {
