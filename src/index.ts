@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-11-25 16:20:50
+ * @LastEditTime: 2025-11-27 09:11:03
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -34,43 +34,27 @@ import { CompactTypeOpaqueString, ContractState, ContractAddress, EncodedCoinInf
 import { createVerifierKey, PublicDataProvider } from '@midnight-ntwrk/midnight-js-types';
 import assert from 'node:assert';
 
-import { CrossChainCircuits, CrossChainPrivateStateId, CrossChainProviders, DeployedCrossChainContract, type CrossChainContract } from './common-types';
-// import {newZkProvider} from './newZkProvider';
-import { witnesses } from "./witnesses";
-export * from './witnesses';
-export * from './common-types';
-// import { fileURLToPath } from 'url'; 
+import {Contract, Witnesses} from './managed/crosschain/contract/index.cjs';
+import { type MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
+import { type FoundContract, type DeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
 
-// export type CrossChainPrivateState = {
+export type CrossChainPrivateState = {}
 
-// }
+export const createCrossChainPrivateState = () => ({});
 
-// export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState,CrossChain.Witnesses<CrossChainPrivateState>>>;
+export const witnesses = {}
+export const CrossChainPrivateStateId = 'crossChainPrivateState';
+export type PrivateStateId = typeof CrossChainPrivateStateId;
 
-// export const CrossChainPrivateStateId = 'crossChainPrivateState';
+export type CrossChainContract = Contract<CrossChainPrivateState, Witnesses<CrossChainPrivateState>>;
+export type CrossChainCircuitKeys = Exclude<keyof CrossChainContract['impureCircuits'], number | symbol>;
+export type CrossChainProviders = MidnightProviders<CrossChainCircuitKeys,PrivateStateId, CrossChainPrivateState>;
 
-// export type CrossChainProviders = MidnightProviders<CrossChainCircuits, typeof CrossChainPrivateStateId, CrossChainPrivateState>;
-
-// export type CrossChainContract = CrossChain.Contract<CrossChainPrivateState>;
-
-// export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
-
-// export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
-// export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
-// export const currentDir = path.dirname(fileURLToPath(import.meta.url));
-
-// export const ZKConfig = {
-//   privateStateStoreName: 'crosschain-private-state',
-//   zkConfigPath: path.resolve(currentDir, 'managed', 'crosschain'),
-// };
+export type CrossChainCircuits = Exclude<keyof CrossChainContract['impureCircuits'], number | symbol>;
+export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
 
 
-// export const createCrossChainPrivateState = () => ({
-// });
 
-// export const witnesses = {
-//   // TODO: Add witnesses
-// }
 const coinInfo = (token: TokenType, value: bigint): EncodedCoinInfo => encodeCoinInfo(createCoinInfo(token, value));
 
 const fromHexWithOrNoPrefix = (hex: string) => {
