@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-11-27 09:11:03
+ * @LastEditTime: 2025-12-01 15:48:43
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,7 +13,7 @@
 import * as CrossChain from "./managed/crosschain/contract/index.cjs";
 // import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
-import { decodeTokenType, sampleCoinPublicKey, encodeCoinInfo, createCoinInfo } from '@midnight-ntwrk/ledger';
+import { decodeTokenType, encodeTokenType, sampleCoinPublicKey, encodeCoinInfo, createCoinInfo } from '@midnight-ntwrk/ledger';
 import { NetworkId, setNetworkId, getRuntimeNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
 import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
@@ -216,7 +216,15 @@ export class CrossChainStateApi {
         else {
             ledger = await this.getLedgerState();
         }
-        return ledger?.tokenPairs.lookup(BigInt(tokenPairId));
+        // return ledger?.tokenPairs.lookup(BigInt(tokenPairId));
+        const ret = ledger?.tokenPairs.lookup(BigInt(tokenPairId));
+        return ret ? {
+            fromChainId: ret.fromChainId.toString(10),
+            toChainId: ret.toChainId.toString(10),
+            midnigthTokenAccount: decodeTokenType(ret.midnigthTokenAccount),
+            domainSep: Buffer.from(ret.domainSep).toString('utf-8'),
+            fee: ret.fee.toString(10),
+        } : undefined;
     }
     async getTokensTotalSupply(tokens, targetLedger) {
         let ledger;
@@ -227,7 +235,7 @@ export class CrossChainStateApi {
             ledger = await this.getLedgerState();
         }
         const tokensTotalSupply = tokens.map((token) => {
-            const token_0 = Buffer.from(token, 'hex');
+            const token_0 = encodeTokenType(token); //Buffer.from(token, 'hex');
             const totalSupply = ledger?.mappintTokenTotalSupply.member(token_0) ? ledger?.mappintTokenTotalSupply.lookup(token_0).toString(10) : '0';
             return { token, totalSupply };
         });

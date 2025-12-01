@@ -30,7 +30,13 @@ export declare class CrossChainStateApi {
     MaxMergeCoins: number;
     constructor();
     init(config: Config, contractAddress: ContractAddress): Promise<void>;
-    getTokenPairInfo(tokenPairId: bigint | string | number, targetLedger: CrossChain.Ledger | undefined): Promise<CrossChain.TokenPairInfo | undefined>;
+    getTokenPairInfo(tokenPairId: bigint | string | number, targetLedger: CrossChain.Ledger | undefined): Promise<{
+        fromChainId: string;
+        toChainId: string;
+        midnigthTokenAccount: string;
+        domainSep: string;
+        fee: string;
+    } | undefined>;
     getTokensTotalSupply(tokens: string[], targetLedger: CrossChain.Ledger | undefined): Promise<{
         token: string;
         totalSupply: string;

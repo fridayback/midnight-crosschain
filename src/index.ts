@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-11-27 09:11:03
+ * @LastEditTime: 2025-12-01 15:48:43
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -34,7 +34,7 @@ import { CompactTypeOpaqueString, ContractState, ContractAddress, EncodedCoinInf
 import { createVerifierKey, PublicDataProvider } from '@midnight-ntwrk/midnight-js-types';
 import assert from 'node:assert';
 
-import {Contract, Witnesses} from './managed/crosschain/contract/index.cjs';
+import { Contract, Witnesses } from './managed/crosschain/contract/index.cjs';
 import { type MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
 import { type FoundContract, type DeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
 
@@ -48,7 +48,7 @@ export type PrivateStateId = typeof CrossChainPrivateStateId;
 
 export type CrossChainContract = Contract<CrossChainPrivateState, Witnesses<CrossChainPrivateState>>;
 export type CrossChainCircuitKeys = Exclude<keyof CrossChainContract['impureCircuits'], number | symbol>;
-export type CrossChainProviders = MidnightProviders<CrossChainCircuitKeys,PrivateStateId, CrossChainPrivateState>;
+export type CrossChainProviders = MidnightProviders<CrossChainCircuitKeys, PrivateStateId, CrossChainPrivateState>;
 
 export type CrossChainCircuits = Exclude<keyof CrossChainContract['impureCircuits'], number | symbol>;
 export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
@@ -265,7 +265,7 @@ export class CrossChainStateApi {
     this.crossChainContract = contractAddress;
   }
 
-  async getTokenPairInfo(tokenPairId: bigint | string | number, targetLedger: CrossChain.Ledger | undefined): Promise<CrossChain.TokenPairInfo | undefined> {
+  async getTokenPairInfo(tokenPairId: bigint | string | number, targetLedger: CrossChain.Ledger | undefined) {
     let ledger;
     if (targetLedger) {
       ledger = targetLedger;
@@ -273,7 +273,15 @@ export class CrossChainStateApi {
       ledger = await this.getLedgerState();
     }
 
-    return ledger?.tokenPairs.lookup(BigInt(tokenPairId));
+    // return ledger?.tokenPairs.lookup(BigInt(tokenPairId));
+    const ret = ledger?.tokenPairs.lookup(BigInt(tokenPairId));
+    return ret ? {
+      fromChainId: ret.fromChainId.toString(10),
+      toChainId: ret.toChainId.toString(10),
+      midnigthTokenAccount: decodeTokenType(ret.midnigthTokenAccount),
+      domainSep: Buffer.from(ret.domainSep).toString('utf-8'),
+      fee: ret.fee.toString(10),
+    }: undefined;
   }
 
   async getTokensTotalSupply(tokens: string[], targetLedger: CrossChain.Ledger | undefined) {
@@ -285,7 +293,7 @@ export class CrossChainStateApi {
     }
 
     const tokensTotalSupply = tokens.map((token) => {
-      const token_0 = Buffer.from(token, 'hex');
+      const token_0 = encodeTokenType(token);//Buffer.from(token, 'hex');
       const totalSupply = ledger?.mappintTokenTotalSupply.member(token_0) ? ledger?.mappintTokenTotalSupply.lookup(token_0).toString(10) : '0';
       return { token, totalSupply };
     });
