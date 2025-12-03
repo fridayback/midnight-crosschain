@@ -2,7 +2,7 @@
  * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-12-03 10:56:12
+ * @LastEditTime: 2025-12-03 21:52:00
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -28,7 +28,7 @@ import { getLedgerNetworkId, getZswapNetworkId, NetworkId, setNetworkId, getRunt
 import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
 import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as Rx from 'rxjs';
-import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueString, CompactTypeOpaqueUint8Array, CompactTypeUnsignedInteger, CompactTypeVector, ContractState, ContractAddress, convert_Uint8Array_to_bigint, degradeToTransient, ecAdd, ecMul, ecMulGenerator, EncodedCoinInfo, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
+import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueString, CompactTypeOpaqueUint8Array, CompactTypeUnsignedInteger, CompactTypeVector, ContractState, ContractAddress, degradeToTransient, ecAdd, ecMul, ecMulGenerator, EncodedCoinInfo, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash } from '@midnight-ntwrk/compact-runtime';
 import { Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
 import { createVerifierKey, type VerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import assert from 'node:assert';
@@ -44,9 +44,9 @@ export type CrossChainContract = CrossChain.Contract<CrossChainPrivateState>;
 
 export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
 
-// export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
+export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
 // export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
-export const currentDir = path.dirname(fileURLToPath(import.meta.url));
+// export const currentDir = path.dirname(fileURLToPath(import.meta.url));
 
 export const ZKConfig = {
   privateStateStoreName: 'crosschain-private-state',

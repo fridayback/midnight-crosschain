@@ -1,6 +1,6 @@
 'use strict';
 const __compactRuntime = require('@midnight-ntwrk/compact-runtime');
-const expectedRuntimeVersionString = '0.8.1';
+const expectedRuntimeVersionString = '0.9.0';
 const expectedRuntimeVersion = expectedRuntimeVersionString.split('-')[0].split('.').map(Number);
 const actualRuntimeVersion = __compactRuntime.versionString.split('-')[0].split('.').map(Number);
 if (expectedRuntimeVersion[0] != actualRuntimeVersion[0]
@@ -2583,8 +2583,9 @@ class Contract {
     return coin_0;
   }
   _evolveNonce_0(index_0, nonce_0) {
-    return this._upgradeFromTransient_0(this._transientHash_1([__compactRuntime.convert_Uint8Array_to_bigint(28,
-                                                                                                             new Uint8Array([109, 105, 100, 110, 105, 103, 104, 116, 58, 107, 101, 114, 110, 101, 108, 58, 110, 111, 110, 99, 101, 95, 101, 118, 111, 108, 118, 101])),
+    return this._upgradeFromTransient_0(this._transientHash_1([__compactRuntime.convertBytesToField(28,
+                                                                                                    new Uint8Array([109, 105, 100, 110, 105, 103, 104, 116, 58, 107, 101, 114, 110, 101, 108, 58, 110, 111, 110, 99, 101, 95, 101, 118, 111, 108, 118, 101]),
+                                                                                                    '<standard library>'),
                                                                index_0,
                                                                this._degradeToTransient_0(nonce_0)]));
   }
@@ -2662,8 +2663,9 @@ class Contract {
                                                'result of subtraction would be negative'),
                        t_0 - value_0));
     const output_0 = { nonce:
-                         this._upgradeFromTransient_0(this._transientHash_0([__compactRuntime.convert_Uint8Array_to_bigint(28,
-                                                                                                                           new Uint8Array([109, 105, 100, 110, 105, 103, 104, 116, 58, 107, 101, 114, 110, 101, 108, 58, 110, 111, 110, 99, 101, 95, 101, 118, 111, 108, 118, 101])),
+                         this._upgradeFromTransient_0(this._transientHash_0([__compactRuntime.convertBytesToField(28,
+                                                                                                                  new Uint8Array([109, 105, 100, 110, 105, 103, 104, 116, 58, 107, 101, 114, 110, 101, 108, 58, 110, 111, 110, 99, 101, 95, 101, 118, 111, 108, 118, 101]),
+                                                                                                                  '<standard library>'),
                                                                              this._degradeToTransient_0(input_0.nonce)])),
                        color: input_0.color,
                        value: value_0 };
@@ -2690,8 +2692,9 @@ class Contract {
       return { change: this._none_0(), sent: output_0 };
     } else {
       const changeCoin_0 = { nonce:
-                               this._upgradeFromTransient_0(this._transientHash_0([__compactRuntime.convert_Uint8Array_to_bigint(30,
-                                                                                                                                 new Uint8Array([109, 105, 100, 110, 105, 103, 104, 116, 58, 107, 101, 114, 110, 101, 108, 58, 110, 111, 110, 99, 101, 95, 101, 118, 111, 108, 118, 101, 47, 50])),
+                               this._upgradeFromTransient_0(this._transientHash_0([__compactRuntime.convertBytesToField(30,
+                                                                                                                        new Uint8Array([109, 105, 100, 110, 105, 103, 104, 116, 58, 107, 101, 114, 110, 101, 108, 58, 110, 111, 110, 99, 101, 95, 101, 118, 111, 108, 118, 101, 47, 50]),
+                                                                                                                        '<standard library>'),
                                                                                    this._degradeToTransient_0(input_0.nonce)])),
                              color: input_0.color,
                              value: change_0 };
@@ -2895,7 +2898,7 @@ class Contract {
                     nonce:
                       ((t1) => {
                         if (t1 > 340282366920938463463374607431768211455n) {
-                          throw new __compactRuntime.CompactError('crosschain.compact line 263 char 14: cast from field value to Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
+                          throw new __compactRuntime.CompactError('crosschain.compact line 263 char 14: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
                         }
                         return t1;
                       })(_descriptor_1.fromValue(Contract._query(context,
@@ -3608,7 +3611,7 @@ class Contract {
     } else {
       const tmp_0 = ((t1) => {
                       if (t1 > 340282366920938463463374607431768211455n) {
-                        throw new __compactRuntime.CompactError('crosschain.compact line 375 char 52: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
+                        throw new __compactRuntime.CompactError('crosschain.compact line 375 char 52: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
                       }
                       return t1;
                     })(newTotalSupply_0);
@@ -3965,7 +3968,7 @@ class Contract {
                      { ins: { cached: true, n: 2 } }]);
     const tmp_1 = ((t1) => {
                     if (t1 > 340282366920938463463374607431768211455n) {
-                      throw new __compactRuntime.CompactError('crosschain.compact line 409 char 28: cast from field value to Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
+                      throw new __compactRuntime.CompactError('crosschain.compact line 409 char 28: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
                     }
                     return t1;
                   })(_descriptor_1.fromValue(Contract._query(context,
@@ -3995,43 +3998,46 @@ class Contract {
                                                                                                      alignment: _descriptor_14.alignment() } }] } },
                                                                           { popeq: { cached: true,
                                                                                      result: undefined } }]).value));
-    Contract._query(context,
-                    partialProofData,
-                    [
-                     { idx: { cached: false,
-                              pushPath: true,
-                              path: [
-                                     { tag: 'value',
-                                       value: { value: _descriptor_14.toValue(1n),
-                                                alignment: _descriptor_14.alignment() } },
-                                     { tag: 'value',
-                                       value: { value: _descriptor_14.toValue(4n),
-                                                alignment: _descriptor_14.alignment() } }] } },
-                     { push: { storage: false,
-                               value: __compactRuntime.StateValue.newCell({ value: _descriptor_6.toValue(tmp_1),
-                                                                            alignment: _descriptor_6.alignment() }).encode() } },
-                     { dup: { n: 7 } },
-                     { push: { storage: false,
-                               value: __compactRuntime.StateValue.newCell(__compactRuntime.coinCommitment(
-                                                                            { value: _descriptor_19.toValue(coin_0),
-                                                                              alignment: _descriptor_19.alignment() },
-                                                                            { value: _descriptor_23.toValue(tmp_2),
-                                                                              alignment: _descriptor_23.alignment() }
-                                                                          )).encode() } },
-                     { idx: { cached: true,
-                              pushPath: false,
-                              path: [
-                                     { tag: 'value',
-                                       value: { value: _descriptor_14.toValue(1n),
-                                                alignment: _descriptor_14.alignment() } },
-                                     { tag: 'stack' }] } },
-                     { push: { storage: false,
-                               value: __compactRuntime.StateValue.newCell({ value: _descriptor_19.toValue(coin_0),
-                                                                            alignment: _descriptor_19.alignment() }).encode() } },
-                     { swap: { n: 0 } },
-                     { concat: { cached: true, n: 91 } },
-                     { ins: { cached: false, n: 1 } },
-                     { ins: { cached: true, n: 2 } }]);
+    __compactRuntime.hasCoinCommitment(context, coin_0, tmp_2) ? Contract._query(context,
+                                                                                 partialProofData,
+                                                                                 [
+                                                                                  { idx: { cached: false,
+                                                                                           pushPath: true,
+                                                                                           path: [
+                                                                                                  { tag: 'value',
+                                                                                                    value: { value: _descriptor_14.toValue(1n),
+                                                                                                             alignment: _descriptor_14.alignment() } },
+                                                                                                  { tag: 'value',
+                                                                                                    value: { value: _descriptor_14.toValue(4n),
+                                                                                                             alignment: _descriptor_14.alignment() } }] } },
+                                                                                  { push: { storage: false,
+                                                                                            value: __compactRuntime.StateValue.newCell({ value: _descriptor_6.toValue(tmp_1),
+                                                                                                                                         alignment: _descriptor_6.alignment() }).encode() } },
+                                                                                  { dup: { n: 7 } },
+                                                                                  { push: { storage: false,
+                                                                                            value: __compactRuntime.StateValue.newCell(__compactRuntime.coinCommitment(
+                                                                                                                                         { value: _descriptor_19.toValue(coin_0),
+                                                                                                                                           alignment: _descriptor_19.alignment() },
+                                                                                                                                         { value: _descriptor_23.toValue(tmp_2),
+                                                                                                                                           alignment: _descriptor_23.alignment() }
+                                                                                                                                       )).encode() } },
+                                                                                  { idx: { cached: true,
+                                                                                           pushPath: false,
+                                                                                           path: [
+                                                                                                  { tag: 'value',
+                                                                                                    value: { value: _descriptor_14.toValue(1n),
+                                                                                                             alignment: _descriptor_14.alignment() } },
+                                                                                                  { tag: 'stack' }] } },
+                                                                                  { push: { storage: false,
+                                                                                            value: __compactRuntime.StateValue.newCell({ value: _descriptor_19.toValue(coin_0),
+                                                                                                                                         alignment: _descriptor_19.alignment() }).encode() } },
+                                                                                  { swap: { n: 0 } },
+                                                                                  { concat: { cached: true,
+                                                                                              n: 91 } },
+                                                                                  { ins: { cached: false,
+                                                                                           n: 1 } },
+                                                                                  { ins: { cached: true,
+                                                                                           n: 2 } }]) : (() => { throw new __compactRuntime.CompactError(`crosschain.compact line 409 char 3: Coin commitment not found. Check the coin has been received (or call 'createZswapOutput')`); })();
     return [];
   }
   _getFee_0(context, partialProofData, tokenPairId_0) {
@@ -4238,7 +4244,7 @@ class Contract {
                             'not receiver');
     const tmp_0 = this._evolveNonce_0(((t1) => {
                                         if (t1 > 18446744073709551615n) {
-                                          throw new __compactRuntime.CompactError('crosschain.compact line 453 char 23: cast from field value to Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
+                                          throw new __compactRuntime.CompactError('crosschain.compact line 453 char 23: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                                         }
                                         return t1;
                                       })(_descriptor_1.fromValue(Contract._query(context,
@@ -4293,7 +4299,7 @@ class Contract {
                       claimMappingTokenInfo_0.domainSep,
                       ((t1) => {
                         if (t1 > 18446744073709551615n) {
-                          throw new __compactRuntime.CompactError('crosschain.compact line 454 char 45: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 18446744073709551615');
+                          throw new __compactRuntime.CompactError('crosschain.compact line 454 char 45: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                         }
                         return t1;
                       })(claimMappingTokenInfo_0.amount),
@@ -4410,7 +4416,7 @@ class Contract {
       const tmp_3 = this._ownPublicKey_0(context, partialProofData);
       const tmp_4 = ((t1) => {
                       if (t1 > 340282366920938463463374607431768211455n) {
-                        throw new __compactRuntime.CompactError('crosschain.compact line 467 char 43: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
+                        throw new __compactRuntime.CompactError('crosschain.compact line 467 char 43: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
                       }
                       return t1;
                     })(newBalance_0);
@@ -4528,7 +4534,7 @@ class Contract {
       const tmp_0 = { total:
                         ((t1) => {
                           if (t1 > 340282366920938463463374607431768211455n) {
-                            throw new __compactRuntime.CompactError('crosschain.compact line 491 char 68: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
+                            throw new __compactRuntime.CompactError('crosschain.compact line 491 char 68: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
                           }
                           return t1;
                         })(newAmount_0),
@@ -4625,7 +4631,7 @@ class Contract {
     this._addTreasuryCoin_0(context, partialProofData, coinApprove_0);
     const coinIndex_0 = ((t1) => {
                           if (t1 > 340282366920938463463374607431768211455n) {
-                            throw new __compactRuntime.CompactError('crosschain.compact line 505 char 21: cast from field value to Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
+                            throw new __compactRuntime.CompactError('crosschain.compact line 505 char 21: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
                           }
                           return t1;
                         })(_descriptor_1.fromValue(Contract._query(context,
@@ -4677,7 +4683,7 @@ class Contract {
                           true);
     const tmp_0 = this._evolveNonce_0(((t1) => {
                                         if (t1 > 18446744073709551615n) {
-                                          throw new __compactRuntime.CompactError('crosschain.compact line 510 char 23: cast from field value to Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
+                                          throw new __compactRuntime.CompactError('crosschain.compact line 510 char 23: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                                         }
                                         return t1;
                                       })(_descriptor_1.fromValue(Contract._query(context,
@@ -4979,7 +4985,7 @@ class Contract {
                             'only mapping token can be executed');
     const tmp_0 = this._evolveNonce_0(((t1) => {
                                         if (t1 > 18446744073709551615n) {
-                                          throw new __compactRuntime.CompactError('crosschain.compact line 551 char 23: cast from field value to Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
+                                          throw new __compactRuntime.CompactError('crosschain.compact line 551 char 23: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                                         }
                                         return t1;
                                       })(_descriptor_1.fromValue(Contract._query(context,
@@ -5034,7 +5040,7 @@ class Contract {
                       domainSep_0,
                       ((t1) => {
                         if (t1 > 18446744073709551615n) {
-                          throw new __compactRuntime.CompactError('crosschain.compact line 552 char 34: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 18446744073709551615');
+                          throw new __compactRuntime.CompactError('crosschain.compact line 552 char 34: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                         }
                         return t1;
                       })(reserveInfo_0.total),
@@ -5438,7 +5444,7 @@ class Contract {
                                          { ins: { cached: true, n: 2 } }]);
                         return ((t1) => {
                                  if (t1 > 255n) {
-                                   throw new __compactRuntime.CompactError('crosschain.compact line 625 char 14: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 255');
+                                   throw new __compactRuntime.CompactError('crosschain.compact line 625 char 14: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                                  }
                                  return t1;
                                })(index_0 + 1n);
@@ -5964,7 +5970,7 @@ class Contract {
                      { ins: { cached: true, n: 2 } }]);
     const tmp_1 = ((t1) => {
                     if (t1 > 4294967295n) {
-                      throw new __compactRuntime.CompactError('crosschain.compact line 697 char 20: cast from field value to Uint value failed: ' + t1 + ' is greater than 4294967295');
+                      throw new __compactRuntime.CompactError('crosschain.compact line 697 char 20: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
                     }
                     return t1;
                   })(_descriptor_1.fromValue(Contract._query(context,
@@ -6004,7 +6010,7 @@ class Contract {
                      { ins: { cached: true, n: 2 } }]);
     const tmp_2 = ((t1) => {
                     if (t1 > 4294967295n) {
-                      throw new __compactRuntime.CompactError('crosschain.compact line 698 char 32: cast from field value to Uint value failed: ' + t1 + ' is greater than 4294967295');
+                      throw new __compactRuntime.CompactError('crosschain.compact line 698 char 32: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
                     }
                     return t1;
                   })(_descriptor_1.fromValue(Contract._query(context,
@@ -6047,7 +6053,7 @@ class Contract {
                          partialProofData,
                          ((t1) => {
                            if (t1 > 4294967295n) {
-                             throw new __compactRuntime.CompactError('crosschain.compact line 699 char 16: cast from field value to Uint value failed: ' + t1 + ' is greater than 4294967295');
+                             throw new __compactRuntime.CompactError('crosschain.compact line 699 char 16: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
                            }
                            return t1;
                          })(_descriptor_1.fromValue(Contract._query(context,
@@ -6232,7 +6238,7 @@ class Contract {
                                         partialProofData,
                                         ((t1) => {
                                           if (t1 > 255n) {
-                                            throw new __compactRuntime.CompactError('crosschain.compact line 727 char 23: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 255');
+                                            throw new __compactRuntime.CompactError('crosschain.compact line 727 char 23: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                                           }
                                           return t1;
                                         })(currentProposal_0.threshold));
@@ -6242,7 +6248,7 @@ class Contract {
                                         partialProofData,
                                         ((t1) => {
                                           if (t1 > 255n) {
-                                            throw new __compactRuntime.CompactError('crosschain.compact line 729 char 21: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 255');
+                                            throw new __compactRuntime.CompactError('crosschain.compact line 729 char 21: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                                           }
                                           return t1;
                                         })(currentProposal_0.threshold));
@@ -6412,7 +6418,7 @@ class Contract {
                              partialProofData,
                              ((t1) => {
                                if (t1 > 18446744073709551615n) {
-                                 throw new __compactRuntime.CompactError('crosschain.compact line 754 char 51: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 18446744073709551615');
+                                 throw new __compactRuntime.CompactError('crosschain.compact line 754 char 51: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                                }
                                return t1;
                              })(_descriptor_1.fromValue(Contract._query(context,
@@ -6472,7 +6478,7 @@ class Contract {
     return true;
   }
   _folder_0(context, partialProofData, f, x, a0) {
-    for (let i = 0; i < 5; i++) { x = f(context, partialProofData, x, a0[i]) }
+    for (let i = 0; i < 5; i++) { x = f(context, partialProofData, x, a0[i]); }
     return x;
   }
   _equal_3(x0, y0) {
@@ -6484,7 +6490,7 @@ class Contract {
     return true;
   }
   _folder_1(context, partialProofData, f, x, a0) {
-    for (let i = 0; i < 5; i++) { x = f(context, partialProofData, x, a0[i]) }
+    for (let i = 0; i < 5; i++) { x = f(context, partialProofData, x, a0[i]); }
     return x;
   }
   _equal_5(x0, y0) {
@@ -6588,7 +6594,7 @@ class Contract {
     return true;
   }
   _folder_2(context, partialProofData, f, x, a0) {
-    for (let i = 0; i < 29; i++) { x = f(context, partialProofData, x, a0[i]) }
+    for (let i = 0; i < 29; i++) { x = f(context, partialProofData, x, a0[i]); }
     return x;
   }
   _equal_21(x0, y0) {
@@ -6644,7 +6650,7 @@ class Contract {
     return true;
   }
   _folder_3(context, partialProofData, f, x, a0) {
-    for (let i = 0; i < 20; i++) { x = f(context, partialProofData, x, a0[i]) }
+    for (let i = 0; i < 20; i++) { x = f(context, partialProofData, x, a0[i]); }
     return x;
   }
   static _query(context, partialProofData, prog) {
