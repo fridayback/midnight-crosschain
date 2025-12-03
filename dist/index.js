@@ -2,7 +2,7 @@
  * @Author: liulin
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-10-28 14:21:00
+ * @LastEditTime: 2025-12-03 10:48:48
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -314,6 +314,16 @@ export class CrossChainApi {
                 nonce: ledger.latestOutBoundCrosstxInfo.nonce.toString(10),
             };
         }
+    }
+    async isVoter(ledger, voter) {
+        let voterPK;
+        if (voter) {
+            voterPK = getCoinPublicKeyFromShieldAddress(voter);
+        }
+        else {
+            voterPK = fromHex(this.providers.walletProvider.coinPublicKey);
+        }
+        return ledger.smgTxSigners.member({ bytes: voterPK });
     }
     async getUnVotedCrossProposal(ledger, voter) {
         let voterPK;

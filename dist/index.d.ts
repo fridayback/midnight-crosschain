@@ -94,6 +94,7 @@ export declare class CrossChainApi {
         fee: string;
         nonce: string;
     } | undefined;
+    isVoter(ledger: CrossChain.Ledger, voter: Address | undefined): Promise<boolean>;
     getUnVotedCrossProposal(ledger: CrossChain.Ledger, voter: Address | undefined): Promise<({
         smgId: string;
         token: string;
