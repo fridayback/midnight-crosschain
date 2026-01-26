@@ -4,20 +4,15 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compactc": "compactc --vscode  contract/crosschain.compact src/managed/crosschain",
     "compact": "compact compile --vscode  contract/crosschain.compact src/managed/crosschain",
     "compact-check": "compact compile --vscode --skip-zk contract/crosschain.compact src/managed/crosschain",
-    "build": "rm -rf dist && npx tsc --project tsconfig.build.json && cp -Rf ./src/managed ./dist/managed",
-    "build-cjs": "rm -rf dist && npx tsc --project tsconfig.cjs.json && cp -Rf ./src/managed ./dist/managed",
+    "build": "rm -rf dist && tsup && cp -Rf ./src/managed ./dist",
     "lint": "eslint src",
     "typecheck": "npx tsc -p tsconfig.json --noEmit"
   },
@@ -45,6 +40,7 @@
     "eslint-plugin-prettier": "^5.4.1",
     "testcontainers": "^11.0.0",
     "ts-node": "^10.9.2",
+    "tsup": "^8.5.1",
     "typescript": "^5.8.3",
     "vitest": "^3.2.0"
   },
@@ -60,10 +56,9 @@
     "@midnight-ntwrk/midnight-js-types": "3.0.0-alpha.14",
     "@midnight-ntwrk/midnight-js-utils": "3.0.0-alpha.14",
     "@midnight-ntwrk/onchain-runtime-v1": "1.0.0-rc.3",
-
-    "@midnight-ntwrk/wallet-sdk-hd": "3.0.0-beta.8",
-    "@midnight-ntwrk/wallet-sdk-facade": "1.0.0-beta.15",
     "@midnight-ntwrk/wallet-sdk-dust-wallet": "1.0.0-beta.14",
+    "@midnight-ntwrk/wallet-sdk-facade": "1.0.0-beta.15",
+    "@midnight-ntwrk/wallet-sdk-hd": "3.0.0-beta.8",
     "@midnight-ntwrk/wallet-sdk-shielded": "1.0.0-beta.15",
     "@midnight-ntwrk/wallet-sdk-unshielded-wallet": "1.0.0-beta.17",
     "pino": "^9.7.0",
