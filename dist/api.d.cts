@@ -1,4 +1,4 @@
-import { MidnightWalletSDK } from './WalletSDK.cjs';
+import { MidnightWalletSDK } from './wallet-sdk.cjs';
 import { CrossChainPrivateState } from './witnesses.cjs';
 import * as _midnight_ntwrk_midnight_js_types from '@midnight-ntwrk/midnight-js-types';
 import { ImpureCircuitId, MidnightProviders, WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';

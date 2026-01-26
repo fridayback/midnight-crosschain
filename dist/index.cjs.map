@@ -1,1 +1,1 @@
-{"version":3,"sources":["../src/index.ts"],"sourcesContent":["export * from './WalletSDK';\nexport * from './witnesses';\nexport * from './api';"],"mappings":";;;;;;;;;;;;;;;AAAA;AAAA;AAAA,0BAAc,wBAAd;AACA,0BAAc,wBADd;AAEA,0BAAc,kBAFd;","names":[]}
+{"version":3,"sources":["../src/index.ts"],"sourcesContent":["export * from './wallet-sdk';\nexport * from './witnesses';\nexport * from './api';"],"mappings":";;;;;;;;;;;;;;;AAAA;AAAA;AAAA,0BAAc,yBAAd;AACA,0BAAc,wBADd;AAEA,0BAAc,kBAFd;","names":[]}

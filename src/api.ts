@@ -35,7 +35,7 @@ import { addField, CompactTypeBytes, CompactTypeCurvePoint, CompactTypeOpaqueStr
 import { createVerifierKey, type VerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import assert from 'node:assert';
 import { fileURLToPath } from 'url';
-import { MidnightWalletSDK } from './WalletSDK.js';
+import { MidnightWalletSDK } from './wallet-sdk.js';
 import { FinalizedTransaction } from '@midnight-ntwrk/ledger-v7';
 
 

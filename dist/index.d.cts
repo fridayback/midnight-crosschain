@@ -1,4 +1,4 @@
-export { Configuration, FacadeSerializedState, MidnightWalletSDK, WalletStore, configuration, initFacadeWallet } from './WalletSDK.cjs';
+export { Configuration, FacadeSerializedState, MidnightWalletSDK, WalletStore, configuration, initFacadeWallet } from './wallet-sdk.cjs';
 export { CrossChainPrivateState, createCrossChainPrivateState, witnesses } from './witnesses.cjs';
 export { Address, Config, CrossChainApi, CrossChainCircuits, CrossChainContract, CrossChainPrivateStateId, CrossChainProviders, DeployedCrossChainContract, ZKConfig, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genSigningKey, getCoinPublicKeyFromShieldAddress, getTreasuryCoinsFromState, initNetwork, pad, removeContractCircuit, upgradeContractCircuit } from './api.cjs';
 import '@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/UnshieldedState';

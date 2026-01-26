@@ -177,4 +177,4 @@ export {
   configuration,
   initFacadeWallet
 };
-//# sourceMappingURL=WalletSDK.js.map
+//# sourceMappingURL=wallet-sdk.js.map

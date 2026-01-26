@@ -26,13 +26,13 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var WalletSDK_exports = {};
-__export(WalletSDK_exports, {
+var wallet_sdk_exports = {};
+__export(wallet_sdk_exports, {
   MidnightWalletSDK: () => MidnightWalletSDK,
   configuration: () => configuration,
   initFacadeWallet: () => initFacadeWallet
 });
-module.exports = __toCommonJS(WalletSDK_exports);
+module.exports = __toCommonJS(wallet_sdk_exports);
 var ledger = __toESM(require("@midnight-ntwrk/ledger-v7"), 1);
 var import_wallet_sdk_dust_wallet = require("@midnight-ntwrk/wallet-sdk-dust-wallet");
 var import_wallet_sdk_facade = require("@midnight-ntwrk/wallet-sdk-facade");
@@ -208,4 +208,4 @@ class MidnightWalletSDK {
   configuration,
   initFacadeWallet
 });
-//# sourceMappingURL=WalletSDK.cjs.map
+//# sourceMappingURL=wallet-sdk.cjs.map
