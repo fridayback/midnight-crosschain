@@ -29,7 +29,7 @@
           "name": "coin",
           "type": {
             "type-name": "Struct",
-            "name": "CoinInfo",
+            "name": "ShieldedCoinInfo",
             "elements": [
               {
                 "name": "nonce",
@@ -229,7 +229,7 @@
           "name": "coin",
           "type": {
             "type-name": "Struct",
-            "name": "CoinInfo",
+            "name": "ShieldedCoinInfo",
             "elements": [
               {
                 "name": "nonce",
@@ -377,30 +377,34 @@
       "pure": false,
       "arguments": [
         {
-          "name": "coin",
+          "name": "amount",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "userFeeWithdrawRequest",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "receiptor",
           "type": {
             "type-name": "Struct",
-            "name": "CoinInfo",
+            "name": "UserAddress",
             "elements": [
               {
-                "name": "nonce",
+                "name": "bytes",
                 "type": {
                   "type-name": "Bytes",
                   "length": 32
-                }
-              },
-              {
-                "name": "color",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "value",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 340282366920938463463374607431768211455
                 }
               }
             ]
@@ -457,7 +461,7 @@
           "name": "coin",
           "type": {
             "type-name": "Struct",
-            "name": "CoinInfo",
+            "name": "ShieldedCoinInfo",
             "elements": [
               {
                 "name": "nonce",
@@ -511,33 +515,10 @@
           }
         },
         {
-          "name": "coinApprove",
+          "name": "amount",
           "type": {
-            "type-name": "Struct",
-            "name": "CoinInfo",
-            "elements": [
-              {
-                "name": "nonce",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "color",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "value",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 340282366920938463463374607431768211455
-                }
-              }
-            ]
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
           }
         }
       ],
@@ -548,7 +529,7 @@
       }
     },
     {
-      "name": "withdrawReserveOfNativeToken",
+      "name": "withdrawReserveOfShieldedToken",
       "pure": false,
       "arguments": [
         {
@@ -573,7 +554,43 @@
       }
     },
     {
-      "name": "withdrawReserveOfMappingToken",
+      "name": "withdrawReserveOfShieldedMappingToken",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "domainSep",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "withdrawReserveOfUnshieldedToken",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "token",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "withdrawReserveOfUnshieldedMappingToken",
       "pure": false,
       "arguments": [
         {
@@ -629,7 +646,7 @@
       }
     },
     {
-      "name": "setFeeReceiver",
+      "name": "setFeeShieldedReceiver",
       "pure": false,
       "arguments": [
         {
@@ -637,6 +654,33 @@
           "type": {
             "type-name": "Struct",
             "name": "ZswapCoinPublicKey",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "setFeeUnshieldedReceiver",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "newFeeReceiver",
+          "type": {
+            "type-name": "Struct",
+            "name": "UserAddress",
             "elements": [
               {
                 "name": "bytes",
@@ -950,6 +994,12 @@
                 }
               },
               {
+                "name": "isShielded",
+                "type": {
+                  "type-name": "Boolean"
+                }
+              },
+              {
                 "name": "fee",
                 "type": {
                   "type-name": "Uint",
@@ -1002,7 +1052,8 @@
                   "elements": [
                     "AddAdmin",
                     "RemoveAdmin",
-                    "UpdateFeeReceiver",
+                    "UpdateFeeShieldedReceiver",
+                    "UpdateFeeUnshieldedReceiver",
                     "UpdateTokenManager",
                     "UpdateAdminThreshold",
                     "UpdateSMGPKThreshold",
@@ -1016,6 +1067,22 @@
                 "type": {
                   "type-name": "Struct",
                   "name": "ZswapCoinPublicKey",
+                  "elements": [
+                    {
+                      "name": "bytes",
+                      "type": {
+                        "type-name": "Bytes",
+                        "length": 32
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "addrUnshielded",
+                "type": {
+                  "type-name": "Struct",
+                  "name": "UserAddress",
                   "elements": [
                     {
                       "name": "bytes",
