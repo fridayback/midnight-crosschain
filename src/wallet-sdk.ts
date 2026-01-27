@@ -217,7 +217,7 @@ export class MidnightWalletSDK {
         // console.log("\n\n...getAccountBalance...curState: ", curState);
 
         // balances: Record<TokenType, bigint>;
-        let aryBalance = new Array();
+        // let aryBalance = new Array();
 
         const dustBalance = curState.dust.walletBalance(new Date());
         const shieldedBlance = curState.shielded.balances;

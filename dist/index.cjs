@@ -9351,7 +9351,6 @@ var MidnightWalletSDK = class {
   async getBalances() {
     assert3__default.default(this.walletObj, "walletObj is not initialized!");
     let curState = await waitForFullySynced(this.walletObj);
-    new Array();
     const dustBalance = curState.dust.walletBalance(/* @__PURE__ */ new Date());
     const shieldedBlance = curState.shielded.balances;
     const unshieldedBlance = curState.unshielded.balances;
