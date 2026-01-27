@@ -902,12 +902,11 @@ export class Contract {
         return { result: result_0, context: context, proofData: partialProofData, gasCost: context.gasCost };
       },
       approveUserWithdrawFee: (...args_1) => {
-        if (args_1.length !== 3) {
-          throw new __compactRuntime.CompactError(`approveUserWithdrawFee: expected 3 arguments (as invoked from Typescript), received ${args_1.length}`);
+        if (args_1.length !== 2) {
+          throw new __compactRuntime.CompactError(`approveUserWithdrawFee: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const user_0 = args_1[1];
-        const amount_0 = args_1[2];
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('approveUserWithdrawFee',
                                      'argument 1 (as invoked from Typescript)',
@@ -922,18 +921,11 @@ export class Contract {
                                      'struct ZswapCoinPublicKey<bytes: Bytes<32>>',
                                      user_0)
         }
-        if (!(typeof(amount_0) === 'bigint' && amount_0 >= 0n && amount_0 <= 340282366920938463463374607431768211455n)) {
-          __compactRuntime.typeError('approveUserWithdrawFee',
-                                     'argument 2 (argument 3 as invoked from Typescript)',
-                                     'crosschain.compact line 524 char 1',
-                                     'Uint<0..340282366920938463463374607431768211456>',
-                                     amount_0)
-        }
         const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
-            value: _descriptor_1.toValue(user_0).concat(_descriptor_8.toValue(amount_0)),
-            alignment: _descriptor_1.alignment().concat(_descriptor_8.alignment())
+            value: _descriptor_1.toValue(user_0),
+            alignment: _descriptor_1.alignment()
           },
           output: undefined,
           publicTranscript: [],
@@ -941,8 +933,7 @@ export class Contract {
         };
         const result_0 = this._approveUserWithdrawFee_0(context,
                                                         partialProofData,
-                                                        user_0,
-                                                        amount_0);
+                                                        user_0);
         partialProofData.output = { value: [], alignment: [] };
         return { result: result_0, context: context, proofData: partialProofData, gasCost: context.gasCost };
       },
@@ -5097,7 +5088,7 @@ export class Contract {
     }
     return [];
   }
-  _approveUserWithdrawFee_0(context, partialProofData, user_0, amount_0) {
+  _approveUserWithdrawFee_0(context, partialProofData, user_0) {
     __compactRuntime.assert(this._equal_14(this._ownPublicKey_0(context,
                                                                 partialProofData),
                                            _descriptor_1.fromValue(__compactRuntime.queryLedgerState(context,
@@ -5198,13 +5189,15 @@ export class Contract {
                                                                                                               alignment: _descriptor_1.alignment() } }] } },
                                                                                    { popeq: { cached: false,
                                                                                               result: undefined } }]).value);
-    __compactRuntime.assert(userFeeBalanceInfo_0 >= amount_0,
-                            'amount must <= userFeeBalance');
-    this._updateUserFee_0(context, partialProofData, user_0, amount_0, false);
+    this._updateUserFee_0(context,
+                          partialProofData,
+                          user_0,
+                          userFeeBalanceInfo_0,
+                          false);
     this._sendUnshielded_0(context,
                            partialProofData,
                            this._nativeToken_0(),
-                           amount_0,
+                           userFeeBalanceInfo_0,
                            this._right_1(receiptor_0));
     __compactRuntime.queryLedgerState(context,
                                       partialProofData,

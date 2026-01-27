@@ -131,8 +131,7 @@ type ImpureCircuits<PS> = {
   addReserve(context: __compactRuntime.CircuitContext<PS>,
              coin_0: ShieldedCoinInfo): __compactRuntime.CircuitResults<PS, []>;
   approveUserWithdrawFee(context: __compactRuntime.CircuitContext<PS>,
-                         user_0: ZswapCoinPublicKey,
-                         amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+                         user_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
   withdrawReserveOfShieldedToken(context: __compactRuntime.CircuitContext<PS>,
                                  token_0: Uint8Array,
                                  coinIndex_0: bigint): __compactRuntime.CircuitResults<PS, []>;
@@ -226,8 +225,7 @@ type Circuits<PS> = {
   addReserve(context: __compactRuntime.CircuitContext<PS>,
              coin_0: ShieldedCoinInfo): __compactRuntime.CircuitResults<PS, []>;
   approveUserWithdrawFee(context: __compactRuntime.CircuitContext<PS>,
-                         user_0: ZswapCoinPublicKey,
-                         amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+                         user_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
   withdrawReserveOfShieldedToken(context: __compactRuntime.CircuitContext<PS>,
                                  token_0: Uint8Array,
                                  coinIndex_0: bigint): __compactRuntime.CircuitResults<PS, []>;
@@ -553,7 +551,7 @@ declare class CrossChainApi {
         coinIndex: string | number | bigint | undefined;
     })[]): Promise<FinalizedCallTxData<CrossChainContract, "executeMultiCrossProposal">>;
     userRechargeForFee(amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "userRechargeForFee">>;
-    approveUserWithdrawFee(user: Address, amount: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "approveUserWithdrawFee">>;
+    approveUserWithdrawFee(user: Address): Promise<FinalizedCallTxData<CrossChainContract, "approveUserWithdrawFee">>;
     userClaim(uniqueId: string, isMappingToken: boolean): Promise<FinalizedCallTxData<CrossChainContract, "userClaimMappingToken">>;
     userFeeWithdrawRequest(receiptor: UserAddress$1): Promise<FinalizedCallTxData<CrossChainContract, "userFeeWithdrawRequest">>;
     userClaimCoin(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "userClaimCoin">>;

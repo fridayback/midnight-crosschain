@@ -364,14 +364,11 @@ class CrossChainApi {
     const finalizedTxData = await this.crossChainContract.callTx.userRechargeForFee(amount_0);
     return finalizedTxData;
   }
-  async approveUserWithdrawFee(user, amount) {
+  async approveUserWithdrawFee(user) {
     const key_0 = { bytes: getCoinPublicKeyFromShieldAddress(user) };
     const ledgerState = await this.getLedgerState();
     (0, import_node_assert.default)(ledgerState != null, `ledgerState is null`);
-    const amount_0 = BigInt(amount);
-    const balance_0 = ledgerState.userFeeBalance.lookup(key_0);
-    (0, import_node_assert.default)(balance_0 >= amount_0, `user ${user} has not enough fee balance real (${balance_0}) vs withdraw ${amount_0}`);
-    const finalizedTxData = await this.crossChainContract.callTx.approveUserWithdrawFee(key_0, amount_0);
+    const finalizedTxData = await this.crossChainContract.callTx.approveUserWithdrawFee(key_0);
     return finalizedTxData;
   }
   async userClaim(uniqueId, isMappingToken) {

@@ -118,8 +118,7 @@ export type ImpureCircuits<PS> = {
   addReserve(context: __compactRuntime.CircuitContext<PS>,
              coin_0: ShieldedCoinInfo): __compactRuntime.CircuitResults<PS, []>;
   approveUserWithdrawFee(context: __compactRuntime.CircuitContext<PS>,
-                         user_0: ZswapCoinPublicKey,
-                         amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+                         user_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
   withdrawReserveOfShieldedToken(context: __compactRuntime.CircuitContext<PS>,
                                  token_0: Uint8Array,
                                  coinIndex_0: bigint): __compactRuntime.CircuitResults<PS, []>;
@@ -228,8 +227,7 @@ export type Circuits<PS> = {
   addReserve(context: __compactRuntime.CircuitContext<PS>,
              coin_0: ShieldedCoinInfo): __compactRuntime.CircuitResults<PS, []>;
   approveUserWithdrawFee(context: __compactRuntime.CircuitContext<PS>,
-                         user_0: ZswapCoinPublicKey,
-                         amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+                         user_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
   withdrawReserveOfShieldedToken(context: __compactRuntime.CircuitContext<PS>,
                                  token_0: Uint8Array,
                                  coinIndex_0: bigint): __compactRuntime.CircuitResults<PS, []>;

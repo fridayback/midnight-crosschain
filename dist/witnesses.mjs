@@ -6,4 +6,4 @@ export {
   createCrossChainPrivateState,
   witnesses
 };
-//# sourceMappingURL=witnesses.js.map
+//# sourceMappingURL=witnesses.mjs.map
