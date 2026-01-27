@@ -219,7 +219,7 @@ export class MidnightWalletSDK {
         const shieldedBlance = curState.shielded.balances;
         const unshieldedBlance = curState.unshielded.balances;
 
-        return { dustBalance, shieldedBlance: JSON.stringify(shieldedBlance), unshieldedBlance: JSON.stringify(unshieldedBlance) };
+        return { dustBalance, shieldedBlance: JSON.parse(JSON.stringify(shieldedBlance)), unshieldedBlance: JSON.parse(JSON.stringify(unshieldedBlance)) };
     }
 
 

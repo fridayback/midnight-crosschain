@@ -54,8 +54,8 @@ declare class MidnightWalletSDK {
     registerNightUtxosForDustGeneration(): Promise<void>;
     getBalances(): Promise<{
         dustBalance: bigint;
-        shieldedBlance: string;
-        unshieldedBlance: string;
+        shieldedBlance: any;
+        unshieldedBlance: any;
     }>;
     getAvailableCoins(): Promise<{
         dustAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_dust_wallet.DustToken[];

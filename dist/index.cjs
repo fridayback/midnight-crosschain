@@ -9352,7 +9352,7 @@ var MidnightWalletSDK = class {
     const dustBalance = curState.dust.walletBalance(/* @__PURE__ */ new Date());
     const shieldedBlance = curState.shielded.balances;
     const unshieldedBlance = curState.unshielded.balances;
-    return { dustBalance, shieldedBlance: JSON.stringify(shieldedBlance), unshieldedBlance: JSON.stringify(unshieldedBlance) };
+    return { dustBalance, shieldedBlance: JSON.parse(JSON.stringify(shieldedBlance)), unshieldedBlance: JSON.parse(JSON.stringify(unshieldedBlance)) };
   }
   async getAvailableCoins() {
     assert3__default.default(this.walletObj, "walletObj is not initialized!");
