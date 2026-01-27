@@ -24,7 +24,7 @@ import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client
 // import { Address, CoinPublicKey, WalletFacade } from '@midnight-ntwrk/wallet-api';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
-import { ShieldedCoinInfo, DustParameters, LedgerParameters, Transaction, TransactionId, type UnprovenTransaction, sampleCoinPublicKey, nativeToken, TokenType, encodeRawTokenType, decodeRawTokenType, createShieldedCoinInfo, dummyUserAddress, UnshieldedTokenType, UserAddress, decodeUserAddress } from '@midnight-ntwrk/ledger-v7';
+import { ShieldedCoinInfo, DustParameters, LedgerParameters, Transaction, TransactionId, type UnprovenTransaction, sampleCoinPublicKey, nativeToken, TokenType, encodeRawTokenType, decodeRawTokenType, createShieldedCoinInfo, dummyUserAddress, UnshieldedTokenType, UserAddress, decodeUserAddress } from '@midnight-ntwrk/ledger-v6';
 // import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
@@ -36,7 +36,7 @@ import { createVerifierKey, type VerifierKey } from '@midnight-ntwrk/midnight-js
 import assert from 'node:assert';
 import { fileURLToPath } from 'url';
 import { MidnightWalletSDK } from './wallet-sdk.js';
-import { FinalizedTransaction } from '@midnight-ntwrk/ledger-v7';
+import { FinalizedTransaction } from '@midnight-ntwrk/ledger-v6';
 
 
 
@@ -284,7 +284,8 @@ export class CrossChainApi {
       }),
       publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
       zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
-      proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+      // proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+      proofProvider: httpClientProofProvider(config.proofServer),
       walletProvider: walletAndMidnightProvider,
       midnightProvider: walletAndMidnightProvider,
     };

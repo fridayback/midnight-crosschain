@@ -1,4 +1,4 @@
-import * as ledger from '@midnight-ntwrk/ledger-v7';
+import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import type { DefaultV1Configuration as DustConfiguration, TotalCostParameters } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
@@ -91,14 +91,14 @@ export const initFacadeWallet = async (
     const dustSecretKey = ledger.DustSecretKey.fromSeed(derivationResult.keys[Roles.Dust]);
     const unshieldedKeystore = createKeystore(derivationResult.keys[Roles.NightExternal], configuration.networkId);
 
-    const shieldedWallet = strSerializedState ?
+    const shieldedWallet = strSerializedState && strSerializedState.shieldedWalletState ?
         ShieldedWallet(configuration).restore(strSerializedState.shieldedWalletState)
         : ShieldedWallet(configuration).startWithSecretKeys(shieldedSecretKeys);
 
-    const dustWallet = strSerializedState ?
+    const dustWallet = strSerializedState && strSerializedState.dustWalletState ?
         DustWallet(configuration).restore(strSerializedState.dustWalletState)
         : DustWallet(configuration).startWithSecretKey(dustSecretKey, ledger.LedgerParameters.initialParameters().dust);
-    const unshieldedWallet = strSerializedState ?
+    const unshieldedWallet = strSerializedState && strSerializedState.unshieldedWalletState ?
         UnshieldedWallet({
             ...configuration,
             txHistoryStorage: new NoOpTransactionHistoryStorage(), //此处不对交易历史进行保留

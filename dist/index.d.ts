@@ -2,15 +2,15 @@ import * as _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState
 import * as _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances';
 import * as _midnight_ntwrk_wallet_sdk_dust_wallet from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { DefaultV1Configuration as DefaultV1Configuration$1, TotalCostParameters } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
-import * as ledger from '@midnight-ntwrk/ledger-v7';
-import { UserAddress as UserAddress$1, TokenType } from '@midnight-ntwrk/ledger-v7';
+import * as ledger from '@midnight-ntwrk/ledger-v6';
+import { UserAddress as UserAddress$1, TokenType } from '@midnight-ntwrk/ledger-v6';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { WalletFacade, CombinedSwapOutputs } from '@midnight-ntwrk/wallet-sdk-facade';
 import { DefaultV1Configuration } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
 import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
 import * as _midnight_ntwrk_midnight_js_types from '@midnight-ntwrk/midnight-js-types';
-import { ImpureCircuitId, MidnightProviders, WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
+import { MidnightProviders, ImpureCircuitId, WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { SigningKey, ContractAddress, ShieldedTokenType, RawTokenType } from '@midnight-ntwrk/compact-runtime';
 import { DeployedContract, FoundContract, FinalizedCallTxData } from '@midnight-ntwrk/midnight-js-contracts';

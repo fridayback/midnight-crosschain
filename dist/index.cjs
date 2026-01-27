@@ -1,12 +1,13 @@
 'use strict';
 
-var ledger = require('@midnight-ntwrk/ledger-v7');
+var ledger = require('@midnight-ntwrk/ledger-v6');
 var walletSdkDustWallet = require('@midnight-ntwrk/wallet-sdk-dust-wallet');
 var walletSdkFacade = require('@midnight-ntwrk/wallet-sdk-facade');
 var walletSdkHd = require('@midnight-ntwrk/wallet-sdk-hd');
 var walletSdkShielded = require('@midnight-ntwrk/wallet-sdk-shielded');
 var walletSdkUnshieldedWallet = require('@midnight-ntwrk/wallet-sdk-unshielded-wallet');
 var buffer = require('buffer');
+var walletSdkAddressFormat = require('@midnight-ntwrk/wallet-sdk-address-format');
 var assert3 = require('assert');
 var path = require('path');
 var __compactRuntime = require('@midnight-ntwrk/compact-runtime');
@@ -51,13 +52,7 @@ var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
-  get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
-}) : x)(function(x) {
-  if (typeof require !== "undefined") return require.apply(this, arguments);
-  throw Error('Dynamic require of "' + x + '" is not supported');
-});
-var __commonJS = (cb, mod) => function __require2() {
+var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var __copyProps = (to, from, except, desc) => {
@@ -76,7 +71,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   __defProp(target, "default", { value: mod, enumerable: true }) ,
   mod
 ));
-var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+var __publicField = (obj, key, value) => __defNormalProp(obj, key + "" , value);
 
 // node_modules/rxjs/dist/cjs/internal/util/isFunction.js
 var require_isFunction = __commonJS({
@@ -192,7 +187,7 @@ var require_Subscription = __commonJS({
         this._finalizers = null;
       }
       Subscription2.prototype.unsubscribe = function() {
-        var e_1, _a4, e_2, _b4;
+        var e_1, _a, e_2, _b;
         var errors;
         if (!this.closed) {
           this.closed = true;
@@ -209,7 +204,7 @@ var require_Subscription = __commonJS({
                 e_1 = { error: e_1_1 };
               } finally {
                 try {
-                  if (_parentage_1_1 && !_parentage_1_1.done && (_a4 = _parentage_1.return)) _a4.call(_parentage_1);
+                  if (_parentage_1_1 && !_parentage_1_1.done && (_a = _parentage_1.return)) _a.call(_parentage_1);
                 } finally {
                   if (e_1) throw e_1.error;
                 }
@@ -247,7 +242,7 @@ var require_Subscription = __commonJS({
               e_2 = { error: e_2_1 };
             } finally {
               try {
-                if (_finalizers_1_1 && !_finalizers_1_1.done && (_b4 = _finalizers_1.return)) _b4.call(_finalizers_1);
+                if (_finalizers_1_1 && !_finalizers_1_1.done && (_b = _finalizers_1.return)) _b.call(_finalizers_1);
               } finally {
                 if (e_2) throw e_2.error;
               }
@@ -259,7 +254,7 @@ var require_Subscription = __commonJS({
         }
       };
       Subscription2.prototype.add = function(teardown) {
-        var _a4;
+        var _a;
         if (teardown && teardown !== this) {
           if (this.closed) {
             execFinalizer(teardown);
@@ -270,7 +265,7 @@ var require_Subscription = __commonJS({
               }
               teardown._addParent(this);
             }
-            (this._finalizers = (_a4 = this._finalizers) !== null && _a4 !== void 0 ? _a4 : []).push(teardown);
+            (this._finalizers = (_a = this._finalizers) !== null && _a !== void 0 ? _a : []).push(teardown);
           }
         }
       };
@@ -457,7 +452,7 @@ var require_errorContext = __commonJS({
         }
         cb();
         if (isRoot) {
-          var _a4 = context, errorThrown = _a4.errorThrown, error = _a4.error;
+          var _a = context, errorThrown = _a.errorThrown, error = _a.error;
           context = null;
           if (errorThrown) {
             throw error;
@@ -760,7 +755,7 @@ var require_Observable = __commonJS({
         var _this = this;
         var subscriber = isSubscriber(observerOrNext) ? observerOrNext : new Subscriber_1.SafeSubscriber(observerOrNext, error, complete);
         errorContext_1.errorContext(function() {
-          var _a4 = _this, operator = _a4.operator, source = _a4.source;
+          var _a = _this, operator = _a.operator, source = _a.source;
           subscriber.add(operator ? operator.call(subscriber, source) : source ? _this._subscribe(subscriber) : _this._trySubscribe(subscriber));
         });
         return subscriber;
@@ -792,8 +787,8 @@ var require_Observable = __commonJS({
         });
       };
       Observable2.prototype._subscribe = function(subscriber) {
-        var _a4;
-        return (_a4 = this.source) === null || _a4 === void 0 ? void 0 : _a4.subscribe(subscriber);
+        var _a;
+        return (_a = this.source) === null || _a === void 0 ? void 0 : _a.subscribe(subscriber);
       };
       Observable2.prototype[observable_1.observable] = function() {
         return this;
@@ -826,8 +821,8 @@ var require_Observable = __commonJS({
     })();
     exports$1.Observable = Observable;
     function getPromiseCtor(promiseCtor) {
-      var _a4;
-      return (_a4 = promiseCtor !== null && promiseCtor !== void 0 ? promiseCtor : config_1.config.Promise) !== null && _a4 !== void 0 ? _a4 : Promise;
+      var _a;
+      return (_a = promiseCtor !== null && promiseCtor !== void 0 ? promiseCtor : config_1.config.Promise) !== null && _a !== void 0 ? _a : Promise;
     }
     function isObserver(value) {
       return value && isFunction_1.isFunction(value.next) && isFunction_1.isFunction(value.error) && isFunction_1.isFunction(value.complete);
@@ -929,11 +924,11 @@ var require_OperatorSubscriber = __commonJS({
         return _this;
       }
       OperatorSubscriber2.prototype.unsubscribe = function() {
-        var _a4;
+        var _a;
         if (!this.shouldUnsubscribe || this.shouldUnsubscribe()) {
           var closed_1 = this.closed;
           _super.prototype.unsubscribe.call(this);
-          !closed_1 && ((_a4 = this.onFinalize) === null || _a4 === void 0 ? void 0 : _a4.call(this));
+          !closed_1 && ((_a = this.onFinalize) === null || _a === void 0 ? void 0 : _a.call(this));
         }
       };
       return OperatorSubscriber2;
@@ -1269,14 +1264,14 @@ var require_Subject = __commonJS({
       Subject2.prototype.next = function(value) {
         var _this = this;
         errorContext_1.errorContext(function() {
-          var e_1, _a4;
+          var e_1, _a;
           _this._throwIfClosed();
           if (!_this.isStopped) {
             if (!_this.currentObservers) {
               _this.currentObservers = Array.from(_this.observers);
             }
             try {
-              for (var _b4 = __values(_this.currentObservers), _c = _b4.next(); !_c.done; _c = _b4.next()) {
+              for (var _b = __values(_this.currentObservers), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var observer = _c.value;
                 observer.next(value);
               }
@@ -1284,7 +1279,7 @@ var require_Subject = __commonJS({
               e_1 = { error: e_1_1 };
             } finally {
               try {
-                if (_c && !_c.done && (_a4 = _b4.return)) _a4.call(_b4);
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
               } finally {
                 if (e_1) throw e_1.error;
               }
@@ -1325,8 +1320,8 @@ var require_Subject = __commonJS({
       };
       Object.defineProperty(Subject2.prototype, "observed", {
         get: function() {
-          var _a4;
-          return ((_a4 = this.observers) === null || _a4 === void 0 ? void 0 : _a4.length) > 0;
+          var _a;
+          return ((_a = this.observers) === null || _a === void 0 ? void 0 : _a.length) > 0;
         },
         enumerable: false,
         configurable: true
@@ -1342,7 +1337,7 @@ var require_Subject = __commonJS({
       };
       Subject2.prototype._innerSubscribe = function(subscriber) {
         var _this = this;
-        var _a4 = this, hasError = _a4.hasError, isStopped = _a4.isStopped, observers = _a4.observers;
+        var _a = this, hasError = _a.hasError, isStopped = _a.isStopped, observers = _a.observers;
         if (hasError || isStopped) {
           return Subscription_1.EMPTY_SUBSCRIPTION;
         }
@@ -1354,7 +1349,7 @@ var require_Subject = __commonJS({
         });
       };
       Subject2.prototype._checkFinalizedStatuses = function(subscriber) {
-        var _a4 = this, hasError = _a4.hasError, thrownError = _a4.thrownError, isStopped = _a4.isStopped;
+        var _a = this, hasError = _a.hasError, thrownError = _a.thrownError, isStopped = _a.isStopped;
         if (hasError) {
           subscriber.error(thrownError);
         } else if (isStopped) {
@@ -1381,20 +1376,20 @@ var require_Subject = __commonJS({
         return _this;
       }
       AnonymousSubject2.prototype.next = function(value) {
-        var _a4, _b4;
-        (_b4 = (_a4 = this.destination) === null || _a4 === void 0 ? void 0 : _a4.next) === null || _b4 === void 0 ? void 0 : _b4.call(_a4, value);
+        var _a, _b;
+        (_b = (_a = this.destination) === null || _a === void 0 ? void 0 : _a.next) === null || _b === void 0 ? void 0 : _b.call(_a, value);
       };
       AnonymousSubject2.prototype.error = function(err) {
-        var _a4, _b4;
-        (_b4 = (_a4 = this.destination) === null || _a4 === void 0 ? void 0 : _a4.error) === null || _b4 === void 0 ? void 0 : _b4.call(_a4, err);
+        var _a, _b;
+        (_b = (_a = this.destination) === null || _a === void 0 ? void 0 : _a.error) === null || _b === void 0 ? void 0 : _b.call(_a, err);
       };
       AnonymousSubject2.prototype.complete = function() {
-        var _a4, _b4;
-        (_b4 = (_a4 = this.destination) === null || _a4 === void 0 ? void 0 : _a4.complete) === null || _b4 === void 0 ? void 0 : _b4.call(_a4);
+        var _a, _b;
+        (_b = (_a = this.destination) === null || _a === void 0 ? void 0 : _a.complete) === null || _b === void 0 ? void 0 : _b.call(_a);
       };
       AnonymousSubject2.prototype._subscribe = function(subscriber) {
-        var _a4, _b4;
-        return (_b4 = (_a4 = this.source) === null || _a4 === void 0 ? void 0 : _a4.subscribe(subscriber)) !== null && _b4 !== void 0 ? _b4 : Subscription_1.EMPTY_SUBSCRIPTION;
+        var _a, _b;
+        return (_b = (_a = this.source) === null || _a === void 0 ? void 0 : _a.subscribe(subscriber)) !== null && _b !== void 0 ? _b : Subscription_1.EMPTY_SUBSCRIPTION;
       };
       return AnonymousSubject2;
     })(Subject);
@@ -1447,7 +1442,7 @@ var require_BehaviorSubject = __commonJS({
         return subscription;
       };
       BehaviorSubject2.prototype.getValue = function() {
-        var _a4 = this, hasError = _a4.hasError, thrownError = _a4.thrownError, _value = _a4._value;
+        var _a = this, hasError = _a.hasError, thrownError = _a.thrownError, _value = _a._value;
         if (hasError) {
           throw thrownError;
         }
@@ -1527,7 +1522,7 @@ var require_ReplaySubject = __commonJS({
         return _this;
       }
       ReplaySubject2.prototype.next = function(value) {
-        var _a4 = this, isStopped = _a4.isStopped, _buffer = _a4._buffer, _infiniteTimeWindow = _a4._infiniteTimeWindow, _timestampProvider = _a4._timestampProvider, _windowTime = _a4._windowTime;
+        var _a = this, isStopped = _a.isStopped, _buffer = _a._buffer, _infiniteTimeWindow = _a._infiniteTimeWindow, _timestampProvider = _a._timestampProvider, _windowTime = _a._windowTime;
         if (!isStopped) {
           _buffer.push(value);
           !_infiniteTimeWindow && _buffer.push(_timestampProvider.now() + _windowTime);
@@ -1539,7 +1534,7 @@ var require_ReplaySubject = __commonJS({
         this._throwIfClosed();
         this._trimBuffer();
         var subscription = this._innerSubscribe(subscriber);
-        var _a4 = this, _infiniteTimeWindow = _a4._infiniteTimeWindow, _buffer = _a4._buffer;
+        var _a = this, _infiniteTimeWindow = _a._infiniteTimeWindow, _buffer = _a._buffer;
         var copy = _buffer.slice();
         for (var i = 0; i < copy.length && !subscriber.closed; i += _infiniteTimeWindow ? 1 : 2) {
           subscriber.next(copy[i]);
@@ -1548,7 +1543,7 @@ var require_ReplaySubject = __commonJS({
         return subscription;
       };
       ReplaySubject2.prototype._trimBuffer = function() {
-        var _a4 = this, _bufferSize = _a4._bufferSize, _timestampProvider = _a4._timestampProvider, _buffer = _a4._buffer, _infiniteTimeWindow = _a4._infiniteTimeWindow;
+        var _a = this, _bufferSize = _a._bufferSize, _timestampProvider = _a._timestampProvider, _buffer = _a._buffer, _infiniteTimeWindow = _a._infiniteTimeWindow;
         var adjustedBufferSize = (_infiniteTimeWindow ? 1 : 2) * _bufferSize;
         _bufferSize < Infinity && adjustedBufferSize < _buffer.length && _buffer.splice(0, _buffer.length - adjustedBufferSize);
         if (!_infiniteTimeWindow) {
@@ -1601,7 +1596,7 @@ var require_AsyncSubject = __commonJS({
         return _this;
       }
       AsyncSubject2.prototype._checkFinalizedStatuses = function(subscriber) {
-        var _a4 = this, hasError = _a4.hasError, _hasValue = _a4._hasValue, _value = _a4._value, thrownError = _a4.thrownError, isStopped = _a4.isStopped, _isComplete = _a4._isComplete;
+        var _a = this, hasError = _a.hasError, _hasValue = _a._hasValue, _value = _a._value, thrownError = _a.thrownError, isStopped = _a.isStopped, _isComplete = _a._isComplete;
         if (hasError) {
           subscriber.error(thrownError);
         } else if (isStopped || _isComplete) {
@@ -1616,7 +1611,7 @@ var require_AsyncSubject = __commonJS({
         }
       };
       AsyncSubject2.prototype.complete = function() {
-        var _a4 = this, _hasValue = _a4._hasValue, _value = _a4._value, _isComplete = _a4._isComplete;
+        var _a = this, _hasValue = _a._hasValue, _value = _a._value, _isComplete = _a._isComplete;
         if (!_isComplete) {
           this._isComplete = true;
           _hasValue && _super.prototype.next.call(this, _value);
@@ -1753,7 +1748,7 @@ var require_AsyncAction = __commonJS({
         return _this;
       }
       AsyncAction2.prototype.schedule = function(state, delay) {
-        var _a4;
+        var _a;
         if (delay === void 0) {
           delay = 0;
         }
@@ -1768,7 +1763,7 @@ var require_AsyncAction = __commonJS({
         }
         this.pending = true;
         this.delay = delay;
-        this.id = (_a4 = this.id) !== null && _a4 !== void 0 ? _a4 : this.requestAsyncId(scheduler, this.id, delay);
+        this.id = (_a = this.id) !== null && _a !== void 0 ? _a : this.requestAsyncId(scheduler, this.id, delay);
         return this;
       };
       AsyncAction2.prototype.requestAsyncId = function(scheduler, _id, delay) {
@@ -1817,7 +1812,7 @@ var require_AsyncAction = __commonJS({
       };
       AsyncAction2.prototype.unsubscribe = function() {
         if (!this.closed) {
-          var _a4 = this, id = _a4.id, scheduler = _a4.scheduler;
+          var _a = this, id = _a.id, scheduler = _a.scheduler;
           var actions = scheduler.actions;
           this.work = this.state = this.scheduler = null;
           this.pending = false;
@@ -1967,7 +1962,7 @@ var require_AsapAction = __commonJS({
         return scheduler._scheduled || (scheduler._scheduled = immediateProvider_1.immediateProvider.setImmediate(scheduler.flush.bind(scheduler, void 0)));
       };
       AsapAction2.prototype.recycleAsyncId = function(scheduler, id, delay) {
-        var _a4;
+        var _a;
         if (delay === void 0) {
           delay = 0;
         }
@@ -1975,7 +1970,7 @@ var require_AsapAction = __commonJS({
           return _super.prototype.recycleAsyncId.call(this, scheduler, id, delay);
         }
         var actions = scheduler.actions;
-        if (id != null && ((_a4 = actions[actions.length - 1]) === null || _a4 === void 0 ? void 0 : _a4.id) !== id) {
+        if (id != null && ((_a = actions[actions.length - 1]) === null || _a === void 0 ? void 0 : _a.id) !== id) {
           immediateProvider_1.immediateProvider.clearImmediate(id);
           if (scheduler._scheduled === id) {
             scheduler._scheduled = void 0;
@@ -2318,7 +2313,7 @@ var require_AnimationFrameAction = __commonJS({
         }));
       };
       AnimationFrameAction2.prototype.recycleAsyncId = function(scheduler, id, delay) {
-        var _a4;
+        var _a;
         if (delay === void 0) {
           delay = 0;
         }
@@ -2326,7 +2321,7 @@ var require_AnimationFrameAction = __commonJS({
           return _super.prototype.recycleAsyncId.call(this, scheduler, id, delay);
         }
         var actions = scheduler.actions;
-        if (id != null && id === scheduler._scheduled && ((_a4 = actions[actions.length - 1]) === null || _a4 === void 0 ? void 0 : _a4.id) !== id) {
+        if (id != null && id === scheduler._scheduled && ((_a = actions[actions.length - 1]) === null || _a === void 0 ? void 0 : _a.id) !== id) {
           animationFrameProvider_1.animationFrameProvider.cancelAnimationFrame(id);
           scheduler._scheduled = void 0;
         }
@@ -2456,7 +2451,7 @@ var require_VirtualTimeScheduler = __commonJS({
         return _this;
       }
       VirtualTimeScheduler2.prototype.flush = function() {
-        var _a4 = this, actions = _a4.actions, maxFrames = _a4.maxFrames;
+        var _a = this, actions = _a.actions, maxFrames = _a.maxFrames;
         var error;
         var action;
         while ((action = actions[0]) && action.delay <= maxFrames) {
@@ -2813,29 +2808,29 @@ var require_isReadableStreamLike = __commonJS({
     var isFunction_1 = require_isFunction();
     function readableStreamLikeToAsyncGenerator(readableStream) {
       return __asyncGenerator(this, arguments, function readableStreamLikeToAsyncGenerator_1() {
-        var reader, _a4, value, done;
-        return __generator(this, function(_b4) {
-          switch (_b4.label) {
+        var reader, _a, value, done;
+        return __generator(this, function(_b) {
+          switch (_b.label) {
             case 0:
               reader = readableStream.getReader();
-              _b4.label = 1;
+              _b.label = 1;
             case 1:
-              _b4.trys.push([1, , 9, 10]);
-              _b4.label = 2;
+              _b.trys.push([1, , 9, 10]);
+              _b.label = 2;
             case 2:
               return [4, __await(reader.read())];
             case 3:
-              _a4 = _b4.sent(), value = _a4.value, done = _a4.done;
+              _a = _b.sent(), value = _a.value, done = _a.done;
               if (!done) return [3, 5];
               return [4, __await(void 0)];
             case 4:
-              return [2, _b4.sent()];
+              return [2, _b.sent()];
             case 5:
               return [4, __await(value)];
             case 6:
-              return [4, _b4.sent()];
+              return [4, _b.sent()];
             case 7:
-              _b4.sent();
+              _b.sent();
               return [3, 2];
             case 8:
               return [3, 10];
@@ -3059,7 +3054,7 @@ var require_innerFrom = __commonJS({
     exports$1.fromPromise = fromPromise;
     function fromIterable(iterable) {
       return new Observable_1.Observable(function(subscriber) {
-        var e_1, _a4;
+        var e_1, _a;
         try {
           for (var iterable_1 = __values(iterable), iterable_1_1 = iterable_1.next(); !iterable_1_1.done; iterable_1_1 = iterable_1.next()) {
             var value = iterable_1_1.value;
@@ -3072,7 +3067,7 @@ var require_innerFrom = __commonJS({
           e_1 = { error: e_1_1 };
         } finally {
           try {
-            if (iterable_1_1 && !iterable_1_1.done && (_a4 = iterable_1.return)) _a4.call(iterable_1);
+            if (iterable_1_1 && !iterable_1_1.done && (_a = iterable_1.return)) _a.call(iterable_1);
           } finally {
             if (e_1) throw e_1.error;
           }
@@ -3095,40 +3090,40 @@ var require_innerFrom = __commonJS({
     exports$1.fromReadableStreamLike = fromReadableStreamLike;
     function process(asyncIterable, subscriber) {
       var asyncIterable_1, asyncIterable_1_1;
-      var e_2, _a4;
+      var e_2, _a;
       return __awaiter(this, void 0, void 0, function() {
         var value, e_2_1;
-        return __generator(this, function(_b4) {
-          switch (_b4.label) {
+        return __generator(this, function(_b) {
+          switch (_b.label) {
             case 0:
-              _b4.trys.push([0, 5, 6, 11]);
+              _b.trys.push([0, 5, 6, 11]);
               asyncIterable_1 = __asyncValues(asyncIterable);
-              _b4.label = 1;
+              _b.label = 1;
             case 1:
               return [4, asyncIterable_1.next()];
             case 2:
-              if (!(asyncIterable_1_1 = _b4.sent(), !asyncIterable_1_1.done)) return [3, 4];
+              if (!(asyncIterable_1_1 = _b.sent(), !asyncIterable_1_1.done)) return [3, 4];
               value = asyncIterable_1_1.value;
               subscriber.next(value);
               if (subscriber.closed) {
                 return [2];
               }
-              _b4.label = 3;
+              _b.label = 3;
             case 3:
               return [3, 1];
             case 4:
               return [3, 11];
             case 5:
-              e_2_1 = _b4.sent();
+              e_2_1 = _b.sent();
               e_2 = { error: e_2_1 };
               return [3, 11];
             case 6:
-              _b4.trys.push([6, , 9, 10]);
-              if (!(asyncIterable_1_1 && !asyncIterable_1_1.done && (_a4 = asyncIterable_1.return))) return [3, 8];
-              return [4, _a4.call(asyncIterable_1)];
+              _b.trys.push([6, , 9, 10]);
+              if (!(asyncIterable_1_1 && !asyncIterable_1_1.done && (_a = asyncIterable_1.return))) return [3, 8];
+              return [4, _a.call(asyncIterable_1)];
             case 7:
-              _b4.sent();
-              _b4.label = 8;
+              _b.sent();
+              _b.label = 8;
             case 8:
               return [3, 10];
             case 9:
@@ -3297,11 +3292,11 @@ var require_scheduleIterable = __commonJS({
         executeSchedule_1.executeSchedule(subscriber, scheduler, function() {
           iterator = input[iterator_1.iterator]();
           executeSchedule_1.executeSchedule(subscriber, scheduler, function() {
-            var _a4;
+            var _a;
             var value;
             var done;
             try {
-              _a4 = iterator.next(), value = _a4.value, done = _a4.done;
+              _a = iterator.next(), value = _a.value, done = _a.done;
             } catch (err) {
               subscriber.error(err);
               return;
@@ -3491,15 +3486,15 @@ var require_Notification = __commonJS({
         return observeNotification(this, observer);
       };
       Notification2.prototype.do = function(nextHandler, errorHandler, completeHandler) {
-        var _a4 = this, kind = _a4.kind, value = _a4.value, error = _a4.error;
+        var _a = this, kind = _a.kind, value = _a.value, error = _a.error;
         return kind === "N" ? nextHandler === null || nextHandler === void 0 ? void 0 : nextHandler(value) : kind === "E" ? errorHandler === null || errorHandler === void 0 ? void 0 : errorHandler(error) : completeHandler === null || completeHandler === void 0 ? void 0 : completeHandler();
       };
       Notification2.prototype.accept = function(nextOrObserver, error, complete) {
-        var _a4;
-        return isFunction_1.isFunction((_a4 = nextOrObserver) === null || _a4 === void 0 ? void 0 : _a4.next) ? this.observe(nextOrObserver) : this.do(nextOrObserver, error, complete);
+        var _a;
+        return isFunction_1.isFunction((_a = nextOrObserver) === null || _a === void 0 ? void 0 : _a.next) ? this.observe(nextOrObserver) : this.do(nextOrObserver, error, complete);
       };
       Notification2.prototype.toObservable = function() {
-        var _a4 = this, kind = _a4.kind, value = _a4.value, error = _a4.error;
+        var _a = this, kind = _a.kind, value = _a.value, error = _a.error;
         var result = kind === "N" ? of_1.of(value) : kind === "E" ? throwError_1.throwError(function() {
           return error;
         }) : kind === "C" ? empty_1.EMPTY : 0;
@@ -3522,12 +3517,12 @@ var require_Notification = __commonJS({
     })();
     exports$1.Notification = Notification;
     function observeNotification(notification, observer) {
-      var _a4, _b4, _c;
+      var _a, _b, _c;
       var _d = notification, kind = _d.kind, value = _d.value, error = _d.error;
       if (typeof kind !== "string") {
         throw new TypeError('Invalid notification, missing "kind"');
       }
-      kind === "N" ? (_a4 = observer.next) === null || _a4 === void 0 ? void 0 : _a4.call(observer, value) : kind === "E" ? (_b4 = observer.error) === null || _b4 === void 0 ? void 0 : _b4.call(observer, error) : (_c = observer.complete) === null || _c === void 0 ? void 0 : _c.call(observer);
+      kind === "N" ? (_a = observer.next) === null || _a === void 0 ? void 0 : _a.call(observer, value) : kind === "E" ? (_b = observer.error) === null || _b === void 0 ? void 0 : _b.call(observer, error) : (_c = observer.complete) === null || _c === void 0 ? void 0 : _c.call(observer);
     }
     exports$1.observeNotification = observeNotification;
   }
@@ -3711,7 +3706,7 @@ var require_timeout = __commonJS({
       };
     });
     function timeout(config, schedulerArg) {
-      var _a4 = isDate_1.isValidDate(config) ? { first: config } : typeof config === "number" ? { each: config } : config, first = _a4.first, each = _a4.each, _b4 = _a4.with, _with = _b4 === void 0 ? timeoutErrorFactory : _b4, _c = _a4.scheduler, scheduler = _c === void 0 ? schedulerArg !== null && schedulerArg !== void 0 ? schedulerArg : async_1.asyncScheduler : _c, _d = _a4.meta, meta = _d === void 0 ? null : _d;
+      var _a = isDate_1.isValidDate(config) ? { first: config } : typeof config === "number" ? { each: config } : config, first = _a.first, each = _a.each, _b = _a.with, _with = _b === void 0 ? timeoutErrorFactory : _b, _c = _a.scheduler, scheduler = _c === void 0 ? schedulerArg !== null && schedulerArg !== void 0 ? schedulerArg : async_1.asyncScheduler : _c, _d = _a.meta, meta = _d === void 0 ? null : _d;
       if (first == null && each == null) {
         throw new TypeError("No timeout provided.");
       }
@@ -4013,7 +4008,7 @@ var require_combineLatest = __commonJS({
       }
       var scheduler = args_1.popScheduler(args);
       var resultSelector = args_1.popResultSelector(args);
-      var _a4 = argsArgArrayOrObject_1.argsArgArrayOrObject(args), observables = _a4.args, keys = _a4.keys;
+      var _a = argsArgArrayOrObject_1.argsArgArrayOrObject(args), observables = _a.args, keys = _a.keys;
       if (observables.length === 0) {
         return from_1.from([], scheduler);
       }
@@ -4255,7 +4250,7 @@ var require_connectable = __commonJS({
         config = DEFAULT_CONFIG;
       }
       var connection = null;
-      var connector = config.connector, _a4 = config.resetOnDisconnect, resetOnDisconnect = _a4 === void 0 ? true : _a4;
+      var connector = config.connector, _a = config.resetOnDisconnect, resetOnDisconnect = _a === void 0 ? true : _a;
       var subject = connector();
       var result = new Observable_1.Observable(function(subscriber) {
         return subject.subscribe(subscriber);
@@ -4297,7 +4292,7 @@ var require_forkJoin = __commonJS({
         args[_i] = arguments[_i];
       }
       var resultSelector = args_1.popResultSelector(args);
-      var _a4 = argsArgArrayOrObject_1.argsArgArrayOrObject(args), sources = _a4.args, keys = _a4.keys;
+      var _a = argsArgArrayOrObject_1.argsArgArrayOrObject(args), sources = _a.args, keys = _a.keys;
       var result = new Observable_1.Observable(function(subscriber) {
         var length = sources.length;
         if (!length) {
@@ -4375,11 +4370,11 @@ var require_fromEvent = __commonJS({
       if (resultSelector) {
         return fromEvent(target, eventName, options).pipe(mapOneOrManyArgs_1.mapOneOrManyArgs(resultSelector));
       }
-      var _a4 = __read(isEventTarget(target) ? eventTargetMethods.map(function(methodName) {
+      var _a = __read(isEventTarget(target) ? eventTargetMethods.map(function(methodName) {
         return function(handler) {
           return target[methodName](eventName, handler, options);
         };
-      }) : isNodeStyleEventEmitter(target) ? nodeEventEmitterMethods.map(toCommonHandlerRegistry(target, eventName)) : isJQueryStyleEventEmitter(target) ? jqueryMethods.map(toCommonHandlerRegistry(target, eventName)) : [], 2), add = _a4[0], remove = _a4[1];
+      }) : isNodeStyleEventEmitter(target) ? nodeEventEmitterMethods.map(toCommonHandlerRegistry(target, eventName)) : isJQueryStyleEventEmitter(target) ? jqueryMethods.map(toCommonHandlerRegistry(target, eventName)) : [], 2), add = _a[0], remove = _a[1];
       if (!add) {
         if (isArrayLike_1.isArrayLike(target)) {
           return mergeMap_1.mergeMap(function(subTarget) {
@@ -4533,11 +4528,11 @@ var require_generate = __commonJS({
     var defer_1 = require_defer();
     var scheduleIterable_1 = require_scheduleIterable();
     function generate(initialStateOrOptions, condition, iterate, resultSelectorOrScheduler, scheduler) {
-      var _a4, _b4;
+      var _a, _b;
       var resultSelector;
       var initialState;
       if (arguments.length === 1) {
-        _a4 = initialStateOrOptions, initialState = _a4.initialState, condition = _a4.condition, iterate = _a4.iterate, _b4 = _a4.resultSelector, resultSelector = _b4 === void 0 ? identity_1.identity : _b4, scheduler = _a4.scheduler;
+        _a = initialStateOrOptions, initialState = _a.initialState, condition = _a.condition, iterate = _a.iterate, _b = _a.resultSelector, resultSelector = _b === void 0 ? identity_1.identity : _b, scheduler = _a.scheduler;
       } else {
         initialState = initialStateOrOptions;
         if (!resultSelectorOrScheduler || isScheduler_1.isScheduler(resultSelectorOrScheduler)) {
@@ -4549,17 +4544,17 @@ var require_generate = __commonJS({
       }
       function gen() {
         var state;
-        return __generator(this, function(_a5) {
-          switch (_a5.label) {
+        return __generator(this, function(_a2) {
+          switch (_a2.label) {
             case 0:
               state = initialState;
-              _a5.label = 1;
+              _a2.label = 1;
             case 1:
               if (!(!condition || condition(state))) return [3, 4];
               return [4, resultSelector(state)];
             case 2:
-              _a5.sent();
-              _a5.label = 3;
+              _a2.sent();
+              _a2.label = 3;
             case 3:
               state = iterate(state);
               return [3, 1];
@@ -5133,7 +5128,7 @@ var require_bufferCount = __commonJS({
         var buffers = [];
         var count = 0;
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value) {
-          var e_1, _a4, e_2, _b4;
+          var e_1, _a, e_2, _b;
           var toEmit = null;
           if (count++ % startBufferEvery === 0) {
             buffers.push([]);
@@ -5151,7 +5146,7 @@ var require_bufferCount = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (buffers_1_1 && !buffers_1_1.done && (_a4 = buffers_1.return)) _a4.call(buffers_1);
+              if (buffers_1_1 && !buffers_1_1.done && (_a = buffers_1.return)) _a.call(buffers_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -5167,14 +5162,14 @@ var require_bufferCount = __commonJS({
               e_2 = { error: e_2_1 };
             } finally {
               try {
-                if (toEmit_1_1 && !toEmit_1_1.done && (_b4 = toEmit_1.return)) _b4.call(toEmit_1);
+                if (toEmit_1_1 && !toEmit_1_1.done && (_b = toEmit_1.return)) _b.call(toEmit_1);
               } finally {
                 if (e_2) throw e_2.error;
               }
             }
           }
         }, function() {
-          var e_3, _a4;
+          var e_3, _a;
           try {
             for (var buffers_2 = __values(buffers), buffers_2_1 = buffers_2.next(); !buffers_2_1.done; buffers_2_1 = buffers_2.next()) {
               var buffer = buffers_2_1.value;
@@ -5184,7 +5179,7 @@ var require_bufferCount = __commonJS({
             e_3 = { error: e_3_1 };
           } finally {
             try {
-              if (buffers_2_1 && !buffers_2_1.done && (_a4 = buffers_2.return)) _a4.call(buffers_2);
+              if (buffers_2_1 && !buffers_2_1.done && (_a = buffers_2.return)) _a.call(buffers_2);
             } finally {
               if (e_3) throw e_3.error;
             }
@@ -5223,13 +5218,13 @@ var require_bufferTime = __commonJS({
     var args_1 = require_args();
     var executeSchedule_1 = require_executeSchedule();
     function bufferTime(bufferTimeSpan) {
-      var _a4, _b4;
+      var _a, _b;
       var otherArgs = [];
       for (var _i = 1; _i < arguments.length; _i++) {
         otherArgs[_i - 1] = arguments[_i];
       }
-      var scheduler = (_a4 = args_1.popScheduler(otherArgs)) !== null && _a4 !== void 0 ? _a4 : async_1.asyncScheduler;
-      var bufferCreationInterval = (_b4 = otherArgs[0]) !== null && _b4 !== void 0 ? _b4 : null;
+      var scheduler = (_a = args_1.popScheduler(otherArgs)) !== null && _a !== void 0 ? _a : async_1.asyncScheduler;
+      var bufferCreationInterval = (_b = otherArgs[0]) !== null && _b !== void 0 ? _b : null;
       var maxBufferSize = otherArgs[1] || Infinity;
       return lift_1.operate(function(source, subscriber) {
         var bufferRecords = [];
@@ -5263,7 +5258,7 @@ var require_bufferTime = __commonJS({
         }
         startBuffer();
         var bufferTimeSubscriber = OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value) {
-          var e_1, _a5;
+          var e_1, _a2;
           var recordsCopy = bufferRecords.slice();
           try {
             for (var recordsCopy_1 = __values(recordsCopy), recordsCopy_1_1 = recordsCopy_1.next(); !recordsCopy_1_1.done; recordsCopy_1_1 = recordsCopy_1.next()) {
@@ -5276,7 +5271,7 @@ var require_bufferTime = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (recordsCopy_1_1 && !recordsCopy_1_1.done && (_a5 = recordsCopy_1.return)) _a5.call(recordsCopy_1);
+              if (recordsCopy_1_1 && !recordsCopy_1_1.done && (_a2 = recordsCopy_1.return)) _a2.call(recordsCopy_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -5335,7 +5330,7 @@ var require_bufferToggle = __commonJS({
           closingSubscription.add(innerFrom_1.innerFrom(closingSelector(openValue)).subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, emitBuffer, noop_1.noop)));
         }, noop_1.noop));
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value) {
-          var e_1, _a4;
+          var e_1, _a;
           try {
             for (var buffers_1 = __values(buffers), buffers_1_1 = buffers_1.next(); !buffers_1_1.done; buffers_1_1 = buffers_1.next()) {
               var buffer = buffers_1_1.value;
@@ -5345,7 +5340,7 @@ var require_bufferToggle = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (buffers_1_1 && !buffers_1_1.done && (_a4 = buffers_1.return)) _a4.call(buffers_1);
+              if (buffers_1_1 && !buffers_1_1.done && (_a = buffers_1.return)) _a.call(buffers_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -6542,7 +6537,7 @@ var require_takeLast = __commonJS({
           buffer.push(value);
           count < buffer.length && buffer.shift();
         }, function() {
-          var e_1, _a4;
+          var e_1, _a;
           try {
             for (var buffer_1 = __values(buffer), buffer_1_1 = buffer_1.next(); !buffer_1_1.done; buffer_1_1 = buffer_1.next()) {
               var value = buffer_1_1.value;
@@ -6552,7 +6547,7 @@ var require_takeLast = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (buffer_1_1 && !buffer_1_1.done && (_a4 = buffer_1.return)) _a4.call(buffer_1);
+              if (buffer_1_1 && !buffer_1_1.done && (_a = buffer_1.return)) _a.call(buffer_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -7057,12 +7052,12 @@ var require_repeat = __commonJS({
     var innerFrom_1 = require_innerFrom();
     var timer_1 = require_timer();
     function repeat(countOrConfig) {
-      var _a4;
+      var _a;
       var count = Infinity;
       var delay;
       if (countOrConfig != null) {
         if (typeof countOrConfig === "object") {
-          _a4 = countOrConfig.count, count = _a4 === void 0 ? Infinity : _a4, delay = countOrConfig.delay;
+          _a = countOrConfig.count, count = _a === void 0 ? Infinity : _a, delay = countOrConfig.delay;
         } else {
           count = countOrConfig;
         }
@@ -7187,7 +7182,7 @@ var require_retry = __commonJS({
           count: configOrCount
         };
       }
-      var _a4 = config.count, count = _a4 === void 0 ? Infinity : _a4, delay = config.delay, _b4 = config.resetOnSuccess, resetOnSuccess = _b4 === void 0 ? false : _b4;
+      var _a = config.count, count = _a === void 0 ? Infinity : _a, delay = config.delay, _b = config.resetOnSuccess, resetOnSuccess = _b === void 0 ? false : _b;
       return count <= 0 ? identity_1.identity : lift_1.operate(function(source, subscriber) {
         var soFar = 0;
         var innerSub;
@@ -7427,9 +7422,9 @@ var require_share = __commonJS({
       if (options === void 0) {
         options = {};
       }
-      var _a4 = options.connector, connector = _a4 === void 0 ? function() {
+      var _a = options.connector, connector = _a === void 0 ? function() {
         return new Subject_1.Subject();
-      } : _a4, _b4 = options.resetOnError, resetOnError = _b4 === void 0 ? true : _b4, _c = options.resetOnComplete, resetOnComplete = _c === void 0 ? true : _c, _d = options.resetOnRefCountZero, resetOnRefCountZero = _d === void 0 ? true : _d;
+      } : _a, _b = options.resetOnError, resetOnError = _b === void 0 ? true : _b, _c = options.resetOnComplete, resetOnComplete = _c === void 0 ? true : _c, _d = options.resetOnRefCountZero, resetOnRefCountZero = _d === void 0 ? true : _d;
       return function(wrapperSource) {
         var connection;
         var resetConnection;
@@ -7519,11 +7514,11 @@ var require_shareReplay = __commonJS({
     var ReplaySubject_1 = require_ReplaySubject();
     var share_1 = require_share();
     function shareReplay(configOrBufferSize, windowTime, scheduler) {
-      var _a4, _b4, _c;
+      var _a, _b, _c;
       var bufferSize;
       var refCount = false;
       if (configOrBufferSize && typeof configOrBufferSize === "object") {
-        _a4 = configOrBufferSize.bufferSize, bufferSize = _a4 === void 0 ? Infinity : _a4, _b4 = configOrBufferSize.windowTime, windowTime = _b4 === void 0 ? Infinity : _b4, _c = configOrBufferSize.refCount, refCount = _c === void 0 ? false : _c, scheduler = configOrBufferSize.scheduler;
+        _a = configOrBufferSize.bufferSize, bufferSize = _a === void 0 ? Infinity : _a, _b = configOrBufferSize.windowTime, windowTime = _b === void 0 ? Infinity : _b, _c = configOrBufferSize.refCount, refCount = _c === void 0 ? false : _c, scheduler = configOrBufferSize.scheduler;
       } else {
         bufferSize = configOrBufferSize !== null && configOrBufferSize !== void 0 ? configOrBufferSize : Infinity;
       }
@@ -7841,29 +7836,29 @@ var require_tap = __commonJS({
     function tap(observerOrNext, error, complete) {
       var tapObserver = isFunction_1.isFunction(observerOrNext) || error || complete ? { next: observerOrNext, error, complete } : observerOrNext;
       return tapObserver ? lift_1.operate(function(source, subscriber) {
-        var _a4;
-        (_a4 = tapObserver.subscribe) === null || _a4 === void 0 ? void 0 : _a4.call(tapObserver);
+        var _a;
+        (_a = tapObserver.subscribe) === null || _a === void 0 ? void 0 : _a.call(tapObserver);
         var isUnsub = true;
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value) {
-          var _a5;
-          (_a5 = tapObserver.next) === null || _a5 === void 0 ? void 0 : _a5.call(tapObserver, value);
+          var _a2;
+          (_a2 = tapObserver.next) === null || _a2 === void 0 ? void 0 : _a2.call(tapObserver, value);
           subscriber.next(value);
         }, function() {
-          var _a5;
+          var _a2;
           isUnsub = false;
-          (_a5 = tapObserver.complete) === null || _a5 === void 0 ? void 0 : _a5.call(tapObserver);
+          (_a2 = tapObserver.complete) === null || _a2 === void 0 ? void 0 : _a2.call(tapObserver);
           subscriber.complete();
         }, function(err) {
-          var _a5;
+          var _a2;
           isUnsub = false;
-          (_a5 = tapObserver.error) === null || _a5 === void 0 ? void 0 : _a5.call(tapObserver, err);
+          (_a2 = tapObserver.error) === null || _a2 === void 0 ? void 0 : _a2.call(tapObserver, err);
           subscriber.error(err);
         }, function() {
-          var _a5, _b4;
+          var _a2, _b;
           if (isUnsub) {
-            (_a5 = tapObserver.unsubscribe) === null || _a5 === void 0 ? void 0 : _a5.call(tapObserver);
+            (_a2 = tapObserver.unsubscribe) === null || _a2 === void 0 ? void 0 : _a2.call(tapObserver);
           }
-          (_b4 = tapObserver.finalize) === null || _b4 === void 0 ? void 0 : _b4.call(tapObserver);
+          (_b = tapObserver.finalize) === null || _b === void 0 ? void 0 : _b.call(tapObserver);
         }));
       }) : identity_1.identity;
     }
@@ -7881,7 +7876,7 @@ var require_throttle = __commonJS({
     var innerFrom_1 = require_innerFrom();
     function throttle(durationSelector, config) {
       return lift_1.operate(function(source, subscriber) {
-        var _a4 = config !== null && config !== void 0 ? config : {}, _b4 = _a4.leading, leading = _b4 === void 0 ? true : _b4, _c = _a4.trailing, trailing = _c === void 0 ? false : _c;
+        var _a = config !== null && config !== void 0 ? config : {}, _b = _a.leading, leading = _b === void 0 ? true : _b, _c = _a.trailing, trailing = _c === void 0 ? false : _c;
         var hasValue = false;
         var sendValue = null;
         var throttled = null;
@@ -8104,7 +8099,7 @@ var require_windowCount = __commonJS({
         var count = 0;
         subscriber.next(windows[0].asObservable());
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value) {
-          var e_1, _a4;
+          var e_1, _a;
           try {
             for (var windows_1 = __values(windows), windows_1_1 = windows_1.next(); !windows_1_1.done; windows_1_1 = windows_1.next()) {
               var window_1 = windows_1_1.value;
@@ -8114,7 +8109,7 @@ var require_windowCount = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (windows_1_1 && !windows_1_1.done && (_a4 = windows_1.return)) _a4.call(windows_1);
+              if (windows_1_1 && !windows_1_1.done && (_a = windows_1.return)) _a.call(windows_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -8161,13 +8156,13 @@ var require_windowTime = __commonJS({
     var args_1 = require_args();
     var executeSchedule_1 = require_executeSchedule();
     function windowTime(windowTimeSpan) {
-      var _a4, _b4;
+      var _a, _b;
       var otherArgs = [];
       for (var _i = 1; _i < arguments.length; _i++) {
         otherArgs[_i - 1] = arguments[_i];
       }
-      var scheduler = (_a4 = args_1.popScheduler(otherArgs)) !== null && _a4 !== void 0 ? _a4 : async_1.asyncScheduler;
-      var windowCreationInterval = (_b4 = otherArgs[0]) !== null && _b4 !== void 0 ? _b4 : null;
+      var scheduler = (_a = args_1.popScheduler(otherArgs)) !== null && _a !== void 0 ? _a : async_1.asyncScheduler;
+      var windowCreationInterval = (_b = otherArgs[0]) !== null && _b !== void 0 ? _b : null;
       var maxWindowSize = otherArgs[1] || Infinity;
       return lift_1.operate(function(source, subscriber) {
         var windowRecords = [];
@@ -8206,8 +8201,8 @@ var require_windowTime = __commonJS({
           return windowRecords.slice().forEach(cb);
         };
         var terminate = function(cb) {
-          loop(function(_a5) {
-            var window = _a5.window;
+          loop(function(_a2) {
+            var window = _a2.window;
             return cb(window);
           });
           cb(subscriber);
@@ -8288,7 +8283,7 @@ var require_windowToggle = __commonJS({
           closingSubscription.add(closingNotifier.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, closeWindow, noop_1.noop, handleError)));
         }, noop_1.noop));
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value) {
-          var e_1, _a4;
+          var e_1, _a;
           var windowsCopy = windows.slice();
           try {
             for (var windowsCopy_1 = __values(windowsCopy), windowsCopy_1_1 = windowsCopy_1.next(); !windowsCopy_1_1.done; windowsCopy_1_1 = windowsCopy_1.next()) {
@@ -8299,7 +8294,7 @@ var require_windowToggle = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (windowsCopy_1_1 && !windowsCopy_1_1.done && (_a4 = windowsCopy_1.return)) _a4.call(windowsCopy_1);
+              if (windowsCopy_1_1 && !windowsCopy_1_1.done && (_a = windowsCopy_1.return)) _a.call(windowsCopy_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -9242,1820 +9237,8 @@ var require_cjs = __commonJS({
   }
 });
 
-// node_modules/@subsquid/scale-codec/lib/types.js
-var require_types2 = __commonJS({
-  "node_modules/@subsquid/scale-codec/lib/types.js"(exports$1) {
-    Object.defineProperty(exports$1, "__esModule", { value: true });
-    exports$1.TypeKind = void 0;
-    var TypeKind;
-    (function(TypeKind2) {
-      TypeKind2[TypeKind2["Primitive"] = 0] = "Primitive";
-      TypeKind2[TypeKind2["Compact"] = 1] = "Compact";
-      TypeKind2[TypeKind2["Sequence"] = 2] = "Sequence";
-      TypeKind2[TypeKind2["BitSequence"] = 3] = "BitSequence";
-      TypeKind2[TypeKind2["Array"] = 4] = "Array";
-      TypeKind2[TypeKind2["Tuple"] = 5] = "Tuple";
-      TypeKind2[TypeKind2["Composite"] = 6] = "Composite";
-      TypeKind2[TypeKind2["Variant"] = 7] = "Variant";
-      TypeKind2[TypeKind2["Option"] = 8] = "Option";
-      TypeKind2[TypeKind2["DoNotConstruct"] = 9] = "DoNotConstruct";
-      TypeKind2[TypeKind2["BooleanOption"] = 10] = "BooleanOption";
-      TypeKind2[TypeKind2["Bytes"] = 11] = "Bytes";
-      TypeKind2[TypeKind2["BytesArray"] = 12] = "BytesArray";
-      TypeKind2[TypeKind2["HexBytes"] = 13] = "HexBytes";
-      TypeKind2[TypeKind2["HexBytesArray"] = 14] = "HexBytesArray";
-      TypeKind2[TypeKind2["Struct"] = 15] = "Struct";
-    })(TypeKind || (exports$1.TypeKind = TypeKind = {}));
-  }
-});
-
-// node_modules/@subsquid/util-internal-hex/lib/hex.js
-var require_hex = __commonJS({
-  "node_modules/@subsquid/util-internal-hex/lib/hex.js"(exports$1) {
-    var __importDefault = exports$1 && exports$1.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
-    Object.defineProperty(exports$1, "__esModule", { value: true });
-    exports$1.decodeHex = exports$1.isHex = exports$1.toHex = void 0;
-    var assert_1 = __importDefault(__require("assert"));
-    function toHex2(data) {
-      if (Buffer.isBuffer(data)) {
-        return "0x" + data.toString("hex");
-      } else {
-        return "0x" + Buffer.from(data.buffer, data.byteOffset, data.byteLength).toString("hex");
-      }
-    }
-    exports$1.toHex = toHex2;
-    function isHex(value) {
-      return typeof value == "string" && value.length % 2 == 0 && /^0x[a-f\d]*$/i.test(value);
-    }
-    exports$1.isHex = isHex;
-    function decodeHex(value) {
-      (0, assert_1.default)(isHex(value));
-      return Buffer.from(value.slice(2), "hex");
-    }
-    exports$1.decodeHex = decodeHex;
-  }
-});
-
-// node_modules/@subsquid/scale-codec/lib/util.js
-var require_util = __commonJS({
-  "node_modules/@subsquid/scale-codec/lib/util.js"(exports$1) {
-    var __importDefault = exports$1 && exports$1.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
-    Object.defineProperty(exports$1, "__esModule", { value: true });
-    exports$1.isObject = exports$1.unsignedIntByteLength = exports$1.UTF8_ENCODER = exports$1.UTF8_DECODER = exports$1.toUnsignedBigInt = exports$1.toSignedBigInt = exports$1.checkUnsignedBigInt = exports$1.checkUnsignedInt = exports$1.checkSignedBigInt = exports$1.checkSignedInt = exports$1.throwUnexpectedCase = exports$1.assertNotNull = void 0;
-    var assert_1 = __importDefault(__require("assert"));
-    function assertNotNull(val, msg) {
-      (0, assert_1.default)(val != null, msg);
-      return val;
-    }
-    exports$1.assertNotNull = assertNotNull;
-    function throwUnexpectedCase(val) {
-      throw new Error(val ? `Unexpected case: ${val}` : `Unexpected case`);
-    }
-    exports$1.throwUnexpectedCase = throwUnexpectedCase;
-    function checkInt(val, sign, bitSize, min, max) {
-      let ok = Number.isInteger(val) && min <= val && max >= val;
-      if (!ok)
-        throw new Error(`Invalid ${sign}${bitSize}: ${val}`);
-    }
-    function checkBigInt(val, sign, bitSize, min, max) {
-      let ok = typeof val == "bigint" && min <= val && max >= val;
-      if (!ok)
-        throw new Error(`Invalid ${sign}${bitSize}: ${val}`);
-    }
-    function checkSignedInt(val, bitSize) {
-      let min;
-      let max;
-      switch (bitSize) {
-        case 8:
-          min = -128;
-          max = 127;
-          break;
-        case 16:
-          min = -32768;
-          max = 32767;
-          break;
-        case 32:
-          min = -2147483648;
-          max = 2147483647;
-          break;
-        default:
-          throwUnexpectedCase(bitSize);
-      }
-      checkInt(val, "I", bitSize, min, max);
-    }
-    exports$1.checkSignedInt = checkSignedInt;
-    function checkSignedBigInt(val, bitSize) {
-      let min;
-      let max;
-      switch (bitSize) {
-        case 64:
-          min = -(2n ** 63n);
-          max = 2n ** 63n - 1n;
-          break;
-        case 128:
-          min = -(2n ** 127n);
-          max = 2n ** 127n - 1n;
-          break;
-        case 256:
-          min = -(2n ** 255n);
-          max = 2n ** 255n - 1n;
-          break;
-        default:
-          throwUnexpectedCase(bitSize);
-      }
-      checkBigInt(val, "I", bitSize, min, max);
-    }
-    exports$1.checkSignedBigInt = checkSignedBigInt;
-    function checkUnsignedInt(val, bitSize) {
-      let max;
-      switch (bitSize) {
-        case 8:
-          max = 255;
-          break;
-        case 16:
-          max = 65535;
-          break;
-        case 32:
-          max = 4294967295;
-          break;
-        default:
-          throwUnexpectedCase(bitSize);
-      }
-      checkInt(val, "U", bitSize, 0, max);
-    }
-    exports$1.checkUnsignedInt = checkUnsignedInt;
-    function checkUnsignedBigInt(val, bitSize) {
-      let max;
-      switch (bitSize) {
-        case 64:
-          max = 0xffffffffffffffffn;
-          break;
-        case 128:
-          max = 2n ** 128n - 1n;
-          break;
-        case 256:
-          max = 2n ** 256n - 1n;
-          break;
-        default:
-          throwUnexpectedCase(bitSize);
-      }
-      checkBigInt(val, "U", bitSize, 0n, max);
-    }
-    exports$1.checkUnsignedBigInt = checkUnsignedBigInt;
-    function toSignedBigInt(val, bitSize) {
-      (0, assert_1.default)(typeof val == "string" || typeof val == "number");
-      val = BigInt(val);
-      checkSignedBigInt(val, bitSize);
-      return val;
-    }
-    exports$1.toSignedBigInt = toSignedBigInt;
-    function toUnsignedBigInt(val, bitSize) {
-      (0, assert_1.default)(typeof val == "string" || typeof val == "number");
-      val = BigInt(val);
-      checkUnsignedBigInt(val, bitSize);
-      return val;
-    }
-    exports$1.toUnsignedBigInt = toUnsignedBigInt;
-    exports$1.UTF8_DECODER = new TextDecoder("utf-8", {
-      fatal: true,
-      ignoreBOM: false
-    });
-    exports$1.UTF8_ENCODER = new TextEncoder();
-    function unsignedIntByteLength(val) {
-      let len = 0;
-      while (val > 0n) {
-        val = val >> 8n;
-        len += 1;
-      }
-      return len;
-    }
-    exports$1.unsignedIntByteLength = unsignedIntByteLength;
-    function isObject(value) {
-      return value != null && typeof value == "object";
-    }
-    exports$1.isObject = isObject;
-  }
-});
-
-// node_modules/@subsquid/scale-codec/lib/src.js
-var require_src = __commonJS({
-  "node_modules/@subsquid/scale-codec/lib/src.js"(exports$1) {
-    var __importDefault = exports$1 && exports$1.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
-    Object.defineProperty(exports$1, "__esModule", { value: true });
-    exports$1.Src = void 0;
-    var util_internal_hex_1 = require_hex();
-    var assert_1 = __importDefault(__require("assert"));
-    var util_1 = require_util();
-    var Src2 = class {
-      constructor(buf) {
-        this.idx = 0;
-        if (typeof buf == "string") {
-          this.buf = (0, util_internal_hex_1.decodeHex)(buf);
-        } else {
-          this.buf = buf;
-        }
-      }
-      byte() {
-        let b = this.buf[this.idx];
-        if (b === void 0) {
-          throw eof();
-        }
-        this.idx += 1;
-        return b;
-      }
-      i8() {
-        let b = this.byte();
-        return b | (b & 2 ** 7) * 33554430;
-      }
-      u8() {
-        return this.byte();
-      }
-      i16() {
-        let val = this.u16();
-        return val | (val & 2 ** 15) * 131070;
-      }
-      u16() {
-        let first = this.byte();
-        let last = this.byte();
-        return first + last * 2 ** 8;
-      }
-      i32() {
-        return this.byte() + this.byte() * 2 ** 8 + this.byte() * 2 ** 16 + (this.byte() << 24);
-      }
-      u32() {
-        return this.byte() + this.byte() * 2 ** 8 + this.byte() * 2 ** 16 + this.byte() * 2 ** 24;
-      }
-      i64() {
-        let lo = this.u32();
-        let hi = this.i32();
-        return BigInt(lo) + (BigInt(hi) << 32n);
-      }
-      u64() {
-        let lo = this.u32();
-        let hi = this.u32();
-        return BigInt(lo) + (BigInt(hi) << 32n);
-      }
-      i128() {
-        let lo = this.u64();
-        let hi = this.i64();
-        return lo + (hi << 64n);
-      }
-      u128() {
-        let lo = this.u64();
-        let hi = this.u64();
-        return lo + (hi << 64n);
-      }
-      i256() {
-        let lo = this.u128();
-        let hi = this.i128();
-        return lo + (hi << 128n);
-      }
-      u256() {
-        let lo = this.u128();
-        let hi = this.u128();
-        return lo + (hi << 128n);
-      }
-      compact() {
-        let b = this.byte();
-        let mode = b & 3;
-        switch (mode) {
-          case 0:
-            return b >> 2;
-          case 1:
-            return (b >> 2) + this.byte() * 2 ** 6;
-          case 2:
-            return (b >> 2) + this.byte() * 2 ** 6 + this.byte() * 2 ** 14 + this.byte() * 2 ** 22;
-          case 3:
-            return this.bigCompact(b >> 2);
-          default:
-            throw new Error("Reached unreachable statement");
-        }
-      }
-      bigCompact(len) {
-        let i = this.u32();
-        switch (len) {
-          case 0:
-            return i;
-          case 1:
-            return i + this.byte() * 2 ** 32;
-          case 2:
-            return i + this.byte() * 2 ** 32 + this.byte() * 2 ** 40;
-        }
-        let n = BigInt(i);
-        let base = 32n;
-        while (len--) {
-          n += BigInt(this.byte()) << base;
-          base += 8n;
-        }
-        return n;
-      }
-      compactLength() {
-        let len = this.compact();
-        (0, assert_1.default)(typeof len == "number");
-        return len;
-      }
-      str() {
-        let len = this.compactLength();
-        let buf = this.bytes(len);
-        return util_1.UTF8_DECODER.decode(buf);
-      }
-      bytes(len) {
-        let beg = this.idx;
-        let end = this.idx += len;
-        if (this.buf.length < end) {
-          throw eof();
-        }
-        return this.buf.subarray(beg, end);
-      }
-      skip(len) {
-        this.idx += len;
-      }
-      bool() {
-        return !!this.byte();
-      }
-      hasBytes() {
-        return this.buf.length > this.idx;
-      }
-      assertEOF() {
-        if (this.hasBytes()) {
-          throw new Error("Unprocessed data left");
-        }
-      }
-    };
-    exports$1.Src = Src2;
-    function eof() {
-      return new Error("Unexpected EOF");
-    }
-  }
-});
-
-// node_modules/@subsquid/scale-codec/lib/sink.js
-var require_sink = __commonJS({
-  "node_modules/@subsquid/scale-codec/lib/sink.js"(exports$1) {
-    var __importDefault = exports$1 && exports$1.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
-    Object.defineProperty(exports$1, "__esModule", { value: true });
-    exports$1.ByteSink = exports$1.HexSink = exports$1.Sink = void 0;
-    var assert_1 = __importDefault(__require("assert"));
-    var util_1 = require_util();
-    var Sink = class {
-      uncheckedU16(val) {
-        this.write(val & 255);
-        this.write(val >>> 8);
-      }
-      uncheckedU32(val) {
-        this.write(val & 255);
-        this.write(val >>> 8 & 255);
-        this.write(val >>> 16 & 255);
-        this.write(val >>> 24);
-      }
-      uncheckedU64(val) {
-        this.uncheckedU32(Number(val & 0xffffffffn));
-        this.uncheckedU32(Number(val >> 32n));
-      }
-      uncheckedU128(val) {
-        this.uncheckedU64(val & 0xffffffffffffffffn);
-        this.uncheckedU64(val >> 64n);
-      }
-      uncheckedU256(val) {
-        this.uncheckedU128(val & 2n ** 128n - 1n);
-        this.uncheckedU128(val >> 128n);
-      }
-      u8(val) {
-        (0, util_1.checkUnsignedInt)(val, 8);
-        this.write(val);
-      }
-      u16(val) {
-        (0, util_1.checkUnsignedInt)(val, 16);
-        this.uncheckedU16(val);
-      }
-      u32(val) {
-        (0, util_1.checkUnsignedInt)(val, 32);
-        this.uncheckedU32(val);
-      }
-      u64(val) {
-        (0, util_1.checkUnsignedBigInt)(val, 64);
-        this.uncheckedU64(val);
-      }
-      u128(val) {
-        (0, util_1.checkUnsignedBigInt)(val, 128);
-        this.uncheckedU128(val);
-      }
-      u256(val) {
-        (0, util_1.checkUnsignedBigInt)(val, 256);
-        this.uncheckedU256(val);
-      }
-      i8(val) {
-        (0, util_1.checkSignedInt)(val, 8);
-        this.write((val + 256) % 256);
-      }
-      i16(val) {
-        (0, util_1.checkSignedInt)(val, 16);
-        let base = 2 ** 16;
-        val = (val + base) % base;
-        this.uncheckedU16(val);
-      }
-      i32(val) {
-        (0, util_1.checkSignedInt)(val, 32);
-        let base = 2 ** 32;
-        val = (val + base) % base;
-        this.uncheckedU32(val);
-      }
-      i64(val) {
-        (0, util_1.checkSignedBigInt)(val, 64);
-        let base = 2n ** 64n;
-        val = (val + base) % base;
-        this.uncheckedU64(val);
-      }
-      i128(val) {
-        (0, util_1.checkSignedBigInt)(val, 128);
-        let base = 2n ** 128n;
-        val = (val + base) % base;
-        this.uncheckedU128(val);
-      }
-      i256(val) {
-        (0, util_1.checkSignedBigInt)(val, 256);
-        let base = 2n ** 256n;
-        val = (val + base) % base;
-        this.uncheckedU256(val);
-      }
-      str(val) {
-        (0, assert_1.default)(typeof val == "string");
-        let bytes = util_1.UTF8_ENCODER.encode(val);
-        this.compact(bytes.length);
-        this.bytes(bytes);
-      }
-      bool(val) {
-        (0, assert_1.default)(typeof val == "boolean");
-        this.write(Number(val));
-      }
-      compact(val) {
-        (0, assert_1.default)((typeof val == "number" || typeof val == "bigint") && val >= 0, "invalid compact");
-        if (val < 64) {
-          this.write(Number(val) * 4);
-        } else if (val < 2 ** 14) {
-          val = Number(val);
-          this.write((val & 63) * 4 + 1);
-          this.write(val >>> 6);
-        } else if (val < 2 ** 30) {
-          val = Number(val);
-          this.write((val & 63) * 4 + 2);
-          this.write(val >>> 6 & 255);
-          this.uncheckedU16(val >>> 14);
-        } else if (val < 2n ** 536n) {
-          val = BigInt(val);
-          this.write((0, util_1.unsignedIntByteLength)(val) * 4 - 13);
-          while (val > 0) {
-            this.write(Number(val & 0xffn));
-            val = val >> 8n;
-          }
-        } else {
-          throw new Error(`${val.toString(16)} is too large for a compact`);
-        }
-      }
-    };
-    exports$1.Sink = Sink;
-    var HexSink = class extends Sink {
-      constructor() {
-        super(...arguments);
-        this.out = "0x";
-      }
-      write(byte) {
-        this.out += (byte >>> 4).toString(16);
-        this.out += (byte & 15).toString(16);
-      }
-      bytes(b) {
-        if (Buffer.isBuffer(b)) {
-          this.out += b.toString("hex");
-        } else {
-          this.out += Buffer.from(b.buffer, b.byteOffset, b.byteLength).toString("hex");
-        }
-      }
-      toHex() {
-        return this.out;
-      }
-    };
-    exports$1.HexSink = HexSink;
-    var ByteSink2 = class extends Sink {
-      constructor() {
-        super(...arguments);
-        this.buf = Buffer.allocUnsafe(128);
-        this.pos = 0;
-      }
-      alloc(size) {
-        if (this.buf.length - this.pos < size) {
-          let buf = Buffer.allocUnsafe(Math.max(size, this.buf.length) * 2);
-          buf.set(this.buf);
-          this.buf = buf;
-        }
-      }
-      write(byte) {
-        this.alloc(1);
-        this.buf[this.pos] = byte;
-        this.pos += 1;
-      }
-      bytes(b) {
-        this.alloc(b.length);
-        this.buf.set(b, this.pos);
-        this.pos += b.length;
-      }
-      toBytes() {
-        return this.buf.subarray(0, this.pos);
-      }
-    };
-    exports$1.ByteSink = ByteSink2;
-  }
-});
-
-// node_modules/@subsquid/scale-codec/lib/types-codec.js
-var require_types_codec = __commonJS({
-  "node_modules/@subsquid/scale-codec/lib/types-codec.js"(exports$1) {
-    var __importDefault = exports$1 && exports$1.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
-    Object.defineProperty(exports$1, "__esModule", { value: true });
-    exports$1.toCodecTypes = exports$1.getCodecType = void 0;
-    var assert_1 = __importDefault(__require("assert"));
-    var types_1 = require_types2();
-    var util_1 = require_util();
-    function getCodecType(types, ti) {
-      let def = types[ti];
-      switch (def.kind) {
-        case types_1.TypeKind.Compact: {
-          let compact = types[def.type];
-          (0, assert_1.default)(compact.kind == types_1.TypeKind.Primitive);
-          (0, assert_1.default)(compact.primitive[0] == "U");
-          return { kind: types_1.TypeKind.Compact, integer: compact.primitive };
-        }
-        case types_1.TypeKind.Composite:
-          if (def.fields.length == 0 || def.fields[0].name == null) {
-            return {
-              kind: types_1.TypeKind.Tuple,
-              tuple: def.fields.map((f) => {
-                (0, assert_1.default)(f.name == null);
-                return f.type;
-              })
-            };
-          } else {
-            return {
-              kind: types_1.TypeKind.Struct,
-              fields: def.fields.map((f) => {
-                let name = (0, util_1.assertNotNull)(f.name);
-                return { name, type: f.type };
-              })
-            };
-          }
-        case types_1.TypeKind.Variant: {
-          let variants = def.variants.filter((v) => v != null);
-          let variantsByName = {};
-          let uniqueIndexes = new Set(variants.map((v) => v.index));
-          if (uniqueIndexes.size != variants.length) {
-            throw new Error(`Variant type ${ti} has duplicate case indexes`);
-          }
-          let len = variants.reduce((len2, v) => Math.max(len2, v.index), 0) + 1;
-          let placedVariants = new Array(len);
-          variants.forEach((v) => {
-            let cv;
-            if (v.fields[0]?.name == null) {
-              switch (v.fields.length) {
-                case 0:
-                  cv = { kind: "empty", name: v.name, index: v.index };
-                  break;
-                case 1:
-                  cv = { kind: "value", name: v.name, index: v.index, type: v.fields[0].type };
-                  break;
-                default:
-                  cv = {
-                    kind: "tuple",
-                    name: v.name,
-                    index: v.index,
-                    def: {
-                      kind: types_1.TypeKind.Tuple,
-                      tuple: v.fields.map((f) => {
-                        (0, assert_1.default)(f.name == null);
-                        return f.type;
-                      })
-                    }
-                  };
-              }
-            } else {
-              cv = {
-                kind: "struct",
-                name: v.name,
-                index: v.index,
-                def: {
-                  kind: types_1.TypeKind.Struct,
-                  fields: v.fields.map((f) => {
-                    let name = (0, util_1.assertNotNull)(f.name);
-                    return { name, type: f.type };
-                  })
-                }
-              };
-            }
-            placedVariants[v.index] = cv;
-            variantsByName[cv.name] = cv;
-          });
-          return {
-            kind: types_1.TypeKind.Variant,
-            variants: placedVariants,
-            variantsByName
-          };
-        }
-        default:
-          return def;
-      }
-    }
-    exports$1.getCodecType = getCodecType;
-    function toCodecTypes(types) {
-      let codecTypes = new Array(types.length);
-      for (let i = 0; i < types.length; i++) {
-        codecTypes[i] = getCodecType(types, i);
-      }
-      return codecTypes;
-    }
-    exports$1.toCodecTypes = toCodecTypes;
-  }
-});
-
-// node_modules/@subsquid/scale-codec/lib/codec.js
-var require_codec = __commonJS({
-  "node_modules/@subsquid/scale-codec/lib/codec.js"(exports$1) {
-    var __importDefault = exports$1 && exports$1.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
-    Object.defineProperty(exports$1, "__esModule", { value: true });
-    exports$1.Codec = void 0;
-    var util_internal_hex_1 = require_hex();
-    var assert_1 = __importDefault(__require("assert"));
-    var sink_1 = require_sink();
-    var src_1 = require_src();
-    var types_1 = require_types2();
-    var types_codec_1 = require_types_codec();
-    var util_1 = require_util();
-    var Codec = class {
-      constructor(types) {
-        this.types = (0, types_codec_1.toCodecTypes)(types);
-      }
-      decodeBinary(type, data) {
-        let src = new src_1.Src(data);
-        let val = this.decode(type, src);
-        src.assertEOF();
-        return val;
-      }
-      encodeToHex(type, val) {
-        let sink = new sink_1.HexSink();
-        this.encode(type, val, sink);
-        return sink.toHex();
-      }
-      encodeToBinary(type, val) {
-        let sink = new sink_1.ByteSink();
-        this.encode(type, val, sink);
-        return sink.toBytes();
-      }
-      decode(type, src) {
-        let def = this.types[type];
-        switch (def.kind) {
-          case types_1.TypeKind.Primitive:
-            return decodePrimitive(def.primitive, src);
-          case types_1.TypeKind.Compact:
-            return decodeCompact(def, src);
-          case types_1.TypeKind.BitSequence:
-            return decodeBitSequence(src);
-          case types_1.TypeKind.Array:
-            return this.decodeArray(def, src);
-          case types_1.TypeKind.Sequence:
-            return this.decodeSequence(def, src);
-          case types_1.TypeKind.Tuple:
-            return this.decodeTuple(def, src);
-          case types_1.TypeKind.Struct:
-            return this.decodeStruct(def, src);
-          case types_1.TypeKind.Variant:
-            return this.decodeVariant(def, src);
-          case types_1.TypeKind.Option:
-            return this.decodeOption(def, src);
-          case types_1.TypeKind.BooleanOption:
-            return decodeBooleanOption(src);
-          case types_1.TypeKind.Bytes:
-            return decodeBytes(src);
-          case types_1.TypeKind.BytesArray:
-            return src.bytes(def.len);
-          case types_1.TypeKind.HexBytes:
-            return (0, util_internal_hex_1.toHex)(decodeBytes(src));
-          case types_1.TypeKind.HexBytesArray:
-            return (0, util_internal_hex_1.toHex)(src.bytes(def.len));
-          case types_1.TypeKind.DoNotConstruct:
-            (0, util_1.throwUnexpectedCase)("DoNotConstruct type reached");
-          default:
-            (0, util_1.throwUnexpectedCase)(def.kind);
-        }
-      }
-      decodeArray(def, src) {
-        let { len, type } = def;
-        let result = new Array(len);
-        for (let i = 0; i < len; i++) {
-          result[i] = this.decode(type, src);
-        }
-        return result;
-      }
-      decodeSequence(def, src) {
-        let len = src.compactLength();
-        let result = new Array(len);
-        for (let i = 0; i < len; i++) {
-          result[i] = this.decode(def.type, src);
-        }
-        return result;
-      }
-      decodeTuple(def, src) {
-        if (def.tuple.length == 0)
-          return null;
-        let result = new Array(def.tuple.length);
-        for (let i = 0; i < def.tuple.length; i++) {
-          result[i] = this.decode(def.tuple[i], src);
-        }
-        return result;
-      }
-      decodeStruct(def, src) {
-        let result = {};
-        for (let i = 0; i < def.fields.length; i++) {
-          let f = def.fields[i];
-          result[f.name] = this.decode(f.type, src);
-        }
-        return result;
-      }
-      decodeVariant(def, src) {
-        let idx = src.u8();
-        let variant = def.variants[idx];
-        if (variant == null)
-          (0, util_1.throwUnexpectedCase)(`unknown variant index: ${idx}`);
-        switch (variant.kind) {
-          case "empty":
-            return {
-              __kind: variant.name
-            };
-          case "tuple":
-            return {
-              __kind: variant.name,
-              value: this.decodeTuple(variant.def, src)
-            };
-          case "value":
-            return {
-              __kind: variant.name,
-              value: this.decode(variant.type, src)
-            };
-          case "struct": {
-            let value = this.decodeStruct(variant.def, src);
-            value.__kind = variant.name;
-            return value;
-          }
-          default:
-            (0, util_1.throwUnexpectedCase)();
-        }
-      }
-      decodeOption(def, src) {
-        let byte = src.u8();
-        switch (byte) {
-          case 0:
-            return void 0;
-          case 1:
-            return this.decode(def.type, src);
-          default:
-            (0, util_1.throwUnexpectedCase)(byte.toString());
-        }
-      }
-      encode(type, val, sink) {
-        let def = this.types[type];
-        switch (def.kind) {
-          case types_1.TypeKind.Primitive:
-            encodePrimitive(def.primitive, val, sink);
-            break;
-          case types_1.TypeKind.Compact:
-            sink.compact(val);
-            break;
-          case types_1.TypeKind.BitSequence:
-            encodeBitSequence(val, sink);
-            break;
-          case types_1.TypeKind.Array:
-            this.encodeArray(def, val, sink);
-            break;
-          case types_1.TypeKind.Sequence:
-            this.encodeSequence(def, val, sink);
-            break;
-          case types_1.TypeKind.Tuple:
-            this.encodeTuple(def, val, sink);
-            break;
-          case types_1.TypeKind.Struct:
-            this.encodeStruct(def, val, sink);
-            break;
-          case types_1.TypeKind.Variant:
-            this.encodeVariant(def, val, sink);
-            break;
-          case types_1.TypeKind.BytesArray:
-            encodeBytesArray(def, val, sink);
-            break;
-          case types_1.TypeKind.HexBytesArray:
-            encodeBytesArray(def, (0, util_internal_hex_1.decodeHex)(val), sink);
-            break;
-          case types_1.TypeKind.Bytes:
-            encodeBytes(val, sink);
-            break;
-          case types_1.TypeKind.HexBytes:
-            encodeBytes((0, util_internal_hex_1.decodeHex)(val), sink);
-            break;
-          case types_1.TypeKind.BooleanOption:
-            encodeBooleanOption(val, sink);
-            break;
-          case types_1.TypeKind.Option:
-            this.encodeOption(def, val, sink);
-            break;
-          default:
-            (0, util_1.throwUnexpectedCase)(def.kind);
-        }
-      }
-      encodeArray(def, val, sink) {
-        (0, assert_1.default)(Array.isArray(val) && val.length == def.len);
-        for (let i = 0; i < val.length; i++) {
-          this.encode(def.type, val[i], sink);
-        }
-      }
-      encodeSequence(def, val, sink) {
-        (0, assert_1.default)(Array.isArray(val));
-        sink.compact(val.length);
-        for (let i = 0; i < val.length; i++) {
-          this.encode(def.type, val[i], sink);
-        }
-      }
-      encodeTuple(def, val, sink) {
-        if (def.tuple.length == 0) {
-          (0, assert_1.default)(val == null);
-          return;
-        }
-        (0, assert_1.default)(Array.isArray(val) && def.tuple.length == val.length);
-        for (let i = 0; i < val.length; i++) {
-          this.encode(def.tuple[i], val[i], sink);
-        }
-      }
-      encodeStruct(def, val, sink) {
-        for (let i = 0; i < def.fields.length; i++) {
-          let f = def.fields[i];
-          this.encode(f.type, val[f.name], sink);
-        }
-      }
-      encodeVariant(def, val, sink) {
-        (0, assert_1.default)(typeof val?.__kind == "string", "not a variant type value");
-        let variant = def.variantsByName[val.__kind];
-        if (variant == null)
-          throw new Error(`Unknown variant: ${val.__kind}`);
-        sink.u8(variant.index);
-        switch (variant.kind) {
-          case "empty":
-            break;
-          case "value":
-            this.encode(variant.type, val.value, sink);
-            break;
-          case "tuple":
-            this.encodeTuple(variant.def, val.value, sink);
-            break;
-          case "struct":
-            this.encodeStruct(variant.def, val, sink);
-            break;
-          default:
-            (0, util_1.throwUnexpectedCase)();
-        }
-      }
-      encodeOption(def, val, sink) {
-        if (val === void 0) {
-          sink.u8(0);
-        } else {
-          sink.u8(1);
-          this.encode(def.type, val, sink);
-        }
-      }
-    };
-    exports$1.Codec = Codec;
-    function decodeBytes(src) {
-      let len = src.compactLength();
-      return src.bytes(len);
-    }
-    function encodeBytes(val, sink) {
-      (0, assert_1.default)(val instanceof Uint8Array);
-      sink.compact(val.length);
-      sink.bytes(val);
-    }
-    function encodeBytesArray(def, val, sink) {
-      (0, assert_1.default)(val instanceof Uint8Array && val.length == def.len);
-      sink.bytes(val);
-    }
-    function decodeBitSequence(src) {
-      let bitLength = src.compactLength();
-      let byteLength = Math.ceil(bitLength / 8);
-      let bytes = src.bytes(byteLength);
-      return {
-        bytes,
-        bitLength
-      };
-    }
-    function encodeBitSequence(val, sink) {
-      (0, assert_1.default)(val && typeof val == "object" && Number.isInteger(val.bitLength) && val.bytes instanceof Uint8Array);
-      let bits = val;
-      (0, assert_1.default)(Math.ceil(bits.bitLength / 8) == bits.bytes.length);
-      sink.compact(bits.bitLength);
-      sink.bytes(bits.bytes);
-    }
-    function decodeBooleanOption(src) {
-      let byte = src.u8();
-      switch (byte) {
-        case 0:
-          return null;
-        case 1:
-          return true;
-        case 2:
-          return false;
-        default:
-          (0, util_1.throwUnexpectedCase)(byte.toString());
-      }
-    }
-    function encodeBooleanOption(val, sink) {
-      if (val == null) {
-        sink.u8(0);
-      } else {
-        (0, assert_1.default)(typeof val == "boolean");
-        sink.u8(val ? 1 : 2);
-      }
-    }
-    function decodeCompact(type, src) {
-      let n = src.compact();
-      switch (type.integer) {
-        case "U8":
-        case "U16":
-        case "U32":
-          return n;
-        default:
-          return BigInt(n);
-      }
-    }
-    function decodePrimitive(type, src) {
-      switch (type) {
-        case "I8":
-          return src.i8();
-        case "U8":
-          return src.u8();
-        case "I16":
-          return src.i16();
-        case "U16":
-          return src.u16();
-        case "I32":
-          return src.i32();
-        case "U32":
-          return src.u32();
-        case "I64":
-          return src.i64();
-        case "U64":
-          return src.u64();
-        case "I128":
-          return src.i128();
-        case "U128":
-          return src.u128();
-        case "I256":
-          return src.i256();
-        case "U256":
-          return src.u256();
-        case "Bool":
-          return src.bool();
-        case "Str":
-          return src.str();
-        default:
-          (0, util_1.throwUnexpectedCase)(type);
-      }
-    }
-    function encodePrimitive(type, val, sink) {
-      switch (type) {
-        case "I8":
-          sink.i8(val);
-          break;
-        case "U8":
-          sink.u8(val);
-          break;
-        case "I16":
-          sink.i16(val);
-          break;
-        case "U16":
-          sink.u16(val);
-          break;
-        case "I32":
-          sink.i32(val);
-          break;
-        case "U32":
-          sink.u32(val);
-          break;
-        case "I64":
-          sink.i64(val);
-          break;
-        case "U64":
-          sink.u64(val);
-          break;
-        case "I128":
-          sink.i128(val);
-          break;
-        case "U128":
-          sink.u128(val);
-          break;
-        case "I256":
-          sink.i256(val);
-          break;
-        case "U256":
-          sink.u256(val);
-          break;
-        case "Bool":
-          sink.bool(val);
-          break;
-        case "Str":
-          sink.str(val);
-          break;
-        default:
-          (0, util_1.throwUnexpectedCase)(type);
-      }
-    }
-  }
-});
-
-// node_modules/@subsquid/util-internal-json/lib/json.js
-var require_json = __commonJS({
-  "node_modules/@subsquid/util-internal-json/lib/json.js"(exports$1) {
-    Object.defineProperty(exports$1, "__esModule", { value: true });
-    exports$1.toJSON = void 0;
-    var util_internal_hex_1 = require_hex();
-    function toJSON(val) {
-      let json;
-      switch (typeof val) {
-        case "bigint":
-          return val.toString();
-        case "object":
-          if (val == null)
-            return null;
-          if (val instanceof Uint8Array) {
-            return (0, util_internal_hex_1.toHex)(val);
-          } else if (val instanceof Date) {
-            return val.toISOString();
-          } else if (typeof val.toJSON == "function" && (json = val.toJSON()) !== val) {
-            return toJSON(json);
-          } else if (val instanceof Error) {
-            json = {};
-            if (val.stack) {
-              json.stack = val.stack;
-            } else {
-              json.stack = val.toString();
-            }
-            json = toJsonObject(val, json);
-            return json;
-          } else if (val instanceof Map) {
-            let entries = [];
-            for (let [k, v] of val.entries()) {
-              entries.push({ k, v });
-            }
-            return toJSON({ map: entries });
-          } else if (val instanceof Set) {
-            return toJSON({ set: [...val] });
-          } else if (Array.isArray(val)) {
-            return toJsonArray(val);
-          } else {
-            return toJsonObject(val);
-          }
-        default:
-          return val;
-      }
-    }
-    exports$1.toJSON = toJSON;
-    function toJsonArray(val) {
-      let arr = new Array(val.length);
-      for (let i = 0; i < val.length; i++) {
-        arr[i] = toJSON(val[i]);
-      }
-      return arr;
-    }
-    function toJsonObject(val, result) {
-      result = result || {};
-      for (let key in val) {
-        result[key] = toJSON(val[key]);
-      }
-      return result;
-    }
-  }
-});
-
-// node_modules/@subsquid/scale-codec/lib/codec-json.js
-var require_codec_json = __commonJS({
-  "node_modules/@subsquid/scale-codec/lib/codec-json.js"(exports$1) {
-    var __importDefault = exports$1 && exports$1.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
-    Object.defineProperty(exports$1, "__esModule", { value: true });
-    exports$1.decodeBinaryArray = exports$1.JsonCodec = void 0;
-    var util_internal_hex_1 = require_hex();
-    var util_internal_json_1 = require_json();
-    var assert_1 = __importDefault(__require("assert"));
-    var types_1 = require_types2();
-    var types_codec_1 = require_types_codec();
-    var util_1 = require_util();
-    var JsonCodec = class {
-      static encode(val) {
-        return (0, util_internal_json_1.toJSON)(val);
-      }
-      constructor(types) {
-        this.types = (0, types_codec_1.toCodecTypes)(types);
-      }
-      decode(type, val) {
-        let def = this.types[type];
-        switch (def.kind) {
-          case types_1.TypeKind.Primitive:
-            return decodePrimitive(def.primitive, val);
-          case types_1.TypeKind.Compact:
-            return decodePrimitive(def.integer, val);
-          case types_1.TypeKind.BitSequence:
-            return (0, util_internal_hex_1.decodeHex)(val);
-          case types_1.TypeKind.Array:
-            return this.decodeArray(def, val);
-          case types_1.TypeKind.Sequence:
-            return this.decodeSequence(def, val);
-          case types_1.TypeKind.Tuple:
-            return this.decodeTuple(def, val);
-          case types_1.TypeKind.Struct:
-            return this.decodeStruct(def, val);
-          case types_1.TypeKind.Variant:
-            return this.decodeVariant(def, val);
-          case types_1.TypeKind.Option:
-            return this.decodeOption(def, val);
-          case types_1.TypeKind.BooleanOption:
-            return decodeBooleanOption(val);
-          case types_1.TypeKind.Bytes:
-            return (0, util_internal_hex_1.decodeHex)(val);
-          case types_1.TypeKind.BytesArray:
-            return decodeBinaryArray(def.len, val);
-          case types_1.TypeKind.HexBytes:
-          case types_1.TypeKind.HexBytesArray:
-            (0, assert_1.default)((0, util_internal_hex_1.isHex)(val));
-            return val;
-          case types_1.TypeKind.DoNotConstruct:
-            (0, util_1.throwUnexpectedCase)("DoNotConstruct type reached");
-          default:
-            (0, util_1.throwUnexpectedCase)();
-        }
-      }
-      decodeArray(def, val) {
-        let { len, type } = def;
-        (0, assert_1.default)(Array.isArray(val));
-        (0, assert_1.default)(val.length == len);
-        let result = new Array(len);
-        for (let i = 0; i < len; i++) {
-          result[i] = this.decode(type, val[i]);
-        }
-        return result;
-      }
-      decodeSequence(def, val) {
-        (0, assert_1.default)(Array.isArray(val));
-        let result = new Array(val.length);
-        for (let i = 0; i < val.length; i++) {
-          result[i] = this.decode(def.type, val[i]);
-        }
-        return result;
-      }
-      decodeTuple(def, value) {
-        let items = def.tuple;
-        if (items.length == 0) {
-          (0, assert_1.default)(value == null || Array.isArray(value) && value.length == 0);
-          return null;
-        } else {
-          (0, assert_1.default)(Array.isArray(value));
-          (0, assert_1.default)(value.length == items.length);
-          let result = new Array(items.length);
-          for (let i = 0; i < items.length; i++) {
-            result[i] = this.decode(items[i], value[i]);
-          }
-          return result;
-        }
-      }
-      decodeStruct(def, value) {
-        (0, assert_1.default)((0, util_1.isObject)(value));
-        let result = {};
-        for (let i = 0; i < def.fields.length; i++) {
-          let f = def.fields[i];
-          result[f.name] = this.decode(f.type, value[f.name]);
-        }
-        return result;
-      }
-      decodeVariant(def, val) {
-        (0, assert_1.default)((0, util_1.isObject)(val));
-        (0, assert_1.default)(typeof val.__kind == "string");
-        let variant = def.variantsByName[val.__kind];
-        if (variant == null)
-          throw new Error(`Unknown variant ${val.__kind}`);
-        switch (variant.kind) {
-          case "empty":
-            return {
-              __kind: val.__kind
-            };
-          case "value":
-            return {
-              __kind: val.__kind,
-              value: this.decode(variant.type, val.value)
-            };
-          case "tuple":
-            return {
-              __kind: val.__kind,
-              value: this.decodeTuple(variant.def, val.value)
-            };
-          case "struct": {
-            let s = this.decodeStruct(variant.def, val);
-            s.__kind = val.__kind;
-            return s;
-          }
-          default:
-            (0, util_1.throwUnexpectedCase)(variant.kind);
-        }
-      }
-      decodeOption(def, value) {
-        return value == null ? void 0 : this.decode(def.type, value);
-      }
-    };
-    exports$1.JsonCodec = JsonCodec;
-    function decodePrimitive(type, value) {
-      switch (type) {
-        case "I8":
-          (0, util_1.checkSignedInt)(value, 8);
-          return value;
-        case "I16":
-          (0, util_1.checkSignedInt)(value, 16);
-          return value;
-        case "I32":
-          (0, util_1.checkSignedInt)(value, 32);
-          return value;
-        case "I64":
-          return (0, util_1.toSignedBigInt)(value, 64);
-        case "I128":
-          return (0, util_1.toSignedBigInt)(value, 128);
-        case "I256":
-          return (0, util_1.toSignedBigInt)(value, 256);
-        case "U8":
-          (0, util_1.checkUnsignedInt)(value, 8);
-          return value;
-        case "U16":
-          (0, util_1.checkUnsignedInt)(value, 16);
-          return value;
-        case "U32":
-          (0, util_1.checkUnsignedInt)(value, 32);
-          return value;
-        case "U64":
-          return (0, util_1.toUnsignedBigInt)(value, 64);
-        case "U128":
-          return (0, util_1.toUnsignedBigInt)(value, 128);
-        case "U256":
-          return (0, util_1.toUnsignedBigInt)(value, 256);
-        case "Bool":
-          (0, assert_1.default)(typeof value == "boolean");
-          return value;
-        case "Str":
-          (0, assert_1.default)(typeof value == "string");
-          return value;
-        default:
-          (0, util_1.throwUnexpectedCase)(type);
-      }
-    }
-    function decodeBooleanOption(value) {
-      if (value == null)
-        return void 0;
-      (0, assert_1.default)(typeof value == "boolean");
-      return value;
-    }
-    function decodeBinaryArray(len, value) {
-      let buf = (0, util_internal_hex_1.decodeHex)(value);
-      (0, assert_1.default)(buf.length == len);
-      return buf;
-    }
-    exports$1.decodeBinaryArray = decodeBinaryArray;
-  }
-});
-
-// node_modules/@subsquid/scale-codec/lib/index.js
-var require_lib = __commonJS({
-  "node_modules/@subsquid/scale-codec/lib/index.js"(exports$1) {
-    var __createBinding = exports$1 && exports$1.__createBinding || (Object.create ? (function(o, m, k, k2) {
-      if (k2 === void 0) k2 = k;
-      var desc = Object.getOwnPropertyDescriptor(m, k);
-      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-        desc = { enumerable: true, get: function() {
-          return m[k];
-        } };
-      }
-      Object.defineProperty(o, k2, desc);
-    }) : (function(o, m, k, k2) {
-      if (k2 === void 0) k2 = k;
-      o[k2] = m[k];
-    }));
-    var __exportStar = exports$1 && exports$1.__exportStar || function(m, exports2) {
-      for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p)) __createBinding(exports2, m, p);
-    };
-    Object.defineProperty(exports$1, "__esModule", { value: true });
-    __exportStar(require_types2(), exports$1);
-    __exportStar(require_src(), exports$1);
-    __exportStar(require_sink(), exports$1);
-    __exportStar(require_codec(), exports$1);
-    __exportStar(require_codec_json(), exports$1);
-  }
-});
-
 // src/wallet-sdk.ts
 var Rx = __toESM(require_cjs());
-
-// node_modules/@scure/base/lib/esm/index.js
-function isBytes(a) {
-  return a instanceof Uint8Array || ArrayBuffer.isView(a) && a.constructor.name === "Uint8Array";
-}
-function isArrayOf(isString, arr) {
-  if (!Array.isArray(arr))
-    return false;
-  if (arr.length === 0)
-    return true;
-  if (isString) {
-    return arr.every((item) => typeof item === "string");
-  } else {
-    return arr.every((item) => Number.isSafeInteger(item));
-  }
-}
-function afn(input) {
-  if (typeof input !== "function")
-    throw new Error("function expected");
-  return true;
-}
-function astr(label, input) {
-  if (typeof input !== "string")
-    throw new Error(`${label}: string expected`);
-  return true;
-}
-function anumber(n) {
-  if (!Number.isSafeInteger(n))
-    throw new Error(`invalid integer: ${n}`);
-}
-function aArr(input) {
-  if (!Array.isArray(input))
-    throw new Error("array expected");
-}
-function astrArr(label, input) {
-  if (!isArrayOf(true, input))
-    throw new Error(`${label}: array of strings expected`);
-}
-function anumArr(label, input) {
-  if (!isArrayOf(false, input))
-    throw new Error(`${label}: array of numbers expected`);
-}
-// @__NO_SIDE_EFFECTS__
-function chain(...args) {
-  const id = (a) => a;
-  const wrap = (a, b) => (c) => a(b(c));
-  const encode = args.map((x) => x.encode).reduceRight(wrap, id);
-  const decode = args.map((x) => x.decode).reduce(wrap, id);
-  return { encode, decode };
-}
-// @__NO_SIDE_EFFECTS__
-function alphabet(letters) {
-  const lettersA = letters.split("") ;
-  const len = lettersA.length;
-  astrArr("alphabet", lettersA);
-  const indexes = new Map(lettersA.map((l, i) => [l, i]));
-  return {
-    encode: (digits) => {
-      aArr(digits);
-      return digits.map((i) => {
-        if (!Number.isSafeInteger(i) || i < 0 || i >= len)
-          throw new Error(`alphabet.encode: digit index outside alphabet "${i}". Allowed: ${letters}`);
-        return lettersA[i];
-      });
-    },
-    decode: (input) => {
-      aArr(input);
-      return input.map((letter) => {
-        astr("alphabet.decode", letter);
-        const i = indexes.get(letter);
-        if (i === void 0)
-          throw new Error(`Unknown letter: "${letter}". Allowed: ${letters}`);
-        return i;
-      });
-    }
-  };
-}
-// @__NO_SIDE_EFFECTS__
-function join(separator = "") {
-  astr("join", separator);
-  return {
-    encode: (from) => {
-      astrArr("join.decode", from);
-      return from.join(separator);
-    },
-    decode: (to) => {
-      astr("join.decode", to);
-      return to.split(separator);
-    }
-  };
-}
-var gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
-var radix2carry = /* @__NO_SIDE_EFFECTS__ */ (from, to) => from + (to - gcd(from, to));
-var powers = /* @__PURE__ */ (() => {
-  let res = [];
-  for (let i = 0; i < 40; i++)
-    res.push(2 ** i);
-  return res;
-})();
-function convertRadix2(data, from, to, padding) {
-  aArr(data);
-  if (from <= 0 || from > 32)
-    throw new Error(`convertRadix2: wrong from=${from}`);
-  if (to <= 0 || to > 32)
-    throw new Error(`convertRadix2: wrong to=${to}`);
-  if (/* @__PURE__ */ radix2carry(from, to) > 32) {
-    throw new Error(`convertRadix2: carry overflow from=${from} to=${to} carryBits=${/* @__PURE__ */ radix2carry(from, to)}`);
-  }
-  let carry = 0;
-  let pos = 0;
-  const max = powers[from];
-  const mask = powers[to] - 1;
-  const res = [];
-  for (const n of data) {
-    anumber(n);
-    if (n >= max)
-      throw new Error(`convertRadix2: invalid data word=${n} from=${from}`);
-    carry = carry << from | n;
-    if (pos + from > 32)
-      throw new Error(`convertRadix2: carry overflow pos=${pos} from=${from}`);
-    pos += from;
-    for (; pos >= to; pos -= to)
-      res.push((carry >> pos - to & mask) >>> 0);
-    const pow = powers[pos];
-    if (pow === void 0)
-      throw new Error("invalid carry");
-    carry &= pow - 1;
-  }
-  carry = carry << to - pos & mask;
-  if (!padding && pos >= from)
-    throw new Error("Excess padding");
-  if (!padding && carry > 0)
-    throw new Error(`Non-zero padding: ${carry}`);
-  if (padding && pos > 0)
-    res.push(carry >>> 0);
-  return res;
-}
-// @__NO_SIDE_EFFECTS__
-function radix2(bits, revPadding = false) {
-  anumber(bits);
-  if (/* @__PURE__ */ radix2carry(8, bits) > 32 || /* @__PURE__ */ radix2carry(bits, 8) > 32)
-    throw new Error("radix2: carry overflow");
-  return {
-    encode: (bytes) => {
-      if (!isBytes(bytes))
-        throw new Error("radix2.encode input should be Uint8Array");
-      return convertRadix2(Array.from(bytes), 8, bits, !revPadding);
-    },
-    decode: (digits) => {
-      anumArr("radix2.decode", digits);
-      return Uint8Array.from(convertRadix2(digits, bits, 8, revPadding));
-    }
-  };
-}
-function unsafeWrapper(fn) {
-  afn(fn);
-  return function(...args) {
-    try {
-      return fn.apply(null, args);
-    } catch (e) {
-    }
-  };
-}
-var BECH_ALPHABET = /* @__PURE__ */ chain(/* @__PURE__ */ alphabet("qpzry9x8gf2tvdw0s3jn54khce6mua7l"), /* @__PURE__ */ join(""));
-var POLYMOD_GENERATORS = [996825010, 642813549, 513874426, 1027748829, 705979059];
-function bech32Polymod(pre) {
-  const b = pre >> 25;
-  let chk = (pre & 33554431) << 5;
-  for (let i = 0; i < POLYMOD_GENERATORS.length; i++) {
-    if ((b >> i & 1) === 1)
-      chk ^= POLYMOD_GENERATORS[i];
-  }
-  return chk;
-}
-function bechChecksum(prefix, words, encodingConst = 1) {
-  const len = prefix.length;
-  let chk = 1;
-  for (let i = 0; i < len; i++) {
-    const c = prefix.charCodeAt(i);
-    if (c < 33 || c > 126)
-      throw new Error(`Invalid prefix (${prefix})`);
-    chk = bech32Polymod(chk) ^ c >> 5;
-  }
-  chk = bech32Polymod(chk);
-  for (let i = 0; i < len; i++)
-    chk = bech32Polymod(chk) ^ prefix.charCodeAt(i) & 31;
-  for (let v of words)
-    chk = bech32Polymod(chk) ^ v;
-  for (let i = 0; i < 6; i++)
-    chk = bech32Polymod(chk);
-  chk ^= encodingConst;
-  return BECH_ALPHABET.encode(convertRadix2([chk % powers[30]], 30, 5, false));
-}
-// @__NO_SIDE_EFFECTS__
-function genBech32(encoding) {
-  const ENCODING_CONST = 734539939;
-  const _words = /* @__PURE__ */ radix2(5);
-  const fromWords = _words.decode;
-  const toWords = _words.encode;
-  const fromWordsUnsafe = unsafeWrapper(fromWords);
-  function encode(prefix, words, limit = 90) {
-    astr("bech32.encode prefix", prefix);
-    if (isBytes(words))
-      words = Array.from(words);
-    anumArr("bech32.encode", words);
-    const plen = prefix.length;
-    if (plen === 0)
-      throw new TypeError(`Invalid prefix length ${plen}`);
-    const actualLength = plen + 7 + words.length;
-    if (limit !== false && actualLength > limit)
-      throw new TypeError(`Length ${actualLength} exceeds limit ${limit}`);
-    const lowered = prefix.toLowerCase();
-    const sum = bechChecksum(lowered, words, ENCODING_CONST);
-    return `${lowered}1${BECH_ALPHABET.encode(words)}${sum}`;
-  }
-  function decode(str, limit = 90) {
-    astr("bech32.decode input", str);
-    const slen = str.length;
-    if (slen < 8 || limit !== false && slen > limit)
-      throw new TypeError(`invalid string length: ${slen} (${str}). Expected (8..${limit})`);
-    const lowered = str.toLowerCase();
-    if (str !== lowered && str !== str.toUpperCase())
-      throw new Error(`String must be lowercase or uppercase`);
-    const sepIndex = lowered.lastIndexOf("1");
-    if (sepIndex === 0 || sepIndex === -1)
-      throw new Error(`Letter "1" must be present between prefix and data only`);
-    const prefix = lowered.slice(0, sepIndex);
-    const data = lowered.slice(sepIndex + 1);
-    if (data.length < 6)
-      throw new Error("Data must be at least 6 characters long");
-    const words = BECH_ALPHABET.decode(data).slice(0, -6);
-    const sum = bechChecksum(prefix, words, ENCODING_CONST);
-    if (!data.endsWith(sum))
-      throw new Error(`Invalid checksum in ${str}: expected "${sum}"`);
-    return { prefix, words };
-  }
-  const decodeUnsafe = unsafeWrapper(decode);
-  function decodeToBytes(str) {
-    const { prefix, words } = decode(str, false);
-    return { prefix, words, bytes: fromWords(words) };
-  }
-  function encodeFromBytes(prefix, bytes) {
-    return encode(prefix, toWords(bytes));
-  }
-  return {
-    encode,
-    decode,
-    encodeFromBytes,
-    decodeToBytes,
-    decodeUnsafe,
-    fromWords,
-    fromWordsUnsafe,
-    toWords
-  };
-}
-var bech32m = /* @__PURE__ */ genBech32();
-
-// node_modules/@midnight-ntwrk/wallet-sdk-address-format/dist/index.js
-var subsquidScale = __toESM(require_lib());
-var mainnet = /* @__PURE__ */ Symbol("Mainnet");
-var NetworkId = {
-  toString: (networkId) => {
-    return networkId === mainnet ? "mainnet" : networkId;
-  }
-};
-var BLSScalar = {
-  modulus: BigInt("0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001")
-};
-var ScaleBigInt = {
-  encode: (data) => {
-    const sink = new subsquidScale.ByteSink();
-    sink.compact(data);
-    return Buffer.from(sink.toBytes());
-  },
-  decode: (repr) => {
-    const src = new subsquidScale.Src(repr);
-    const res = src.compact();
-    src.assertEOF();
-    return BigInt(res);
-  }
-};
-var Bech32mSymbol = /* @__PURE__ */ Symbol("MidnightBech32m");
-var _MidnightBech32m = class _MidnightBech32m {
-  constructor(type, network, data) {
-    __publicField(this, "type");
-    __publicField(this, "network");
-    __publicField(this, "data");
-    this.data = data;
-    this.network = network;
-    this.type = type;
-    _MidnightBech32m.validateSegment("type", type);
-    if (network != mainnet) {
-      _MidnightBech32m.validateSegment("network", network);
-    }
-  }
-  static encode(networkId, item) {
-    return item[Bech32mSymbol].encode(networkId, item);
-  }
-  static validateSegment(segmentName, segment) {
-    const result = /^[A-Za-z1-9-]+$/.test(segment);
-    if (!result) {
-      throw new Error(`Segment ${segmentName}: ${segment} contains disallowed characters. Allowed characters are only numbers, latin letters and a hyphen`);
-    }
-  }
-  static parse(bech32string) {
-    const bech32parsed = bech32m.decodeToBytes(bech32string);
-    const [prefix, type, network = mainnet] = bech32parsed.prefix.split("_");
-    if (prefix != _MidnightBech32m.prefix) {
-      throw new Error(`Expected prefix ${_MidnightBech32m.prefix}`);
-    }
-    _MidnightBech32m.validateSegment("type", type);
-    if (network != mainnet) {
-      _MidnightBech32m.validateSegment("network", network);
-    }
-    return new _MidnightBech32m(type, network, Buffer.from(bech32parsed.bytes));
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  decode(tclass, networkId) {
-    return tclass[Bech32mSymbol].decode(networkId, this);
-  }
-  asString() {
-    const networkSegment = this.network == mainnet ? "" : `_${this.network}`;
-    return bech32m.encode(`${_MidnightBech32m.prefix}_${this.type}${networkSegment}`, bech32m.toWords(this.data), false);
-  }
-  toString() {
-    return this.asString();
-  }
-};
-__publicField(_MidnightBech32m, "prefix", "mn");
-var MidnightBech32m = _MidnightBech32m;
-var Bech32mCodec = class _Bech32mCodec {
-  constructor(type, dataToBytes, dataFromBytes) {
-    __publicField(this, "type");
-    __publicField(this, "dataToBytes");
-    __publicField(this, "dataFromBytes");
-    this.dataFromBytes = dataFromBytes;
-    this.dataToBytes = dataToBytes;
-    this.type = type;
-  }
-  encode(networkId, data) {
-    const context = _Bech32mCodec.createContext(networkId);
-    return new MidnightBech32m(this.type, context.networkId, this.dataToBytes(data));
-  }
-  decode(networkId, repr) {
-    const context = _Bech32mCodec.createContext(networkId);
-    if (repr.type != this.type) {
-      throw new Error(`Expected type ${this.type}, got ${repr.type}`);
-    }
-    if (context.networkId != repr.network) {
-      throw new Error(`Expected ${NetworkId.toString(context.networkId)} address, got ${NetworkId.toString(repr.network)} one`);
-    }
-    return this.dataFromBytes(repr.data);
-  }
-  static createContext(networkId) {
-    if (networkId === "mainnet") {
-      return { networkId: mainnet };
-    } else {
-      return { networkId };
-    }
-  }
-};
-var _a, _b;
-_b = Bech32mSymbol, _a = Bech32mSymbol;
-var _ShieldedAddress = class _ShieldedAddress {
-  constructor(coinPublicKey, encryptionPublicKey) {
-    __publicField(this, _a, _ShieldedAddress.codec);
-    __publicField(this, "coinPublicKey");
-    __publicField(this, "encryptionPublicKey");
-    this.encryptionPublicKey = encryptionPublicKey;
-    this.coinPublicKey = coinPublicKey;
-  }
-  coinPublicKeyString() {
-    return this.coinPublicKey.data.toString("hex");
-  }
-  encryptionPublicKeyString() {
-    return this.encryptionPublicKey.data.toString("hex");
-  }
-  equals(other) {
-    return this.coinPublicKey.equals(other.coinPublicKey) && this.encryptionPublicKey.equals(other.encryptionPublicKey);
-  }
-};
-__publicField(_ShieldedAddress, "codec", new Bech32mCodec("shield-addr", (addr) => Buffer.concat([addr.coinPublicKey.data, addr.encryptionPublicKey.data]), (bytes) => {
-  const coinPublicKey = new ShieldedCoinPublicKey(bytes.subarray(0, ShieldedCoinPublicKey.keyLength));
-  const encryptionPublicKey = new ShieldedEncryptionPublicKey(bytes.subarray(ShieldedCoinPublicKey.keyLength));
-  return new _ShieldedAddress(coinPublicKey, encryptionPublicKey);
-}));
-__publicField(_ShieldedAddress, _b, _ShieldedAddress.codec);
-var ShieldedAddress = _ShieldedAddress;
-var _ShieldedEncryptionSecretKey = class _ShieldedEncryptionSecretKey {
-  constructor(zswap) {
-    // There are some bits in serialization of field elements and elliptic curve points, that are hard to replicate
-    // Thus using zswap implementation directly for serialization purposes
-    __publicField(this, "zswap");
-    this.zswap = zswap;
-  }
-};
-__publicField(_ShieldedEncryptionSecretKey, "codec", new Bech32mCodec("shield-esk", (esk) => Buffer.from(esk.zswap.yesIKnowTheSecurityImplicationsOfThis_serialize()), (repr) => new _ShieldedEncryptionSecretKey(ledger.EncryptionSecretKey.deserialize(repr))));
-var _ShieldedCoinPublicKey = class _ShieldedCoinPublicKey {
-  constructor(data) {
-    __publicField(this, "data");
-    this.data = data;
-    if (data.length != _ShieldedCoinPublicKey.keyLength) {
-      throw new Error("Coin public key needs to be 32 bytes long");
-    }
-  }
-  static fromHexString(hexString) {
-    return new _ShieldedCoinPublicKey(Buffer.from(hexString, "hex"));
-  }
-  toHexString() {
-    return this.data.toString("hex");
-  }
-  equals(other) {
-    const otherKey = typeof other === "string" ? _ShieldedCoinPublicKey.fromHexString(other) : other;
-    return otherKey.data.equals(this.data);
-  }
-};
-__publicField(_ShieldedCoinPublicKey, "keyLength", 32);
-__publicField(_ShieldedCoinPublicKey, "codec", new Bech32mCodec("shield-cpk", (cpk) => cpk.data, (repr) => new _ShieldedCoinPublicKey(repr)));
-var ShieldedCoinPublicKey = _ShieldedCoinPublicKey;
-var _ShieldedEncryptionPublicKey = class _ShieldedEncryptionPublicKey {
-  constructor(data) {
-    __publicField(this, "data");
-    this.data = data;
-  }
-  static fromHexString(hexString) {
-    return new _ShieldedEncryptionPublicKey(Buffer.from(hexString, "hex"));
-  }
-  toHexString() {
-    return this.data.toString("hex");
-  }
-  equals(other) {
-    const otherKey = typeof other === "string" ? _ShieldedEncryptionPublicKey.fromHexString(other) : other;
-    return otherKey.data.equals(this.data);
-  }
-};
-__publicField(_ShieldedEncryptionPublicKey, "keyLength", 32);
-__publicField(_ShieldedEncryptionPublicKey, "codec", new Bech32mCodec("shield-epk", (cpk) => cpk.data, (repr) => new _ShieldedEncryptionPublicKey(repr)));
-var ShieldedEncryptionPublicKey = _ShieldedEncryptionPublicKey;
-var _a2, _b2;
-_b2 = Bech32mSymbol, _a2 = Bech32mSymbol;
-var _UnshieldedAddress = class _UnshieldedAddress {
-  constructor(data) {
-    __publicField(this, "data");
-    __publicField(this, _a2, _UnshieldedAddress.codec);
-    if (data.length != _UnshieldedAddress.keyLength) {
-      throw new Error("Unshielded address needs to be 32 bytes long");
-    }
-    this.data = data;
-  }
-  get hexString() {
-    return this.data.toString("hex");
-  }
-  equals(other) {
-    const otherAddress = typeof other === "string" ? new _UnshieldedAddress(Buffer.from(other, "hex")) : other;
-    return otherAddress.data.equals(this.data);
-  }
-};
-__publicField(_UnshieldedAddress, "keyLength", 32);
-__publicField(_UnshieldedAddress, "codec", new Bech32mCodec("addr", (addr) => addr.data, (repr) => new _UnshieldedAddress(repr)));
-__publicField(_UnshieldedAddress, _b2, _UnshieldedAddress.codec);
-var UnshieldedAddress = _UnshieldedAddress;
-var _a3, _b3;
-_b3 = Bech32mSymbol, _a3 = Bech32mSymbol;
-var _DustAddress = class _DustAddress {
-  constructor(data) {
-    __publicField(this, "data");
-    __publicField(this, _a3, _DustAddress.codec);
-    if (data >= BLSScalar.modulus) {
-      throw new Error("Dust address is too large");
-    }
-    this.data = data;
-  }
-  serialize() {
-    return ScaleBigInt.encode(this.data);
-  }
-  equals(other) {
-    const otherAddress = typeof other === "bigint" ? other : other.data;
-    return otherAddress === this.data;
-  }
-};
-__publicField(_DustAddress, "codec", new Bech32mCodec("dust", (daddr) => daddr.serialize(), (repr) => new _DustAddress(ScaleBigInt.decode(repr))));
-__publicField(_DustAddress, _b3, _DustAddress.codec);
-__publicField(_DustAddress, "encodePublicKey", (networkId, publicKey) => {
-  return _DustAddress.codec.encode(networkId, new _DustAddress(publicKey)).asString();
-});
 Number.parseInt(globalThis.process?.env?.["PROOF_SERVER_PORT"] ?? "6300", 10);
 var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, network = "preview", costParameters = {
   additionalFeeOverhead: 300000000000000n,
@@ -11086,9 +9269,9 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
   const shieldedSecretKeys = ledger__namespace.ZswapSecretKeys.fromSeed(derivationResult.keys[walletSdkHd.Roles.Zswap]);
   const dustSecretKey = ledger__namespace.DustSecretKey.fromSeed(derivationResult.keys[walletSdkHd.Roles.Dust]);
   const unshieldedKeystore = walletSdkUnshieldedWallet.createKeystore(derivationResult.keys[walletSdkHd.Roles.NightExternal], configuration2.networkId);
-  const shieldedWallet = strSerializedState ? walletSdkShielded.ShieldedWallet(configuration2).restore(strSerializedState.shieldedWalletState) : walletSdkShielded.ShieldedWallet(configuration2).startWithSecretKeys(shieldedSecretKeys);
-  const dustWallet = strSerializedState ? walletSdkDustWallet.DustWallet(configuration2).restore(strSerializedState.dustWalletState) : walletSdkDustWallet.DustWallet(configuration2).startWithSecretKey(dustSecretKey, ledger__namespace.LedgerParameters.initialParameters().dust);
-  const unshieldedWallet = strSerializedState ? walletSdkUnshieldedWallet.UnshieldedWallet({
+  const shieldedWallet = strSerializedState && strSerializedState.shieldedWalletState ? walletSdkShielded.ShieldedWallet(configuration2).restore(strSerializedState.shieldedWalletState) : walletSdkShielded.ShieldedWallet(configuration2).startWithSecretKeys(shieldedSecretKeys);
+  const dustWallet = strSerializedState && strSerializedState.dustWalletState ? walletSdkDustWallet.DustWallet(configuration2).restore(strSerializedState.dustWalletState) : walletSdkDustWallet.DustWallet(configuration2).startWithSecretKey(dustSecretKey, ledger__namespace.LedgerParameters.initialParameters().dust);
+  const unshieldedWallet = strSerializedState && strSerializedState.unshieldedWalletState ? walletSdkUnshieldedWallet.UnshieldedWallet({
     ...configuration2,
     txHistoryStorage: new walletSdkUnshieldedWallet.NoOpTransactionHistoryStorage()
     //此处不对交易历史进行保留
@@ -11121,8 +9304,8 @@ var MidnightWalletSDK = class {
     const selfWallet = this.walletObj;
     const state = await Rx.firstValueFrom(this.walletObj.state());
     this.walletAddress = {
-      shieldedAddress: ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString(),
-      unshieldedAddress: UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString(),
+      shieldedAddress: walletSdkAddressFormat.ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString(),
+      unshieldedAddress: walletSdkAddressFormat.UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString(),
       dustAddress: state.dust.dustAddress
     };
     const callBack = async () => {
@@ -27726,7 +25909,7 @@ var CrossChainApi = class _CrossChainApi {
   }
   async init(config, wallet) {
     const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-    const zkConfigProvider = new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath);
+    new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath);
     this.providers = {
       privateStateProvider: midnightJsLevelPrivateStateProvider.levelPrivateStateProvider({
         privateStateStoreName: "CCPSSN",
@@ -27734,7 +25917,8 @@ var CrossChainApi = class _CrossChainApi {
       }),
       publicDataProvider: midnightJsIndexerPublicDataProvider.indexerPublicDataProvider(config.indexer, config.indexerWS),
       zkConfigProvider: new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath),
-      proofProvider: midnightJsHttpClientProofProvider.httpClientProofProvider(config.proofServer, zkConfigProvider),
+      // proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+      proofProvider: midnightJsHttpClientProofProvider.httpClientProofProvider(config.proofServer),
       walletProvider: walletAndMidnightProvider,
       midnightProvider: walletAndMidnightProvider
     };
@@ -28293,18 +26477,13 @@ var genSigningKey = () => {
   return __compactRuntime.sampleSigningKey();
 };
 var getCoinPublicKeyFromShieldAddress = (shieldAddr) => {
-  const tmp1 = MidnightBech32m.parse(shieldAddr);
-  const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
+  const tmp1 = walletSdkAddressFormat.MidnightBech32m.parse(shieldAddr);
+  const tmp2 = walletSdkAddressFormat.ShieldedAddress.codec.decode(tmp1.network, tmp1);
   return tmp2.coinPublicKey.data;
 };
 var initNetwork = (network) => {
   midnightJsNetworkId.setNetworkId(network);
 };
-/*! Bundled license information:
-
-@scure/base/lib/esm/index.js:
-  (*! scure-base - MIT License (c) 2022 Paul Miller (paulmillr.com) *)
-*/
 
 exports.CrossChainApi = CrossChainApi;
 exports.CrossChainPrivateStateId = CrossChainPrivateStateId;
