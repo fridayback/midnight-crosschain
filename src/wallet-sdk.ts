@@ -204,7 +204,7 @@ export class MidnightWalletSDK {
             nightUtxos,
             signKeyStore.getPublicKey(),
             (payload) => signKeyStore.signData(payload),
-            this.walletAddress.dustAddress
+            // this.walletAddress.dustAddress
         );
 
         const finalizedDustTx = await this.walletObj.finalizeTransaction(dustRegistrationRecipe);
