@@ -20,6 +20,7 @@ import { deployContract, FinalizedCallTxData, findDeployedContract, type Deploye
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
+// import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 // import { Address, CoinPublicKey, WalletFacade } from '@midnight-ntwrk/wallet-api';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
@@ -50,7 +51,19 @@ export type CrossChainContract = CrossChain.Contract<CrossChainPrivateState>;
 
 export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
 
-export const currentDir = path.resolve(new URL(__dirname).pathname, '..');
+export function getDirname(): string {
+  // ES Module 环境
+  if (typeof import.meta?.url === 'string') {
+    const url = require('url')
+    const path = require('path')
+    return path.dirname(url.fileURLToPath(import.meta.url))
+  }
+  
+  // CommonJS 环境
+  return __dirname
+}
+
+export const currentDir = path.resolve(new URL(getDirname()).pathname, '..');
 // export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
 // export const currentDir = path.dirname(fileURLToPath(import.meta.url));
 export type Address = string;

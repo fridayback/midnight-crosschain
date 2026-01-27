@@ -20,6 +20,7 @@ var midnightJsNetworkId = require('@midnight-ntwrk/midnight-js-network-id');
 var midnightJsUtils = require('@midnight-ntwrk/midnight-js-utils');
 var midnightJsTypes = require('@midnight-ntwrk/midnight-js-types');
 
+var _documentCurrentScript = typeof document !== 'undefined' ? document.currentScript : null;
 function _interopDefault (e) { return e && e.__esModule ? e : { default: e }; }
 
 function _interopNamespace(e) {
@@ -52,7 +53,13 @@ var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __commonJS = (cb, mod) => function __require() {
+var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
+  get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
+}) : x)(function(x) {
+  if (typeof require !== "undefined") return require.apply(this, arguments);
+  throw Error('Dynamic require of "' + x + '" is not supported');
+});
+var __commonJS = (cb, mod) => function __require2() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var __copyProps = (to, from, except, desc) => {
@@ -25863,7 +25870,15 @@ var pureCircuits = {
   }
 };
 var CrossChainPrivateStateId = "crossChainPrivateState";
-var currentDir = path__default.default.resolve(new URL(__dirname).pathname, "..");
+function getDirname() {
+  if (typeof (typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href)) === "string") {
+    const url = __require("url");
+    const path2 = __require("path");
+    return path2.dirname(url.fileURLToPath((typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href))));
+  }
+  return __dirname;
+}
+var currentDir = path__default.default.resolve(new URL(getDirname()).pathname, "..");
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
   zkConfigPath: path__default.default.resolve(currentDir, "managed", "crosschain")
@@ -26496,6 +26511,7 @@ exports.crosschainContractInstance = crosschainContractInstance;
 exports.currentDir = currentDir;
 exports.genSigningKey = genSigningKey;
 exports.getCoinPublicKeyFromShieldAddress = getCoinPublicKeyFromShieldAddress;
+exports.getDirname = getDirname;
 exports.getTreasuryCoinsFromState = getTreasuryCoinsFromState;
 exports.initFacadeWallet = initFacadeWallet;
 exports.initNetwork = initNetwork;
