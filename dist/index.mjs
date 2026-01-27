@@ -9261,6 +9261,7 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
 };
 var MidnightWalletSDK = class {
   constructor(config) {
+    this.isGenerating = false;
     this.config = config;
     this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "" };
     this.bActiveFlag = false;
@@ -9288,6 +9289,7 @@ var MidnightWalletSDK = class {
       await store({ shieldedWalletState: state2.shielded.serialize(), unshieldedWalletState: state2.unshielded.serialize(), dustWalletState: state2.dust.serialize() });
       console.log("wallet state saved!");
       clearTimeout(this.storeTimer);
+      this.registerNightUtxosForDustGeneration();
       this.storeTimer = setTimeout(callBack, saveInterval);
     };
     this.storeTimer = setTimeout(async () => {
@@ -9297,6 +9299,25 @@ var MidnightWalletSDK = class {
   // to get the wallet address
   getAccountAddress() {
     return this.walletAddress;
+  }
+  async registerNightUtxosForDustGeneration() {
+    if (this.isGenerating) return;
+    this.isGenerating = true;
+    assert3(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+    const state = await Rx.firstValueFrom(this.walletObj.state());
+    const nightUtxos = state.unshielded.availableCoins.filter(
+      (coin) => coin.meta.registeredForDustGeneration === false && coin.utxo.type === ledger.nativeToken().raw
+    );
+    const signKeyStore = this.unshieldedKeystore;
+    const dustRegistrationRecipe = await this.walletObj.registerNightUtxosForDustGeneration(
+      nightUtxos,
+      signKeyStore.getPublicKey(),
+      (payload) => signKeyStore.signData(payload),
+      this.walletAddress.dustAddress
+    );
+    const finalizedDustTx = await this.walletObj.finalizeTransaction(dustRegistrationRecipe);
+    await this.walletObj.submitTransaction(finalizedDustTx);
+    this.isGenerating = false;
   }
   async getBalances() {
     assert3(this.walletObj, "walletObj is not initialized!");

@@ -124,6 +124,7 @@ export interface WalletStore {
 }
 export class MidnightWalletSDK {
     private config: Configuration;
+    private isGenerating: boolean = false;
     // private NetWorkId: NetworkId;
     private walletObj?: WalletFacade;
     private shieldedSecretKeys?: ledger.ZswapSecretKeys;
@@ -165,6 +166,7 @@ export class MidnightWalletSDK {
             await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
             console.log('wallet state saved!');
             clearTimeout(this.storeTimer);
+            this.registerNightUtxosForDustGeneration();
             this.storeTimer = setTimeout(callBack, saveInterval);
         }
         this.storeTimer = setTimeout(async () => {
@@ -176,6 +178,32 @@ export class MidnightWalletSDK {
     // to get the wallet address
     getAccountAddress() {
         return this.walletAddress;
+    }
+
+    async registerNightUtxosForDustGeneration() {
+        if (this.isGenerating) return;
+        this.isGenerating = true;
+        assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+        const state = await Rx.firstValueFrom(this.walletObj.state());
+
+        const nightUtxos = state.unshielded.availableCoins.filter(
+            (coin) => coin.meta.registeredForDustGeneration === false && coin.utxo.type === ledger.nativeToken().raw,
+        );
+
+        const signKeyStore = this.unshieldedKeystore;
+
+        const dustRegistrationRecipe = await this.walletObj.registerNightUtxosForDustGeneration(
+            nightUtxos,
+            signKeyStore.getPublicKey(),
+            (payload) => signKeyStore.signData(payload),
+            this.walletAddress.dustAddress
+        );
+
+        const finalizedDustTx = await this.walletObj.finalizeTransaction(dustRegistrationRecipe);
+
+        const dustRegistrationTxHash = await this.walletObj.submitTransaction(finalizedDustTx);
+
+        this.isGenerating = false;
     }
 
 
@@ -223,18 +251,18 @@ export class MidnightWalletSDK {
         return this.walletObj;
     }
 
-    getShieldedSecretKeys(){
-        assert(this.shieldedSecretKeys,"shieldedSecretKeys is undefined");
+    getShieldedSecretKeys() {
+        assert(this.shieldedSecretKeys, "shieldedSecretKeys is undefined");
         return this.shieldedSecretKeys;
     }
 
-    getUnshieldedKeystore(){
-        assert(this.unshieldedKeystore,"unshieldedKeystore is undefined");
+    getUnshieldedKeystore() {
+        assert(this.unshieldedKeystore, "unshieldedKeystore is undefined");
         return this.unshieldedKeystore;
     }
 
-    getDustSecretKey(){
-        assert(this.dustSecretKey,"dustSecretKey is undefined");
+    getDustSecretKey() {
+        assert(this.dustSecretKey, "dustSecretKey is undefined");
         return this.dustSecretKey;
     }
 
@@ -261,7 +289,7 @@ export class MidnightWalletSDK {
         //             ],
         //         },
         //     ]
-        assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey,"wallet uninitialized");
+        assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
         const unprovenTxRecipe = await this.walletObj?.transferTransaction(
             this.shieldedSecretKeys,
             this.dustSecretKey,

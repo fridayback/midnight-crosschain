@@ -36,6 +36,7 @@ interface WalletStore {
 }
 declare class MidnightWalletSDK {
     private config;
+    private isGenerating;
     private walletObj?;
     private shieldedSecretKeys?;
     private dustSecretKey?;
@@ -50,6 +51,7 @@ declare class MidnightWalletSDK {
         unshieldedAddress: string;
         dustAddress: string;
     };
+    registerNightUtxosForDustGeneration(): Promise<void>;
     getBalances(): Promise<{
         dustBalance: bigint;
         shieldedBlance: Record<string, bigint>;
