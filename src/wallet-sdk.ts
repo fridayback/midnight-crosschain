@@ -114,8 +114,9 @@ export const initFacadeWallet = async (
 };
 
 export const waitForFullySynced = async (facade: WalletFacade): Promise<FacadeState> => {
-  return await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
+    return await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
 };
+
 
 export interface FacadeSerializedState {
     readonly shieldedWalletState: string;
@@ -166,7 +167,7 @@ export class MidnightWalletSDK {
         };
 
         const callBack = async () => {
-            const state =  await waitForFullySynced(selfWallet);//await Rx.firstValueFrom(selfWallet.state());
+            const state = await waitForFullySynced(selfWallet);//await Rx.firstValueFrom(selfWallet.state());
             await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
             console.log('wallet state saved!');
             clearTimeout(this.storeTimer);
@@ -223,7 +224,13 @@ export class MidnightWalletSDK {
         const shieldedBlance = curState.shielded.balances;
         const unshieldedBlance = curState.unshielded.balances;
 
-        return { dustBalance, shieldedBlance: JSON.parse(JSON.stringify(shieldedBlance)), unshieldedBlance: JSON.parse(JSON.stringify(unshieldedBlance)) };
+        // 使用 replacer 将 bigint 转换为字符串
+        const replacer = (key:any, value:any) => typeof value === 'bigint' ? value.toString() : value;
+
+        // 反序列化，使用 reviver 将字符串转换回 bigint
+        const reviver = (key:any, value:any) => typeof value === 'string' && /^\d+$/.test(value) ? BigInt(value) : value;
+
+        return { dustBalance, shieldedBlance: JSON.parse(JSON.stringify(shieldedBlance,replacer),reviver), unshieldedBlance: JSON.parse(JSON.stringify(unshieldedBlance,replacer),reviver) };
     }
 
 

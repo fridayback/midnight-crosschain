@@ -9354,7 +9354,9 @@ var MidnightWalletSDK = class {
     const dustBalance = curState.dust.walletBalance(/* @__PURE__ */ new Date());
     const shieldedBlance = curState.shielded.balances;
     const unshieldedBlance = curState.unshielded.balances;
-    return { dustBalance, shieldedBlance: JSON.parse(JSON.stringify(shieldedBlance)), unshieldedBlance: JSON.parse(JSON.stringify(unshieldedBlance)) };
+    const replacer = (key, value) => typeof value === "bigint" ? value.toString() : value;
+    const reviver = (key, value) => typeof value === "string" && /^\d+$/.test(value) ? BigInt(value) : value;
+    return { dustBalance, shieldedBlance: JSON.parse(JSON.stringify(shieldedBlance, replacer), reviver), unshieldedBlance: JSON.parse(JSON.stringify(unshieldedBlance, replacer), reviver) };
   }
   async getAvailableCoins() {
     assert3__default.default(this.walletObj, "walletObj is not initialized!");
