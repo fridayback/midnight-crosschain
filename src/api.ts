@@ -54,9 +54,10 @@ export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | 
 export function getDirname(): string {
   // ES Module 环境
   if (typeof import.meta?.url === 'string') {
-    const url = require('url')
-    const path = require('path')
-    return path.dirname(url.fileURLToPath(import.meta.url))
+    // const url = require('url')
+    // const path = require('path')
+    // return path.dirname(url.fileURLToPath(import.meta.url))
+    return import.meta.url;
   }
   
   // CommonJS 环境
