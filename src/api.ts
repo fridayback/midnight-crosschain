@@ -65,6 +65,7 @@ export function getDirname(): string {
 }
 
 export const currentDir = path.resolve(new URL(getDirname()).pathname, '..');
+console.log('currentDir===>',currentDir);
 // export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
 // export const currentDir = path.dirname(fileURLToPath(import.meta.url));
 export type Address = string;

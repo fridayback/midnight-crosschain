@@ -25873,6 +25873,7 @@ function getDirname() {
   return __dirname;
 }
 var currentDir = path.resolve(new URL(getDirname()).pathname, "..");
+console.log("currentDir===>", currentDir);
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
   zkConfigPath: path.resolve(currentDir, "managed", "crosschain")

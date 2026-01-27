@@ -25899,6 +25899,7 @@ function getDirname() {
   return __dirname;
 }
 var currentDir = path__default.default.resolve(new URL(getDirname()).pathname, "..");
+console.log("currentDir===>", currentDir);
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
   zkConfigPath: path__default.default.resolve(currentDir, "managed", "crosschain")
