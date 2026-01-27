@@ -9260,7 +9260,10 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
   return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
 var waitForFullySynced = async (facade) => {
-  return await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
+  const timeCur = Date.now();
+  const state = await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
+  console.log(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
+  return state;
 };
 var MidnightWalletSDK = class {
   constructor(config) {

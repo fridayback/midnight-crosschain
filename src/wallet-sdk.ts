@@ -114,7 +114,10 @@ export const initFacadeWallet = async (
 };
 
 export const waitForFullySynced = async (facade: WalletFacade): Promise<FacadeState> => {
-    return await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
+    const timeCur = Date.now();
+    const state = await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
+    console.log(`Wallet synced in ${(Date.now() - timeCur) / 1000} seconds`);
+    return state;
 };
 
 
