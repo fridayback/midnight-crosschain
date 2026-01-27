@@ -2,7 +2,7 @@ import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import type { DefaultV1Configuration as DustConfiguration, TotalCostParameters } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
-import { CombinedSwapOutputs, WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
+import { CombinedSwapOutputs, FacadeState, WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
 import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 import type { DefaultV1Configuration as ShieldedConfiguration } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
@@ -113,6 +113,10 @@ export const initFacadeWallet = async (
     return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
 
+export const waitForFullySynced = async (facade: WalletFacade): Promise<FacadeState> => {
+  return await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
+};
+
 export interface FacadeSerializedState {
     readonly shieldedWalletState: string;
     readonly unshieldedWalletState: string;
@@ -154,7 +158,7 @@ export class MidnightWalletSDK {
         this.dustSecretKey = ret.dustSecretKey;
 
         const selfWallet = this.walletObj;
-        const state = await Rx.firstValueFrom(this.walletObj.state());
+        const state = await waitForFullySynced(this.walletObj);//await Rx.firstValueFrom(this.walletObj.state());
         this.walletAddress = {
             shieldedAddress: ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString()
             , unshieldedAddress: UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString()
@@ -162,7 +166,7 @@ export class MidnightWalletSDK {
         };
 
         const callBack = async () => {
-            const state = await Rx.firstValueFrom(selfWallet.state());
+            const state =  await waitForFullySynced(selfWallet);//await Rx.firstValueFrom(selfWallet.state());
             await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
             console.log('wallet state saved!');
             clearTimeout(this.storeTimer);
@@ -184,7 +188,7 @@ export class MidnightWalletSDK {
         if (this.isGenerating) return;
         this.isGenerating = true;
         assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
-        const state = await Rx.firstValueFrom(this.walletObj.state());
+        const state = await waitForFullySynced(this.walletObj);//await Rx.firstValueFrom(this.walletObj.state());
 
         const nightUtxos = state.unshielded.availableCoins.filter(
             (coin) => coin.meta.registeredForDustGeneration === false && coin.utxo.type === ledger.nativeToken().raw,
@@ -209,7 +213,7 @@ export class MidnightWalletSDK {
 
     async getBalances() {
         assert(this.walletObj, "walletObj is not initialized!");
-        let curState = await Rx.firstValueFrom(this.walletObj.state());
+        let curState = await waitForFullySynced(this.walletObj);//await Rx.firstValueFrom(this.walletObj.state());
         // console.log("\n\n...getAccountBalance...curState: ", curState);
 
         // balances: Record<TokenType, bigint>;
@@ -225,7 +229,7 @@ export class MidnightWalletSDK {
 
     async getAvailableCoins() {
         assert(this.walletObj, "walletObj is not initialized!");
-        let curState = await Rx.firstValueFrom(this.walletObj.state());
+        let curState = await waitForFullySynced(this.walletObj);//await Rx.firstValueFrom(this.walletObj.state());
 
         const dustAvailableCoins = curState.dust.availableCoins;
         const shieldedAvailableCoins = curState.shielded.availableCoins;
@@ -269,7 +273,7 @@ export class MidnightWalletSDK {
 
     async getSerializedWalletState() {
         if (!this.walletObj) return '';
-        let curState = await Rx.firstValueFrom(this.walletObj.state());
+        let curState = await waitForFullySynced(this.walletObj);//await Rx.firstValueFrom(this.walletObj.state());
         const dustWalletState = curState.dust.serialize();
         const shieldedWalletState = curState.shielded.serialize();
         const unshieldedWalletState = curState.unshielded.serialize();

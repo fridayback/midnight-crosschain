@@ -4757,7 +4757,7 @@ var require_filter = __commonJS({
     exports$1.filter = void 0;
     var lift_1 = require_lift();
     var OperatorSubscriber_1 = require_OperatorSubscriber();
-    function filter(predicate, thisArg) {
+    function filter2(predicate, thisArg) {
       return lift_1.operate(function(source, subscriber) {
         var index = 0;
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value) {
@@ -4765,7 +4765,7 @@ var require_filter = __commonJS({
         }));
       });
     }
-    exports$1.filter = filter;
+    exports$1.filter = filter2;
   }
 });
 
@@ -9259,6 +9259,9 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
   await wallet.start(shieldedSecretKeys, dustSecretKey);
   return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
+var waitForFullySynced = async (facade) => {
+  return await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
+};
 var MidnightWalletSDK = class {
   constructor(config) {
     this.isGenerating = false;
@@ -9278,14 +9281,14 @@ var MidnightWalletSDK = class {
     this.unshieldedKeystore = ret.unshieldedKeystore;
     this.dustSecretKey = ret.dustSecretKey;
     const selfWallet = this.walletObj;
-    const state = await Rx.firstValueFrom(this.walletObj.state());
+    const state = await waitForFullySynced(this.walletObj);
     this.walletAddress = {
       shieldedAddress: ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString(),
       unshieldedAddress: UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString(),
       dustAddress: state.dust.dustAddress
     };
     const callBack = async () => {
-      const state2 = await Rx.firstValueFrom(selfWallet.state());
+      const state2 = await waitForFullySynced(selfWallet);
       await store({ shieldedWalletState: state2.shielded.serialize(), unshieldedWalletState: state2.unshielded.serialize(), dustWalletState: state2.dust.serialize() });
       console.log("wallet state saved!");
       clearTimeout(this.storeTimer);
@@ -9304,7 +9307,7 @@ var MidnightWalletSDK = class {
     if (this.isGenerating) return;
     this.isGenerating = true;
     assert3(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
-    const state = await Rx.firstValueFrom(this.walletObj.state());
+    const state = await waitForFullySynced(this.walletObj);
     const nightUtxos = state.unshielded.availableCoins.filter(
       (coin) => coin.meta.registeredForDustGeneration === false && coin.utxo.type === ledger.nativeToken().raw
     );
@@ -9321,7 +9324,7 @@ var MidnightWalletSDK = class {
   }
   async getBalances() {
     assert3(this.walletObj, "walletObj is not initialized!");
-    let curState = await Rx.firstValueFrom(this.walletObj.state());
+    let curState = await waitForFullySynced(this.walletObj);
     new Array();
     const dustBalance = curState.dust.walletBalance(/* @__PURE__ */ new Date());
     const shieldedBlance = curState.shielded.balances;
@@ -9330,7 +9333,7 @@ var MidnightWalletSDK = class {
   }
   async getAvailableCoins() {
     assert3(this.walletObj, "walletObj is not initialized!");
-    let curState = await Rx.firstValueFrom(this.walletObj.state());
+    let curState = await waitForFullySynced(this.walletObj);
     const dustAvailableCoins = curState.dust.availableCoins;
     const shieldedAvailableCoins = curState.shielded.availableCoins;
     const unshieldedAvailableCoins = curState.unshielded.availableCoins;
@@ -9363,7 +9366,7 @@ var MidnightWalletSDK = class {
   }
   async getSerializedWalletState() {
     if (!this.walletObj) return "";
-    let curState = await Rx.firstValueFrom(this.walletObj.state());
+    let curState = await waitForFullySynced(this.walletObj);
     const dustWalletState = curState.dust.serialize();
     const shieldedWalletState = curState.shielded.serialize();
     const unshieldedWalletState = curState.unshielded.serialize();
@@ -26487,6 +26490,6 @@ var initNetwork = (network) => {
   setNetworkId(network);
 };
 
-export { CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genSigningKey, getCoinPublicKeyFromShieldAddress, getDirname, getTreasuryCoinsFromState, initFacadeWallet, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, witnesses };
+export { CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genSigningKey, getCoinPublicKeyFromShieldAddress, getDirname, getTreasuryCoinsFromState, initFacadeWallet, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, waitForFullySynced, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

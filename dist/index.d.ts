@@ -5,7 +5,7 @@ import { DefaultV1Configuration as DefaultV1Configuration$1, TotalCostParameters
 import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { UserAddress as UserAddress$1, TokenType } from '@midnight-ntwrk/ledger-v6';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
-import { WalletFacade, CombinedSwapOutputs } from '@midnight-ntwrk/wallet-sdk-facade';
+import { WalletFacade, CombinedSwapOutputs, FacadeState } from '@midnight-ntwrk/wallet-sdk-facade';
 import { DefaultV1Configuration } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
 import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
@@ -26,6 +26,7 @@ strSerializedState?: FacadeSerializedState) => Promise<{
     dustSecretKey: ledger.DustSecretKey;
     unshieldedKeystore: UnshieldedKeystore;
 }>;
+declare const waitForFullySynced: (facade: WalletFacade) => Promise<FacadeState>;
 interface FacadeSerializedState {
     readonly shieldedWalletState: string;
     readonly unshieldedWalletState: string;
@@ -665,4 +666,4 @@ declare const genSigningKey: () => string;
 declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const initNetwork: (network: "mainnet" | "testnet-02" | "preview" | "devnet" | "undeployed") => void;
 
-export { type Address, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createCrossChainPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genSigningKey, getCoinPublicKeyFromShieldAddress, getDirname, getTreasuryCoinsFromState, initFacadeWallet, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, witnesses };
+export { type Address, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createCrossChainPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genSigningKey, getCoinPublicKeyFromShieldAddress, getDirname, getTreasuryCoinsFromState, initFacadeWallet, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, waitForFullySynced, witnesses };
