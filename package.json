@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "0.11.0-rc.1",
+    "@midnight-ntwrk/onchain-runtime-v2": "^2.0.0",
     "@midnight-ntwrk/midnight-js-contracts": "3.0.0-alpha.15",
     "@midnight-ntwrk/midnight-js-http-client-proof-provider": "3.0.0-alpha.15",
     "@midnight-ntwrk/midnight-js-indexer-public-data-provider": "3.0.0-alpha.15",
