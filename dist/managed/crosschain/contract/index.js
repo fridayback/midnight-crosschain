@@ -1027,14 +1027,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('withdrawReserveOfUnshieldedToken',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 579 char 1',
+                                     'crosschain.compact line 580 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(token_0.buffer instanceof ArrayBuffer && token_0.BYTES_PER_ELEMENT === 1 && token_0.length === 32)) {
           __compactRuntime.typeError('withdrawReserveOfUnshieldedToken',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 579 char 1',
+                                     'crosschain.compact line 580 char 1',
                                      'Bytes<32>',
                                      token_0)
         }
@@ -1063,14 +1063,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('withdrawReserveOfUnshieldedMappingToken',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 589 char 1',
+                                     'crosschain.compact line 590 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(domainSep_0.buffer instanceof ArrayBuffer && domainSep_0.BYTES_PER_ELEMENT === 1 && domainSep_0.length === 32)) {
           __compactRuntime.typeError('withdrawReserveOfUnshieldedMappingToken',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 589 char 1',
+                                     'crosschain.compact line 590 char 1',
                                      'Bytes<32>',
                                      domainSep_0)
         }
@@ -1099,14 +1099,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('transferOwner',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 604 char 1',
+                                     'crosschain.compact line 605 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(newOwner_0) === 'object' && newOwner_0.bytes.buffer instanceof ArrayBuffer && newOwner_0.bytes.BYTES_PER_ELEMENT === 1 && newOwner_0.bytes.length === 32)) {
           __compactRuntime.typeError('transferOwner',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 604 char 1',
+                                     'crosschain.compact line 605 char 1',
                                      'struct ZswapCoinPublicKey<bytes: Bytes<32>>',
                                      newOwner_0)
         }
@@ -1134,7 +1134,7 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('acceptOwner',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 609 char 1',
+                                     'crosschain.compact line 610 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
@@ -1158,14 +1158,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setFeeShieldedReceiver',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 614 char 1',
+                                     'crosschain.compact line 615 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(newFeeReceiver_0) === 'object' && newFeeReceiver_0.bytes.buffer instanceof ArrayBuffer && newFeeReceiver_0.bytes.BYTES_PER_ELEMENT === 1 && newFeeReceiver_0.bytes.length === 32)) {
           __compactRuntime.typeError('setFeeShieldedReceiver',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 614 char 1',
+                                     'crosschain.compact line 615 char 1',
                                      'struct ZswapCoinPublicKey<bytes: Bytes<32>>',
                                      newFeeReceiver_0)
         }
@@ -1194,14 +1194,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setFeeUnshieldedReceiver',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 619 char 1',
+                                     'crosschain.compact line 620 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(newFeeReceiver_0) === 'object' && newFeeReceiver_0.bytes.buffer instanceof ArrayBuffer && newFeeReceiver_0.bytes.BYTES_PER_ELEMENT === 1 && newFeeReceiver_0.bytes.length === 32)) {
           __compactRuntime.typeError('setFeeUnshieldedReceiver',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 619 char 1',
+                                     'crosschain.compact line 620 char 1',
                                      'struct UserAddress<bytes: Bytes<32>>',
                                      newFeeReceiver_0)
         }
@@ -1230,14 +1230,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setTokenManager',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 624 char 1',
+                                     'crosschain.compact line 625 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(newTokenManager_0) === 'object' && newTokenManager_0.bytes.buffer instanceof ArrayBuffer && newTokenManager_0.bytes.BYTES_PER_ELEMENT === 1 && newTokenManager_0.bytes.length === 32)) {
           __compactRuntime.typeError('setTokenManager',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 624 char 1',
+                                     'crosschain.compact line 625 char 1',
                                      'struct ZswapCoinPublicKey<bytes: Bytes<32>>',
                                      newTokenManager_0)
         }
@@ -1266,14 +1266,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setMegerWorker',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 629 char 1',
+                                     'crosschain.compact line 630 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(newMergeWorker_0) === 'object' && newMergeWorker_0.bytes.buffer instanceof ArrayBuffer && newMergeWorker_0.bytes.BYTES_PER_ELEMENT === 1 && newMergeWorker_0.bytes.length === 32)) {
           __compactRuntime.typeError('setMegerWorker',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 629 char 1',
+                                     'crosschain.compact line 630 char 1',
                                      'struct ZswapCoinPublicKey<bytes: Bytes<32>>',
                                      newMergeWorker_0)
         }
@@ -1305,14 +1305,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('addAdmin',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 648 char 1',
+                                     'crosschain.compact line 649 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(admin_0) === 'object' && admin_0.bytes.buffer instanceof ArrayBuffer && admin_0.bytes.BYTES_PER_ELEMENT === 1 && admin_0.bytes.length === 32)) {
           __compactRuntime.typeError('addAdmin',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 648 char 1',
+                                     'crosschain.compact line 649 char 1',
                                      'struct ZswapCoinPublicKey<bytes: Bytes<32>>',
                                      admin_0)
         }
@@ -1339,14 +1339,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('removeAdmin',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 654 char 1',
+                                     'crosschain.compact line 655 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(admin_0) === 'object' && admin_0.bytes.buffer instanceof ArrayBuffer && admin_0.bytes.BYTES_PER_ELEMENT === 1 && admin_0.bytes.length === 32)) {
           __compactRuntime.typeError('removeAdmin',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 654 char 1',
+                                     'crosschain.compact line 655 char 1',
                                      'struct ZswapCoinPublicKey<bytes: Bytes<32>>',
                                      admin_0)
         }
@@ -1373,14 +1373,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setAdminThreshold',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 660 char 1',
+                                     'crosschain.compact line 661 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(threshold_0) === 'bigint' && threshold_0 >= 0n && threshold_0 <= 255n)) {
           __compactRuntime.typeError('setAdminThreshold',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 660 char 1',
+                                     'crosschain.compact line 661 char 1',
                                      'Uint<0..256>',
                                      threshold_0)
         }
@@ -1409,14 +1409,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setSmgPksks',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 666 char 1',
+                                     'crosschain.compact line 667 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(Array.isArray(voters_0) && voters_0.length === 29 && voters_0.every((t) => typeof(t) === 'object' && t.bytes.buffer instanceof ArrayBuffer && t.bytes.BYTES_PER_ELEMENT === 1 && t.bytes.length === 32))) {
           __compactRuntime.typeError('setSmgPksks',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 666 char 1',
+                                     'crosschain.compact line 667 char 1',
                                      'Vector<29, struct ZswapCoinPublicKey<bytes: Bytes<32>>>',
                                      voters_0)
         }
@@ -1443,14 +1443,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('updateSmgPk',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 681 char 1',
+                                     'crosschain.compact line 682 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(newVoter_0) === 'object' && newVoter_0.bytes.buffer instanceof ArrayBuffer && newVoter_0.bytes.BYTES_PER_ELEMENT === 1 && newVoter_0.bytes.length === 32)) {
           __compactRuntime.typeError('updateSmgPk',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 681 char 1',
+                                     'crosschain.compact line 682 char 1',
                                      'struct ZswapCoinPublicKey<bytes: Bytes<32>>',
                                      newVoter_0)
         }
@@ -1479,14 +1479,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setSmgPKThreold',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 709 char 1',
+                                     'crosschain.compact line 710 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(threshold_0) === 'bigint' && threshold_0 >= 0n && threshold_0 <= 255n)) {
           __compactRuntime.typeError('setSmgPKThreold',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 709 char 1',
+                                     'crosschain.compact line 710 char 1',
                                      'Uint<0..256>',
                                      threshold_0)
         }
@@ -1516,21 +1516,21 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setFeeCommonConfig',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 715 char 1',
+                                     'crosschain.compact line 716 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(chainId_0) === 'bigint' && chainId_0 >= 0n && chainId_0 <= 4294967295n)) {
           __compactRuntime.typeError('setFeeCommonConfig',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 715 char 1',
+                                     'crosschain.compact line 716 char 1',
                                      'Uint<0..4294967296>',
                                      chainId_0)
         }
         if (!(typeof(fee_0) === 'bigint' && fee_0 >= 0n && fee_0 <= 340282366920938463463374607431768211455n)) {
           __compactRuntime.typeError('setFeeCommonConfig',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'crosschain.compact line 715 char 1',
+                                     'crosschain.compact line 716 char 1',
                                      'Uint<0..340282366920938463463374607431768211456>',
                                      fee_0)
         }
@@ -1561,21 +1561,21 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('addTokenPair',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 724 char 1',
+                                     'crosschain.compact line 725 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(tokenPairId_0) === 'bigint' && tokenPairId_0 >= 0n && tokenPairId_0 <= 4294967295n)) {
           __compactRuntime.typeError('addTokenPair',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 724 char 1',
+                                     'crosschain.compact line 725 char 1',
                                      'Uint<0..4294967296>',
                                      tokenPairId_0)
         }
         if (!(typeof(pairInfo_0) === 'object' && typeof(pairInfo_0.fromChainId) === 'bigint' && pairInfo_0.fromChainId >= 0n && pairInfo_0.fromChainId <= 4294967295n && typeof(pairInfo_0.toChainId) === 'bigint' && pairInfo_0.toChainId >= 0n && pairInfo_0.toChainId <= 4294967295n && pairInfo_0.midnigthTokenAccount.buffer instanceof ArrayBuffer && pairInfo_0.midnigthTokenAccount.BYTES_PER_ELEMENT === 1 && pairInfo_0.midnigthTokenAccount.length === 32 && pairInfo_0.domainSep.buffer instanceof ArrayBuffer && pairInfo_0.domainSep.BYTES_PER_ELEMENT === 1 && pairInfo_0.domainSep.length === 32 && typeof(pairInfo_0.isShielded) === 'boolean' && typeof(pairInfo_0.fee) === 'bigint' && pairInfo_0.fee >= 0n && pairInfo_0.fee <= 340282366920938463463374607431768211455n)) {
           __compactRuntime.typeError('addTokenPair',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'crosschain.compact line 724 char 1',
+                                     'crosschain.compact line 725 char 1',
                                      'struct TokenPairInfo<fromChainId: Uint<0..4294967296>, toChainId: Uint<0..4294967296>, midnigthTokenAccount: Bytes<32>, domainSep: Bytes<32>, isShielded: Boolean, fee: Uint<0..340282366920938463463374607431768211456>>',
                                      pairInfo_0)
         }
@@ -1605,14 +1605,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('removeTokenPair',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 736 char 1',
+                                     'crosschain.compact line 737 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(tokenPairId_0) === 'bigint' && tokenPairId_0 >= 0n && tokenPairId_0 <= 4294967295n)) {
           __compactRuntime.typeError('removeTokenPair',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 736 char 1',
+                                     'crosschain.compact line 737 char 1',
                                      'Uint<0..4294967296>',
                                      tokenPairId_0)
         }
@@ -1641,14 +1641,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('newProposal',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 742 char 1',
+                                     'crosschain.compact line 743 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(newProposal_0) === 'object' && typeof(newProposal_0.type) === 'number' && newProposal_0.type >= 0 && newProposal_0.type <= 8 && typeof(newProposal_0.addr) === 'object' && newProposal_0.addr.bytes.buffer instanceof ArrayBuffer && newProposal_0.addr.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addr.bytes.length === 32 && typeof(newProposal_0.addrUnshielded) === 'object' && newProposal_0.addrUnshielded.bytes.buffer instanceof ArrayBuffer && newProposal_0.addrUnshielded.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addrUnshielded.bytes.length === 32 && typeof(newProposal_0.threshold) === 'bigint' && newProposal_0.threshold >= 0n && newProposal_0.threshold <= 340282366920938463463374607431768211455n && typeof(newProposal_0.feeConfig) === 'object' && typeof(newProposal_0.feeConfig.chainId) === 'bigint' && newProposal_0.feeConfig.chainId >= 0n && newProposal_0.feeConfig.chainId <= 4294967295n && typeof(newProposal_0.feeConfig.fee) === 'bigint' && newProposal_0.feeConfig.fee >= 0n && newProposal_0.feeConfig.fee <= 340282366920938463463374607431768211455n && Array.isArray(newProposal_0.smgPubkeys) && newProposal_0.smgPubkeys.length === 29 && newProposal_0.smgPubkeys.every((t) => typeof(t) === 'object' && t.bytes.buffer instanceof ArrayBuffer && t.bytes.BYTES_PER_ELEMENT === 1 && t.bytes.length === 32))) {
           __compactRuntime.typeError('newProposal',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 742 char 1',
+                                     'crosschain.compact line 743 char 1',
                                      'struct Proposal<type: Enum<ProposalType, AddAdmin, RemoveAdmin, UpdateFeeShieldedReceiver, UpdateFeeUnshieldedReceiver, UpdateTokenManager, UpdateAdminThreshold, UpdateSMGPKThreshold, UpdateFeeCommonConfig, SetSmgPKS>, addr: struct ZswapCoinPublicKey<bytes: Bytes<32>>, addrUnshielded: struct UserAddress<bytes: Bytes<32>>, threshold: Uint<0..340282366920938463463374607431768211456>, feeConfig: struct FeeConfig<chainId: Uint<0..4294967296>, fee: Uint<0..340282366920938463463374607431768211456>>, smgPubkeys: Vector<29, struct ZswapCoinPublicKey<bytes: Bytes<32>>>>',
                                      newProposal_0)
         }
@@ -1677,14 +1677,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('voteProposal',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 752 char 1',
+                                     'crosschain.compact line 753 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(proposalId_0) === 'bigint' && proposalId_0 >= 0n && proposalId_0 <= 4294967295n)) {
           __compactRuntime.typeError('voteProposal',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 752 char 1',
+                                     'crosschain.compact line 753 char 1',
                                      'Uint<0..4294967296>',
                                      proposalId_0)
         }
@@ -1713,14 +1713,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('executeProposal',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 761 char 1',
+                                     'crosschain.compact line 762 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(proposalId_0) === 'bigint' && proposalId_0 >= 0n && proposalId_0 <= 4294967295n)) {
           __compactRuntime.typeError('executeProposal',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 761 char 1',
+                                     'crosschain.compact line 762 char 1',
                                      'Uint<0..4294967296>',
                                      proposalId_0)
         }
@@ -1749,14 +1749,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('removeExpiredHisTxs',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 797 char 1',
+                                     'crosschain.compact line 798 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(Array.isArray(txs_0) && txs_0.length === 20 && txs_0.every((t) => t.buffer instanceof ArrayBuffer && t.BYTES_PER_ELEMENT === 1 && t.length === 32))) {
           __compactRuntime.typeError('removeExpiredHisTxs',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 797 char 1',
+                                     'crosschain.compact line 798 char 1',
                                      'Vector<20, Bytes<32>>',
                                      txs_0)
         }
@@ -5674,7 +5674,7 @@ export class Contract {
                                 domainSep_0,
                                 ((t1) => {
                                   if (t1 > 18446744073709551615n) {
-                                    throw new __compactRuntime.CompactError('crosschain.compact line 596 char 44: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
+                                    throw new __compactRuntime.CompactError('crosschain.compact line 597 char 44: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                                   }
                                   return t1;
                                 })(reserveInfo_0.total),
@@ -6088,7 +6088,7 @@ export class Contract {
                                                                     n: 2 } }]);
                         return ((t1) => {
                                  if (t1 > 255n) {
-                                   throw new __compactRuntime.CompactError('crosschain.compact line 674 char 14: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
+                                   throw new __compactRuntime.CompactError('crosschain.compact line 675 char 14: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                                  }
                                  return t1;
                                })(index_0 + 1n);
@@ -6614,7 +6614,7 @@ export class Contract {
                                        { ins: { cached: true, n: 2 } }]);
     const tmp_1 = ((t1) => {
                     if (t1 > 4294967295n) {
-                      throw new __compactRuntime.CompactError('crosschain.compact line 746 char 20: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
+                      throw new __compactRuntime.CompactError('crosschain.compact line 747 char 20: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
                     }
                     return t1;
                   })(_descriptor_3.fromValue(__compactRuntime.queryLedgerState(context,
@@ -6654,7 +6654,7 @@ export class Contract {
                                        { ins: { cached: true, n: 2 } }]);
     const tmp_2 = ((t1) => {
                     if (t1 > 4294967295n) {
-                      throw new __compactRuntime.CompactError('crosschain.compact line 747 char 32: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
+                      throw new __compactRuntime.CompactError('crosschain.compact line 748 char 32: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
                     }
                     return t1;
                   })(_descriptor_3.fromValue(__compactRuntime.queryLedgerState(context,
@@ -6697,7 +6697,7 @@ export class Contract {
                          partialProofData,
                          ((t1) => {
                            if (t1 > 4294967295n) {
-                             throw new __compactRuntime.CompactError('crosschain.compact line 748 char 16: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
+                             throw new __compactRuntime.CompactError('crosschain.compact line 749 char 16: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
                            }
                            return t1;
                          })(_descriptor_3.fromValue(__compactRuntime.queryLedgerState(context,
@@ -6887,7 +6887,7 @@ export class Contract {
                                           partialProofData,
                                           ((t1) => {
                                             if (t1 > 255n) {
-                                              throw new __compactRuntime.CompactError('crosschain.compact line 778 char 23: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
+                                              throw new __compactRuntime.CompactError('crosschain.compact line 779 char 23: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                                             }
                                             return t1;
                                           })(currentProposal_0.threshold));
@@ -6897,7 +6897,7 @@ export class Contract {
                                           partialProofData,
                                           ((t1) => {
                                             if (t1 > 255n) {
-                                              throw new __compactRuntime.CompactError('crosschain.compact line 780 char 21: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
+                                              throw new __compactRuntime.CompactError('crosschain.compact line 781 char 21: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                                             }
                                             return t1;
                                           })(currentProposal_0.threshold));
@@ -7068,7 +7068,7 @@ export class Contract {
                              partialProofData,
                              ((t1) => {
                                if (t1 > 18446744073709551615n) {
-                                 throw new __compactRuntime.CompactError('crosschain.compact line 805 char 51: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
+                                 throw new __compactRuntime.CompactError('crosschain.compact line 806 char 51: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                                }
                                return t1;
                              })(_descriptor_3.fromValue(__compactRuntime.queryLedgerState(context,
@@ -9972,7 +9972,7 @@ export const pureCircuits = {
     if (!(Array.isArray(coins_0) && coins_0.length === 2 && coins_0.every((t) => typeof(t) === 'bigint' && t >= 0n && t <= 340282366920938463463374607431768211455n))) {
       __compactRuntime.typeError('mergeTreasuryCoin',
                                  'argument 1',
-                                 'crosschain.compact line 635 char 1',
+                                 'crosschain.compact line 636 char 1',
                                  'Vector<2, Uint<0..340282366920938463463374607431768211456>>',
                                  coins_0)
     }

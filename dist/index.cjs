@@ -1,6 +1,6 @@
 'use strict';
 
-var ledger = require('@midnight-ntwrk/ledger-v6');
+var ledger = require('@midnight-ntwrk/ledger-v7');
 var walletSdkDustWallet = require('@midnight-ntwrk/wallet-sdk-dust-wallet');
 var walletSdkFacade = require('@midnight-ntwrk/wallet-sdk-facade');
 var walletSdkHd = require('@midnight-ntwrk/wallet-sdk-hd');
@@ -1258,7 +1258,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "withdrawReserveOfUnshieldedToken",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 579 char 1",
+            "crosschain.compact line 580 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1267,7 +1267,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "withdrawReserveOfUnshieldedToken",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 579 char 1",
+            "crosschain.compact line 580 char 1",
             "Bytes<32>",
             token_0
           );
@@ -1300,7 +1300,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "withdrawReserveOfUnshieldedMappingToken",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 589 char 1",
+            "crosschain.compact line 590 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1309,7 +1309,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "withdrawReserveOfUnshieldedMappingToken",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 589 char 1",
+            "crosschain.compact line 590 char 1",
             "Bytes<32>",
             domainSep_0
           );
@@ -1342,7 +1342,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "transferOwner",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 604 char 1",
+            "crosschain.compact line 605 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1351,7 +1351,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "transferOwner",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 604 char 1",
+            "crosschain.compact line 605 char 1",
             "struct ZswapCoinPublicKey<bytes: Bytes<32>>",
             newOwner_0
           );
@@ -1383,7 +1383,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "acceptOwner",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 609 char 1",
+            "crosschain.compact line 610 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1409,7 +1409,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeShieldedReceiver",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 614 char 1",
+            "crosschain.compact line 615 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1418,7 +1418,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeShieldedReceiver",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 614 char 1",
+            "crosschain.compact line 615 char 1",
             "struct ZswapCoinPublicKey<bytes: Bytes<32>>",
             newFeeReceiver_0
           );
@@ -1451,7 +1451,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeUnshieldedReceiver",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 619 char 1",
+            "crosschain.compact line 620 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1460,7 +1460,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeUnshieldedReceiver",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 619 char 1",
+            "crosschain.compact line 620 char 1",
             "struct UserAddress<bytes: Bytes<32>>",
             newFeeReceiver_0
           );
@@ -1493,7 +1493,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setTokenManager",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 624 char 1",
+            "crosschain.compact line 625 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1502,7 +1502,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setTokenManager",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 624 char 1",
+            "crosschain.compact line 625 char 1",
             "struct ZswapCoinPublicKey<bytes: Bytes<32>>",
             newTokenManager_0
           );
@@ -1535,7 +1535,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setMegerWorker",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 629 char 1",
+            "crosschain.compact line 630 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1544,7 +1544,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setMegerWorker",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 629 char 1",
+            "crosschain.compact line 630 char 1",
             "struct ZswapCoinPublicKey<bytes: Bytes<32>>",
             newMergeWorker_0
           );
@@ -1580,7 +1580,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "addAdmin",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 648 char 1",
+            "crosschain.compact line 649 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1589,7 +1589,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "addAdmin",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 648 char 1",
+            "crosschain.compact line 649 char 1",
             "struct ZswapCoinPublicKey<bytes: Bytes<32>>",
             admin_0
           );
@@ -1618,7 +1618,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "removeAdmin",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 654 char 1",
+            "crosschain.compact line 655 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1627,7 +1627,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "removeAdmin",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 654 char 1",
+            "crosschain.compact line 655 char 1",
             "struct ZswapCoinPublicKey<bytes: Bytes<32>>",
             admin_0
           );
@@ -1656,7 +1656,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setAdminThreshold",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 660 char 1",
+            "crosschain.compact line 661 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1665,7 +1665,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setAdminThreshold",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 660 char 1",
+            "crosschain.compact line 661 char 1",
             "Uint<0..256>",
             threshold_0
           );
@@ -1698,7 +1698,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setSmgPksks",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 666 char 1",
+            "crosschain.compact line 667 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1707,7 +1707,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setSmgPksks",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 666 char 1",
+            "crosschain.compact line 667 char 1",
             "Vector<29, struct ZswapCoinPublicKey<bytes: Bytes<32>>>",
             voters_0
           );
@@ -1736,7 +1736,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "updateSmgPk",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 681 char 1",
+            "crosschain.compact line 682 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1745,7 +1745,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "updateSmgPk",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 681 char 1",
+            "crosschain.compact line 682 char 1",
             "struct ZswapCoinPublicKey<bytes: Bytes<32>>",
             newVoter_0
           );
@@ -1778,7 +1778,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setSmgPKThreold",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 709 char 1",
+            "crosschain.compact line 710 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1787,7 +1787,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setSmgPKThreold",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 709 char 1",
+            "crosschain.compact line 710 char 1",
             "Uint<0..256>",
             threshold_0
           );
@@ -1821,7 +1821,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeCommonConfig",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 715 char 1",
+            "crosschain.compact line 716 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1830,7 +1830,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeCommonConfig",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 715 char 1",
+            "crosschain.compact line 716 char 1",
             "Uint<0..4294967296>",
             chainId_0
           );
@@ -1839,7 +1839,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeCommonConfig",
             "argument 2 (argument 3 as invoked from Typescript)",
-            "crosschain.compact line 715 char 1",
+            "crosschain.compact line 716 char 1",
             "Uint<0..340282366920938463463374607431768211456>",
             fee_0
           );
@@ -1874,7 +1874,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "addTokenPair",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 724 char 1",
+            "crosschain.compact line 725 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1883,7 +1883,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "addTokenPair",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 724 char 1",
+            "crosschain.compact line 725 char 1",
             "Uint<0..4294967296>",
             tokenPairId_0
           );
@@ -1892,7 +1892,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "addTokenPair",
             "argument 2 (argument 3 as invoked from Typescript)",
-            "crosschain.compact line 724 char 1",
+            "crosschain.compact line 725 char 1",
             "struct TokenPairInfo<fromChainId: Uint<0..4294967296>, toChainId: Uint<0..4294967296>, midnigthTokenAccount: Bytes<32>, domainSep: Bytes<32>, isShielded: Boolean, fee: Uint<0..340282366920938463463374607431768211456>>",
             pairInfo_0
           );
@@ -1926,7 +1926,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "removeTokenPair",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 736 char 1",
+            "crosschain.compact line 737 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1935,7 +1935,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "removeTokenPair",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 736 char 1",
+            "crosschain.compact line 737 char 1",
             "Uint<0..4294967296>",
             tokenPairId_0
           );
@@ -1968,7 +1968,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "newProposal",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 742 char 1",
+            "crosschain.compact line 743 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1977,7 +1977,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "newProposal",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 742 char 1",
+            "crosschain.compact line 743 char 1",
             "struct Proposal<type: Enum<ProposalType, AddAdmin, RemoveAdmin, UpdateFeeShieldedReceiver, UpdateFeeUnshieldedReceiver, UpdateTokenManager, UpdateAdminThreshold, UpdateSMGPKThreshold, UpdateFeeCommonConfig, SetSmgPKS>, addr: struct ZswapCoinPublicKey<bytes: Bytes<32>>, addrUnshielded: struct UserAddress<bytes: Bytes<32>>, threshold: Uint<0..340282366920938463463374607431768211456>, feeConfig: struct FeeConfig<chainId: Uint<0..4294967296>, fee: Uint<0..340282366920938463463374607431768211456>>, smgPubkeys: Vector<29, struct ZswapCoinPublicKey<bytes: Bytes<32>>>>",
             newProposal_0
           );
@@ -2010,7 +2010,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "voteProposal",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 752 char 1",
+            "crosschain.compact line 753 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -2019,7 +2019,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "voteProposal",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 752 char 1",
+            "crosschain.compact line 753 char 1",
             "Uint<0..4294967296>",
             proposalId_0
           );
@@ -2052,7 +2052,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "executeProposal",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 761 char 1",
+            "crosschain.compact line 762 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -2061,7 +2061,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "executeProposal",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 761 char 1",
+            "crosschain.compact line 762 char 1",
             "Uint<0..4294967296>",
             proposalId_0
           );
@@ -2094,7 +2094,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "removeExpiredHisTxs",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 797 char 1",
+            "crosschain.compact line 798 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -2103,7 +2103,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "removeExpiredHisTxs",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 797 char 1",
+            "crosschain.compact line 798 char 1",
             "Vector<20, Bytes<32>>",
             txs_0
           );
@@ -9137,7 +9137,7 @@ var Contract = class {
       domainSep_0,
       ((t1) => {
         if (t1 > 18446744073709551615n) {
-          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 596 char 44: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
+          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 597 char 44: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
         }
         return t1;
       })(reserveInfo_0.total),
@@ -9953,7 +9953,7 @@ var Contract = class {
           );
           return ((t1) => {
             if (t1 > 255n) {
-              throw new __compactRuntime__namespace.CompactError("crosschain.compact line 674 char 14: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
+              throw new __compactRuntime__namespace.CompactError("crosschain.compact line 675 char 14: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
             }
             return t1;
           })(index_0 + 1n);
@@ -10985,7 +10985,7 @@ var Contract = class {
     );
     const tmp_1 = ((t1) => {
       if (t1 > 4294967295n) {
-        throw new __compactRuntime__namespace.CompactError("crosschain.compact line 746 char 20: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
+        throw new __compactRuntime__namespace.CompactError("crosschain.compact line 747 char 20: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
       }
       return t1;
     })(_descriptor_3.fromValue(__compactRuntime__namespace.queryLedgerState(
@@ -11063,7 +11063,7 @@ var Contract = class {
     );
     const tmp_2 = ((t1) => {
       if (t1 > 4294967295n) {
-        throw new __compactRuntime__namespace.CompactError("crosschain.compact line 747 char 32: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
+        throw new __compactRuntime__namespace.CompactError("crosschain.compact line 748 char 32: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
       }
       return t1;
     })(_descriptor_3.fromValue(__compactRuntime__namespace.queryLedgerState(
@@ -11143,7 +11143,7 @@ var Contract = class {
       partialProofData,
       ((t1) => {
         if (t1 > 4294967295n) {
-          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 748 char 16: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
+          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 749 char 16: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
         }
         return t1;
       })(_descriptor_3.fromValue(__compactRuntime__namespace.queryLedgerState(
@@ -11504,7 +11504,7 @@ var Contract = class {
                   partialProofData,
                   ((t1) => {
                     if (t1 > 255n) {
-                      throw new __compactRuntime__namespace.CompactError("crosschain.compact line 778 char 23: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
+                      throw new __compactRuntime__namespace.CompactError("crosschain.compact line 779 char 23: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
                     }
                     return t1;
                   })(currentProposal_0.threshold)
@@ -11516,7 +11516,7 @@ var Contract = class {
                     partialProofData,
                     ((t1) => {
                       if (t1 > 255n) {
-                        throw new __compactRuntime__namespace.CompactError("crosschain.compact line 780 char 21: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
+                        throw new __compactRuntime__namespace.CompactError("crosschain.compact line 781 char 21: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
                       }
                       return t1;
                     })(currentProposal_0.threshold)
@@ -11820,7 +11820,7 @@ var Contract = class {
       partialProofData,
       ((t1) => {
         if (t1 > 18446744073709551615n) {
-          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 805 char 51: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
+          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 806 char 51: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
         }
         return t1;
       })(_descriptor_3.fromValue(__compactRuntime__namespace.queryLedgerState(
@@ -16694,7 +16694,7 @@ var pureCircuits = {
       __compactRuntime__namespace.typeError(
         "mergeTreasuryCoin",
         "argument 1",
-        "crosschain.compact line 635 char 1",
+        "crosschain.compact line 636 char 1",
         "Vector<2, Uint<0..340282366920938463463374607431768211456>>",
         coins_0
       );
@@ -16740,8 +16740,9 @@ var createWalletAndMidnightProvider = async (wallet) => {
     getCoinPublicKey: () => wallet.getShieldedSecretKeys().coinPublicKey,
     //() => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
+    // balanceTx(tx: UnprovenTransaction, newCoins?: ShieldedCoinInfo[], ttl?: Date): Promise<FinalizedTransaction> {
     balanceTx(tx, newCoins, ttl) {
-      return walletFacade.balanceTransaction(wallet.getShieldedSecretKeys(), wallet.getDustSecretKey(), tx, ttl ? ttl : new Date(Date.now() + 1800 * 1e3));
+      return walletFacade.balanceTransaction(wallet.getShieldedSecretKeys(), wallet.getDustSecretKey(), tx, ttl ? ttl : new Date(Date.now() + 1800 * 1e3)).then((tx2) => walletFacade.finalizeTransaction(tx2));
     },
     submitTx(tx) {
       return walletFacade.submitTransaction(tx);
@@ -16756,7 +16757,7 @@ var CrossChainApi = class _CrossChainApi {
   }
   async init(config, wallet) {
     const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-    new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath);
+    const zkConfigProvider = new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath);
     this.providers = {
       privateStateProvider: midnightJsLevelPrivateStateProvider.levelPrivateStateProvider({
         privateStateStoreName: "CCPSSN",
@@ -16764,8 +16765,7 @@ var CrossChainApi = class _CrossChainApi {
       }),
       publicDataProvider: midnightJsIndexerPublicDataProvider.indexerPublicDataProvider(config.indexer, config.indexerWS),
       zkConfigProvider: new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath),
-      // proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
-      proofProvider: midnightJsHttpClientProofProvider.httpClientProofProvider(config.proofServer),
+      proofProvider: midnightJsHttpClientProofProvider.httpClientProofProvider(config.proofServer, zkConfigProvider),
       walletProvider: walletAndMidnightProvider,
       midnightProvider: walletAndMidnightProvider
     };

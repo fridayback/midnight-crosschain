@@ -574,6 +574,7 @@ export circuit  withdrawReserveOfShieldedMappingToken(domainSep: Bytes<32>): [] 
   nonce = evolveNonce(crossCounter as Field as Uint<64>,nonce);
   mintShieldedToken(disclose(domainSep), reserveInfo.total as Uint<64>, nonce,left<ZswapCoinPublicKey, ContractAddress>(feeShieldedReceiver));
   updateShieldedReserve(true,domainSep,reserveInfo.total,false);
+  // mintUnshieldedToken(disclose(domainSep), reserveInfo.total as Uint<64>, right<ContractAddress, UserAddress>(feeUnshieldedReceiver));
 }
 
 export circuit withdrawReserveOfUnshieldedToken(token: Bytes<32>): [] {
