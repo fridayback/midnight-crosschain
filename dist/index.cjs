@@ -16742,7 +16742,7 @@ function pad(s, n) {
 var crosschainContractInstance = new Contract(witnesses);
 var CompiledSimpleContract = compactJs.CompiledContract.make("CrossChain", Contract).pipe(
   compactJs.CompiledContract.withWitnesses(witnesses),
-  compactJs.CompiledContract.withCompiledFileAssets("./managed/crosschain")
+  compactJs.CompiledContract.withCompiledFileAssets(path__default.default.resolve(currentDir, "managed", "crosschain"))
 );
 var createWalletAndMidnightProvider = async (wallet) => {
   const walletFacade = wallet.getWalletInstance();
