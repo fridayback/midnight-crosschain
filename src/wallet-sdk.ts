@@ -207,7 +207,7 @@ export class MidnightWalletSDK {
             // this.walletAddress.dustAddress
         );
 
-        const finalizedDustTx = await this.walletObj.finalizeTransaction(dustRegistrationRecipe);
+        const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
 
         const dustRegistrationTxHash = await this.walletObj.submitTransaction(finalizedDustTx);
 
@@ -305,13 +305,13 @@ export class MidnightWalletSDK {
         //     ]
         assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
         const unprovenTxRecipe = await this.walletObj?.transferTransaction(
-            this.shieldedSecretKeys,
-            this.dustSecretKey,
             transferInfo,
-            ttl,
+            {shieldedSecretKeys: this.shieldedSecretKeys,
+            dustSecretKey: this.dustSecretKey},
+            {ttl, payFees: true},
         );
 
-        const finalizedTx = await this.walletObj.finalizeTransaction(unprovenTxRecipe);
+        const finalizedTx = await this.walletObj.finalizeRecipe(unprovenTxRecipe);
 
         const submittedTxHash = await this.walletObj.submitTransaction(finalizedTx);
         return submittedTxHash;

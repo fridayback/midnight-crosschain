@@ -12,6 +12,8 @@ var walletSdkAddressFormat = require('@midnight-ntwrk/wallet-sdk-address-format'
 var assert3 = require('assert');
 var path = require('path');
 var __compactRuntime = require('@midnight-ntwrk/compact-runtime');
+var compactJs = require('@midnight-ntwrk/compact-js');
+var midnightJsTypes = require('@midnight-ntwrk/midnight-js-types');
 var midnightJsContracts = require('@midnight-ntwrk/midnight-js-contracts');
 var midnightJsLevelPrivateStateProvider = require('@midnight-ntwrk/midnight-js-level-private-state-provider');
 var midnightJsIndexerPublicDataProvider = require('@midnight-ntwrk/midnight-js-indexer-public-data-provider');
@@ -19,7 +21,6 @@ var midnightJsNodeZkConfigProvider = require('@midnight-ntwrk/midnight-js-node-z
 var midnightJsHttpClientProofProvider = require('@midnight-ntwrk/midnight-js-http-client-proof-provider');
 var midnightJsNetworkId = require('@midnight-ntwrk/midnight-js-network-id');
 var midnightJsUtils = require('@midnight-ntwrk/midnight-js-utils');
-var midnightJsTypes = require('@midnight-ntwrk/midnight-js-types');
 
 var _documentCurrentScript = typeof document !== 'undefined' ? document.currentScript : null;
 function _interopDefault (e) { return e && e.__esModule ? e : { default: e }; }
@@ -158,7 +159,7 @@ var MidnightWalletSDK = class {
       (payload) => signKeyStore.signData(payload)
       // this.walletAddress.dustAddress
     );
-    const finalizedDustTx = await this.walletObj.finalizeTransaction(dustRegistrationRecipe);
+    const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
     await this.walletObj.submitTransaction(finalizedDustTx);
     this.isGenerating = false;
   }
@@ -216,23 +217,29 @@ var MidnightWalletSDK = class {
   async transferTo(transferInfo, ttl) {
     assert3__default.default(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
     const unprovenTxRecipe = await this.walletObj?.transferTransaction(
-      this.shieldedSecretKeys,
-      this.dustSecretKey,
       transferInfo,
-      ttl
+      {
+        shieldedSecretKeys: this.shieldedSecretKeys,
+        dustSecretKey: this.dustSecretKey
+      },
+      { ttl, payFees: true }
     );
-    const finalizedTx = await this.walletObj.finalizeTransaction(unprovenTxRecipe);
+    const finalizedTx = await this.walletObj.finalizeRecipe(unprovenTxRecipe);
     const submittedTxHash = await this.walletObj.submitTransaction(finalizedTx);
     return submittedTxHash;
   }
 };
 
 // src/witnesses.ts
-var createCrossChainPrivateState = () => ({});
+var createPrivateState = (privateCounter) => ({});
+var createInitialPrivateState = (privateCounter) => createPrivateState();
 var witnesses = {
-  // TODO: Add witnesses
+  //   privateIncrement: ({ privateState }: WitnessContext<Ledger, CrossChainPrivateState>): [CrossChainPrivateState, []] => [
+  //     { privateCounter: privateState.privateCounter + 1 },
+  //     []
+  //   ]
 };
-__compactRuntime__namespace.checkRuntimeVersion("0.11.0");
+__compactRuntime__namespace.checkRuntimeVersion("0.14.0");
 var ProposalType;
 (function(ProposalType2) {
   ProposalType2[ProposalType2["AddAdmin"] = 0] = "AddAdmin";
@@ -302,7 +309,7 @@ var _Proposal_0 = class {
   }
   fromValue(value_0) {
     return {
-      type: _descriptor_6.fromValue(value_0),
+      pType: _descriptor_6.fromValue(value_0),
       addr: _descriptor_1.fromValue(value_0),
       addrUnshielded: _descriptor_7.fromValue(value_0),
       threshold: _descriptor_8.fromValue(value_0),
@@ -311,7 +318,7 @@ var _Proposal_0 = class {
     };
   }
   toValue(value_0) {
-    return _descriptor_6.toValue(value_0.type).concat(_descriptor_1.toValue(value_0.addr).concat(_descriptor_7.toValue(value_0.addrUnshielded).concat(_descriptor_8.toValue(value_0.threshold).concat(_descriptor_9.toValue(value_0.feeConfig).concat(_descriptor_10.toValue(value_0.smgPubkeys))))));
+    return _descriptor_6.toValue(value_0.pType).concat(_descriptor_1.toValue(value_0.addr).concat(_descriptor_7.toValue(value_0.addrUnshielded).concat(_descriptor_8.toValue(value_0.threshold).concat(_descriptor_9.toValue(value_0.feeConfig).concat(_descriptor_10.toValue(value_0.smgPubkeys))))));
   }
 };
 var _descriptor_11 = new _Proposal_0();
@@ -572,21 +579,21 @@ var _descriptor_32 = new _Either_2();
 var _descriptor_35 = __compactRuntime__namespace.CompactTypeField;
 var _descriptor_36 = new __compactRuntime__namespace.CompactTypeVector(2, _descriptor_0);
 var _descriptor_37 = new __compactRuntime__namespace.CompactTypeVector(3, _descriptor_35);
-var _descriptor_38 = new __compactRuntime__namespace.CompactTypeBytes(6);
+var _descriptor_38 = new __compactRuntime__namespace.CompactTypeBytes(21);
 var _CoinPreimage_0 = class {
   alignment() {
-    return _descriptor_19.alignment().concat(_descriptor_4.alignment().concat(_descriptor_0.alignment().concat(_descriptor_38.alignment())));
+    return _descriptor_38.alignment().concat(_descriptor_19.alignment().concat(_descriptor_4.alignment().concat(_descriptor_0.alignment())));
   }
   fromValue(value_0) {
     return {
+      domain_sep: _descriptor_38.fromValue(value_0),
       info: _descriptor_19.fromValue(value_0),
       dataType: _descriptor_4.fromValue(value_0),
-      data: _descriptor_0.fromValue(value_0),
-      domain_sep: _descriptor_38.fromValue(value_0)
+      data: _descriptor_0.fromValue(value_0)
     };
   }
   toValue(value_0) {
-    return _descriptor_19.toValue(value_0.info).concat(_descriptor_4.toValue(value_0.dataType).concat(_descriptor_0.toValue(value_0.data).concat(_descriptor_38.toValue(value_0.domain_sep))));
+    return _descriptor_38.toValue(value_0.domain_sep).concat(_descriptor_19.toValue(value_0.info).concat(_descriptor_4.toValue(value_0.dataType).concat(_descriptor_0.toValue(value_0.data))));
   }
 };
 var _descriptor_39 = new _CoinPreimage_0();
@@ -1973,12 +1980,12 @@ var Contract = class {
             contextOrig_0
           );
         }
-        if (!(typeof newProposal_0 === "object" && typeof newProposal_0.type === "number" && newProposal_0.type >= 0 && newProposal_0.type <= 8 && typeof newProposal_0.addr === "object" && newProposal_0.addr.bytes.buffer instanceof ArrayBuffer && newProposal_0.addr.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addr.bytes.length === 32 && typeof newProposal_0.addrUnshielded === "object" && newProposal_0.addrUnshielded.bytes.buffer instanceof ArrayBuffer && newProposal_0.addrUnshielded.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addrUnshielded.bytes.length === 32 && typeof newProposal_0.threshold === "bigint" && newProposal_0.threshold >= 0n && newProposal_0.threshold <= 340282366920938463463374607431768211455n && typeof newProposal_0.feeConfig === "object" && typeof newProposal_0.feeConfig.chainId === "bigint" && newProposal_0.feeConfig.chainId >= 0n && newProposal_0.feeConfig.chainId <= 4294967295n && typeof newProposal_0.feeConfig.fee === "bigint" && newProposal_0.feeConfig.fee >= 0n && newProposal_0.feeConfig.fee <= 340282366920938463463374607431768211455n && Array.isArray(newProposal_0.smgPubkeys) && newProposal_0.smgPubkeys.length === 29 && newProposal_0.smgPubkeys.every((t) => typeof t === "object" && t.bytes.buffer instanceof ArrayBuffer && t.bytes.BYTES_PER_ELEMENT === 1 && t.bytes.length === 32))) {
+        if (!(typeof newProposal_0 === "object" && typeof newProposal_0.pType === "number" && newProposal_0.pType >= 0 && newProposal_0.pType <= 8 && typeof newProposal_0.addr === "object" && newProposal_0.addr.bytes.buffer instanceof ArrayBuffer && newProposal_0.addr.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addr.bytes.length === 32 && typeof newProposal_0.addrUnshielded === "object" && newProposal_0.addrUnshielded.bytes.buffer instanceof ArrayBuffer && newProposal_0.addrUnshielded.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addrUnshielded.bytes.length === 32 && typeof newProposal_0.threshold === "bigint" && newProposal_0.threshold >= 0n && newProposal_0.threshold <= 340282366920938463463374607431768211455n && typeof newProposal_0.feeConfig === "object" && typeof newProposal_0.feeConfig.chainId === "bigint" && newProposal_0.feeConfig.chainId >= 0n && newProposal_0.feeConfig.chainId <= 4294967295n && typeof newProposal_0.feeConfig.fee === "bigint" && newProposal_0.feeConfig.fee >= 0n && newProposal_0.feeConfig.fee <= 340282366920938463463374607431768211455n && Array.isArray(newProposal_0.smgPubkeys) && newProposal_0.smgPubkeys.length === 29 && newProposal_0.smgPubkeys.every((t) => typeof t === "object" && t.bytes.buffer instanceof ArrayBuffer && t.bytes.BYTES_PER_ELEMENT === 1 && t.bytes.length === 32))) {
           __compactRuntime__namespace.typeError(
             "newProposal",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 743 char 1",
-            "struct Proposal<type: Enum<ProposalType, AddAdmin, RemoveAdmin, UpdateFeeShieldedReceiver, UpdateFeeUnshieldedReceiver, UpdateTokenManager, UpdateAdminThreshold, UpdateSMGPKThreshold, UpdateFeeCommonConfig, SetSmgPKS>, addr: struct ZswapCoinPublicKey<bytes: Bytes<32>>, addrUnshielded: struct UserAddress<bytes: Bytes<32>>, threshold: Uint<0..340282366920938463463374607431768211456>, feeConfig: struct FeeConfig<chainId: Uint<0..4294967296>, fee: Uint<0..340282366920938463463374607431768211456>>, smgPubkeys: Vector<29, struct ZswapCoinPublicKey<bytes: Bytes<32>>>>",
+            "struct Proposal<pType: Enum<ProposalType, AddAdmin, RemoveAdmin, UpdateFeeShieldedReceiver, UpdateFeeUnshieldedReceiver, UpdateTokenManager, UpdateAdminThreshold, UpdateSMGPKThreshold, UpdateFeeCommonConfig, SetSmgPKS>, addr: struct ZswapCoinPublicKey<bytes: Bytes<32>>, addrUnshielded: struct UserAddress<bytes: Bytes<32>>, threshold: Uint<0..340282366920938463463374607431768211456>, feeConfig: struct FeeConfig<chainId: Uint<0..4294967296>, fee: Uint<0..340282366920938463463374607431768211456>>, smgPubkeys: Vector<29, struct ZswapCoinPublicKey<bytes: Bytes<32>>>>",
             newProposal_0
           );
         }
@@ -3630,7 +3637,7 @@ var Contract = class {
         { ins: { cached: true, n: 2 } }
       ]
     );
-    state_0.data = context.currentQueryContext.state;
+    state_0.data = new __compactRuntime__namespace.ChargedState(context.currentQueryContext.state.state);
     return {
       currentContractState: state_0,
       currentPrivateState: context.currentPrivateState,
@@ -3983,7 +3990,7 @@ var Contract = class {
     );
     let t_0;
     const change_0 = (t_0 = input_0.value, __compactRuntime__namespace.assert(
-      !(t_0 < value_0),
+      t_0 >= value_0,
       "result of subtraction would be negative"
     ), t_0 - value_0);
     const output_0 = {
@@ -4149,18 +4156,18 @@ var Contract = class {
   }
   _coinCommitment_0(coin_0, recipient_0) {
     return this._persistentHash_0({
+      domain_sep: new Uint8Array([109, 105, 100, 110, 105, 103, 104, 116, 58, 122, 115, 119, 97, 112, 45, 99, 99, 91, 118, 49, 93]),
       info: coin_0,
       dataType: recipient_0.is_left,
-      data: recipient_0.is_left ? recipient_0.left.bytes : recipient_0.right.bytes,
-      domain_sep: new Uint8Array([109, 100, 110, 58, 99, 99])
+      data: recipient_0.is_left ? recipient_0.left.bytes : recipient_0.right.bytes
     });
   }
   _coinNullifier_0(coin_0, addr_0) {
     return this._persistentHash_0({
+      domain_sep: new Uint8Array([109, 105, 100, 110, 105, 103, 104, 116, 58, 122, 115, 119, 97, 112, 45, 99, 110, 91, 118, 49, 93]),
       info: coin_0,
       dataType: false,
-      data: addr_0.bytes,
-      domain_sep: new Uint8Array([109, 100, 110, 58, 99, 110])
+      data: addr_0.bytes
     });
   }
   _blockTimeLt_0(context, partialProofData, time_0) {
@@ -5900,7 +5907,7 @@ var Contract = class {
       "delta must be less than or equal to oldTotalSupply"
     );
     const newTotalSupply_0 = isAdd_0 ? oldTotalSupply_0 + delta_0 : (__compactRuntime__namespace.assert(
-      !(oldTotalSupply_0 < delta_0),
+      oldTotalSupply_0 >= delta_0,
       "result of subtraction would be negative"
     ), oldTotalSupply_0 - delta_0);
     if (this._equal_5(newTotalSupply_0, 0n)) {
@@ -7507,7 +7514,7 @@ var Contract = class {
       "userFeeBalance not enough"
     );
     const newBalance_0 = isAdd_0 ? oldBalance_0 + delta_0 : (__compactRuntime__namespace.assert(
-      !(oldBalance_0 < delta_0),
+      oldBalance_0 >= delta_0,
       "result of subtraction would be negative"
     ), oldBalance_0 - delta_0);
     if (this._equal_11(newBalance_0, 0n)) {
@@ -7702,7 +7709,7 @@ var Contract = class {
       "delta must be less than or equal to oldAmount"
     );
     const newAmount_0 = isAdd_0 ? oldAmount_0 + delta_0 : (__compactRuntime__namespace.assert(
-      !(oldAmount_0 < delta_0),
+      oldAmount_0 >= delta_0,
       "result of subtraction would be negative"
     ), oldAmount_0 - delta_0);
     if (this._equal_12(newAmount_0, 0n)) {
@@ -7885,7 +7892,7 @@ var Contract = class {
       "delta must be less than or equal to oldAmount"
     );
     const newAmount_0 = isAdd_0 ? oldAmount_0 + delta_0 : (__compactRuntime__namespace.assert(
-      !(oldAmount_0 < delta_0),
+      oldAmount_0 >= delta_0,
       "result of subtraction would be negative"
     ), oldAmount_0 - delta_0);
     if (this._equal_13(newAmount_0, 0n)) {
@@ -10946,7 +10953,7 @@ var Contract = class {
   }
   _newProposal_0(context, partialProofData, newProposal_0) {
     __compactRuntime__namespace.assert(
-      newProposal_0.type !== 7 && newProposal_0.type !== 4,
+      newProposal_0.pType !== 7 && newProposal_0.pType !== 4,
       "ProposalType not supoorted"
     );
     const tmp_0 = 1n;
@@ -11471,34 +11478,34 @@ var Contract = class {
         } }
       ]
     ).value));
-    if (currentProposal_0.type === 0) {
+    if (currentProposal_0.pType === 0) {
       this._addAdmin_0(context, partialProofData, currentProposal_0.addr);
     } else {
-      if (currentProposal_0.type === 1) {
+      if (currentProposal_0.pType === 1) {
         this._removeAdmin_0(context, partialProofData, currentProposal_0.addr);
       } else {
-        if (currentProposal_0.type === 2) {
+        if (currentProposal_0.pType === 2) {
           this._setFeeShieldedReceiver_0(
             context,
             partialProofData,
             currentProposal_0.addr
           );
         } else {
-          if (currentProposal_0.type === 3) {
+          if (currentProposal_0.pType === 3) {
             this._setFeeUnshieldedReceiver_0(
               context,
               partialProofData,
               currentProposal_0.addrUnshielded
             );
           } else {
-            if (currentProposal_0.type === 4) {
+            if (currentProposal_0.pType === 4) {
               this._setTokenManager_0(
                 context,
                 partialProofData,
                 currentProposal_0.addr
               );
             } else {
-              if (currentProposal_0.type === 5) {
+              if (currentProposal_0.pType === 5) {
                 this._setAdminThreshold_0(
                   context,
                   partialProofData,
@@ -11510,7 +11517,7 @@ var Contract = class {
                   })(currentProposal_0.threshold)
                 );
               } else {
-                if (currentProposal_0.type === 6) {
+                if (currentProposal_0.pType === 6) {
                   this._setSmgPKThreold_0(
                     context,
                     partialProofData,
@@ -11522,7 +11529,7 @@ var Contract = class {
                     })(currentProposal_0.threshold)
                   );
                 } else {
-                  if (currentProposal_0.type === 7) {
+                  if (currentProposal_0.pType === 7) {
                     this._setFeeCommonConfig_0(
                       context,
                       partialProofData,
@@ -11530,7 +11537,7 @@ var Contract = class {
                       currentProposal_0.feeConfig.fee
                     );
                   } else {
-                    if (currentProposal_0.type === 8) {
+                    if (currentProposal_0.pType === 8) {
                       this._setSmgPksks_0(
                         context,
                         partialProofData,
@@ -11651,7 +11658,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    if (currentProposal_0.type === 1) {
+    if (currentProposal_0.pType === 1) {
       __compactRuntime__namespace.queryLedgerState(
         context,
         partialProofData,
@@ -16733,6 +16740,10 @@ function pad(s, n) {
   return paddedArray;
 }
 var crosschainContractInstance = new Contract(witnesses);
+var CompiledSimpleContract = compactJs.CompiledContract.make("CrossChain", Contract).pipe(
+  compactJs.CompiledContract.withWitnesses(witnesses),
+  compactJs.CompiledContract.withCompiledFileAssets("./managed/crosschain")
+);
 var createWalletAndMidnightProvider = async (wallet) => {
   const walletFacade = wallet.getWalletInstance();
   assert3__default.default(walletFacade, "wallet not initialized");
@@ -16740,9 +16751,8 @@ var createWalletAndMidnightProvider = async (wallet) => {
     getCoinPublicKey: () => wallet.getShieldedSecretKeys().coinPublicKey,
     //() => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
-    // balanceTx(tx: UnprovenTransaction, newCoins?: ShieldedCoinInfo[], ttl?: Date): Promise<FinalizedTransaction> {
-    balanceTx(tx, newCoins, ttl) {
-      return walletFacade.balanceTransaction(wallet.getShieldedSecretKeys(), wallet.getDustSecretKey(), tx, ttl ? ttl : new Date(Date.now() + 1800 * 1e3)).then((tx2) => walletFacade.finalizeTransaction(tx2));
+    balanceTx(tx, ttl) {
+      return walletFacade.balanceUnboundTransaction(tx, { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() }, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1e3) }).then((tx2) => walletFacade.finalizeRecipe(tx2));
     },
     submitTx(tx) {
       return walletFacade.submitTransaction(tx);
@@ -16780,7 +16790,7 @@ var CrossChainApi = class _CrossChainApi {
   }
   async deployContract(adminThreshold, smgPkThreshold, signingKey) {
     this.crossChainContract = await midnightJsContracts.deployContract(this.providers, {
-      contract: crosschainContractInstance,
+      compiledContract: CompiledSimpleContract,
       privateStateId: CrossChainPrivateStateId,
       initialPrivateState: {},
       signingKey,
@@ -16791,7 +16801,7 @@ var CrossChainApi = class _CrossChainApi {
   async join(contractAddress) {
     this.crossChainContract = await midnightJsContracts.findDeployedContract(this.providers, {
       contractAddress,
-      contract: crosschainContractInstance,
+      compiledContract: CompiledSimpleContract,
       privateStateId: CrossChainPrivateStateId,
       initialPrivateState: {}
     });
@@ -17195,48 +17205,48 @@ var CrossChainApi = class _CrossChainApi {
   async addAdminProposal(addr) {
     const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
     let proposal = this.defaultProsal();
-    proposal.type = ProposalType.AddAdmin;
+    proposal.pType = ProposalType.AddAdmin;
     proposal.addr = addr_0;
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
   async removeAdminProposal(addr) {
     const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
     let proposal = this.defaultProsal();
-    proposal.type = ProposalType.RemoveAdmin;
+    proposal.pType = ProposalType.RemoveAdmin;
     proposal.addr = addr_0;
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
   async updateFeeShieldedReceiverProposal(addr) {
     const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
     let proposal = this.defaultProsal();
-    proposal.type = ProposalType.UpdateFeeShieldedReceiver;
+    proposal.pType = ProposalType.UpdateFeeShieldedReceiver;
     proposal.addr = addr_0;
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
   async updateFeeUnshieldedReceiverProposal(addr) {
     const addr_0 = { bytes: __compactRuntime.encodeUserAddress(addr) };
     let proposal = this.defaultProsal();
-    proposal.type = ProposalType.UpdateFeeUnshieldedReceiver;
+    proposal.pType = ProposalType.UpdateFeeUnshieldedReceiver;
     proposal.addr = addr_0;
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
   async updateTokenManagerProposal(addr) {
     const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
     let proposal = this.defaultProsal();
-    proposal.type = ProposalType.UpdateTokenManager;
+    proposal.pType = ProposalType.UpdateTokenManager;
     proposal.addr = addr_0;
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
   async updateAdminThresholdProposal(threshold) {
     const threshold_0 = BigInt(threshold);
     let proposal = this.defaultProsal();
-    proposal.type = ProposalType.UpdateAdminThreshold;
+    proposal.pType = ProposalType.UpdateAdminThreshold;
     proposal.threshold = threshold_0;
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
   defaultProsal() {
     return {
-      type: ProposalType.UpdateAdminThreshold,
+      pType: ProposalType.UpdateAdminThreshold,
       addr: { bytes: fromHexWithOrNoPrefix("") },
       addrUnshielded: { bytes: fromHexWithOrNoPrefix("") },
       threshold: BigInt(0),
@@ -17247,7 +17257,7 @@ var CrossChainApi = class _CrossChainApi {
   async updateSMGPKThresholdProposal(threshold) {
     const threshold_0 = BigInt(threshold);
     let proposal = this.defaultProsal();
-    proposal.type = ProposalType.UpdateSMGPKThreshold;
+    proposal.pType = ProposalType.UpdateSMGPKThreshold;
     proposal.threshold = threshold_0;
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
@@ -17255,7 +17265,7 @@ var CrossChainApi = class _CrossChainApi {
     const chainId_0 = BigInt(chainId);
     const fee_0 = BigInt(fee);
     let proposal = this.defaultProsal();
-    proposal.type = ProposalType.UpdateFeeCommonConfig;
+    proposal.pType = ProposalType.UpdateFeeCommonConfig;
     proposal.feeConfig = { fee: fee_0, chainId: chainId_0 };
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
@@ -17283,30 +17293,23 @@ var CrossChainApi = class _CrossChainApi {
     return await this.crossChainContract.contractMaintenanceTx.replaceAuthority(newKey);
   }
   async upgradeContract(circuitId, newCircuitHex) {
-    let newVK;
     if (newCircuitHex) {
-      newVK = midnightJsTypes.createVerifierKey(midnightJsUtils.fromHex(newCircuitHex));
+      midnightJsTypes.createVerifierKey(midnightJsUtils.fromHex(newCircuitHex));
     } else {
-      newVK = await this.providers.zkConfigProvider.getVerifierKey(circuitId);
+      await this.providers.zkConfigProvider.getVerifierKey(circuitId);
     }
-    await this.crossChainContract.circuitMaintenanceTx[circuitId].removeVerifierKey();
-    const res2 = await this.crossChainContract.circuitMaintenanceTx[circuitId].insertVerifierKey(newVK);
-    return res2;
   }
 };
 var upgradeContractCircuit = async (providers, contractAddress, circuitId, newVkHex) => {
   midnightJsUtils.assertIsContractAddress(contractAddress);
-  let newVk;
   if (newVkHex) {
-    newVk = midnightJsTypes.createVerifierKey(midnightJsUtils.fromHex(newVkHex));
+    midnightJsTypes.createVerifierKey(midnightJsUtils.fromHex(newVkHex));
   } else {
-    newVk = await providers.zkConfigProvider.getVerifierKey(circuitId);
+    await providers.zkConfigProvider.getVerifierKey(circuitId);
   }
-  return await midnightJsContracts.submitInsertVerifierKeyTx(providers, contractAddress, circuitId, newVk);
 };
 var removeContractCircuit = async (providers, contractAddress, circuitId) => {
   midnightJsUtils.assertIsContractAddress(contractAddress);
-  return await midnightJsContracts.submitRemoveVerifierKeyTx(providers, contractAddress, circuitId);
 };
 var getTreasuryCoinsFromState = (state) => {
   let treasuryCoins = /* @__PURE__ */ new Map();
@@ -17332,12 +17335,14 @@ var initNetwork = (network) => {
   midnightJsNetworkId.setNetworkId(network);
 };
 
+exports.CompiledSimpleContract = CompiledSimpleContract;
 exports.CrossChainApi = CrossChainApi;
 exports.CrossChainPrivateStateId = CrossChainPrivateStateId;
 exports.MidnightWalletSDK = MidnightWalletSDK;
 exports.ZKConfig = ZKConfig;
 exports.configuration = configuration;
-exports.createCrossChainPrivateState = createCrossChainPrivateState;
+exports.createInitialPrivateState = createInitialPrivateState;
+exports.createPrivateState = createPrivateState;
 exports.createWalletAndMidnightProvider = createWalletAndMidnightProvider;
 exports.crosschainContractInstance = crosschainContractInstance;
 exports.currentDir = currentDir;

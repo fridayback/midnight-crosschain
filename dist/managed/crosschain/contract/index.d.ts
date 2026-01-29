@@ -24,7 +24,7 @@ export type ReserveOfToken = { total: bigint; isMappingToken: boolean };
 
 export type FeeConfig = { chainId: bigint; fee: bigint };
 
-export type Proposal = { type: ProposalType;
+export type Proposal = { pType: ProposalType;
                          addr: ZswapCoinPublicKey;
                          addrUnshielded: UserAddress;
                          threshold: bigint;
@@ -79,7 +79,7 @@ export type QualifiedShieldedCoinInfo = { nonce: Uint8Array;
                                           mt_index: bigint
                                         };
 
-export type CurvePoint = { x: bigint; y: bigint };
+export type NativePoint = { x: bigint, y: bigint };
 
 export type ZswapCoinPublicKey = { bytes: Uint8Array };
 

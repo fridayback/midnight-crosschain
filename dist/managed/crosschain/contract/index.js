@@ -1,5 +1,5 @@
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
-__compactRuntime.checkRuntimeVersion('0.11.0');
+__compactRuntime.checkRuntimeVersion('0.14.0');
 
 export var ProposalType;
 (function (ProposalType) {
@@ -85,7 +85,7 @@ class _Proposal_0 {
   }
   fromValue(value_0) {
     return {
-      type: _descriptor_6.fromValue(value_0),
+      pType: _descriptor_6.fromValue(value_0),
       addr: _descriptor_1.fromValue(value_0),
       addrUnshielded: _descriptor_7.fromValue(value_0),
       threshold: _descriptor_8.fromValue(value_0),
@@ -94,7 +94,7 @@ class _Proposal_0 {
     }
   }
   toValue(value_0) {
-    return _descriptor_6.toValue(value_0.type).concat(_descriptor_1.toValue(value_0.addr).concat(_descriptor_7.toValue(value_0.addrUnshielded).concat(_descriptor_8.toValue(value_0.threshold).concat(_descriptor_9.toValue(value_0.feeConfig).concat(_descriptor_10.toValue(value_0.smgPubkeys))))));
+    return _descriptor_6.toValue(value_0.pType).concat(_descriptor_1.toValue(value_0.addr).concat(_descriptor_7.toValue(value_0.addrUnshielded).concat(_descriptor_8.toValue(value_0.threshold).concat(_descriptor_9.toValue(value_0.feeConfig).concat(_descriptor_10.toValue(value_0.smgPubkeys))))));
   }
 }
 
@@ -430,22 +430,22 @@ const _descriptor_36 = new __compactRuntime.CompactTypeVector(2, _descriptor_0);
 
 const _descriptor_37 = new __compactRuntime.CompactTypeVector(3, _descriptor_35);
 
-const _descriptor_38 = new __compactRuntime.CompactTypeBytes(6);
+const _descriptor_38 = new __compactRuntime.CompactTypeBytes(21);
 
 class _CoinPreimage_0 {
   alignment() {
-    return _descriptor_19.alignment().concat(_descriptor_4.alignment().concat(_descriptor_0.alignment().concat(_descriptor_38.alignment())));
+    return _descriptor_38.alignment().concat(_descriptor_19.alignment().concat(_descriptor_4.alignment().concat(_descriptor_0.alignment())));
   }
   fromValue(value_0) {
     return {
+      domain_sep: _descriptor_38.fromValue(value_0),
       info: _descriptor_19.fromValue(value_0),
       dataType: _descriptor_4.fromValue(value_0),
-      data: _descriptor_0.fromValue(value_0),
-      domain_sep: _descriptor_38.fromValue(value_0)
+      data: _descriptor_0.fromValue(value_0)
     }
   }
   toValue(value_0) {
-    return _descriptor_19.toValue(value_0.info).concat(_descriptor_4.toValue(value_0.dataType).concat(_descriptor_0.toValue(value_0.data).concat(_descriptor_38.toValue(value_0.domain_sep))));
+    return _descriptor_38.toValue(value_0.domain_sep).concat(_descriptor_19.toValue(value_0.info).concat(_descriptor_4.toValue(value_0.dataType).concat(_descriptor_0.toValue(value_0.data))));
   }
 }
 
@@ -1645,11 +1645,11 @@ export class Contract {
                                      'CircuitContext',
                                      contextOrig_0)
         }
-        if (!(typeof(newProposal_0) === 'object' && typeof(newProposal_0.type) === 'number' && newProposal_0.type >= 0 && newProposal_0.type <= 8 && typeof(newProposal_0.addr) === 'object' && newProposal_0.addr.bytes.buffer instanceof ArrayBuffer && newProposal_0.addr.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addr.bytes.length === 32 && typeof(newProposal_0.addrUnshielded) === 'object' && newProposal_0.addrUnshielded.bytes.buffer instanceof ArrayBuffer && newProposal_0.addrUnshielded.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addrUnshielded.bytes.length === 32 && typeof(newProposal_0.threshold) === 'bigint' && newProposal_0.threshold >= 0n && newProposal_0.threshold <= 340282366920938463463374607431768211455n && typeof(newProposal_0.feeConfig) === 'object' && typeof(newProposal_0.feeConfig.chainId) === 'bigint' && newProposal_0.feeConfig.chainId >= 0n && newProposal_0.feeConfig.chainId <= 4294967295n && typeof(newProposal_0.feeConfig.fee) === 'bigint' && newProposal_0.feeConfig.fee >= 0n && newProposal_0.feeConfig.fee <= 340282366920938463463374607431768211455n && Array.isArray(newProposal_0.smgPubkeys) && newProposal_0.smgPubkeys.length === 29 && newProposal_0.smgPubkeys.every((t) => typeof(t) === 'object' && t.bytes.buffer instanceof ArrayBuffer && t.bytes.BYTES_PER_ELEMENT === 1 && t.bytes.length === 32))) {
+        if (!(typeof(newProposal_0) === 'object' && typeof(newProposal_0.pType) === 'number' && newProposal_0.pType >= 0 && newProposal_0.pType <= 8 && typeof(newProposal_0.addr) === 'object' && newProposal_0.addr.bytes.buffer instanceof ArrayBuffer && newProposal_0.addr.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addr.bytes.length === 32 && typeof(newProposal_0.addrUnshielded) === 'object' && newProposal_0.addrUnshielded.bytes.buffer instanceof ArrayBuffer && newProposal_0.addrUnshielded.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addrUnshielded.bytes.length === 32 && typeof(newProposal_0.threshold) === 'bigint' && newProposal_0.threshold >= 0n && newProposal_0.threshold <= 340282366920938463463374607431768211455n && typeof(newProposal_0.feeConfig) === 'object' && typeof(newProposal_0.feeConfig.chainId) === 'bigint' && newProposal_0.feeConfig.chainId >= 0n && newProposal_0.feeConfig.chainId <= 4294967295n && typeof(newProposal_0.feeConfig.fee) === 'bigint' && newProposal_0.feeConfig.fee >= 0n && newProposal_0.feeConfig.fee <= 340282366920938463463374607431768211455n && Array.isArray(newProposal_0.smgPubkeys) && newProposal_0.smgPubkeys.length === 29 && newProposal_0.smgPubkeys.every((t) => typeof(t) === 'object' && t.bytes.buffer instanceof ArrayBuffer && t.bytes.BYTES_PER_ELEMENT === 1 && t.bytes.length === 32))) {
           __compactRuntime.typeError('newProposal',
                                      'argument 1 (argument 2 as invoked from Typescript)',
                                      'crosschain.compact line 743 char 1',
-                                     'struct Proposal<type: Enum<ProposalType, AddAdmin, RemoveAdmin, UpdateFeeShieldedReceiver, UpdateFeeUnshieldedReceiver, UpdateTokenManager, UpdateAdminThreshold, UpdateSMGPKThreshold, UpdateFeeCommonConfig, SetSmgPKS>, addr: struct ZswapCoinPublicKey<bytes: Bytes<32>>, addrUnshielded: struct UserAddress<bytes: Bytes<32>>, threshold: Uint<0..340282366920938463463374607431768211456>, feeConfig: struct FeeConfig<chainId: Uint<0..4294967296>, fee: Uint<0..340282366920938463463374607431768211456>>, smgPubkeys: Vector<29, struct ZswapCoinPublicKey<bytes: Bytes<32>>>>',
+                                     'struct Proposal<pType: Enum<ProposalType, AddAdmin, RemoveAdmin, UpdateFeeShieldedReceiver, UpdateFeeUnshieldedReceiver, UpdateTokenManager, UpdateAdminThreshold, UpdateSMGPKThreshold, UpdateFeeCommonConfig, SetSmgPKS>, addr: struct ZswapCoinPublicKey<bytes: Bytes<32>>, addrUnshielded: struct UserAddress<bytes: Bytes<32>>, threshold: Uint<0..340282366920938463463374607431768211456>, feeConfig: struct FeeConfig<chainId: Uint<0..4294967296>, fee: Uint<0..340282366920938463463374607431768211456>>, smgPubkeys: Vector<29, struct ZswapCoinPublicKey<bytes: Bytes<32>>>>',
                                      newProposal_0)
         }
         const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
@@ -2613,7 +2613,7 @@ export class Contract {
                                                                 .value
                                                             )) } },
                                        { ins: { cached: true, n: 2 } }]);
-    state_0.data = context.currentQueryContext.state;
+    state_0.data = new __compactRuntime.ChargedState(context.currentQueryContext.state.state);
     return {
       currentContractState: state_0,
       currentPrivateState: context.currentPrivateState,
@@ -2850,7 +2850,7 @@ export class Contract {
                                        { swap: { n: 0 } }]);
     let t_0;
     const change_0 = (t_0 = input_0.value,
-                      (__compactRuntime.assert(!(t_0 < value_0),
+                      (__compactRuntime.assert(t_0 >= value_0,
                                                'result of subtraction would be negative'),
                        t_0 - value_0));
     const output_0 = { nonce:
@@ -2950,21 +2950,21 @@ export class Contract {
              mt_index: 0n };
   }
   _coinCommitment_0(coin_0, recipient_0) {
-    return this._persistentHash_0({ info: coin_0,
+    return this._persistentHash_0({ domain_sep:
+                                      new Uint8Array([109, 105, 100, 110, 105, 103, 104, 116, 58, 122, 115, 119, 97, 112, 45, 99, 99, 91, 118, 49, 93]),
+                                    info: coin_0,
                                     dataType: recipient_0.is_left,
                                     data:
                                       recipient_0.is_left ?
                                       recipient_0.left.bytes :
-                                      recipient_0.right.bytes,
-                                    domain_sep:
-                                      new Uint8Array([109, 100, 110, 58, 99, 99]) });
+                                      recipient_0.right.bytes });
   }
   _coinNullifier_0(coin_0, addr_0) {
-    return this._persistentHash_0({ info: coin_0,
+    return this._persistentHash_0({ domain_sep:
+                                      new Uint8Array([109, 105, 100, 110, 105, 103, 104, 116, 58, 122, 115, 119, 97, 112, 45, 99, 110, 91, 118, 49, 93]),
+                                    info: coin_0,
                                     dataType: false,
-                                    data: addr_0.bytes,
-                                    domain_sep:
-                                      new Uint8Array([109, 100, 110, 58, 99, 110]) });
+                                    data: addr_0.bytes });
   }
   _blockTimeLt_0(context, partialProofData, time_0) {
     return _descriptor_4.fromValue(__compactRuntime.queryLedgerState(context,
@@ -3979,9 +3979,9 @@ export class Contract {
                             'delta must be less than or equal to oldTotalSupply');
     const newTotalSupply_0 = isAdd_0 ?
                              oldTotalSupply_0 + delta_0 :
-                             (__compactRuntime.assert(!(oldTotalSupply_0
-                                                        <
-                                                        delta_0),
+                             (__compactRuntime.assert(oldTotalSupply_0
+                                                      >=
+                                                      delta_0,
                                                       'result of subtraction would be negative'),
                               oldTotalSupply_0 - delta_0);
     if (this._equal_5(newTotalSupply_0, 0n)) {
@@ -4808,7 +4808,7 @@ export class Contract {
                             'userFeeBalance not enough');
     const newBalance_0 = isAdd_0 ?
                          oldBalance_0 + delta_0 :
-                         (__compactRuntime.assert(!(oldBalance_0 < delta_0),
+                         (__compactRuntime.assert(oldBalance_0 >= delta_0,
                                                   'result of subtraction would be negative'),
                           oldBalance_0 - delta_0);
     if (this._equal_11(newBalance_0, 0n)) {
@@ -4927,7 +4927,7 @@ export class Contract {
                             'delta must be less than or equal to oldAmount');
     const newAmount_0 = isAdd_0 ?
                         oldAmount_0 + delta_0 :
-                        (__compactRuntime.assert(!(oldAmount_0 < delta_0),
+                        (__compactRuntime.assert(oldAmount_0 >= delta_0,
                                                  'result of subtraction would be negative'),
                          oldAmount_0 - delta_0);
     if (this._equal_12(newAmount_0, 0n)) {
@@ -5035,7 +5035,7 @@ export class Contract {
                             'delta must be less than or equal to oldAmount');
     const newAmount_0 = isAdd_0 ?
                         oldAmount_0 + delta_0 :
-                        (__compactRuntime.assert(!(oldAmount_0 < delta_0),
+                        (__compactRuntime.assert(oldAmount_0 >= delta_0,
                                                  'result of subtraction would be negative'),
                          oldAmount_0 - delta_0);
     if (this._equal_13(newAmount_0, 0n)) {
@@ -6591,7 +6591,9 @@ export class Contract {
     return [];
   }
   _newProposal_0(context, partialProofData, newProposal_0) {
-    __compactRuntime.assert(newProposal_0.type !== 7 && newProposal_0.type !== 4,
+    __compactRuntime.assert(newProposal_0.pType !== 7
+                            &&
+                            newProposal_0.pType !== 4,
                             'ProposalType not supoorted');
     const tmp_0 = 1n;
     __compactRuntime.queryLedgerState(context,
@@ -6861,28 +6863,28 @@ export class Contract {
                                                                                                                       alignment: _descriptor_5.alignment() } }] } },
                                                                                            { popeq: { cached: false,
                                                                                                       result: undefined } }]).value));
-    if (currentProposal_0.type === 0) {
+    if (currentProposal_0.pType === 0) {
       this._addAdmin_0(context, partialProofData, currentProposal_0.addr);
     } else {
-      if (currentProposal_0.type === 1) {
+      if (currentProposal_0.pType === 1) {
         this._removeAdmin_0(context, partialProofData, currentProposal_0.addr);
       } else {
-        if (currentProposal_0.type === 2) {
+        if (currentProposal_0.pType === 2) {
           this._setFeeShieldedReceiver_0(context,
                                          partialProofData,
                                          currentProposal_0.addr);
         } else {
-          if (currentProposal_0.type === 3) {
+          if (currentProposal_0.pType === 3) {
             this._setFeeUnshieldedReceiver_0(context,
                                              partialProofData,
                                              currentProposal_0.addrUnshielded);
           } else {
-            if (currentProposal_0.type === 4) {
+            if (currentProposal_0.pType === 4) {
               this._setTokenManager_0(context,
                                       partialProofData,
                                       currentProposal_0.addr);
             } else {
-              if (currentProposal_0.type === 5) {
+              if (currentProposal_0.pType === 5) {
                 this._setAdminThreshold_0(context,
                                           partialProofData,
                                           ((t1) => {
@@ -6892,7 +6894,7 @@ export class Contract {
                                             return t1;
                                           })(currentProposal_0.threshold));
               } else {
-                if (currentProposal_0.type === 6) {
+                if (currentProposal_0.pType === 6) {
                   this._setSmgPKThreold_0(context,
                                           partialProofData,
                                           ((t1) => {
@@ -6902,13 +6904,13 @@ export class Contract {
                                             return t1;
                                           })(currentProposal_0.threshold));
                 } else {
-                  if (currentProposal_0.type === 7) {
+                  if (currentProposal_0.pType === 7) {
                     this._setFeeCommonConfig_0(context,
                                                partialProofData,
                                                currentProposal_0.feeConfig.chainId,
                                                currentProposal_0.feeConfig.fee);
                   } else {
-                    if (currentProposal_0.type === 8) {
+                    if (currentProposal_0.pType === 8) {
                       this._setSmgPksks_0(context,
                                           partialProofData,
                                           currentProposal_0.smgPubkeys);
@@ -6973,7 +6975,7 @@ export class Contract {
                                                                                               alignment: _descriptor_5.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } },
                                        { ins: { cached: true, n: 1 } }]);
-    if (currentProposal_0.type === 1) {
+    if (currentProposal_0.pType === 1) {
       __compactRuntime.queryLedgerState(context,
                                         partialProofData,
                                         [

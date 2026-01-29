@@ -1038,7 +1038,7 @@
             "name": "Proposal",
             "elements": [
               {
-                "name": "type",
+                "name": "pType",
                 "type": {
                   "type-name": "Enum",
                   "name": "ProposalType",

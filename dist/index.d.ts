@@ -10,9 +10,10 @@ import { DefaultV1Configuration } from '@midnight-ntwrk/wallet-sdk-shielded/dist
 import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
 import * as _midnight_ntwrk_midnight_js_types from '@midnight-ntwrk/midnight-js-types';
-import { MidnightProviders, ImpureCircuitId, WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
+import { MidnightProviders, WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { SigningKey, ContractAddress, ShieldedTokenType, RawTokenType } from '@midnight-ntwrk/compact-runtime';
+import { CompiledContract, ImpureCircuitId } from '@midnight-ntwrk/compact-js';
 import { DeployedContract, FoundContract, FinalizedCallTxData } from '@midnight-ntwrk/midnight-js-contracts';
 
 type Configuration = DefaultV1Configuration & DefaultV1Configuration$1 & {
@@ -77,7 +78,8 @@ declare class MidnightWalletSDK {
 }
 
 type CrossChainPrivateState = {};
-declare const createCrossChainPrivateState: () => {};
+declare const createPrivateState: (privateCounter: number) => CrossChainPrivateState;
+declare const createInitialPrivateState: (privateCounter: number) => CrossChainPrivateState;
 declare const witnesses: {};
 
 type ClaimCoinInfo = { receiver: ZswapCoinPublicKey;
@@ -104,7 +106,7 @@ type ReserveOfToken = { total: bigint; isMappingToken: boolean };
 
 type FeeConfig = { chainId: bigint; fee: bigint };
 
-type Proposal = { type: ProposalType;
+type Proposal = { pType: ProposalType;
                          addr: ZswapCoinPublicKey;
                          addrUnshielded: UserAddress;
                          threshold: bigint;
@@ -524,6 +526,7 @@ interface Config {
     readonly zkConfigPath: string;
 }
 declare const crosschainContractInstance: CrossChainContract;
+declare const CompiledSimpleContract: CompiledContract.CompiledContract<Contract<any, any>, any, never>;
 declare const createWalletAndMidnightProvider: (wallet: MidnightWalletSDK) => Promise<WalletProvider & MidnightProvider>;
 declare class CrossChainApi {
     providers: CrossChainProviders;
@@ -657,13 +660,13 @@ declare class CrossChainApi {
     executeProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "executeProposal">>;
     removeExpiredHisTxs(txs: string[]): Promise<FinalizedCallTxData<CrossChainContract, "removeExpiredHisTxs">>;
     updateContractAuthority(newKey: SigningKey): Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
-    upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
+    upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<void>;
 }
-declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
-declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string) => Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
+declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<void>;
+declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string) => Promise<void>;
 declare const getTreasuryCoinsFromState: (state: Ledger) => Map<string, Map<bigint, QualifiedShieldedCoinInfo>>;
 declare const genSigningKey: () => string;
 declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const initNetwork: (network: "mainnet" | "testnet-02" | "preview" | "devnet" | "undeployed") => void;
 
-export { type Address, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createCrossChainPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genSigningKey, getCoinPublicKeyFromShieldAddress, getDirname, getTreasuryCoinsFromState, initFacadeWallet, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { type Address, CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genSigningKey, getCoinPublicKeyFromShieldAddress, getDirname, getTreasuryCoinsFromState, initFacadeWallet, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, waitForFullySynced, witnesses };

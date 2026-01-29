@@ -13,12 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pragma language_version >= 0.15.0;
+pragma language_version >= 0.20.0;
 
 import CompactStandardLibrary;
 
 
-export { ShieldedCoinInfo, QualifiedShieldedCoinInfo, CurvePoint, ZswapCoinPublicKey
+export { ShieldedCoinInfo, QualifiedShieldedCoinInfo, NativePoint, ZswapCoinPublicKey
 ,TokenPairInfo,FeeConfig,ProposalType,Proposal,CrossOutBound,UserAddress
 , CrossProposal,ClaimMappingTokenInfo,ClaimCoinInfo,ReserveOfToken
 ,ExecuteCrossProposalInfo,SmgEvent}
@@ -47,8 +47,8 @@ export ledger feeCommonConfig: Map<Uint<32>, Uint<128>>;
 export ledger feeShieldedReceiver: ZswapCoinPublicKey;
 export ledger feeUnshieldedReceiver: UserAddress;
 // smg related state
-// export ledger smgPubkeys: Map<Uint<8>,CurvePoint>;
-// export ledger smgPubkeysToIndex: Map<CurvePoint, Uint<8>>;
+// export ledger smgPubkeys: Map<Uint<8>,NativePoint>;
+// export ledger smgPubkeysToIndex: Map<NativePoint, Uint<8>>;
 export ledger smgPKThreshold: Uint<8>;
 // export ledger smgPKCount: Uint<8>;
 
@@ -109,7 +109,7 @@ export struct FeeConfig{
 }
 
 export struct Proposal{
-  type: ProposalType;
+  pType: ProposalType;
   addr: ZswapCoinPublicKey;
   addrUnshielded: UserAddress;
   threshold: Uint<128>;
@@ -741,7 +741,7 @@ export circuit removeTokenPair(tokenPairId: Uint<32>): [] {
 }
 
 export circuit newProposal(newProposal: Proposal): [] {
-  assert(disclose(newProposal.type) != ProposalType.UpdateFeeCommonConfig && disclose(newProposal.type) != ProposalType.UpdateTokenManager, "ProposalType not supoorted");
+  assert(disclose(newProposal.pType) != ProposalType.UpdateFeeCommonConfig && disclose(newProposal.pType) != ProposalType.UpdateTokenManager, "ProposalType not supoorted");
   proposalId.increment(1);
 
   proposals.insert(proposalId as Field as Uint<32>, disclose(newProposal));
@@ -765,23 +765,23 @@ export circuit executeProposal(proposalId: Uint<32>): [] {
 
 
   const currentProposal = proposals.lookup(currentExcuteProposalId);
-  if(currentProposal.type == ProposalType.AddAdmin){
+  if(currentProposal.pType == ProposalType.AddAdmin){
     addAdmin(currentProposal.addr);
-  }else if(currentProposal.type == ProposalType.RemoveAdmin){
+  }else if(currentProposal.pType == ProposalType.RemoveAdmin){
     removeAdmin(currentProposal.addr);
-  }else if(currentProposal.type == ProposalType.UpdateFeeShieldedReceiver){
+  }else if(currentProposal.pType == ProposalType.UpdateFeeShieldedReceiver){
     setFeeShieldedReceiver(currentProposal.addr);
-  }else if(currentProposal.type == ProposalType.UpdateFeeUnshieldedReceiver){
+  }else if(currentProposal.pType == ProposalType.UpdateFeeUnshieldedReceiver){
     setFeeUnshieldedReceiver(currentProposal.addrUnshielded);
-  }else if(currentProposal.type == ProposalType.UpdateTokenManager){
+  }else if(currentProposal.pType == ProposalType.UpdateTokenManager){
     setTokenManager(currentProposal.addr);
-  }else if(currentProposal.type == ProposalType.UpdateAdminThreshold){
+  }else if(currentProposal.pType == ProposalType.UpdateAdminThreshold){
     setAdminThreshold(currentProposal.threshold as Uint<8>);
-  }else if(currentProposal.type == ProposalType.UpdateSMGPKThreshold){
+  }else if(currentProposal.pType == ProposalType.UpdateSMGPKThreshold){
     setSmgPKThreold(currentProposal.threshold as Uint<8>);
-  }else if(currentProposal.type == ProposalType.UpdateFeeCommonConfig){
+  }else if(currentProposal.pType == ProposalType.UpdateFeeCommonConfig){
     setFeeCommonConfig(currentProposal.feeConfig.chainId as Uint<32>, currentProposal.feeConfig.fee as Uint<128>);
-  }else if(currentProposal.type == ProposalType.SetSmgPKS){
+  }else if(currentProposal.pType == ProposalType.SetSmgPKS){
     setSmgPksks(currentProposal.smgPubkeys);
   }
 
@@ -789,7 +789,7 @@ export circuit executeProposal(proposalId: Uint<32>): [] {
   proposalVoters.remove(disclose(proposalId));
   currentExcuteProposalId = 0;
   
-  if(currentProposal.type == ProposalType.RemoveAdmin){
+  if(currentProposal.pType == ProposalType.RemoveAdmin){
     proposals.resetToDefault();
     proposalVoters.resetToDefault();
   }

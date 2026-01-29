@@ -14,8 +14,8 @@ import path from 'node:path';
 
 import { witnesses, type CrossChainPrivateState } from './witnesses';
 import * as CrossChain from "./managed/crosschain/contract/index.js";
-
-import { UnboundTransaction, type ImpureCircuitId, type MidnightProvider, type MidnightProviders, type WalletProvider } from '@midnight-ntwrk/midnight-js-types';
+import { type ImpureCircuitId, CompiledContract} from '@midnight-ntwrk/compact-js';
+import { UnboundTransaction,type MidnightProvider, type MidnightProviders, type WalletProvider,  createVerifierKey, type VerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import { deployContract, FinalizedCallTxData, findDeployedContract, type DeployedContract, submitInsertVerifierKeyTx, type FoundContract, submitRemoveVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
@@ -23,8 +23,6 @@ import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config
 // import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 // import { Address, CoinPublicKey, WalletFacade } from '@midnight-ntwrk/wallet-api';
-import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
-import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { ShieldedCoinInfo, DustParameters, LedgerParameters, Transaction, TransactionId, type UnprovenTransaction, sampleCoinPublicKey, FinalizedTransaction, nativeToken, TokenType, encodeRawTokenType, decodeRawTokenType, createShieldedCoinInfo, dummyUserAddress, UnshieldedTokenType, UserAddress, decodeUserAddress } from '@midnight-ntwrk/ledger-v7';
 // import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
@@ -32,8 +30,6 @@ import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from
 import { MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as Rx from 'rxjs';
 import { ContractState, ContractAddress, degradeToTransient, ecAdd, ecMul, ecMulGenerator, EncodedShieldedCoinInfo, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash, encodeShieldedCoinInfo, ShieldedTokenType, RawTokenType, encodeUserAddress, rawTokenType } from '@midnight-ntwrk/compact-runtime';
-// import { Resource } from '@midnight-ntwrk/wallet';
-import { createVerifierKey, type VerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import assert from 'node:assert';
 import { fileURLToPath } from 'url';
 import { MidnightWalletSDK } from './wallet-sdk.js';
@@ -115,6 +111,12 @@ export interface Config {
 
 export const crosschainContractInstance: CrossChainContract = new CrossChain.Contract(witnesses);
 
+export const CompiledSimpleContract =
+  CompiledContract.make('CrossChain', CrossChain.Contract).pipe(
+   CompiledContract.withWitnesses(witnesses),
+    CompiledContract.withCompiledFileAssets('./managed/crosschain')
+  );
+
 
 export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK): Promise<WalletProvider & MidnightProvider> => {
   const walletFacade = wallet.getWalletInstance();
@@ -122,12 +124,9 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
   return {
     getCoinPublicKey: () => wallet.getShieldedSecretKeys().coinPublicKey,//() => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
-    // balanceTx(tx: UnprovenTransaction, newCoins?: ShieldedCoinInfo[], ttl?: Date): Promise<FinalizedTransaction> {
-    balanceTx(tx: UnboundTransaction, newCoins?: ShieldedCoinInfo[], ttl?: Date): Promise<FinalizedTransaction> {
-      return walletFacade.balanceTransaction(wallet.getShieldedSecretKeys(), wallet.getDustSecretKey(), tx, ttl ? ttl : new Date(Date.now() + 1800 * 1000))
-        .then((tx) => walletFacade.finalizeTransaction(tx));
-      // .then((zswapTx) => Transaction.deserialize(zswapTx.serialize(getZswapNetworkId()), getLedgerNetworkId()))
-      // .then(createBalancedTx);
+    balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> {
+      return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
+        .then((tx) => walletFacade.finalizeRecipe(tx));
     },
     submitTx(tx: FinalizedTransaction): Promise<TransactionId> {
       return walletFacade.submitTransaction(tx);
@@ -316,24 +315,24 @@ export class CrossChainApi {
   }
 
   async deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, signingKey: SigningKey): Promise<ContractAddress> {
-    this.crossChainContract = await deployContract(this.providers, {
-      contract: crosschainContractInstance,
+    this.crossChainContract = (await deployContract(this.providers, {
+      compiledContract: CompiledSimpleContract,
       privateStateId: CrossChainPrivateStateId,
       initialPrivateState: {},
       signingKey: signingKey,
       args: [BigInt(adminThreshold), BigInt(smgPkThreshold)]
-    });
+    })) as DeployedCrossChainContract;
     // // logger.info(`Deployed contract at address: ${this.crossChainContract.deployTxData.public.contractAddress}`);
     return this.crossChainContract.deployTxData.public.contractAddress;
   }
 
   async join(contractAddress: ContractAddress): Promise<void> {
-    this.crossChainContract = await findDeployedContract(this.providers, {
+    this.crossChainContract = (await findDeployedContract(this.providers, {
       contractAddress,
-      contract: crosschainContractInstance,
+      compiledContract: CompiledSimpleContract,
       privateStateId: CrossChainPrivateStateId,
       initialPrivateState: {},
-    });
+    })) as DeployedCrossChainContract;
   }
 
   checkCrossData(
@@ -849,7 +848,7 @@ export class CrossChainApi {
     // const addr_0 = { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(addr, getZswapNetworkId())) };
     const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
     let proposal = this.defaultProsal();
-    proposal.type = CrossChain.ProposalType.AddAdmin;
+    proposal.pType = CrossChain.ProposalType.AddAdmin;
     proposal.addr = addr_0;
 
     return await this.crossChainContract.callTx.newProposal(proposal);
@@ -858,7 +857,7 @@ export class CrossChainApi {
   async removeAdminProposal(addr: Address) {
     const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
     let proposal = this.defaultProsal();
-    proposal.type = CrossChain.ProposalType.RemoveAdmin;
+    proposal.pType = CrossChain.ProposalType.RemoveAdmin;
     proposal.addr = addr_0;
 
     return await this.crossChainContract.callTx.newProposal(proposal);
@@ -867,7 +866,7 @@ export class CrossChainApi {
   async updateFeeShieldedReceiverProposal(addr: Address) {
     const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
     let proposal = this.defaultProsal();
-    proposal.type = CrossChain.ProposalType.UpdateFeeShieldedReceiver;
+    proposal.pType = CrossChain.ProposalType.UpdateFeeShieldedReceiver;
     proposal.addr = addr_0;
 
     return await this.crossChainContract.callTx.newProposal(proposal);
@@ -876,7 +875,7 @@ export class CrossChainApi {
   async updateFeeUnshieldedReceiverProposal(addr: Address) {
     const addr_0 = { bytes: encodeUserAddress(addr) };
     let proposal = this.defaultProsal();
-    proposal.type = CrossChain.ProposalType.UpdateFeeUnshieldedReceiver;
+    proposal.pType = CrossChain.ProposalType.UpdateFeeUnshieldedReceiver;
     proposal.addr = addr_0;
 
     return await this.crossChainContract.callTx.newProposal(proposal);
@@ -885,7 +884,7 @@ export class CrossChainApi {
   async updateTokenManagerProposal(addr: Address) {
     const addr_0 = { bytes: getCoinPublicKeyFromShieldAddress(addr) };
     let proposal = this.defaultProsal();
-    proposal.type = CrossChain.ProposalType.UpdateTokenManager;
+    proposal.pType = CrossChain.ProposalType.UpdateTokenManager;
     proposal.addr = addr_0;
 
     return await this.crossChainContract.callTx.newProposal(proposal);
@@ -894,7 +893,7 @@ export class CrossChainApi {
   async updateAdminThresholdProposal(threshold: number | string | bigint) {
     const threshold_0 = BigInt(threshold);
     let proposal = this.defaultProsal();
-    proposal.type = CrossChain.ProposalType.UpdateAdminThreshold;
+    proposal.pType = CrossChain.ProposalType.UpdateAdminThreshold;
     proposal.threshold = threshold_0;
 
     return await this.crossChainContract.callTx.newProposal(proposal);
@@ -902,7 +901,7 @@ export class CrossChainApi {
 
   defaultProsal(): CrossChain.Proposal {
     return {
-      type: CrossChain.ProposalType.UpdateAdminThreshold,
+      pType: CrossChain.ProposalType.UpdateAdminThreshold,
       addr: { bytes: fromHexWithOrNoPrefix("") },
       addrUnshielded: { bytes: fromHexWithOrNoPrefix("") },
       threshold: BigInt(0),
@@ -913,7 +912,7 @@ export class CrossChainApi {
   async updateSMGPKThresholdProposal(threshold: number | string | bigint) {
     const threshold_0 = BigInt(threshold);
     let proposal = this.defaultProsal();
-    proposal.type = CrossChain.ProposalType.UpdateSMGPKThreshold;
+    proposal.pType = CrossChain.ProposalType.UpdateSMGPKThreshold;
     proposal.threshold = threshold_0;
 
     return await this.crossChainContract.callTx.newProposal(proposal);
@@ -924,7 +923,7 @@ export class CrossChainApi {
     const fee_0 = BigInt(fee);
 
     let proposal = this.defaultProsal();
-    proposal.type = CrossChain.ProposalType.UpdateFeeCommonConfig;
+    proposal.pType = CrossChain.ProposalType.UpdateFeeCommonConfig;
     proposal.feeConfig = { fee: fee_0, chainId: chainId_0 };
 
     return await this.crossChainContract.callTx.newProposal(proposal);
@@ -965,9 +964,9 @@ export class CrossChainApi {
       newVK = await this.providers.zkConfigProvider.getVerifierKey(circuitId as CrossChainCircuits);
     }
 
-    const res1 = await this.crossChainContract.circuitMaintenanceTx[circuitId].removeVerifierKey();
-    const res2 = await this.crossChainContract.circuitMaintenanceTx[circuitId].insertVerifierKey(newVK);
-    return res2;
+    // const res1 = this.crossChainContract.circuitMaintenanceTx.removeVerifierKey();
+    // const res2 = await this.crossChainContract.circuitMaintenanceTx[circuitId].insertVerifierKey(newVK);
+    // return res2;
   }
 
 }
@@ -980,12 +979,12 @@ export const upgradeContractCircuit = async (providers: MidnightProviders, contr
   } else {
     newVk = await providers.zkConfigProvider.getVerifierKey(circuitId as CrossChainCircuits);
   }
-  return await submitInsertVerifierKeyTx(providers, contractAddress, circuitId, newVk);
+  // return await submitInsertVerifierKeyTx(providers, contractAddress, circuitId, newVk);
 }
 
 export const removeContractCircuit = async (providers: MidnightProviders, contractAddress: Address, circuitId: string) => {
   assertIsContractAddress(contractAddress);
-  return await submitRemoveVerifierKeyTx(providers, contractAddress, circuitId);
+  // return await submitRemoveVerifierKeyTx(providers, contractAddress, circuitId);
 }
 
 
