@@ -152,6 +152,10 @@ var MidnightWalletSDK = class {
     const nightUtxos = state.unshielded.availableCoins.filter(
       (coin) => coin.meta.registeredForDustGeneration === false && coin.utxo.type === ledger__namespace.nativeToken().raw
     );
+    if (nightUtxos.length === 0) {
+      this.isGenerating = false;
+      return;
+    }
     const signKeyStore = this.unshieldedKeystore;
     const dustRegistrationRecipe = await this.walletObj.registerNightUtxosForDustGeneration(
       nightUtxos,
