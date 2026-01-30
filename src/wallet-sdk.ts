@@ -56,6 +56,7 @@ export const configuration = function (indexerHttpUrl: string, indexerWsUrl: str
             indexerWsUrl: indexerWsUrl,
         },
         indexerUrl: indexerWsUrl,
+        batchSize: 1
     };
 }
 

@@ -66,7 +66,8 @@ var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, net
       indexerHttpUrl,
       indexerWsUrl
     },
-    indexerUrl: indexerWsUrl
+    indexerUrl: indexerWsUrl,
+    batchSize: 1
   };
 };
 var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
