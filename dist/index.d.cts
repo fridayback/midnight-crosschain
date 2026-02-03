@@ -1,5 +1,5 @@
-import * as _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState from '@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/UnshieldedState';
-import * as _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances';
+import * as _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js from '@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/UnshieldedState.js';
+import * as _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances.js';
 import * as _midnight_ntwrk_wallet_sdk_dust_wallet from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { DefaultV1Configuration as DefaultV1Configuration$1, TotalCostParameters } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import * as ledger from '@midnight-ntwrk/ledger-v7';
@@ -46,7 +46,8 @@ declare class MidnightWalletSDK {
     private walletAddress;
     private bActiveFlag;
     private storeTimer?;
-    constructor(config: Configuration);
+    readonly ISMimic: boolean;
+    constructor(config: Configuration, mimic?: boolean);
     initWallet(strSeed: string, store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
     getAccountAddress(): {
         shieldedAddress: string;
@@ -61,8 +62,8 @@ declare class MidnightWalletSDK {
     }>;
     getAvailableCoins(): Promise<{
         dustAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_dust_wallet.DustToken[];
-        shieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances.AvailableCoin[];
-        unshieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState.UtxoWithMeta[];
+        shieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js.AvailableCoin[];
+        unshieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js.UtxoWithMeta[];
     }>;
     uninitWallet(): Promise<void>;
     getWalletInstance(): WalletFacade | undefined;

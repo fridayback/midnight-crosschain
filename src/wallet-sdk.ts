@@ -5,6 +5,7 @@ import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { CombinedSwapOutputs, FacadeState, WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
 import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
+
 import type { DefaultV1Configuration as ShieldedConfiguration } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
 import {
     createKeystore,
@@ -19,10 +20,9 @@ import * as Rx from 'rxjs';
 import { ShieldedAddress, UnshieldedAddress, DustAddress } from "@midnight-ntwrk/wallet-sdk-address-format"
 import assert from 'node:assert';
 import { stat } from 'fs';
+import { LedgerParameters } from '@midnight-ntwrk/ledger-v7';
 
-const PROOF_SERVER_PORT = Number.parseInt(globalThis.process?.env?.['PROOF_SERVER_PORT'] ?? '6300', 10);
-const INDEXER_HTTP_URL = `https://indexer.preview.midnight.network/api/v3/graphql`;
-const INDEXER_WS_URL = `wss://indexer.preview.midnight.network/api/v3/graphql/ws`;
+import {ToolKitClient} from './utils.js';
 
 export type Configuration = ShieldedConfiguration & DustConfiguration & { indexerUrl: string };
 // export const defaultConfiguration: Configuration = {
@@ -142,10 +142,12 @@ export class MidnightWalletSDK {
     private walletAddress: { shieldedAddress: string, unshieldedAddress: string, dustAddress: string };
     private bActiveFlag: boolean;
     private storeTimer?: NodeJS.Timeout;
-    constructor(config: Configuration) {
+    readonly ISMimic: boolean = false;
+    constructor(config: Configuration, mimic: boolean = false) {
         this.config = config;
         this.walletAddress = { shieldedAddress: '', unshieldedAddress: '', dustAddress: '' };
         this.bActiveFlag = false;
+        this.ISMimic = mimic;
     }
 
     //////////////////////////////////////////
@@ -182,6 +184,8 @@ export class MidnightWalletSDK {
             await callBack();
         }, saveInterval);
 
+        
+
     }
 
     // to get the wallet address
@@ -214,7 +218,8 @@ export class MidnightWalletSDK {
 
         const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
 
-        const dustRegistrationTxHash = await this.walletObj.submitTransaction(finalizedDustTx);
+        // const dustRegistrationTxHash = await this.walletObj.submitTransaction(finalizedDustTx);
+        const dustRegistrationTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
 
         this.isGenerating = false;
     }
@@ -318,7 +323,8 @@ export class MidnightWalletSDK {
 
         const finalizedTx = await this.walletObj.finalizeRecipe(unprovenTxRecipe);
 
-        const submittedTxHash = await this.walletObj.submitTransaction(finalizedTx);
+        // const submittedTxHash = await this.walletObj.submitTransaction(finalizedTx);
+        const submittedTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedTx) : await this.walletObj.submitTransaction(finalizedTx);
         return submittedTxHash;
     }
 

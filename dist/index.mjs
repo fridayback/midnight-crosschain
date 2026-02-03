@@ -9,6 +9,8 @@ import { Buffer as Buffer$1 } from 'buffer';
 import * as Rx from 'rxjs';
 import { UnshieldedAddress, ShieldedAddress, MidnightBech32m } from '@midnight-ntwrk/wallet-sdk-address-format';
 import assert3 from 'assert';
+import * as graphHttp from 'graphql-http';
+import axios from 'axios';
 import path from 'path';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { ContractState, encodeUserAddress, rawTokenType, sampleSigningKey, encodeShieldedCoinInfo } from '@midnight-ntwrk/compact-runtime';
@@ -25,7 +27,80 @@ import { toHex, fromHex, assertIsContractAddress } from '@midnight-ntwrk/midnigh
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, key + "" , value);
-Number.parseInt(globalThis.process?.env?.["PROOF_SERVER_PORT"] ?? "6300", 10);
+var indexerURL = (process.env.INDEXER_URL || "http://10.211.55.6:8088") + "/api/v3/graphql";
+var txServerURL = (process.env.TX_SERVER_URL || "http://10.211.55.6:3000") + "/submit";
+var client = graphHttp.createClient({ url: indexerURL });
+var TXClient = class {
+  static async post(apiURL, txStringWithContext) {
+    try {
+      const response = await axios.post(
+        apiURL,
+        txStringWithContext
+      );
+      console.log("\u2705 Post successfully!");
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("\u274C Axios error:", error.message);
+      } else {
+        console.error("\u274C Unexpected error:", error);
+      }
+      throw error;
+    }
+  }
+};
+var ToolKitClient = class _ToolKitClient {
+  static async getBlockNumberSync() {
+    let qryOption = `{
+            block {
+                height
+                hash
+            }
+        }`;
+    const ret = await new Promise((resolve, reject) => {
+      let result;
+      client.subscribe(
+        {
+          query: qryOption
+        },
+        {
+          next: (data) => result = data,
+          error: reject,
+          complete: () => resolve(result)
+        }
+      );
+    });
+    console.log("midnight getBlockNumberSync query result: ", ret);
+    return ret;
+  }
+  static async prepareTXStringWithContext(txData) {
+    let txBlock = await _ToolKitClient.getBlockNumberSync();
+    let initialTX = {
+      tx: [],
+      block_context: {
+        secondsSinceEpoch: 0,
+        secondsSinceEpochErr: 30,
+        parentBlockHash: ""
+      }
+    };
+    const timestampSec = Math.floor(Date.now() / 1e3);
+    initialTX.tx = Array.from(txData);
+    initialTX.block_context.secondsSinceEpoch = timestampSec;
+    initialTX.block_context.parentBlockHash = txBlock.data.block.hash;
+    let txStringWithContext = {
+      initial_tx: JSON.stringify(initialTX),
+      batches: []
+    };
+    return txStringWithContext;
+  }
+  static async submitTXStringWithContext(tx) {
+    const txStringWithContext = await _ToolKitClient.prepareTXStringWithContext(tx.serialize());
+    const ret = await TXClient.post(txServerURL, txStringWithContext);
+    return ret;
+  }
+};
+
+// src/wallet-sdk.ts
 var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, network = "preview", costParameters = {
   additionalFeeOverhead: 300000000000000n,
   feeBlocksMargin: 5
@@ -78,11 +153,13 @@ var waitForFullySynced = async (facade) => {
   return state;
 };
 var MidnightWalletSDK = class {
-  constructor(config) {
+  constructor(config, mimic = false) {
     this.isGenerating = false;
+    this.ISMimic = false;
     this.config = config;
     this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "" };
     this.bActiveFlag = false;
+    this.ISMimic = mimic;
   }
   //////////////////////////////////////////
   // to generate a wallet instance
@@ -138,7 +215,7 @@ var MidnightWalletSDK = class {
       // this.walletAddress.dustAddress
     );
     const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
-    await this.walletObj.submitTransaction(finalizedDustTx);
+    this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
     this.isGenerating = false;
   }
   async getBalances() {
@@ -203,7 +280,7 @@ var MidnightWalletSDK = class {
       { ttl, payFees: true }
     );
     const finalizedTx = await this.walletObj.finalizeRecipe(unprovenTxRecipe);
-    const submittedTxHash = await this.walletObj.submitTransaction(finalizedTx);
+    const submittedTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedTx) : await this.walletObj.submitTransaction(finalizedTx);
     return submittedTxHash;
   }
 };
