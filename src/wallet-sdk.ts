@@ -226,7 +226,7 @@ export class MidnightWalletSDK {
         this.isGenerating = false;
     }
 
-    async deregisterFromDustGeneration(utxos: readonly ledger.Utxo[]) {
+    async deregisterFromDustGeneration() {
         if (this.isUnGenerating) return;
         this.isUnGenerating = true;
         assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
