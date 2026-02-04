@@ -184,6 +184,7 @@ var waitForFullySynced = async (facade) => {
 var MidnightWalletSDK = class {
   constructor(config, mimic = false) {
     this.isGenerating = false;
+    this.isUnGenerating = false;
     this.ISMimic = false;
     this.config = config;
     this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "" };
@@ -246,6 +247,29 @@ var MidnightWalletSDK = class {
     const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
     this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
     this.isGenerating = false;
+  }
+  async deregisterFromDustGeneration(utxos) {
+    if (this.isUnGenerating) return;
+    this.isUnGenerating = true;
+    assert3__default.default(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+    const state = await waitForFullySynced(this.walletObj);
+    const nightUtxos = state.unshielded.availableCoins.filter(
+      (coin) => coin.meta.registeredForDustGeneration === true && coin.utxo.type === ledger__namespace.nativeToken().raw
+    );
+    if (nightUtxos.length === 0) {
+      this.isUnGenerating = false;
+      return;
+    }
+    const signKeyStore = this.unshieldedKeystore;
+    const dustRegistrationRecipe = await this.walletObj.deregisterFromDustGeneration(
+      nightUtxos,
+      signKeyStore.getPublicKey(),
+      (payload) => signKeyStore.signData(payload)
+      // this.walletAddress.dustAddress
+    );
+    const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
+    this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
+    this.isUnGenerating = false;
   }
   async getBalances() {
     assert3__default.default(this.walletObj, "walletObj is not initialized!");

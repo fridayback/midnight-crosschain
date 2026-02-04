@@ -135,6 +135,7 @@ export interface WalletStore {
 export class MidnightWalletSDK {
     private config: Configuration;
     private isGenerating: boolean = false;
+    private isUnGenerating: boolean = false;
     // private NetWorkId: NetworkId;
     private walletObj?: WalletFacade;
     private shieldedSecretKeys?: ledger.ZswapSecretKeys;
@@ -223,6 +224,37 @@ export class MidnightWalletSDK {
         const dustRegistrationTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
 
         this.isGenerating = false;
+    }
+
+    async deregisterFromDustGeneration(utxos: readonly ledger.Utxo[]) {
+        if (this.isUnGenerating) return;
+        this.isUnGenerating = true;
+        assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+        const state = await waitForFullySynced(this.walletObj);//await Rx.firstValueFrom(this.walletObj.state());
+
+        const nightUtxos = state.unshielded.availableCoins.filter(
+            (coin) => coin.meta.registeredForDustGeneration === true && coin.utxo.type === ledger.nativeToken().raw,
+        );
+        if (nightUtxos.length === 0) {
+            this.isUnGenerating = false;
+            return;
+        }
+
+        const signKeyStore = this.unshieldedKeystore;
+
+        const dustRegistrationRecipe = await this.walletObj.deregisterFromDustGeneration(
+            nightUtxos,
+            signKeyStore.getPublicKey(),
+            (payload) => signKeyStore.signData(payload),
+            // this.walletAddress.dustAddress
+        );
+
+        const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
+
+        // const dustRegistrationTxHash = await this.walletObj.submitTransaction(finalizedDustTx);
+        const dustRegistrationTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
+
+        this.isUnGenerating = false;
     }
 
 
@@ -324,7 +356,7 @@ export class MidnightWalletSDK {
             },
             { ttl, payFees: true },
         );
-        
+
         const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
 
         // const submittedTxHash = await this.walletObj.submitTransaction(finalizedTx);
