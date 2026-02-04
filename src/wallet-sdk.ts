@@ -40,7 +40,7 @@ export type Configuration = ShieldedConfiguration & DustConfiguration & { indexe
 //     indexerUrl: INDEXER_WS_URL,
 // };
 
-export const configuration = function (indexerHttpUrl: string, indexerWsUrl: string, provingServerUrl: string
+export const configuration = function (indexerHttpUrl: string, indexerWsUrl: string, provingServerUrl: string, node: string
     , network: NetworkId.NetworkId = 'preview'
     , costParameters: TotalCostParameters = {
         additionalFeeOverhead: 300_000_000_000_000n,
@@ -49,7 +49,7 @@ export const configuration = function (indexerHttpUrl: string, indexerWsUrl: str
     return {
         networkId: network,
         costParameters: costParameters,
-        relayURL: new URL(indexerWsUrl),
+        relayURL: new URL(node.replace(/^http/, 'ws')),
         provingServerUrl: new URL(provingServerUrl),
         indexerClientConnection: {
             indexerHttpUrl: indexerHttpUrl,

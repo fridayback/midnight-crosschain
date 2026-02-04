@@ -130,14 +130,14 @@ var ToolKitClient = class _ToolKitClient {
 };
 
 // src/wallet-sdk.ts
-var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, network = "preview", costParameters = {
+var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, node, network = "preview", costParameters = {
   additionalFeeOverhead: 300000000000000n,
   feeBlocksMargin: 5
 }) {
   return {
     networkId: network,
     costParameters,
-    relayURL: new URL(indexerWsUrl),
+    relayURL: new URL(node.replace(/^http/, "ws")),
     provingServerUrl: new URL(provingServerUrl),
     indexerClientConnection: {
       indexerHttpUrl,

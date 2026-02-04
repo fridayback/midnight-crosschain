@@ -19,7 +19,7 @@ import { DeployedContract, FoundContract, FinalizedCallTxData } from '@midnight-
 type Configuration = DefaultV1Configuration & DefaultV1Configuration$1 & {
     indexerUrl: string;
 };
-declare const configuration: (indexerHttpUrl: string, indexerWsUrl: string, provingServerUrl: string, network?: NetworkId.NetworkId, costParameters?: TotalCostParameters) => Configuration;
+declare const configuration: (indexerHttpUrl: string, indexerWsUrl: string, provingServerUrl: string, node: string, network?: NetworkId.NetworkId, costParameters?: TotalCostParameters) => Configuration;
 declare const initFacadeWallet: (seed: Buffer$1, configuration: Configuration, // = defaultConfiguration,
 strSerializedState?: FacadeSerializedState) => Promise<{
     wallet: WalletFacade;
