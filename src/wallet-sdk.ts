@@ -22,7 +22,8 @@ import assert from 'node:assert';
 import { stat } from 'fs';
 import { LedgerParameters } from '@midnight-ntwrk/ledger-v7';
 
-import {ToolKitClient} from './utils.js';
+import { ToolKitClient } from './utils.js';
+import { UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
 
 export type Configuration = ShieldedConfiguration & DustConfiguration & { indexerUrl: string };
 // export const defaultConfiguration: Configuration = {
@@ -184,7 +185,7 @@ export class MidnightWalletSDK {
             await callBack();
         }, saveInterval);
 
-        
+
 
     }
 
@@ -238,12 +239,12 @@ export class MidnightWalletSDK {
         const unshieldedBlance = curState.unshielded.balances;
 
         // 使用 replacer 将 bigint 转换为字符串
-        const replacer = (key:any, value:any) => typeof value === 'bigint' ? value.toString() : value;
+        const replacer = (key: any, value: any) => typeof value === 'bigint' ? value.toString() : value;
 
         // 反序列化，使用 reviver 将字符串转换回 bigint
-        const reviver = (key:any, value:any) => typeof value === 'string' && /^\d+$/.test(value) ? BigInt(value) : value;
+        const reviver = (key: any, value: any) => typeof value === 'string' && /^\d+$/.test(value) ? BigInt(value) : value;
 
-        return { dustBalance, shieldedBlance: JSON.parse(JSON.stringify(shieldedBlance,replacer),reviver), unshieldedBlance: JSON.parse(JSON.stringify(unshieldedBlance,replacer),reviver) };
+        return { dustBalance, shieldedBlance: JSON.parse(JSON.stringify(shieldedBlance, replacer), reviver), unshieldedBlance: JSON.parse(JSON.stringify(unshieldedBlance, replacer), reviver) };
     }
 
 
@@ -314,18 +315,86 @@ export class MidnightWalletSDK {
         //         },
         //     ]
         assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
-        const unprovenTxRecipe = await this.walletObj?.transferTransaction(
+        // UnprovenTransactionRecipe ;UnboundTransactionRecipe
+        const recipe = await this.walletObj?.transferTransaction(
             transferInfo,
-            {shieldedSecretKeys: this.shieldedSecretKeys,
-            dustSecretKey: this.dustSecretKey},
-            {ttl, payFees: true},
+            {
+                shieldedSecretKeys: this.shieldedSecretKeys,
+                dustSecretKey: this.dustSecretKey
+            },
+            { ttl, payFees: true },
         );
-
-        const finalizedTx = await this.walletObj.finalizeRecipe(unprovenTxRecipe);
+        
+        const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
 
         // const submittedTxHash = await this.walletObj.submitTransaction(finalizedTx);
         const submittedTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedTx) : await this.walletObj.submitTransaction(finalizedTx);
         return submittedTxHash;
     }
 
+    async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<ledger.FinalizedTransaction> {
+        assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+        const recipe = await this.walletObj.balanceUnboundTransaction(
+            tx,
+            { shieldedSecretKeys: this.shieldedSecretKeys, dustSecretKey: this.dustSecretKey },
+            { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) },
+        );
+        const unshieldedKeystore = this.unshieldedKeystore;
+        const signFn = (payload: Uint8Array) => unshieldedKeystore.signData(payload);
+        signTransactionIntents(recipe.baseTransaction, signFn, 'proof');
+        if (recipe.balancingTransaction) {
+            signTransactionIntents(recipe.balancingTransaction, signFn, 'pre-proof');
+        }
+        const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
+        return finalizedTx;
+    }
+
 }
+
+/**
+ * Sign all unshielded offers in a transaction's intents, using the correct
+ * proof marker for Intent.deserialize. This works around a bug in the wallet
+ * SDK where signRecipe hardcodes 'pre-proof', which fails for proven
+ * (UnboundTransaction) intents that contain 'proof' data.
+ */
+export const signTransactionIntents = (
+    tx: { intents?: Map<number, any> },
+    signFn: (payload: Uint8Array) => ledger.Signature,
+    proofMarker: 'proof' | 'pre-proof',
+): void => {
+    if (!tx.intents || tx.intents.size === 0) return;
+
+    for (const segment of tx.intents.keys()) {
+        const intent = tx.intents.get(segment);
+        if (!intent) continue;
+
+        // Clone the intent with the correct proof marker.
+        // The wallet SDK bug hardcodes 'pre-proof' here, which fails for
+        // proven (UnboundTransaction) intents that use 'proof'.
+        const cloned = ledger.Intent.deserialize<ledger.SignatureEnabled, ledger.Proofish, ledger.PreBinding>(
+            'signature',
+            proofMarker,
+            'pre-binding',
+            intent.serialize(),
+        );
+
+        const sigData = cloned.signatureData(segment);
+        const signature = signFn(sigData);
+
+        if (cloned.fallibleUnshieldedOffer) {
+            const sigs = cloned.fallibleUnshieldedOffer.inputs.map(
+                (_: ledger.UtxoSpend, i: number) => cloned.fallibleUnshieldedOffer!.signatures.at(i) ?? signature,
+            );
+            cloned.fallibleUnshieldedOffer = cloned.fallibleUnshieldedOffer.addSignatures(sigs);
+        }
+
+        if (cloned.guaranteedUnshieldedOffer) {
+            const sigs = cloned.guaranteedUnshieldedOffer.inputs.map(
+                (_: ledger.UtxoSpend, i: number) => cloned.guaranteedUnshieldedOffer!.signatures.at(i) ?? signature,
+            );
+            cloned.guaranteedUnshieldedOffer = cloned.guaranteedUnshieldedOffer.addSignatures(sigs);
+        }
+
+        tx.intents.set(segment, cloned);
+    }
+};

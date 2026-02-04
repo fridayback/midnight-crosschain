@@ -271,7 +271,7 @@ var MidnightWalletSDK = class {
   }
   async transferTo(transferInfo, ttl) {
     assert3(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
-    const unprovenTxRecipe = await this.walletObj?.transferTransaction(
+    const recipe = await this.walletObj?.transferTransaction(
       transferInfo,
       {
         shieldedSecretKeys: this.shieldedSecretKeys,
@@ -279,9 +279,53 @@ var MidnightWalletSDK = class {
       },
       { ttl, payFees: true }
     );
-    const finalizedTx = await this.walletObj.finalizeRecipe(unprovenTxRecipe);
+    const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
     const submittedTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedTx) : await this.walletObj.submitTransaction(finalizedTx);
     return submittedTxHash;
+  }
+  async balanceTx(tx, ttl) {
+    assert3(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+    const recipe = await this.walletObj.balanceUnboundTransaction(
+      tx,
+      { shieldedSecretKeys: this.shieldedSecretKeys, dustSecretKey: this.dustSecretKey },
+      { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1e3) }
+    );
+    const unshieldedKeystore = this.unshieldedKeystore;
+    const signFn = (payload) => unshieldedKeystore.signData(payload);
+    signTransactionIntents(recipe.baseTransaction, signFn, "proof");
+    if (recipe.balancingTransaction) {
+      signTransactionIntents(recipe.balancingTransaction, signFn, "pre-proof");
+    }
+    const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
+    return finalizedTx;
+  }
+};
+var signTransactionIntents = (tx, signFn, proofMarker) => {
+  if (!tx.intents || tx.intents.size === 0) return;
+  for (const segment of tx.intents.keys()) {
+    const intent = tx.intents.get(segment);
+    if (!intent) continue;
+    const cloned = ledger.Intent.deserialize(
+      "signature",
+      proofMarker,
+      "pre-binding",
+      intent.serialize()
+    );
+    const sigData = cloned.signatureData(segment);
+    const signature = signFn(sigData);
+    if (cloned.fallibleUnshieldedOffer) {
+      const sigs = cloned.fallibleUnshieldedOffer.inputs.map(
+        (_, i) => cloned.fallibleUnshieldedOffer.signatures.at(i) ?? signature
+      );
+      cloned.fallibleUnshieldedOffer = cloned.fallibleUnshieldedOffer.addSignatures(sigs);
+    }
+    if (cloned.guaranteedUnshieldedOffer) {
+      const sigs = cloned.guaranteedUnshieldedOffer.inputs.map(
+        (_, i) => cloned.guaranteedUnshieldedOffer.signatures.at(i) ?? signature
+      );
+      cloned.guaranteedUnshieldedOffer = cloned.guaranteedUnshieldedOffer.addSignatures(sigs);
+    }
+    tx.intents.set(segment, cloned);
   }
 };
 
@@ -16806,8 +16850,8 @@ var createWalletAndMidnightProvider = async (wallet) => {
     getCoinPublicKey: () => wallet.getShieldedSecretKeys().coinPublicKey,
     //() => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
-    balanceTx(tx, ttl) {
-      return walletFacade.balanceUnboundTransaction(tx, { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() }, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1e3) }).then((tx2) => walletFacade.finalizeRecipe(tx2));
+    async balanceTx(tx, ttl) {
+      return await wallet.balanceTx(tx, ttl);
     },
     submitTx(tx) {
       return walletFacade.submitTransaction(tx);
@@ -17390,6 +17434,6 @@ var initNetwork = (network) => {
   setNetworkId(network);
 };
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genSigningKey, getCoinPublicKeyFromShieldAddress, getDirname, getTreasuryCoinsFromState, initFacadeWallet, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genSigningKey, getCoinPublicKeyFromShieldAddress, getDirname, getTreasuryCoinsFromState, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

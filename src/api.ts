@@ -32,7 +32,7 @@ import * as Rx from 'rxjs';
 import { ContractState, ContractAddress, degradeToTransient, ecAdd, ecMul, ecMulGenerator, EncodedShieldedCoinInfo, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash, encodeShieldedCoinInfo, ShieldedTokenType, RawTokenType, encodeUserAddress, rawTokenType } from '@midnight-ntwrk/compact-runtime';
 import assert from 'node:assert';
 import { fileURLToPath } from 'url';
-import { MidnightWalletSDK } from './wallet-sdk.js';
+import { MidnightWalletSDK, signTransactionIntents} from './wallet-sdk.js';
 // import { FinalizedTransaction } from '@midnight-ntwrk/ledger-v7';
 
 
@@ -124,9 +124,10 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
   return {
     getCoinPublicKey: () => wallet.getShieldedSecretKeys().coinPublicKey,//() => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
-    balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> {
-      return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
-        .then((tx) => walletFacade.finalizeRecipe(tx));
+    async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> {
+      return await wallet.balanceTx(tx, ttl);
+      // return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
+      //   .then((tx) => walletFacade.finalizeRecipe(tx));
     },
     submitTx(tx: FinalizedTransaction): Promise<TransactionId> {
       return walletFacade.submitTransaction(tx);
