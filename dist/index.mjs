@@ -11430,7 +11430,7 @@ var createWalletAndMidnightProvider = async (wallet) => {
     //() => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
     async balanceTx(tx, ttl) {
-      return await wallet.balanceTx(tx, ttl);
+      return walletFacade.balanceUnboundTransaction(tx, { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() }, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1e3) }).then((tx2) => walletFacade.finalizeRecipe(tx2));
     },
     submitTx(tx) {
       return walletFacade.submitTransaction(tx);

@@ -125,9 +125,9 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
     getCoinPublicKey: () => wallet.getShieldedSecretKeys().coinPublicKey,//() => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
     async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> {
-      return await wallet.balanceTx(tx, ttl);
-      // return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
-      //   .then((tx) => walletFacade.finalizeRecipe(tx));
+      // return await wallet.balanceTx(tx, ttl);
+      return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
+        .then((tx) => walletFacade.finalizeRecipe(tx));
     },
     submitTx(tx: FinalizedTransaction): Promise<TransactionId> {
       return walletFacade.submitTransaction(tx);
