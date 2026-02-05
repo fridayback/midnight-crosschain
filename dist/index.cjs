@@ -267,7 +267,9 @@ var MidnightWalletSDK = class {
       (payload) => signKeyStore.signData(payload)
       // this.walletAddress.dustAddress
     );
-    const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
+    const unshieldedKeystore = this.unshieldedKeystore;
+    const recipe = await this.walletObj?.signRecipe(dustRegistrationRecipe, (payload) => unshieldedKeystore.signData(payload));
+    const finalizedDustTx = await this.walletObj.finalizeRecipe(recipe);
     this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
     this.isUnGenerating = false;
   }
@@ -332,7 +334,9 @@ var MidnightWalletSDK = class {
       },
       { ttl, payFees: true }
     );
-    const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
+    const unshieldedKeystore = this.unshieldedKeystore;
+    const signedTransferTxRecipe = await this.walletObj?.signRecipe(recipe, (payload) => unshieldedKeystore.signData(payload));
+    const finalizedTx = await this.walletObj.finalizeRecipe(signedTransferTxRecipe);
     const submittedTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedTx) : await this.walletObj.submitTransaction(finalizedTx);
     return submittedTxHash;
   }
