@@ -2,7 +2,7 @@
   "circuits": [
     {
       "name": "userLock",
-      "pure": true,
+      "pure": false,
       "arguments": [
         {
           "name": "smgId",
@@ -26,33 +26,10 @@
           }
         },
         {
-          "name": "coin",
+          "name": "amount",
           "type": {
-            "type-name": "Struct",
-            "name": "ShieldedCoinInfo",
-            "elements": [
-              {
-                "name": "nonce",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "color",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "value",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 340282366920938463463374607431768211455
-                }
-              }
-            ]
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
           }
         }
       ],
@@ -64,7 +41,7 @@
     },
     {
       "name": "smgRelease",
-      "pure": true,
+      "pure": false,
       "arguments": [
         {
           "name": "uniqueId",
@@ -98,7 +75,7 @@
           "name": "toAddr",
           "type": {
             "type-name": "Struct",
-            "name": "ZswapCoinPublicKey",
+            "name": "UserAddress",
             "elements": [
               {
                 "name": "bytes",
@@ -174,7 +151,7 @@
           "name": "toAddr",
           "type": {
             "type-name": "Struct",
-            "name": "ZswapCoinPublicKey",
+            "name": "UserAddress",
             "elements": [
               {
                 "name": "bytes",
@@ -226,33 +203,10 @@
           }
         },
         {
-          "name": "coin",
+          "name": "amount",
           "type": {
-            "type-name": "Struct",
-            "name": "ShieldedCoinInfo",
-            "elements": [
-              {
-                "name": "nonce",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "color",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              },
-              {
-                "name": "value",
-                "type": {
-                  "type-name": "Uint",
-                  "maxval": 340282366920938463463374607431768211455
-                }
-              }
-            ]
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
           }
         }
       ],
@@ -342,7 +296,7 @@
           "name": "mutiEx",
           "type": {
             "type-name": "Vector",
-            "length": 5,
+            "length": 3,
             "type": {
               "type-name": "Struct",
               "name": "ExecuteCrossProposalInfo",
@@ -373,29 +327,11 @@
       }
     },
     {
-      "name": "userRechargeForFee",
+      "name": "setFeeUnshieldedReceiver",
       "pure": false,
       "arguments": [
         {
-          "name": "amount",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 340282366920938463463374607431768211455
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "userFeeWithdrawRequest",
-      "pure": false,
-      "arguments": [
-        {
-          "name": "receiptor",
+          "name": "newFeeReceiver",
           "type": {
             "type-name": "Struct",
             "name": "UserAddress",
@@ -418,14 +354,27 @@
       }
     },
     {
-      "name": "userClaimCoin",
+      "name": "setSmgPksks",
       "pure": false,
       "arguments": [
         {
-          "name": "id",
+          "name": "voters",
           "type": {
-            "type-name": "Bytes",
-            "length": 32
+            "type-name": "Vector",
+            "length": 29,
+            "type": {
+              "type-name": "Struct",
+              "name": "ZswapCoinPublicKey",
+              "elements": [
+                {
+                  "name": "bytes",
+                  "type": {
+                    "type-name": "Bytes",
+                    "length": 32
+                  }
+                }
+              ]
+            }
           }
         }
       ],
@@ -436,14 +385,66 @@
       }
     },
     {
-      "name": "userClaimMappingToken",
+      "name": "updateSmgPk",
       "pure": false,
       "arguments": [
         {
-          "name": "id",
+          "name": "newVoter",
           "type": {
-            "type-name": "Bytes",
-            "length": 32
+            "type-name": "Struct",
+            "name": "ZswapCoinPublicKey",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "setSmgPKThreold",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "threshold",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 255
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "setFeeCommonConfig",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "chainId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        },
+        {
+          "name": "fee",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
           }
         }
       ],
@@ -499,12 +500,6 @@
                 }
               },
               {
-                "name": "isShielded",
-                "type": {
-                  "type-name": "Boolean"
-                }
-              },
-              {
                 "name": "fee",
                 "type": {
                   "type-name": "Uint",
@@ -512,6 +507,24 @@
                 }
               }
             ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "removeTokenPair",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "tokenPairId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
           }
         }
       ],
