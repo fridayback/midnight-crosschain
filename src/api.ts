@@ -816,7 +816,7 @@ export class CrossChainApi {
     const tokenPairId_0 = BigInt(tokenPairId);
     const fromChainId_0 = BigInt(fromChainId);
     const toChainId_0 = BigInt(toChainId);
-    const midnigtAccount_0 = encodeRawTokenType(midnigthTokenAccount);
+    const midnigtAccount_0 = Buffer.from(midnigthTokenAccount,'hex');//encodeRawTokenType(midnigthTokenAccount);
     const domainSep_0 = pad(domainSep, 32);
     if (domainSep) {
       const expectedTokenType = rawTokenType(domainSep_0, this.crossChainContract.deployTxData.public.contractAddress);

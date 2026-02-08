@@ -1,5 +1,5 @@
 import * as ledger from '@midnight-ntwrk/ledger-v7';
-import { decodeRawTokenType, encodeRawTokenType } from '@midnight-ntwrk/ledger-v7';
+import { decodeRawTokenType } from '@midnight-ntwrk/ledger-v7';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
@@ -9545,7 +9545,7 @@ var CrossChainApi = class _CrossChainApi {
     const tokenPairId_0 = BigInt(tokenPairId);
     const fromChainId_0 = BigInt(fromChainId);
     const toChainId_0 = BigInt(toChainId);
-    const midnigtAccount_0 = encodeRawTokenType(midnigthTokenAccount);
+    const midnigtAccount_0 = Buffer.from(midnigthTokenAccount, "hex");
     const domainSep_0 = pad(domainSep, 32);
     if (domainSep) {
       const expectedTokenType = rawTokenType(domainSep_0, this.crossChainContract.deployTxData.public.contractAddress);
