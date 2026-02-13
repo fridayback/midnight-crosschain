@@ -9147,7 +9147,7 @@ var createWalletAndMidnightProvider = async (wallet) => {
     //() => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
     async balanceTx(tx, ttl) {
-      return walletFacade.balanceUnboundTransaction(tx, { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() }, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1e3) }).then((tx2) => walletFacade.finalizeRecipe(tx2));
+      return await wallet.balanceTx(tx, ttl);
     },
     submitTx(tx) {
       return walletFacade.submitTransaction(tx);
@@ -9358,8 +9358,6 @@ var CrossChainApi = class _CrossChainApi {
     const smgId_0 = Buffer.from(smgId, "hex");
     assert3__default.default(smgId_0.length === 32, `smgId must be 32 bytes long`);
     const tokenPair_0 = BigInt(tokenPair);
-    const pairInfo = await this.getTokenPairInfo(tokenPair_0);
-    assert3__default.default(pairInfo, `tokenPairId ${tokenPair} not found`);
     const amount_0 = BigInt(amount);
     const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, amount_0);
     return finalizedTxData;

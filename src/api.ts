@@ -125,9 +125,9 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
     getCoinPublicKey: () => wallet.getShieldedSecretKeys().coinPublicKey,//() => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
     async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> {
-      // return await wallet.balanceTx(tx, ttl);
-      return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
-        .then((tx) => walletFacade.finalizeRecipe(tx));
+      return await wallet.balanceTx(tx, ttl);
+      // return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
+      //   .then((tx) => walletFacade.finalizeRecipe(tx));
     },
     submitTx(tx: FinalizedTransaction): Promise<TransactionId> {
       return walletFacade.submitTransaction(tx);
@@ -519,8 +519,8 @@ export class CrossChainApi {
     assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
 
     const tokenPair_0 = BigInt(tokenPair);
-    const pairInfo = await this.getTokenPairInfo(tokenPair_0);
-    assert(pairInfo, `tokenPairId ${tokenPair} not found`);
+    // const pairInfo = await this.getTokenPairInfo(tokenPair_0);
+    // assert(pairInfo, `tokenPairId ${tokenPair} not found`);
     const amount_0 = BigInt(amount);
     // const token = pairInfo.midnigthTokenAccount;//encodeRawTokenType(
     // const coin_0 = coinInfo(token, amount_0);
