@@ -515,27 +515,27 @@ export class CrossChainApi {
 
   /////////////////////////////////////////////////  Cross Tx  /////////////////////////////////////////////////////////////
   async userLock(smgId: string, toAddress: string, tokenPair: string | number | bigint, amount: string | number | bigint) {
-    // const smgId_0 = Buffer.from(smgId, 'hex');
-    // assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
+    const smgId_0 = Buffer.from(smgId, 'hex');
+    assert(smgId_0.length === 32, `smgId must be 32 bytes long`);
 
-    // const tokenPair_0 = BigInt(tokenPair);
-    // const pairInfo = await this.getTokenPairInfo(tokenPair_0);
-    // assert(pairInfo, `tokenPairId ${tokenPair} not found`);
-    // const amount_0 = BigInt(amount);
-    // const token = decodeTokenType(pairInfo.midnigthTokenAccount);
+    const tokenPair_0 = BigInt(tokenPair);
+    const pairInfo = await this.getTokenPairInfo(tokenPair_0);
+    assert(pairInfo, `tokenPairId ${tokenPair} not found`);
+    const amount_0 = BigInt(amount);
+    // const token = pairInfo.midnigthTokenAccount;//encodeRawTokenType(
     // const coin_0 = coinInfo(token, amount_0);
-    // const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, coin_0);
-    // return finalizedTxData;
+    const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, amount_0);
+    return finalizedTxData;
   }
 
   async smgRelease(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint
     , fee: string | number | bigint, toAddr: string
     , ttl: number) {
 
-    // const proof = this.checkCrossData(uniqueId, smgId, tokenPair, amount, fee, toAddr, undefined, ttl);
-    // const finalizedTxData = await this.crossChainContract.callTx.smgRelease(
-    //   proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.toAddr, proof.fee, proof.ttl);
-    // return finalizedTxData;
+    const proof = this.checkCrossData(uniqueId, smgId, tokenPair, amount, fee, toAddr, undefined, ttl);
+    const finalizedTxData = await this.crossChainContract.callTx.smgRelease(
+      proof.uniqueId, proof.smgId, proof.tokenPairId, proof.amount, proof.toAddr, proof.fee, proof.ttl);
+    return finalizedTxData;
   }
 
   async smgMint(uniqueId: string, smgId: string, tokenPair: string | number | bigint, amount: string | number | bigint

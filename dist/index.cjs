@@ -9355,8 +9355,27 @@ var CrossChainApi = class _CrossChainApi {
   }
   /////////////////////////////////////////////////  Cross Tx  /////////////////////////////////////////////////////////////
   async userLock(smgId, toAddress, tokenPair, amount) {
+    const smgId_0 = Buffer.from(smgId, "hex");
+    assert3__default.default(smgId_0.length === 32, `smgId must be 32 bytes long`);
+    const tokenPair_0 = BigInt(tokenPair);
+    const pairInfo = await this.getTokenPairInfo(tokenPair_0);
+    assert3__default.default(pairInfo, `tokenPairId ${tokenPair} not found`);
+    const amount_0 = BigInt(amount);
+    const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, amount_0);
+    return finalizedTxData;
   }
   async smgRelease(uniqueId, smgId, tokenPair, amount, fee, toAddr, ttl) {
+    const proof = this.checkCrossData(uniqueId, smgId, tokenPair, amount, fee, toAddr, void 0, ttl);
+    const finalizedTxData = await this.crossChainContract.callTx.smgRelease(
+      proof.uniqueId,
+      proof.smgId,
+      proof.tokenPairId,
+      proof.amount,
+      proof.toAddr,
+      proof.fee,
+      proof.ttl
+    );
+    return finalizedTxData;
   }
   async smgMint(uniqueId, smgId, tokenPair, amount, fee, toAddr, ttl) {
     const proof = this.checkCrossData(uniqueId, smgId, tokenPair, amount, fee, toAddr, void 0, ttl);
