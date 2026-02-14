@@ -1,11 +1,11 @@
 // import "dotenv/config";
 import * as graphHttp from 'graphql-http';
-import {type FinalizedTransaction} from '@midnight-ntwrk/ledger-v7';
+import { type FinalizedTransaction } from '@midnight-ntwrk/ledger-v7';
 
 
 
-const indexerURL = (process.env.INDEXER_URL || "http://10.211.55.6:8088")+"/api/v3/graphql";
-const txServerURL = (process.env.TX_SERVER_URL || "http://10.211.55.6:3000")+'/submit';
+const indexerURL = (process.env.INDEXER_URL || "http://10.211.55.6:8088") + "/api/v3/graphql";
+const txServerURL = (process.env.TX_SERVER_URL || "http://10.211.55.6:3000") + '/submit';
 
 const client = graphHttp.createClient({ url: indexerURL });
 
@@ -41,7 +41,7 @@ export type TXStringWithContext = {
 export class TXClient {
     static async post(apiURL: string, txStringWithContext: TXStringWithContext) {
         try {
-            const response: AxiosResponse = await axios.post(apiURL, 
+            const response: AxiosResponse = await axios.post(apiURL,
                 txStringWithContext
             );
 
@@ -125,7 +125,11 @@ export class ToolKitClient {
     static async submitTXStringWithContext(tx: FinalizedTransaction): Promise<TransactionIdentifier> {
         const txStringWithContext = await ToolKitClient.prepareTXStringWithContext(tx.serialize());
         const ret = await TXClient.post(txServerURL, txStringWithContext);
-
-        return ret;
+        if (ret.success === true) {
+            return ret.data;
+        } else {
+            throw new Error(`Failed to submit transaction: ${ret}`);
+        }
+        // return ret;
     }
 }

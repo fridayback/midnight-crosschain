@@ -125,7 +125,11 @@ var ToolKitClient = class _ToolKitClient {
   static async submitTXStringWithContext(tx) {
     const txStringWithContext = await _ToolKitClient.prepareTXStringWithContext(tx.serialize());
     const ret = await TXClient.post(txServerURL, txStringWithContext);
-    return ret;
+    if (ret.success === true) {
+      return ret.data;
+    } else {
+      throw new Error(`Failed to submit transaction: ${ret}`);
+    }
   }
 };
 
