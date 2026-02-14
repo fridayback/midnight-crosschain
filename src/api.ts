@@ -130,7 +130,8 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
       //   .then((tx) => walletFacade.finalizeRecipe(tx));
     },
     submitTx(tx: FinalizedTransaction): Promise<TransactionId> {
-      return walletFacade.submitTransaction(tx);
+      // return walletFacade.submitTransaction(tx);
+      return wallet.submitTx(tx);
     },
   };
 };

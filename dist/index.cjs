@@ -9155,7 +9155,7 @@ var createWalletAndMidnightProvider = async (wallet) => {
       return await wallet.balanceTx(tx, ttl);
     },
     submitTx(tx) {
-      return walletFacade.submitTransaction(tx);
+      return wallet.submitTx(tx);
     }
   };
 };
