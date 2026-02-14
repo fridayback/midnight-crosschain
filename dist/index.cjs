@@ -275,8 +275,20 @@ var MidnightWalletSDK = class {
   }
   async submitTx(tx) {
     assert3__default.default(this.walletObj, "walletObj is not initialized!");
-    const txHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(tx) : await this.walletObj.submitTransaction(tx);
-    return txHash;
+    const ret = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(tx) : await this.walletObj.submitTransaction(tx);
+    if (this.ISMimic) {
+      console.log("Submitted tx string to mimic, response: ", ret);
+      const separator = '"midnight_tx_hash":"0x';
+      const offset = ret.indexOf(separator);
+      if (offset !== -1) {
+        const txHash = ret.substring(offset + separator.length, offset + separator.length + 64);
+        console.log("Extracted tx hash from response: ", txHash);
+        return txHash;
+      } else {
+        throw ret;
+      }
+    }
+    return ret;
   }
   async getBalances() {
     assert3__default.default(this.walletObj, "walletObj is not initialized!");
