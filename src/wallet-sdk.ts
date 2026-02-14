@@ -220,8 +220,8 @@ export class MidnightWalletSDK {
 
         const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
 
-        // const dustRegistrationTxHash = await this.walletObj.submitTransaction(finalizedDustTx);
-        const dustRegistrationTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
+        const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
+        // const dustRegistrationTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
 
         this.isGenerating = false;
     }
@@ -255,9 +255,17 @@ export class MidnightWalletSDK {
         const finalizedDustTx = await this.walletObj.finalizeRecipe(recipe);
 
         // const dustRegistrationTxHash = await this.walletObj.submitTransaction(finalizedDustTx);
-        const dustRegistrationTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
+        // const dustRegistrationTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
+        const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
 
         this.isUnGenerating = false;
+    }
+
+    async submitTx(tx: ledger.FinalizedTransaction) {
+        assert(this.walletObj, "walletObj is not initialized!");
+        // const txHash = await this.walletObj.submitTransaction(tx);
+        const txHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(tx) : await this.walletObj.submitTransaction(tx);
+        return txHash;
     }
 
 
@@ -363,8 +371,8 @@ export class MidnightWalletSDK {
         const signedTransferTxRecipe = await this.walletObj?.signRecipe(recipe, (payload) => unshieldedKeystore.signData(payload));
         const finalizedTx = await this.walletObj.finalizeRecipe(signedTransferTxRecipe);
 
-        // const submittedTxHash = await this.walletObj.submitTransaction(finalizedTx);
-        const submittedTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedTx) : await this.walletObj.submitTransaction(finalizedTx);
+        const submittedTxHash = await this.submitTx(finalizedTx);
+        // const submittedTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedTx) : await this.walletObj.submitTransaction(finalizedTx);
         return submittedTxHash;
     }
 

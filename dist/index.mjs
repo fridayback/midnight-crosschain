@@ -216,7 +216,7 @@ var MidnightWalletSDK = class {
       // this.walletAddress.dustAddress
     );
     const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
-    this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
+    await this.submitTx(finalizedDustTx);
     this.isGenerating = false;
   }
   async deregisterFromDustGeneration() {
@@ -241,8 +241,13 @@ var MidnightWalletSDK = class {
     const unshieldedKeystore = this.unshieldedKeystore;
     const recipe = await this.walletObj?.signRecipe(dustRegistrationRecipe, (payload) => unshieldedKeystore.signData(payload));
     const finalizedDustTx = await this.walletObj.finalizeRecipe(recipe);
-    this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
+    await this.submitTx(finalizedDustTx);
     this.isUnGenerating = false;
+  }
+  async submitTx(tx) {
+    assert3(this.walletObj, "walletObj is not initialized!");
+    const txHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(tx) : await this.walletObj.submitTransaction(tx);
+    return txHash;
   }
   async getBalances() {
     assert3(this.walletObj, "walletObj is not initialized!");
@@ -308,7 +313,7 @@ var MidnightWalletSDK = class {
     const unshieldedKeystore = this.unshieldedKeystore;
     const signedTransferTxRecipe = await this.walletObj?.signRecipe(recipe, (payload) => unshieldedKeystore.signData(payload));
     const finalizedTx = await this.walletObj.finalizeRecipe(signedTransferTxRecipe);
-    const submittedTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedTx) : await this.walletObj.submitTransaction(finalizedTx);
+    const submittedTxHash = await this.submitTx(finalizedTx);
     return submittedTxHash;
   }
   async balanceTx(tx, ttl) {

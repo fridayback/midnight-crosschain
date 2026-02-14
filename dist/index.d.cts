@@ -57,6 +57,7 @@ declare class MidnightWalletSDK {
     };
     registerNightUtxosForDustGeneration(): Promise<void>;
     deregisterFromDustGeneration(): Promise<void>;
+    submitTx(tx: ledger.FinalizedTransaction): Promise<string>;
     getBalances(): Promise<{
         dustBalance: bigint;
         shieldedBlance: any;
