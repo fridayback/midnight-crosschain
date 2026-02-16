@@ -125,9 +125,29 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
     getCoinPublicKey: () => wallet.getShieldedSecretKeys().coinPublicKey,//() => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
     async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> {
-      return await wallet.balanceTx(tx, ttl);
+      // return await wallet.balanceTx(tx, ttl);
       // return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
       //   .then((tx) => walletFacade.finalizeRecipe(tx));
+      const recipe = await walletFacade.balanceUnboundTransaction(
+        tx,
+        { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
+        { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) },
+      );
+
+      // Work around wallet SDK bug: signRecipe uses hardcoded 'pre-proof'
+      // marker when cloning intents, but proven (UnboundTransaction) intents
+      // have 'proof' data, causing "Failed to clone intent". We sign manually
+      // with the correct proof markers.
+      const signFn = (payload: Uint8Array) => wallet.getUnshieldedKeystore().signData(payload);
+      signTransactionIntents(recipe.baseTransaction, signFn, 'proof');
+      if (recipe.balancingTransaction) {
+        signTransactionIntents(recipe.balancingTransaction, signFn, 'pre-proof');
+      }
+
+      // const recipeFinalized = await ctx.wallet.signRecipe(recipe, (payload) => ctx.unshieldedKeystore.signData(payload));
+
+      return walletFacade.finalizeRecipe(recipe);
+
     },
     submitTx(tx: FinalizedTransaction): Promise<TransactionId> {
       // return walletFacade.submitTransaction(tx);

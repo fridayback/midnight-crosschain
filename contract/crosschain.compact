@@ -247,41 +247,41 @@ circuit addCrossProposal(
   , isMappingToken: Boolean
 ): [] {
   assert(crossProposalHis.member(disclose(uniqueId)) == false, "crossTx has finished");
-  // assert(smgTxSigners.member(ownPublicKey()), "not smg member");
-  // assert(disclose(amount) > 0, "amount must be greater than 0");
-  // assert(disclose(amount) > disclose(fee), "amount must be greater than fee");
+  assert(smgTxSigners.member(ownPublicKey()), "not smg member");
+  assert(disclose(amount) > 0, "amount must be greater than 0");
+  assert(disclose(amount) > disclose(fee), "amount must be greater than fee");
 
-  // if(crossProposal.member(disclose(uniqueId))){
-  //    if(blockTimeLt(crossProposal.lookup(disclose(uniqueId)).ttl)){
-  //      assert(false,"proposal exists");
-  //    }else{
-  //      crossProposal.remove(disclose(uniqueId));
-  //      crossProposalVoters.remove(disclose(uniqueId));
-  //    }
-  // }
-  // assert( blockTimeLt(disclose(ttl)), "ttl expired");
-  // assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
+  if(crossProposal.member(disclose(uniqueId))){
+     if(blockTimeLt(crossProposal.lookup(disclose(uniqueId)).ttl)){
+       assert(false,"proposal exists");
+     }else{
+       crossProposal.remove(disclose(uniqueId));
+       crossProposalVoters.remove(disclose(uniqueId));
+     }
+  }
+  assert( blockTimeLt(disclose(ttl)), "ttl expired");
+  assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
 
-  // const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
+  const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
   
-  // const newCrossProposal = CrossProposal{ 
-  //   smgId: disclose(smgId)
-  //   , token: isMappingToken?tokenPair.domainSep :tokenPair.midnigthTokenAccount
-  //   , tokenPairId: disclose(tokenPairId)
-  //   , isMappingToken: isMappingToken
-  //   , amount: disclose(amount)
-  //   , fee: disclose(fee)
-  //   , toAddr: disclose(toAddr)
-  //   , ttl: disclose(ttl)
-  //   };
+  const newCrossProposal = CrossProposal{ 
+    smgId: disclose(smgId)
+    , token: isMappingToken?tokenPair.domainSep :tokenPair.midnigthTokenAccount
+    , tokenPairId: disclose(tokenPairId)
+    , isMappingToken: isMappingToken
+    , amount: disclose(amount)
+    , fee: disclose(fee)
+    , toAddr: disclose(toAddr)
+    , ttl: disclose(ttl)
+    };
 
-  // //TODO: need to check add the same proposal again
+  //TODO: need to check add the same proposal again
  
-  // crossProposal.insert(disclose(uniqueId),newCrossProposal);
-  // crossProposalVoters.insert(disclose(uniqueId),default<Set<Uint<8>>>);
+  crossProposal.insert(disclose(uniqueId),newCrossProposal);
+  crossProposalVoters.insert(disclose(uniqueId),default<Set<Uint<8>>>);
 
-  // voteCrossProposal(VoteForCrossPropasal{uniqueId: disclose(uniqueId), ttl: disclose(ttl)});
-  // // crossCounter.increment(1);
+  voteCrossProposal(VoteForCrossPropasal{uniqueId: disclose(uniqueId), ttl: disclose(ttl)});
+  // crossCounter.increment(1);
 }
 
 export circuit voteMultiCrossProposal(uniqueIds: Vector<5, VoteForCrossPropasal>): [] {

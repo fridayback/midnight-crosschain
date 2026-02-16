@@ -3315,6 +3315,403 @@ var Contract = class {
       ).value) === false,
       "crossTx has finished"
     );
+    let tmp_0;
+    __compactRuntime__namespace.assert(
+      (tmp_0 = this._ownPublicKey_0(
+        context,
+        partialProofData
+      ), _descriptor_6.fromValue(__compactRuntime__namespace.queryLedgerState(
+        context,
+        partialProofData,
+        [
+          { dup: { n: 0 } },
+          { idx: {
+            cached: false,
+            pushPath: false,
+            path: [
+              {
+                tag: "value",
+                value: {
+                  value: _descriptor_7.toValue(0n),
+                  alignment: _descriptor_7.alignment()
+                }
+              },
+              {
+                tag: "value",
+                value: {
+                  value: _descriptor_7.toValue(0n),
+                  alignment: _descriptor_7.alignment()
+                }
+              }
+            ]
+          } },
+          { push: {
+            storage: false,
+            value: __compactRuntime__namespace.StateValue.newCell({
+              value: _descriptor_5.toValue(tmp_0),
+              alignment: _descriptor_5.alignment()
+            }).encode()
+          } },
+          "member",
+          { popeq: {
+            cached: true,
+            result: void 0
+          } }
+        ]
+      ).value)),
+      "not smg member"
+    );
+    __compactRuntime__namespace.assert(amount_0 > 0n, "amount must be greater than 0");
+    __compactRuntime__namespace.assert(amount_0 > fee_0, "amount must be greater than fee");
+    if (_descriptor_6.fromValue(__compactRuntime__namespace.queryLedgerState(
+      context,
+      partialProofData,
+      [
+        { dup: { n: 0 } },
+        { idx: {
+          cached: false,
+          pushPath: false,
+          path: [
+            {
+              tag: "value",
+              value: {
+                value: _descriptor_7.toValue(1n),
+                alignment: _descriptor_7.alignment()
+              }
+            },
+            {
+              tag: "value",
+              value: {
+                value: _descriptor_7.toValue(8n),
+                alignment: _descriptor_7.alignment()
+              }
+            }
+          ]
+        } },
+        { push: {
+          storage: false,
+          value: __compactRuntime__namespace.StateValue.newCell({
+            value: _descriptor_0.toValue(uniqueId_0),
+            alignment: _descriptor_0.alignment()
+          }).encode()
+        } },
+        "member",
+        { popeq: {
+          cached: true,
+          result: void 0
+        } }
+      ]
+    ).value)) {
+      if (this._blockTimeLt_0(
+        context,
+        partialProofData,
+        _descriptor_11.fromValue(__compactRuntime__namespace.queryLedgerState(
+          context,
+          partialProofData,
+          [
+            { dup: { n: 0 } },
+            { idx: {
+              cached: false,
+              pushPath: false,
+              path: [
+                {
+                  tag: "value",
+                  value: {
+                    value: _descriptor_7.toValue(1n),
+                    alignment: _descriptor_7.alignment()
+                  }
+                },
+                {
+                  tag: "value",
+                  value: {
+                    value: _descriptor_7.toValue(8n),
+                    alignment: _descriptor_7.alignment()
+                  }
+                }
+              ]
+            } },
+            { idx: {
+              cached: false,
+              pushPath: false,
+              path: [
+                {
+                  tag: "value",
+                  value: {
+                    value: _descriptor_0.toValue(uniqueId_0),
+                    alignment: _descriptor_0.alignment()
+                  }
+                }
+              ]
+            } },
+            { popeq: {
+              cached: false,
+              result: void 0
+            } }
+          ]
+        ).value).ttl
+      )) {
+        __compactRuntime__namespace.assert(false, "proposal exists");
+      } else {
+        __compactRuntime__namespace.queryLedgerState(
+          context,
+          partialProofData,
+          [
+            { idx: {
+              cached: false,
+              pushPath: true,
+              path: [
+                {
+                  tag: "value",
+                  value: {
+                    value: _descriptor_7.toValue(1n),
+                    alignment: _descriptor_7.alignment()
+                  }
+                },
+                {
+                  tag: "value",
+                  value: {
+                    value: _descriptor_7.toValue(8n),
+                    alignment: _descriptor_7.alignment()
+                  }
+                }
+              ]
+            } },
+            { push: {
+              storage: false,
+              value: __compactRuntime__namespace.StateValue.newCell({
+                value: _descriptor_0.toValue(uniqueId_0),
+                alignment: _descriptor_0.alignment()
+              }).encode()
+            } },
+            { rem: { cached: false } },
+            { ins: { cached: true, n: 2 } }
+          ]
+        );
+        __compactRuntime__namespace.queryLedgerState(
+          context,
+          partialProofData,
+          [
+            { idx: {
+              cached: false,
+              pushPath: true,
+              path: [
+                {
+                  tag: "value",
+                  value: {
+                    value: _descriptor_7.toValue(1n),
+                    alignment: _descriptor_7.alignment()
+                  }
+                },
+                {
+                  tag: "value",
+                  value: {
+                    value: _descriptor_7.toValue(9n),
+                    alignment: _descriptor_7.alignment()
+                  }
+                }
+              ]
+            } },
+            { push: {
+              storage: false,
+              value: __compactRuntime__namespace.StateValue.newCell({
+                value: _descriptor_0.toValue(uniqueId_0),
+                alignment: _descriptor_0.alignment()
+              }).encode()
+            } },
+            { rem: { cached: false } },
+            { ins: { cached: true, n: 2 } }
+          ]
+        );
+      }
+    }
+    __compactRuntime__namespace.assert(
+      this._blockTimeLt_0(context, partialProofData, ttl_0),
+      "ttl expired"
+    );
+    __compactRuntime__namespace.assert(
+      _descriptor_6.fromValue(__compactRuntime__namespace.queryLedgerState(
+        context,
+        partialProofData,
+        [
+          { dup: { n: 0 } },
+          { idx: {
+            cached: false,
+            pushPath: false,
+            path: [
+              {
+                tag: "value",
+                value: {
+                  value: _descriptor_7.toValue(0n),
+                  alignment: _descriptor_7.alignment()
+                }
+              },
+              {
+                tag: "value",
+                value: {
+                  value: _descriptor_7.toValue(3n),
+                  alignment: _descriptor_7.alignment()
+                }
+              }
+            ]
+          } },
+          { push: {
+            storage: false,
+            value: __compactRuntime__namespace.StateValue.newCell({
+              value: _descriptor_2.toValue(tokenPairId_0),
+              alignment: _descriptor_2.alignment()
+            }).encode()
+          } },
+          "member",
+          { popeq: {
+            cached: true,
+            result: void 0
+          } }
+        ]
+      ).value),
+      "tokenpairId not exists"
+    );
+    const tokenPair_0 = _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+      context,
+      partialProofData,
+      [
+        { dup: { n: 0 } },
+        { idx: {
+          cached: false,
+          pushPath: false,
+          path: [
+            {
+              tag: "value",
+              value: {
+                value: _descriptor_7.toValue(0n),
+                alignment: _descriptor_7.alignment()
+              }
+            },
+            {
+              tag: "value",
+              value: {
+                value: _descriptor_7.toValue(3n),
+                alignment: _descriptor_7.alignment()
+              }
+            }
+          ]
+        } },
+        { idx: {
+          cached: false,
+          pushPath: false,
+          path: [
+            {
+              tag: "value",
+              value: {
+                value: _descriptor_2.toValue(tokenPairId_0),
+                alignment: _descriptor_2.alignment()
+              }
+            }
+          ]
+        } },
+        { popeq: {
+          cached: false,
+          result: void 0
+        } }
+      ]
+    ).value);
+    const newCrossProposal_0 = {
+      smgId: smgId_0,
+      token: isMappingToken_0 ? tokenPair_0.domainSep : tokenPair_0.midnigthTokenAccount,
+      tokenPairId: tokenPairId_0,
+      isMappingToken: isMappingToken_0,
+      amount: amount_0,
+      fee: fee_0,
+      toAddr: toAddr_0,
+      ttl: ttl_0
+    };
+    __compactRuntime__namespace.queryLedgerState(
+      context,
+      partialProofData,
+      [
+        { idx: {
+          cached: false,
+          pushPath: true,
+          path: [
+            {
+              tag: "value",
+              value: {
+                value: _descriptor_7.toValue(1n),
+                alignment: _descriptor_7.alignment()
+              }
+            },
+            {
+              tag: "value",
+              value: {
+                value: _descriptor_7.toValue(8n),
+                alignment: _descriptor_7.alignment()
+              }
+            }
+          ]
+        } },
+        { push: {
+          storage: false,
+          value: __compactRuntime__namespace.StateValue.newCell({
+            value: _descriptor_0.toValue(uniqueId_0),
+            alignment: _descriptor_0.alignment()
+          }).encode()
+        } },
+        { push: {
+          storage: true,
+          value: __compactRuntime__namespace.StateValue.newCell({
+            value: _descriptor_11.toValue(newCrossProposal_0),
+            alignment: _descriptor_11.alignment()
+          }).encode()
+        } },
+        { ins: { cached: false, n: 1 } },
+        { ins: { cached: true, n: 2 } }
+      ]
+    );
+    __compactRuntime__namespace.queryLedgerState(
+      context,
+      partialProofData,
+      [
+        { idx: {
+          cached: false,
+          pushPath: true,
+          path: [
+            {
+              tag: "value",
+              value: {
+                value: _descriptor_7.toValue(1n),
+                alignment: _descriptor_7.alignment()
+              }
+            },
+            {
+              tag: "value",
+              value: {
+                value: _descriptor_7.toValue(9n),
+                alignment: _descriptor_7.alignment()
+              }
+            }
+          ]
+        } },
+        { push: {
+          storage: false,
+          value: __compactRuntime__namespace.StateValue.newCell({
+            value: _descriptor_0.toValue(uniqueId_0),
+            alignment: _descriptor_0.alignment()
+          }).encode()
+        } },
+        { push: {
+          storage: true,
+          value: __compactRuntime__namespace.StateValue.newMap(
+            new __compactRuntime__namespace.StateMap()
+          ).encode()
+        } },
+        { ins: { cached: false, n: 1 } },
+        { ins: { cached: true, n: 2 } }
+      ]
+    );
+    this._voteCrossProposal_0(
+      context,
+      partialProofData,
+      { uniqueId: uniqueId_0, ttl: ttl_0 }
+    );
     return [];
   }
   _voteMultiCrossProposal_0(context, partialProofData, uniqueIds_0) {
@@ -8771,7 +9168,17 @@ var createWalletAndMidnightProvider = async (wallet) => {
     //() => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
     async balanceTx(tx, ttl) {
-      return await wallet.balanceTx(tx, ttl);
+      const recipe = await walletFacade.balanceUnboundTransaction(
+        tx,
+        { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
+        { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1e3) }
+      );
+      const signFn = (payload) => wallet.getUnshieldedKeystore().signData(payload);
+      signTransactionIntents(recipe.baseTransaction, signFn, "proof");
+      if (recipe.balancingTransaction) {
+        signTransactionIntents(recipe.balancingTransaction, signFn, "pre-proof");
+      }
+      return walletFacade.finalizeRecipe(recipe);
     },
     submitTx(tx) {
       return wallet.submitTx(tx);
