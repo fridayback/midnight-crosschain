@@ -102,8 +102,6 @@ export type ImpureCircuits<PS> = {
            amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   voteMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
                          uniqueIds_0: VoteForCrossPropasal[]): __compactRuntime.CircuitResults<PS, []>;
-  voteCrossProposal(context: __compactRuntime.CircuitContext<PS>,
-                    target_0: VoteForCrossPropasal): __compactRuntime.CircuitResults<PS, []>;
   executeMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
                             mutiEx_0: ExecuteCrossProposalInfo[]): __compactRuntime.CircuitResults<PS, []>;
   setFeeUnshieldedReceiver(context: __compactRuntime.CircuitContext<PS>,
@@ -156,8 +154,6 @@ export type Circuits<PS> = {
            amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   voteMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
                          uniqueIds_0: VoteForCrossPropasal[]): __compactRuntime.CircuitResults<PS, []>;
-  voteCrossProposal(context: __compactRuntime.CircuitContext<PS>,
-                    target_0: VoteForCrossPropasal): __compactRuntime.CircuitResults<PS, []>;
   executeMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
                             mutiEx_0: ExecuteCrossProposalInfo[]): __compactRuntime.CircuitResults<PS, []>;
   setFeeUnshieldedReceiver(context: __compactRuntime.CircuitContext<PS>,

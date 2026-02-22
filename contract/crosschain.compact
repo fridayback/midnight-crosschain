@@ -275,43 +275,72 @@ circuit addCrossProposal(
     , ttl: disclose(ttl)
     };
 
-  //TODO: need to check add the same proposal again
+  // //TODO: need to check add the same proposal again
  
   crossProposal.insert(disclose(uniqueId),newCrossProposal);
-  crossProposalVoters.insert(disclose(uniqueId),default<Set<Uint<8>>>);
+  crossProposalVoters.insertDefault(disclose(uniqueId));
 
-  voteCrossProposal(VoteForCrossPropasal{uniqueId: disclose(uniqueId), ttl: disclose(ttl)});
+  // _voteCrossProposal(newCrossProposal);
   // crossCounter.increment(1);
+  const voterIndex = smgTxSigners.lookup(ownPublicKey());
+  // if(crossProposalVoters.lookup(uniqueId).member(voterIndex)) return;
+
+  crossProposalVoters.lookup(uniqueId).insert(voterIndex);
 }
 
 export circuit voteMultiCrossProposal(uniqueIds: Vector<5, VoteForCrossPropasal>): [] {
+// export circuit voteMultiCrossProposal(target: VoteForCrossPropasal): [] {
+  if(!smgTxSigners.member(ownPublicKey())) return;
+  // if(disclose(target.uniqueId) != default<Bytes<32>> && crossProposal.member(disclose(target.uniqueId))) {
+  //     const proposal = crossProposal.lookup(disclose(target.uniqueId));
+  //     if(proposal.ttl == disclose(target.ttl)) {
+  //       if(blockTimeGte(proposal.ttl)){
+  //         crossProposal.remove(disclose(target.uniqueId));
+  //         crossProposalVoters.remove(disclose(target.uniqueId));
+  //       }else{
+  //         // _voteCrossProposal(proposal);
+  //         const voterIndex = smgTxSigners.lookup(ownPublicKey());
+  //         crossProposalVoters.lookup(disclose(target.uniqueId)).insert(voterIndex);
+  //       }
+          
+  //     } 
+  //   }
+
   for (const target of disclose(uniqueIds)) {
-    if(target.uniqueId != default<Bytes<32>>) {
-      voteCrossProposal(target);
+    if(disclose(target.uniqueId) != default<Bytes<32>> && crossProposal.member(disclose(target.uniqueId))) {
+      const proposal = crossProposal.lookup(disclose(target.uniqueId));
+      if(proposal.ttl == disclose(target.ttl)) {
+        if(blockTimeGte(proposal.ttl)){
+          crossProposal.remove(disclose(target.uniqueId));
+          crossProposalVoters.remove(disclose(target.uniqueId));
+        }else{
+          // _voteCrossProposal(proposal);
+          const voterIndex = smgTxSigners.lookup(ownPublicKey());
+          crossProposalVoters.lookup(disclose(target.uniqueId)).insert(voterIndex);
+        }
+          
+      } 
     }
   }
+    
 }
 
-export circuit voteCrossProposal(target: VoteForCrossPropasal): [] {
-  if(!smgTxSigners.member(ownPublicKey())) return;
-  if(!crossProposal.member(disclose(target.uniqueId))) return;
+// circuit _voteCrossProposal(target: CrossProposal): [] {
+//   // if(!smgTxSigners.member(ownPublicKey())) return;
+  
+//   // if(crossProposalVoters.lookup(target.smgId).size() >= smgPKThreshold) return;
+//   // if ttl is expired and not enough voters, remove the proposal
+//   // if(blockTimeGte(target.ttl)){
+//   //   crossProposal.remove(target.smgId);
+//   //   crossProposalVoters.remove(target.smgId);
+//   //   return;
+//   // }
 
-  const proposal = crossProposal.lookup(disclose(target.uniqueId));
-  if(proposal.ttl != disclose(target.ttl)) return;
+//   const voterIndex = smgTxSigners.lookup(ownPublicKey());
+//   // if(crossProposalVoters.lookup(target.smgId).member(voterIndex)) return;
 
-  if(crossProposalVoters.lookup(disclose(target.uniqueId)).size() >= smgPKThreshold) return;
-  // if ttl is expired and not enough voters, remove the proposal
-  if(blockTimeGte(proposal.ttl)){
-    crossProposal.remove(disclose(target.uniqueId));
-    crossProposalVoters.remove(disclose(target.uniqueId));
-    return;
-  }
-
-  const voterIndex = smgTxSigners.lookup(ownPublicKey());
-  if(crossProposalVoters.lookup(disclose(target.uniqueId)).member(voterIndex)) return;
-
-  crossProposalVoters.lookup(disclose(target.uniqueId)).insert(voterIndex);
-}
+//   crossProposalVoters.lookup(target.smgId).insert(voterIndex);
+// }
 
 export circuit executeMultiCrossProposal(mutiEx: Vector<3,ExecuteCrossProposalInfo>): [] {
   currentExecuteCrossProposal.resetToDefault();

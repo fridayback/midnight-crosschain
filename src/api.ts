@@ -584,12 +584,18 @@ export class CrossChainApi {
     return finalizedTxData;
   }
 
-  async voteCrossProposal(uniqueId: string, ttl: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "voteCrossProposal">> {
+  async voteCrossProposal(uniqueId: string, ttl: string | number | bigint): Promise<FinalizedCallTxData<CrossChainContract, "voteMultiCrossProposal">> {
     const uniqueId_0 = Buffer.from(uniqueId, 'hex');
     const ttl_0 = BigInt(ttl);
     assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
 
-    const finalizedTxData = await this.crossChainContract.callTx.voteCrossProposal({ uniqueId: uniqueId_0, ttl: ttl_0 });
+    const finalizedTxData = await this.crossChainContract.callTx.voteMultiCrossProposal([
+      { uniqueId: uniqueId_0, ttl: ttl_0 },
+      { uniqueId: Buffer.alloc(32,0), ttl: 0n},
+      { uniqueId: Buffer.alloc(32,0), ttl: 0n},
+      { uniqueId: Buffer.alloc(32,0), ttl: 0n},
+      { uniqueId: Buffer.alloc(32,0), ttl: 0n}
+    ]);
     return finalizedTxData;
   }
 
