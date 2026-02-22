@@ -9488,13 +9488,12 @@ var CrossChainApi = class _CrossChainApi {
     const uniqueId_0 = Buffer.from(uniqueId, "hex");
     const ttl_0 = BigInt(ttl);
     assert3(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
-    const finalizedTxData = await this.crossChainContract.callTx.voteMultiCrossProposal([
-      { uniqueId: uniqueId_0, ttl: ttl_0 },
-      { uniqueId: Buffer.alloc(32, 0), ttl: 0n },
-      { uniqueId: Buffer.alloc(32, 0), ttl: 0n },
-      { uniqueId: Buffer.alloc(32, 0), ttl: 0n },
-      { uniqueId: Buffer.alloc(32, 0), ttl: 0n }
-    ]);
+    const maxCount = 5;
+    let items = [{ uniqueId: uniqueId_0, ttl: ttl_0 }];
+    for (let index = 1; index < maxCount; index++) {
+      items.push({ uniqueId: Buffer.alloc(32, 0), ttl: 0n });
+    }
+    const finalizedTxData = await this.crossChainContract.callTx.voteMultiCrossProposal(items);
     return finalizedTxData;
   }
   async voteMultiCrossProposal(uniqueIds) {
@@ -9504,8 +9503,9 @@ var CrossChainApi = class _CrossChainApi {
       assert3(uniqueId_0.length === 32, `uniqueId(${uniqueId_0}) must be 32 bytes long`);
       return { uniqueId: uniqueId_0, ttl: ttl_0 };
     });
-    assert3(uniqueIds_0.length <= 5 && uniqueIds_0.length > 0, `uniqueIds length must be between 1 and 5`);
-    for (let index = uniqueIds_0.length; index < 5; index++) {
+    const maxCount = 5;
+    assert3(uniqueIds_0.length <= maxCount && uniqueIds_0.length > 0, `uniqueIds length must be between 1 and ${maxCount}`);
+    for (let index = uniqueIds_0.length; index < maxCount; index++) {
       uniqueIds_0.push({ uniqueId: Buffer.alloc(32), ttl: BigInt(0) });
     }
     const finalizedTxData = await this.crossChainContract.callTx.voteMultiCrossProposal(uniqueIds_0);
