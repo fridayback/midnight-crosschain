@@ -9225,10 +9225,10 @@ var CompiledSimpleContract = CompiledContract.make("CrossChain", Contract).pipe(
 var createWalletAndMidnightProvider = async (wallet) => {
   const walletFacade = wallet.getWalletInstance();
   assert3(walletFacade, "wallet not initialized");
+  const state = await Rx.firstValueFrom(walletFacade.state().pipe(Rx.filter((s) => s.isSynced)));
   return {
-    getCoinPublicKey: () => wallet.getShieldedSecretKeys().coinPublicKey,
-    //() => state.shielded.coinPublicKey.toHexString(),
-    getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
+    getCoinPublicKey: () => state.shielded.coinPublicKey.toHexString(),
+    getEncryptionPublicKey: () => state.shielded.encryptionPublicKey.toHexString(),
     async balanceTx(tx, ttl) {
       const recipe = await walletFacade.balanceUnboundTransaction(
         tx,

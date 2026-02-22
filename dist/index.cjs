@@ -9254,10 +9254,10 @@ var CompiledSimpleContract = compactJs.CompiledContract.make("CrossChain", Contr
 var createWalletAndMidnightProvider = async (wallet) => {
   const walletFacade = wallet.getWalletInstance();
   assert3__default.default(walletFacade, "wallet not initialized");
+  const state = await Rx__namespace.firstValueFrom(walletFacade.state().pipe(Rx__namespace.filter((s) => s.isSynced)));
   return {
-    getCoinPublicKey: () => wallet.getShieldedSecretKeys().coinPublicKey,
-    //() => state.shielded.coinPublicKey.toHexString(),
-    getEncryptionPublicKey: () => wallet.getShieldedSecretKeys().encryptionPublicKey,
+    getCoinPublicKey: () => state.shielded.coinPublicKey.toHexString(),
+    getEncryptionPublicKey: () => state.shielded.encryptionPublicKey.toHexString(),
     async balanceTx(tx, ttl) {
       const recipe = await walletFacade.balanceUnboundTransaction(
         tx,
