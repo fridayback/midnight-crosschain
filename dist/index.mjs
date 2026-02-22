@@ -9523,8 +9523,9 @@ var CrossChainApi = class _CrossChainApi {
       }
       return { uniqueId: uniqueId_0, coinIndex: coinIndex_0 };
     });
-    assert3(uniqueIds_0.length <= 5 && uniqueIds_0.length > 0, `uniqueIds must be between 1 and 5`);
-    for (let index = uniqueIds_0.length; index < 5; index++) {
+    const maxCount = 3;
+    assert3(uniqueIds_0.length <= maxCount && uniqueIds_0.length > 0, `uniqueIds must be between 1 and ${maxCount}`);
+    for (let index = uniqueIds_0.length; index < maxCount; index++) {
       uniqueIds_0.push({ uniqueId: Buffer.alloc(32), coinIndex: BigInt(0) });
     }
     const finalizedTxData = await this.crossChainContract.callTx.executeMultiCrossProposal(uniqueIds_0);
