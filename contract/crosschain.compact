@@ -376,7 +376,7 @@ circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
   }else{
     const tokenPair = tokenPairs.lookup(proposal.tokenPairId);
     mintUnshieldedToken(proposal.token, (proposal.amount - proposal.fee) as Uint<64>, right<ContractAddress, UserAddress>(proposal.toAddr));
-    mintUnshieldedToken(proposal.token, proposal.fee as Uint<64>, right<ContractAddress, UserAddress>(feeUnshieldedReceiver));
+    // mintUnshieldedToken(proposal.token, proposal.fee as Uint<64>, right<ContractAddress, UserAddress>(feeUnshieldedReceiver));
     updateTokenTotalSupply(tokenPair.midnigthTokenAccount, proposal.amount, true);
   }
 

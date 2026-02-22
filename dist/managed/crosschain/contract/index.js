@@ -2834,30 +2834,6 @@ export class Contract {
                                                                 'result of subtraction would be negative'),
                                         t_0 - t_1)))),
                                   this._right_0(proposal_0.toAddr));
-      this._mintUnshieldedToken_0(context,
-                                  partialProofData,
-                                  proposal_0.token,
-                                  ((t1) => {
-                                    if (t1 > 18446744073709551615n) {
-                                      throw new __compactRuntime.CompactError('crosschain.compact line 379 char 41: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
-                                    }
-                                    return t1;
-                                  })(proposal_0.fee),
-                                  this._right_0(_descriptor_10.fromValue(__compactRuntime.queryLedgerState(context,
-                                                                                                           partialProofData,
-                                                                                                           [
-                                                                                                            { dup: { n: 0 } },
-                                                                                                            { idx: { cached: false,
-                                                                                                                     pushPath: false,
-                                                                                                                     path: [
-                                                                                                                            { tag: 'value',
-                                                                                                                              value: { value: _descriptor_7.toValue(1n),
-                                                                                                                                       alignment: _descriptor_7.alignment() } },
-                                                                                                                            { tag: 'value',
-                                                                                                                              value: { value: _descriptor_7.toValue(0n),
-                                                                                                                                       alignment: _descriptor_7.alignment() } }] } },
-                                                                                                            { popeq: { cached: false,
-                                                                                                                       result: undefined } }]).value)));
       this._updateTokenTotalSupply_0(context,
                                      partialProofData,
                                      tokenPair_0.midnigthTokenAccount,
