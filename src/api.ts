@@ -374,7 +374,7 @@ export class CrossChainApi {
     const tokenPairId_0 = BigInt(tokenPairId);
     const amount_0 = BigInt(amount);
     const fee_0 = BigInt(fee);
-    const toAddr_0 = { bytes: getCoinPublicKeyFromShieldAddress(toAddr) };
+    const toAddr_0 = toAddr.includes('mn_shield')?{ bytes: getCoinPublicKeyFromShieldAddress(toAddr) }:{bytes: getUserAddressFromUnshieldAddress(toAddr)};
 
     const ttl_0 = BigInt(ttl);
     return {
