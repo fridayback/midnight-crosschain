@@ -9799,7 +9799,6 @@ var CrossChainApi = class _CrossChainApi {
   //   return finalizedTxData;
   // }
   async updateContractAuthority(newKey) {
-    return await this.crossChainContract.contractMaintenanceTx.replaceAuthority(newKey);
   }
   async upgradeContract(circuitId, newCircuitHex) {
     if (newCircuitHex) {

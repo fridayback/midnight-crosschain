@@ -9,7 +9,6 @@ import { WalletFacade, CombinedSwapOutputs, FacadeState } from '@midnight-ntwrk/
 import { DefaultV1Configuration } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
 import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
-import * as _midnight_ntwrk_midnight_js_types from '@midnight-ntwrk/midnight-js-types';
 import { UnboundTransaction, MidnightProviders, WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { SigningKey, ContractAddress, RawTokenType } from '@midnight-ntwrk/compact-runtime';
@@ -484,7 +483,7 @@ declare class CrossChainApi {
     addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, midnigthTokenAccount: RawTokenType, domainSep: string, fee: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "addTokenPair">>;
     removeTokenPair(tokenPairId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "removeTokenPair">>;
     defaultProsal(): Proposal;
-    updateContractAuthority(newKey: SigningKey): Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
+    updateContractAuthority(newKey: SigningKey): Promise<void>;
     upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<void>;
 }
 declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<void>;
