@@ -490,7 +490,7 @@ declare class CrossChainApi {
     upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<void>;
     addCircuite(circuitId: CrossChainCircuits, newCircuitHex: string): Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
 }
-declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<void>;
+declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
 declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string) => Promise<void>;
 declare const genSigningKey: () => string;
 declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;

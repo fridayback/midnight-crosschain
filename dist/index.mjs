@@ -16,7 +16,7 @@ import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { ContractState, rawTokenType, sampleSigningKey } from '@midnight-ntwrk/compact-runtime';
 import { CompiledContract } from '@midnight-ntwrk/compact-js';
 import { createVerifierKey } from '@midnight-ntwrk/midnight-js-types';
-import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
+import { deployContract, findDeployedContract, submitInsertVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
@@ -9665,11 +9665,13 @@ var CrossChainApi = class _CrossChainApi {
 };
 var upgradeContractCircuit = async (providers, contractAddress, circuitId, newVkHex) => {
   assertIsContractAddress(contractAddress);
+  let newVk;
   if (newVkHex) {
-    createVerifierKey(fromHex(newVkHex));
+    newVk = createVerifierKey(fromHex(newVkHex));
   } else {
-    await providers.zkConfigProvider.getVerifierKey(circuitId);
+    newVk = await providers.zkConfigProvider.getVerifierKey(circuitId);
   }
+  return await submitInsertVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId, newVk);
 };
 var removeContractCircuit = async (providers, contractAddress, circuitId) => {
   assertIsContractAddress(contractAddress);

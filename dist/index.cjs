@@ -9694,11 +9694,13 @@ var CrossChainApi = class _CrossChainApi {
 };
 var upgradeContractCircuit = async (providers, contractAddress, circuitId, newVkHex) => {
   midnightJsUtils.assertIsContractAddress(contractAddress);
+  let newVk;
   if (newVkHex) {
-    midnightJsTypes.createVerifierKey(midnightJsUtils.fromHex(newVkHex));
+    newVk = midnightJsTypes.createVerifierKey(midnightJsUtils.fromHex(newVkHex));
   } else {
-    await providers.zkConfigProvider.getVerifierKey(circuitId);
+    newVk = await providers.zkConfigProvider.getVerifierKey(circuitId);
   }
+  return await midnightJsContracts.submitInsertVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId, newVk);
 };
 var removeContractCircuit = async (providers, contractAddress, circuitId) => {
   midnightJsUtils.assertIsContractAddress(contractAddress);

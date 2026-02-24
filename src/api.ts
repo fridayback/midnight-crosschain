@@ -1007,7 +1007,7 @@ export const upgradeContractCircuit = async (providers: MidnightProviders, contr
   } else {
     newVk = await providers.zkConfigProvider.getVerifierKey(circuitId as CrossChainCircuits);
   }
-  // return await submitInsertVerifierKeyTx(providers, contractAddress, circuitId, newVk);
+  return await submitInsertVerifierKeyTx(providers, CompiledSimpleContract,contractAddress, circuitId as CrossChainCircuits, newVk);
 }
 
 export const removeContractCircuit = async (providers: MidnightProviders, contractAddress: Address, circuitId: string) => {
