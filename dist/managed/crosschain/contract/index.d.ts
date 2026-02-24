@@ -95,6 +95,7 @@ export type ImpureCircuits<PS> = {
           fee_0: bigint,
           toAddr_0: UserAddress,
           ttl_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  foo(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
   userBurn(context: __compactRuntime.CircuitContext<PS>,
            smgId_0: Uint8Array,
            toAddr_0: string,
@@ -147,6 +148,7 @@ export type Circuits<PS> = {
           fee_0: bigint,
           toAddr_0: UserAddress,
           ttl_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  foo(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
   userBurn(context: __compactRuntime.CircuitContext<PS>,
            smgId_0: Uint8Array,
            toAddr_0: string,
