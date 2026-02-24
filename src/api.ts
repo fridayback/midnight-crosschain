@@ -992,6 +992,11 @@ export class CrossChainApi {
     // return res2;
   }
 
+  async addCircuite(circuitId: CrossChainCircuits, newCircuitHex: string){
+    const newVK = createVerifierKey(fromHex(newCircuitHex));
+    return await this.crossChainContract.circuitMaintenanceTx.foo.insertVerifierKey(newVK);
+  }
+
 }
 
 export const upgradeContractCircuit = async (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => {

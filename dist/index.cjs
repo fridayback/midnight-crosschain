@@ -9687,6 +9687,10 @@ var CrossChainApi = class _CrossChainApi {
       await this.providers.zkConfigProvider.getVerifierKey(circuitId);
     }
   }
+  async addCircuite(circuitId, newCircuitHex) {
+    const newVK = midnightJsTypes.createVerifierKey(midnightJsUtils.fromHex(newCircuitHex));
+    return await this.crossChainContract.circuitMaintenanceTx.foo.insertVerifierKey(newVK);
+  }
 };
 var upgradeContractCircuit = async (providers, contractAddress, circuitId, newVkHex) => {
   midnightJsUtils.assertIsContractAddress(contractAddress);
