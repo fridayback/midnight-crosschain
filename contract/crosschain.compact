@@ -224,7 +224,7 @@ export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
 
   if(contractFee > 0) receiveUnshielded(nativeToken(),contractFee);
   receiveUnshielded(tokenPair.midnigthTokenAccount, disclose(amount)); 
-  sendUnshielded(tokenPair.midnigthTokenAccount, disclose(amount), right<ContractAddress, UserAddress>(UserAddress{bytes: 0 as Field as Bytes<32>})); // burn address
+  _internal_send_unshielded(tokenPair.midnigthTokenAccount, disclose(amount), right<ContractAddress, UserAddress>(UserAddress{bytes: 0 as Field as Bytes<32>})); // burn address
 
     // record the crosschain info
   latestOutBoundCrosstxInfo = CrossOutBound{
@@ -369,6 +369,14 @@ circuit updateTokenTotalSupply(token: Bytes<32>, delta: Uint<128>, isAdd: Boolea
   }
 }
 
+circuit _internal_receive_unshielded(color: Bytes<32>, amount: Uint<64>): []{
+  // receiveUnshielded(color, amount);
+}
+
+circuit _internal_send_unshielded(color: Bytes<32>, amount: Uint<128>, toAddr: Either<ContractAddress, UserAddress>):[]{
+  // sendUnshielded(color, amount, toAddr);
+}
+
 circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
   assert(worker == ownPublicKey(), "only worker can executeCrossProposal ");
   assert( crossProposal.member(disclose(uniqueId)),"crossproposal not exists");
@@ -376,11 +384,11 @@ circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
   const proposal = crossProposal.lookup(disclose(uniqueId));
 
   if(proposal.isMappingToken == false){
-    sendUnshielded(proposal.token, proposal.amount, right<ContractAddress, UserAddress>(proposal.toAddr));
+    _internal_send_unshielded(proposal.token, proposal.amount, right<ContractAddress, UserAddress>(proposal.toAddr));
   }else{
     const tokenPair = tokenPairs.lookup(proposal.tokenPairId);
     mintUnshieldedToken(proposal.token, (proposal.amount - proposal.fee) as Uint<64>, right<ContractAddress, UserAddress>(proposal.toAddr));
-    // mintUnshieldedToken(proposal.token, proposal.fee as Uint<64>, right<ContractAddress, UserAddress>(feeUnshieldedReceiver));
+    if(proposal.fee > 0) mintUnshieldedToken(proposal.token, proposal.fee as Uint<64>, right<ContractAddress, UserAddress>(feeUnshieldedReceiver));
     updateTokenTotalSupply(tokenPair.midnigthTokenAccount, proposal.amount, true);
   }
 
