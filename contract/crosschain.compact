@@ -377,6 +377,11 @@ circuit _internal_send_unshielded(color: Bytes<32>, amount: Uint<128>, toAddr: E
   // sendUnshielded(color, amount, toAddr);
 }
 
+circuit _interal_mint_unshielded(domainSep: Bytes<32>, amount: Uint<64>, toAddr: Either<ContractAddress, UserAddress>): [] {
+  // mintUnshieldedToken(domainSep, amount, toAddr);
+}
+
+
 circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
   assert(worker == ownPublicKey(), "only worker can executeCrossProposal ");
   assert( crossProposal.member(disclose(uniqueId)),"crossproposal not exists");
@@ -387,8 +392,8 @@ circuit executeCrossProposal(uniqueId: Bytes<32>, coinIndex: Uint<128>): [] {
     _internal_send_unshielded(proposal.token, proposal.amount, right<ContractAddress, UserAddress>(proposal.toAddr));
   }else{
     const tokenPair = tokenPairs.lookup(proposal.tokenPairId);
-    mintUnshieldedToken(proposal.token, (proposal.amount - proposal.fee) as Uint<64>, right<ContractAddress, UserAddress>(proposal.toAddr));
-    if(proposal.fee > 0) mintUnshieldedToken(proposal.token, proposal.fee as Uint<64>, right<ContractAddress, UserAddress>(feeUnshieldedReceiver));
+    _interal_mint_unshielded(proposal.token, (proposal.amount - proposal.fee) as Uint<64>, right<ContractAddress, UserAddress>(proposal.toAddr));
+    if(proposal.fee > 0) _interal_mint_unshielded(proposal.token, proposal.fee as Uint<64>, right<ContractAddress, UserAddress>(feeUnshieldedReceiver));
     updateTokenTotalSupply(tokenPair.midnigthTokenAccount, proposal.amount, true);
   }
 
