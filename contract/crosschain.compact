@@ -175,8 +175,8 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
 
   const contractFee = getFee(disclose(tokenPairId));
 
-  receiveUnshielded(tokenPair.midnigthTokenAccount, disclose(amount));
-  if(contractFee > 0) receiveUnshielded(nativeToken(),contractFee);
+  _internal_receive_unshielded(tokenPair.midnigthTokenAccount, disclose(amount));
+  if(contractFee > 0) _internal_receive_unshielded(nativeToken(),contractFee);
 
   // record the crosschain info
   latestOutBoundCrosstxInfo = CrossOutBound{
@@ -222,8 +222,8 @@ export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
   const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
   const contractFee = getFee(disclose(tokenPairId));
 
-  if(contractFee > 0) receiveUnshielded(nativeToken(),contractFee);
-  receiveUnshielded(tokenPair.midnigthTokenAccount, disclose(amount)); 
+  if(contractFee > 0) _internal_receive_unshielded(nativeToken(),contractFee);
+  _internal_receive_unshielded(tokenPair.midnigthTokenAccount, disclose(amount)); 
   _internal_send_unshielded(tokenPair.midnigthTokenAccount, disclose(amount), right<ContractAddress, UserAddress>(UserAddress{bytes: 0 as Field as Bytes<32>})); // burn address
 
     // record the crosschain info
@@ -369,8 +369,8 @@ circuit updateTokenTotalSupply(token: Bytes<32>, delta: Uint<128>, isAdd: Boolea
   }
 }
 
-circuit _internal_receive_unshielded(color: Bytes<32>, amount: Uint<64>): []{
-  // receiveUnshielded(color, amount);
+circuit _internal_receive_unshielded(color: Bytes<32>, amount: Uint<128>): []{
+  // _internal_receive_unshielded(color, amount);
 }
 
 circuit _internal_send_unshielded(color: Bytes<32>, amount: Uint<128>, toAddr: Either<ContractAddress, UserAddress>):[]{
