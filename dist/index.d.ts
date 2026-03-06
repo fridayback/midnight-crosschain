@@ -489,6 +489,7 @@ declare class CrossChainApi {
     }[]): Promise<FinalizedCallTxData<CrossChainContract, "voteMultiCrossProposal">>;
     executeCrossProposal(uniqueId: string, coinIndex: string | number | bigint | undefined): Promise<void>;
     executeMultiCrossProposal(uniqueIds: string[]): Promise<FinalizedCallTxData<CrossChainContract, "executeMultiCrossProposal">>;
+    userClaim(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "userClaim">>;
     getLedgerState(): Promise<Ledger | null>;
     setSmgPksks(voters: Address[]): Promise<FinalizedCallTxData<CrossChainContract, "setSmgPksks">>;
     setSmgPKThreold(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "setSmgPKThreold">>;

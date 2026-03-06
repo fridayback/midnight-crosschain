@@ -414,43 +414,44 @@ export class MidnightWalletSDK {
  * (UnboundTransaction) intents that contain 'proof' data.
  */
 export const signTransactionIntents = (
-    tx: { intents?: Map<number, any> },
-    signFn: (payload: Uint8Array) => ledger.Signature,
-    proofMarker: 'proof' | 'pre-proof',
+  tx: { intents?: Map<number, any> },
+  signFn: (payload: Uint8Array) => ledger.Signature,
+  proofMarker: 'proof' | 'pre-proof',
 ): void => {
-    if (!tx.intents || tx.intents.size === 0) return;
+  if (!tx.intents || tx.intents.size === 0) return;
+  let intents = tx.intents;
+  for (const segment of intents.keys()) {
+    const intent = intents.get(segment);
+    if (!intent) continue;
 
-    for (const segment of tx.intents.keys()) {
-        const intent = tx.intents.get(segment);
-        if (!intent) continue;
+    // Clone the intent with the correct proof marker.
+    // The wallet SDK bug hardcodes 'pre-proof' here, which fails for
+    // proven (UnboundTransaction) intents that use 'proof'.
+    const cloned = ledger.Intent.deserialize<ledger.SignatureEnabled, ledger.Proofish, ledger.PreBinding>(
+      'signature',
+      proofMarker,
+      'pre-binding',
+      intent.serialize(),
+    );
 
-        // Clone the intent with the correct proof marker.
-        // The wallet SDK bug hardcodes 'pre-proof' here, which fails for
-        // proven (UnboundTransaction) intents that use 'proof'.
-        const cloned = ledger.Intent.deserialize<ledger.SignatureEnabled, ledger.Proofish, ledger.PreBinding>(
-            'signature',
-            proofMarker,
-            'pre-binding',
-            intent.serialize(),
-        );
+    const sigData = cloned.signatureData(segment);
+    const signature = signFn(sigData);
 
-        const sigData = cloned.signatureData(segment);
-        const signature = signFn(sigData);
-
-        if (cloned.fallibleUnshieldedOffer) {
-            const sigs = cloned.fallibleUnshieldedOffer.inputs.map(
-                (_: ledger.UtxoSpend, i: number) => cloned.fallibleUnshieldedOffer!.signatures.at(i) ?? signature,
-            );
-            cloned.fallibleUnshieldedOffer = cloned.fallibleUnshieldedOffer.addSignatures(sigs);
-        }
-
-        if (cloned.guaranteedUnshieldedOffer) {
-            const sigs = cloned.guaranteedUnshieldedOffer.inputs.map(
-                (_: ledger.UtxoSpend, i: number) => cloned.guaranteedUnshieldedOffer!.signatures.at(i) ?? signature,
-            );
-            cloned.guaranteedUnshieldedOffer = cloned.guaranteedUnshieldedOffer.addSignatures(sigs);
-        }
-
-        tx.intents.set(segment, cloned);
+    if (cloned.fallibleUnshieldedOffer) {
+      const sigs = cloned.fallibleUnshieldedOffer.inputs.map(
+        (_: ledger.UtxoSpend, i: number) => cloned.fallibleUnshieldedOffer!.signatures.at(i) ?? signature,
+      );
+      cloned.fallibleUnshieldedOffer = cloned.fallibleUnshieldedOffer.addSignatures(sigs);
     }
+
+    if (cloned.guaranteedUnshieldedOffer) {
+      const sigs = cloned.guaranteedUnshieldedOffer.inputs.map(
+        (_: ledger.UtxoSpend, i: number) => cloned.guaranteedUnshieldedOffer!.signatures.at(i) ?? signature,
+      );
+      cloned.guaranteedUnshieldedOffer = cloned.guaranteedUnshieldedOffer.addSignatures(sigs);
+    }
+
+    intents.set(segment, cloned);
+  }
+  tx.intents = intents;
 };

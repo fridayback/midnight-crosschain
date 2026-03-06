@@ -664,13 +664,13 @@ export class CrossChainApi {
   //   return finalizedTxData;
   // }
 
-  // async userClaim(uniqueId: string, isMappingToken: boolean) {
-  //   if (isMappingToken) {
-  //     return this.userClaimMappingToken(uniqueId);
-  //   } else {
-  //     return this.userClaimCoin(uniqueId);
-  //   }
-  // }
+  async userClaim(uniqueId: string) {
+    const uniqueId_0 = Buffer.from(uniqueId, 'hex');
+    assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
+
+    const finalizedTxData = await this.crossChainContract.callTx.userClaim(uniqueId_0);
+    return finalizedTxData;
+  }
 
   // async userFeeWithdrawRequest(receiptor: UserAddress) {
   //   const receiptor_0 = { bytes: encodeUserAddress(receiptor) };

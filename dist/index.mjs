@@ -351,8 +351,9 @@ var MidnightWalletSDK = class {
 };
 var signTransactionIntents = (tx, signFn, proofMarker) => {
   if (!tx.intents || tx.intents.size === 0) return;
-  for (const segment of tx.intents.keys()) {
-    const intent = tx.intents.get(segment);
+  let intents = tx.intents;
+  for (const segment of intents.keys()) {
+    const intent = intents.get(segment);
     if (!intent) continue;
     const cloned = ledger.Intent.deserialize(
       "signature",
@@ -374,8 +375,9 @@ var signTransactionIntents = (tx, signFn, proofMarker) => {
       );
       cloned.guaranteedUnshieldedOffer = cloned.guaranteedUnshieldedOffer.addSignatures(sigs);
     }
-    tx.intents.set(segment, cloned);
+    intents.set(segment, cloned);
   }
+  tx.intents = intents;
 };
 
 // src/witnesses.ts
@@ -10236,13 +10238,12 @@ var CrossChainApi = class _CrossChainApi {
   //   const finalizedTxData = await this.crossChainContract.callTx.approveUserWithdrawFee(key_0);
   //   return finalizedTxData;
   // }
-  // async userClaim(uniqueId: string, isMappingToken: boolean) {
-  //   if (isMappingToken) {
-  //     return this.userClaimMappingToken(uniqueId);
-  //   } else {
-  //     return this.userClaimCoin(uniqueId);
-  //   }
-  // }
+  async userClaim(uniqueId) {
+    const uniqueId_0 = Buffer.from(uniqueId, "hex");
+    assert3(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
+    const finalizedTxData = await this.crossChainContract.callTx.userClaim(uniqueId_0);
+    return finalizedTxData;
+  }
   // async userFeeWithdrawRequest(receiptor: UserAddress) {
   //   const receiptor_0 = { bytes: encodeUserAddress(receiptor) };
   //   const finalizedTxData = await this.crossChainContract.callTx.userFeeWithdrawRequest(receiptor_0);
