@@ -399,7 +399,7 @@ export class CrossChainApi {
     const ledger = await this.getLedgerState();
     const tokensTotalSupply = tokens.map((token) => {
       const token_0 = Buffer.from(token, 'hex');
-      const totalSupply = ledger?.mappintTokenTotalSupply.member(token_0) ? ledger?.mappintTokenTotalSupply.lookup(token_0).toString(10) : '0';
+      const totalSupply = ledger?.mappingTokenTotalSupply.member(token_0) ? ledger?.mappingTokenTotalSupply.lookup(token_0).toString(10) : '0';
       return { token, totalSupply };
     });
     return tokensTotalSupply;
@@ -629,20 +629,16 @@ export class CrossChainApi {
     // return finalizedTxData;
   }
 
-  async executeMultiCrossProposal(uniqueIds: ({ uniqueId: string, coinIndex: string | number | bigint | undefined })[]): Promise<FinalizedCallTxData<CrossChainContract, "executeMultiCrossProposal">> {
+  async executeMultiCrossProposal(uniqueIds: string[]): Promise<FinalizedCallTxData<CrossChainContract, "executeMultiCrossProposal">> {
     const uniqueIds_0 = uniqueIds.map((item) => {
-      const uniqueId_0 = Buffer.from(item.uniqueId, 'hex');
-      assert(uniqueId_0.length === 32, `uniqueId(${item.uniqueId}) must be 32 bytes long`);
-      let coinIndex_0 = BigInt(0);
-      if (item.coinIndex) {
-        coinIndex_0 = BigInt(item.coinIndex);
-      }
-      return { uniqueId: uniqueId_0, coinIndex: coinIndex_0 };
+      const uniqueId_0 = Buffer.from(item, 'hex');
+      assert(uniqueId_0.length === 32, `uniqueId(${uniqueId_0}) must be 32 bytes long`);
+      return uniqueId_0;
     });
     const maxCount = 3;
     assert(uniqueIds_0.length <= maxCount && uniqueIds_0.length > 0, `uniqueIds must be between 1 and ${maxCount}`);
     for (let index = uniqueIds_0.length; index < maxCount; index++) {
-      uniqueIds_0.push({ uniqueId: Buffer.alloc(32), coinIndex: BigInt(0) });
+      uniqueIds_0.push(Buffer.alloc(32));
     }
 
     const finalizedTxData = await this.crossChainContract.callTx.executeMultiCrossProposal(uniqueIds_0);
@@ -757,11 +753,11 @@ export class CrossChainApi {
   //   return finalizedTxData;
   // }
 
-  async updateSmgPk(newVoter: Address): Promise<FinalizedCallTxData<CrossChainContract, "updateSmgPk">> {
-    const newVoter_0 = { bytes: getCoinPublicKeyFromShieldAddress(newVoter) };
-    const finalizedTxData = await this.crossChainContract.callTx.updateSmgPk(newVoter_0);
-    return finalizedTxData;
-  }
+  // async updateSmgPk(newVoter: Address): Promise<FinalizedCallTxData<CrossChainContract, "updateSmgPk">> {
+  //   const newVoter_0 = { bytes: getCoinPublicKeyFromShieldAddress(newVoter) };
+  //   const finalizedTxData = await this.crossChainContract.callTx.updateSmgPk(newVoter_0);
+  //   return finalizedTxData;
+  // }
 
   // async setFeeShieldedReceiver(feeReceiver: Address): Promise<FinalizedCallTxData<CrossChainContract, "setFeeShieldedReceiver">> {
   //   const feeReceiver_0 = { bytes: getCoinPublicKeyFromShieldAddress(feeReceiver) };
@@ -769,11 +765,11 @@ export class CrossChainApi {
   //   return finalizedTxData;
   // }
 
-  async setFeeUnshieldedReceiver(feeReceiver: UserAddress): Promise<FinalizedCallTxData<CrossChainContract, "setFeeUnshieldedReceiver">> {
-    const feeReceiver_0 = { bytes: getUserAddressFromUnshieldAddress(feeReceiver) };
-    const finalizedTxData = await this.crossChainContract.callTx.setFeeUnshieldedReceiver(feeReceiver_0);
-    return finalizedTxData;
-  }
+  // async setFeeUnshieldedReceiver(feeReceiver: UserAddress): Promise<FinalizedCallTxData<CrossChainContract, "setFeeUnshieldedReceiver">> {
+  //   const feeReceiver_0 = { bytes: getUserAddressFromUnshieldAddress(feeReceiver) };
+  //   const finalizedTxData = await this.crossChainContract.callTx.setFeeUnshieldedReceiver(feeReceiver_0);
+  //   return finalizedTxData;
+  // }
 
   // async setTokenManager(tokenManager: Address): Promise<FinalizedCallTxData<CrossChainContract, "setTokenManager">> {
   //   const tokenManager_0 = { bytes: getCoinPublicKeyFromShieldAddress(tokenManager) };
@@ -992,10 +988,10 @@ export class CrossChainApi {
     // return res2;
   }
 
-  async addCircuite(circuitId: CrossChainCircuits, newCircuitHex: string){
-    const newVK = createVerifierKey(fromHex(newCircuitHex));
-    return await this.crossChainContract.circuitMaintenanceTx.foo.insertVerifierKey(newVK);
-  }
+  // async addCircuite(circuitId: CrossChainCircuits, newCircuitHex: string){
+  //   const newVK = createVerifierKey(fromHex(newCircuitHex));
+  //   return await this.crossChainContract.circuitMaintenanceTx.foo.insertVerifierKey(newVK);
+  // }
 
 }
 

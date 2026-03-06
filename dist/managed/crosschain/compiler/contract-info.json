@@ -178,17 +178,6 @@
       }
     },
     {
-      "name": "foo",
-      "pure": false,
-      "arguments": [
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
       "name": "userBurn",
       "pure": false,
       "arguments": [
@@ -275,24 +264,8 @@
             "type-name": "Vector",
             "length": 3,
             "type": {
-              "type-name": "Struct",
-              "name": "ExecuteCrossProposalInfo",
-              "elements": [
-                {
-                  "name": "uniqueId",
-                  "type": {
-                    "type-name": "Bytes",
-                    "length": 32
-                  }
-                },
-                {
-                  "name": "coinIndex",
-                  "type": {
-                    "type-name": "Uint",
-                    "maxval": 340282366920938463463374607431768211455
-                  }
-                }
-              ]
+              "type-name": "Bytes",
+              "length": 32
             }
           }
         }
@@ -304,7 +277,25 @@
       }
     },
     {
-      "name": "setFeeUnshieldedReceiver",
+      "name": "userClaim",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "id",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "setFeeReceiver",
       "pure": false,
       "arguments": [
         {
@@ -352,33 +343,6 @@
                 }
               ]
             }
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "updateSmgPk",
-      "pure": false,
-      "arguments": [
-        {
-          "name": "newVoter",
-          "type": {
-            "type-name": "Struct",
-            "name": "ZswapCoinPublicKey",
-            "elements": [
-              {
-                "name": "bytes",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              }
-            ]
           }
         }
       ],
