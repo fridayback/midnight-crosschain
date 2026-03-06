@@ -645,14 +645,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('executeMultiCrossProposal',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 388 char 1',
+                                     'crosschain.compact line 394 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(Array.isArray(mutiEx_0) && mutiEx_0.length === 3 && mutiEx_0.every((t) => t.buffer instanceof ArrayBuffer && t.BYTES_PER_ELEMENT === 1 && t.length === 32))) {
           __compactRuntime.typeError('executeMultiCrossProposal',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 388 char 1',
+                                     'crosschain.compact line 394 char 1',
                                      'Vector<3, Bytes<32>>',
                                      mutiEx_0)
         }
@@ -681,14 +681,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('userClaim',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 431 char 1',
+                                     'crosschain.compact line 437 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(id_0.buffer instanceof ArrayBuffer && id_0.BYTES_PER_ELEMENT === 1 && id_0.length === 32)) {
           __compactRuntime.typeError('userClaim',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 431 char 1',
+                                     'crosschain.compact line 437 char 1',
                                      'Bytes<32>',
                                      id_0)
         }
@@ -715,14 +715,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setFeeReceiver',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 473 char 1',
+                                     'crosschain.compact line 479 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(newFeeReceiver_0) === 'object' && newFeeReceiver_0.bytes.buffer instanceof ArrayBuffer && newFeeReceiver_0.bytes.BYTES_PER_ELEMENT === 1 && newFeeReceiver_0.bytes.length === 32)) {
           __compactRuntime.typeError('setFeeReceiver',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 473 char 1',
+                                     'crosschain.compact line 479 char 1',
                                      'struct UserAddress<bytes: Bytes<32>>',
                                      newFeeReceiver_0)
         }
@@ -751,14 +751,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setSmgPksks',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 506 char 1',
+                                     'crosschain.compact line 512 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(Array.isArray(voters_0) && voters_0.length === 29 && voters_0.every((t) => typeof(t) === 'object' && t.bytes.buffer instanceof ArrayBuffer && t.bytes.BYTES_PER_ELEMENT === 1 && t.bytes.length === 32))) {
           __compactRuntime.typeError('setSmgPksks',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 506 char 1',
+                                     'crosschain.compact line 512 char 1',
                                      'Vector<29, struct ZswapCoinPublicKey<bytes: Bytes<32>>>',
                                      voters_0)
         }
@@ -785,14 +785,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setSmgPKThreold',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 537 char 1',
+                                     'crosschain.compact line 543 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(threshold_0) === 'bigint' && threshold_0 >= 0n && threshold_0 <= 255n)) {
           __compactRuntime.typeError('setSmgPKThreold',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 537 char 1',
+                                     'crosschain.compact line 543 char 1',
                                      'Uint<0..256>',
                                      threshold_0)
         }
@@ -822,21 +822,21 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setFeeCommonConfig',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 543 char 1',
+                                     'crosschain.compact line 549 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(chainId_0) === 'bigint' && chainId_0 >= 0n && chainId_0 <= 4294967295n)) {
           __compactRuntime.typeError('setFeeCommonConfig',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 543 char 1',
+                                     'crosschain.compact line 549 char 1',
                                      'Uint<0..4294967296>',
                                      chainId_0)
         }
         if (!(typeof(fee_0) === 'bigint' && fee_0 >= 0n && fee_0 <= 340282366920938463463374607431768211455n)) {
           __compactRuntime.typeError('setFeeCommonConfig',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'crosschain.compact line 543 char 1',
+                                     'crosschain.compact line 549 char 1',
                                      'Uint<0..340282366920938463463374607431768211456>',
                                      fee_0)
         }
@@ -867,21 +867,21 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('addTokenPair',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 552 char 1',
+                                     'crosschain.compact line 558 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(tokenPairId_0) === 'bigint' && tokenPairId_0 >= 0n && tokenPairId_0 <= 4294967295n)) {
           __compactRuntime.typeError('addTokenPair',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 552 char 1',
+                                     'crosschain.compact line 558 char 1',
                                      'Uint<0..4294967296>',
                                      tokenPairId_0)
         }
         if (!(typeof(pairInfo_0) === 'object' && typeof(pairInfo_0.fromChainId) === 'bigint' && pairInfo_0.fromChainId >= 0n && pairInfo_0.fromChainId <= 4294967295n && typeof(pairInfo_0.toChainId) === 'bigint' && pairInfo_0.toChainId >= 0n && pairInfo_0.toChainId <= 4294967295n && pairInfo_0.midnigthTokenAccount.buffer instanceof ArrayBuffer && pairInfo_0.midnigthTokenAccount.BYTES_PER_ELEMENT === 1 && pairInfo_0.midnigthTokenAccount.length === 32 && pairInfo_0.domainSep.buffer instanceof ArrayBuffer && pairInfo_0.domainSep.BYTES_PER_ELEMENT === 1 && pairInfo_0.domainSep.length === 32 && typeof(pairInfo_0.fee) === 'bigint' && pairInfo_0.fee >= 0n && pairInfo_0.fee <= 340282366920938463463374607431768211455n)) {
           __compactRuntime.typeError('addTokenPair',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'crosschain.compact line 552 char 1',
+                                     'crosschain.compact line 558 char 1',
                                      'struct TokenPairInfo<fromChainId: Uint<0..4294967296>, toChainId: Uint<0..4294967296>, midnigthTokenAccount: Bytes<32>, domainSep: Bytes<32>, fee: Uint<0..340282366920938463463374607431768211456>>',
                                      pairInfo_0)
         }
@@ -911,14 +911,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('removeTokenPair',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 564 char 1',
+                                     'crosschain.compact line 570 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(tokenPairId_0) === 'bigint' && tokenPairId_0 >= 0n && tokenPairId_0 <= 4294967295n)) {
           __compactRuntime.typeError('removeTokenPair',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 564 char 1',
+                                     'crosschain.compact line 570 char 1',
                                      'Uint<0..4294967296>',
                                      tokenPairId_0)
         }
@@ -1857,7 +1857,7 @@ export class Contract {
     this._receiveUnshielded_0(context,
                               partialProofData,
                               this._nativeToken_0(),
-                              1009n);
+                              amount_0);
     const tmp_0 = { smgId: smgId_0,
                     fromAddr: this._ownPublicKey_0(context, partialProofData),
                     toAddr: toAddr_0,
@@ -2697,7 +2697,14 @@ export class Contract {
                                                                                               alignment: _descriptor_11.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } },
                                        { ins: { cached: true, n: 2 } }]);
-    this._updateReserve_0(context, partialProofData, false, token_0, fee_0, true);
+    if (fee_0 > 0n) {
+      this._updateReserve_0(context,
+                            partialProofData,
+                            false,
+                            token_0,
+                            fee_0,
+                            true);
+    }
     return [];
   }
   __mint_0(context,
@@ -2726,12 +2733,14 @@ export class Contract {
                                    color_0,
                                    amount_0,
                                    true);
-    this._updateReserve_0(context,
-                          partialProofData,
-                          true,
-                          domainSep_0,
-                          fee_0,
-                          true);
+    if (fee_0 > 0n) {
+      this._updateReserve_0(context,
+                            partialProofData,
+                            true,
+                            domainSep_0,
+                            fee_0,
+                            true);
+    }
     const tmp_0 = { receiver: toAddr_0,
                     token: domainSep_0,
                     isMappingToken: true,
@@ -3086,7 +3095,7 @@ export class Contract {
     } else {
       const tmp_0 = ((t1) => {
                       if (t1 > 340282366920938463463374607431768211455n) {
-                        throw new __compactRuntime.CompactError('crosschain.compact line 420 char 52: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
+                        throw new __compactRuntime.CompactError('crosschain.compact line 426 char 52: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
                       }
                       return t1;
                     })(newTotalSupply_0);
@@ -3170,7 +3179,7 @@ export class Contract {
                                   claimMappingTokenInfo_0.token,
                                   ((t1) => {
                                     if (t1 > 18446744073709551615n) {
-                                      throw new __compactRuntime.CompactError('crosschain.compact line 436 char 54: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
+                                      throw new __compactRuntime.CompactError('crosschain.compact line 442 char 54: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                                     }
                                     return t1;
                                   })(claimMappingTokenInfo_0.amount),
@@ -3181,7 +3190,7 @@ export class Contract {
                              claimMappingTokenInfo_0.token,
                              ((t1) => {
                                if (t1 > 18446744073709551615n) {
-                                 throw new __compactRuntime.CompactError('crosschain.compact line 438 char 49: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
+                                 throw new __compactRuntime.CompactError('crosschain.compact line 444 char 49: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                                }
                                return t1;
                              })(claimMappingTokenInfo_0.amount),
@@ -3375,7 +3384,7 @@ export class Contract {
                                                                     n: 2 } }]);
                         return ((t1) => {
                                  if (t1 > 255n) {
-                                   throw new __compactRuntime.CompactError('crosschain.compact line 514 char 14: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
+                                   throw new __compactRuntime.CompactError('crosschain.compact line 520 char 14: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                                  }
                                  return t1;
                                })(index_0 + 1n);

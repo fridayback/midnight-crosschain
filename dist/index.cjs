@@ -1084,7 +1084,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "executeMultiCrossProposal",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 388 char 1",
+            "crosschain.compact line 394 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1093,7 +1093,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "executeMultiCrossProposal",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 388 char 1",
+            "crosschain.compact line 394 char 1",
             "Vector<3, Bytes<32>>",
             mutiEx_0
           );
@@ -1126,7 +1126,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "userClaim",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 431 char 1",
+            "crosschain.compact line 437 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1135,7 +1135,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "userClaim",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 431 char 1",
+            "crosschain.compact line 437 char 1",
             "Bytes<32>",
             id_0
           );
@@ -1164,7 +1164,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeReceiver",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 473 char 1",
+            "crosschain.compact line 479 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1173,7 +1173,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeReceiver",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 473 char 1",
+            "crosschain.compact line 479 char 1",
             "struct UserAddress<bytes: Bytes<32>>",
             newFeeReceiver_0
           );
@@ -1206,7 +1206,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setSmgPksks",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 506 char 1",
+            "crosschain.compact line 512 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1215,7 +1215,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setSmgPksks",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 506 char 1",
+            "crosschain.compact line 512 char 1",
             "Vector<29, struct ZswapCoinPublicKey<bytes: Bytes<32>>>",
             voters_0
           );
@@ -1244,7 +1244,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setSmgPKThreold",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 537 char 1",
+            "crosschain.compact line 543 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1253,7 +1253,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setSmgPKThreold",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 537 char 1",
+            "crosschain.compact line 543 char 1",
             "Uint<0..256>",
             threshold_0
           );
@@ -1287,7 +1287,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeCommonConfig",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 543 char 1",
+            "crosschain.compact line 549 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1296,7 +1296,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeCommonConfig",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 543 char 1",
+            "crosschain.compact line 549 char 1",
             "Uint<0..4294967296>",
             chainId_0
           );
@@ -1305,7 +1305,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "setFeeCommonConfig",
             "argument 2 (argument 3 as invoked from Typescript)",
-            "crosschain.compact line 543 char 1",
+            "crosschain.compact line 549 char 1",
             "Uint<0..340282366920938463463374607431768211456>",
             fee_0
           );
@@ -1340,7 +1340,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "addTokenPair",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 552 char 1",
+            "crosschain.compact line 558 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1349,7 +1349,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "addTokenPair",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 552 char 1",
+            "crosschain.compact line 558 char 1",
             "Uint<0..4294967296>",
             tokenPairId_0
           );
@@ -1358,7 +1358,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "addTokenPair",
             "argument 2 (argument 3 as invoked from Typescript)",
-            "crosschain.compact line 552 char 1",
+            "crosschain.compact line 558 char 1",
             "struct TokenPairInfo<fromChainId: Uint<0..4294967296>, toChainId: Uint<0..4294967296>, midnigthTokenAccount: Bytes<32>, domainSep: Bytes<32>, fee: Uint<0..340282366920938463463374607431768211456>>",
             pairInfo_0
           );
@@ -1392,7 +1392,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "removeTokenPair",
             "argument 1 (as invoked from Typescript)",
-            "crosschain.compact line 564 char 1",
+            "crosschain.compact line 570 char 1",
             "CircuitContext",
             contextOrig_0
           );
@@ -1401,7 +1401,7 @@ var Contract = class {
           __compactRuntime__namespace.typeError(
             "removeTokenPair",
             "argument 1 (argument 2 as invoked from Typescript)",
-            "crosschain.compact line 564 char 1",
+            "crosschain.compact line 570 char 1",
             "Uint<0..4294967296>",
             tokenPairId_0
           );
@@ -3010,7 +3010,7 @@ var Contract = class {
       context,
       partialProofData,
       this._nativeToken_0(),
-      1009n
+      amount_0
     );
     const tmp_0 = {
       smgId: smgId_0,
@@ -4484,7 +4484,16 @@ var Contract = class {
         { ins: { cached: true, n: 2 } }
       ]
     );
-    this._updateReserve_0(context, partialProofData, false, token_0, fee_0, true);
+    if (fee_0 > 0n) {
+      this._updateReserve_0(
+        context,
+        partialProofData,
+        false,
+        token_0,
+        fee_0,
+        true
+      );
+    }
     return [];
   }
   __mint_0(context, partialProofData, uniqueId_0, domainSep_0, toAddr_0, amount_0, fee_0) {
@@ -4522,14 +4531,16 @@ var Contract = class {
       amount_0,
       true
     );
-    this._updateReserve_0(
-      context,
-      partialProofData,
-      true,
-      domainSep_0,
-      fee_0,
-      true
-    );
+    if (fee_0 > 0n) {
+      this._updateReserve_0(
+        context,
+        partialProofData,
+        true,
+        domainSep_0,
+        fee_0,
+        true
+      );
+    }
     const tmp_0 = {
       receiver: toAddr_0,
       token: domainSep_0,
@@ -5192,7 +5203,7 @@ var Contract = class {
     } else {
       const tmp_0 = ((t1) => {
         if (t1 > 340282366920938463463374607431768211455n) {
-          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 420 char 52: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 340282366920938463463374607431768211455");
+          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 426 char 52: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 340282366920938463463374607431768211455");
         }
         return t1;
       })(newTotalSupply_0);
@@ -5346,7 +5357,7 @@ var Contract = class {
         claimMappingTokenInfo_0.token,
         ((t1) => {
           if (t1 > 18446744073709551615n) {
-            throw new __compactRuntime__namespace.CompactError("crosschain.compact line 436 char 54: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
+            throw new __compactRuntime__namespace.CompactError("crosschain.compact line 442 char 54: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
           }
           return t1;
         })(claimMappingTokenInfo_0.amount),
@@ -5359,7 +5370,7 @@ var Contract = class {
         claimMappingTokenInfo_0.token,
         ((t1) => {
           if (t1 > 18446744073709551615n) {
-            throw new __compactRuntime__namespace.CompactError("crosschain.compact line 438 char 49: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
+            throw new __compactRuntime__namespace.CompactError("crosschain.compact line 444 char 49: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
           }
           return t1;
         })(claimMappingTokenInfo_0.amount),
@@ -5725,7 +5736,7 @@ var Contract = class {
           );
           return ((t1) => {
             if (t1 > 255n) {
-              throw new __compactRuntime__namespace.CompactError("crosschain.compact line 514 char 14: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
+              throw new __compactRuntime__namespace.CompactError("crosschain.compact line 520 char 14: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
             }
             return t1;
           })(index_0 + 1n);

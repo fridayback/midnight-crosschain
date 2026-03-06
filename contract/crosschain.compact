@@ -187,8 +187,8 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
   // const contractFee = getFee(disclose(tokenPairId));
 
   // receiveUnshielded(tokenPair.midnigthTokenAccount, disclose(amount));
-  // receiveUnshielded(nativeToken(), disclose(amount));
-  receiveUnshielded(nativeToken(), 1009);
+  receiveUnshielded(nativeToken(), disclose(amount));
+  // receiveUnshielded(nativeToken(), 1009);
   // if(contractFee > 0) receiveFee(contractFee);
 
   // record the crosschain info
@@ -351,6 +351,8 @@ circuit updateReserve(isMappingToken: Boolean,token: Bytes<32>, delta: Uint<128>
 circuit withdrawReserve(token: Bytes<32>): [] {
   assert(reserveOfAllToken.member(disclose(token)),"token not exists in reserve");
   const reserveInfo = reserveOfAllToken.lookup(disclose(token));
+  assert (reserveInfo.total > 0, "reserve amount must be positive");
+  
   
   if(reserveInfo.isMappingToken){
     mintUnshieldedToken(disclose(token), reserveInfo.total as Uint<64>, right<ContractAddress, UserAddress>(feeReceiver));
@@ -368,14 +370,18 @@ circuit _transfer(uniqueId: Bytes<32>, token: Bytes<32>, toAddr: UserAddress, am
           , isMappingToken: false
           , amount: (amount-fee) as Uint<128>
           });
-  updateReserve(false, token, fee, true);
+  if(fee > 0) {
+    updateReserve(false, token, fee, true);
+  }
 }
 
 circuit _mint(uniqueId: Bytes<32>, domainSep: Bytes<32>, toAddr: UserAddress, amount: Uint<128>, fee: Uint<128>): [] {
   const color = tokenType(domainSep, kernel.self());
   updateTokenTotalSupply(color, amount, true);
 
-  updateReserve(true, domainSep, fee, true);
+  if(fee > 0) {
+    updateReserve(true, domainSep, fee, true);
+  }
 
   tokenToBeClaimed.insert(uniqueId, ClaimTokenInfo{
     receiver: toAddr
