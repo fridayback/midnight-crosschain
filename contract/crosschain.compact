@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pragma language_version >= 0.20.0;
+pragma language_version >= 0.20;
 
 import CompactStandardLibrary;
 
@@ -178,18 +178,18 @@ circuit receiveFee(amount: Uint<128>): [] {
 }
 
 export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId: Uint<32>, amount: Uint<128>): [] {
-  // assert(disclose(amount) > 0, "amount must be greater than 0");
-  // assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
-  // const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
+  assert(disclose(amount) > 0, "amount must be greater than 0");
+  assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
+  const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
   // const midnightTokenAccount = tokenPairs.lookup(disclose(tokenPairId)).midnigthTokenAccount;
-  // assert(tokenPair.domainSep == default<Bytes<32>>, "not support mapping token");
+  assert(tokenPair.domainSep == default<Bytes<32>>, "not support mapping token");
 
-  // const contractFee = getFee(disclose(tokenPairId));
+  const contractFee = getFee(disclose(tokenPairId));
 
-  // receiveUnshielded(tokenPair.midnigthTokenAccount, disclose(amount));
-  receiveUnshielded(nativeToken(), disclose(amount));
+  receiveUnshielded(tokenPair.midnigthTokenAccount, disclose(amount));
+  // receiveUnshielded(nativeToken(), disclose(amount));
   // receiveUnshielded(nativeToken(), 1009);
-  // if(contractFee > 0) receiveFee(contractFee);
+  if(contractFee > 0) receiveFee(contractFee);
 
   // record the crosschain info
   latestOutBoundCrosstxInfo = CrossOutBound{
@@ -237,6 +237,7 @@ export circuit userBurn(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
   assert(tokenPairs.member(disclose(tokenPairId)),"tokenpairId not exists");
   assert(disclose(amount) > 0, "amount must be greater than 0");
   const tokenPair = tokenPairs.lookup(disclose(tokenPairId));
+  assert(tokenPair.domainSep != default<Bytes<32>>, "only support mapping token");
   const contractFee = getFee(disclose(tokenPairId));
 
   if(contractFee > 0) receiveFee(contractFee);
