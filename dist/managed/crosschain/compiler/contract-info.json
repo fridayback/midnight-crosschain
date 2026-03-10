@@ -1,8 +1,12 @@
 {
+  "compiler-version": "0.29.0",
+  "language-version": "0.21.0",
+  "runtime-version": "0.14.0",
   "circuits": [
     {
       "name": "userLock",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "smgId",
@@ -42,6 +46,7 @@
     {
       "name": "smgRelease",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "uniqueId",
@@ -111,6 +116,7 @@
     {
       "name": "smgMint",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "uniqueId",
@@ -180,6 +186,7 @@
     {
       "name": "userBurn",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "smgId",
@@ -219,6 +226,7 @@
     {
       "name": "voteMultiCrossProposal",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "uniqueIds",
@@ -257,6 +265,7 @@
     {
       "name": "executeMultiCrossProposal",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "mutiEx",
@@ -279,6 +288,7 @@
     {
       "name": "userClaim",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "id",
@@ -297,6 +307,7 @@
     {
       "name": "setFeeReceiver",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "newFeeReceiver",
@@ -324,6 +335,7 @@
     {
       "name": "setSmgPksks",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "voters",
@@ -355,6 +367,7 @@
     {
       "name": "setSmgPKThreold",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "threshold",
@@ -373,6 +386,7 @@
     {
       "name": "setFeeCommonConfig",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "chainId",
@@ -398,6 +412,7 @@
     {
       "name": "addTokenPair",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "tokenPairId",
@@ -460,6 +475,7 @@
     {
       "name": "removeTokenPair",
       "pure": false,
+      "proof": true,
       "arguments": [
         {
           "name": "tokenPairId",

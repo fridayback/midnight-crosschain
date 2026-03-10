@@ -53,7 +53,8 @@ export function getDirname(): string {
     // const url = require('url')
     // const path = require('path')
     // return path.dirname(url.fileURLToPath(import.meta.url))
-    return import.meta.url;
+    // return import.meta.url;
+    return path.dirname(fileURLToPath(import.meta.url));
   }
 
   // CommonJS 环境
