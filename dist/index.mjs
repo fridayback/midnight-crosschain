@@ -23,7 +23,7 @@ import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { toHex, fromHex, assertIsContractAddress } from '@midnight-ntwrk/midnight-js-utils';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { fileURLToPath } from 'url';
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -10192,7 +10192,7 @@ var CrossChainPrivateStateId = "crossChainPrivateState";
 function getDirname() {
   if (typeof import.meta?.url === "string") {
     const ret = path.resolve(fileURLToPath(import.meta.url), "..");
-    return pathToFileURL(ret).href;
+    return ret;
   }
   return path.resolve(__dirname, "..");
 }

@@ -68,7 +68,8 @@ function getDirname() {
     // console.log('fileURLToPath(import.meta.url)===>', fileURLToPath(import.meta.url));
     // console.log('path.dirname(fileURLToPath(import.meta.url))===>', path.dirname(fileURLToPath(import.meta.url)));
     const ret = path.resolve(fileURLToPath(import.meta.url), "..");
-    return pathToFileURL(ret).href;
+    // return pathToFileURL(ret).href;
+    return ret;
   }
   return path.resolve(__dirname,'..');
 }
