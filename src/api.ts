@@ -31,7 +31,7 @@ import { MidnightBech32m, ShieldedAddress, UnshieldedAddress } from '@midnight-n
 import * as Rx from 'rxjs';
 import { ContractState, ContractAddress, degradeToTransient, ecAdd, ecMul, ecMulGenerator, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash, encodeShieldedCoinInfo, ShieldedTokenType, RawTokenType, encodeUserAddress, rawTokenType } from '@midnight-ntwrk/compact-runtime';
 import assert from 'node:assert';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { MidnightWalletSDK, signTransactionIntents} from './wallet-sdk.js';
 // import { FinalizedTransaction } from '@midnight-ntwrk/ledger-v7';
 
@@ -47,21 +47,32 @@ export type CrossChainContract = CrossChain.Contract<CrossChainPrivateState>;
 
 export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
 
-export function getDirname(): string {
-  // ES Module 环境
-  if (typeof import.meta?.url === 'string') {
-    // const url = require('url')
-    // const path = require('path')
-    // return path.dirname(url.fileURLToPath(import.meta.url))
-    // return import.meta.url;
-    return path.dirname(fileURLToPath(import.meta.url));
+// export function getDirname(): string {
+//   // ES Module 环境
+//   if (typeof import.meta?.url === 'string') {
+//     // const url = require('url')
+//     // const path = require('path')
+//     // return path.dirname(url.fileURLToPath(import.meta.url))
+//     // return import.meta.url;
+//     return path.dirname(fileURLToPath(import.meta.url));
+//   }
+
+//   // CommonJS 环境
+//   return __dirname
+// }
+
+// export const currentDir = path.resolve(new URL(getDirname()).pathname, '..');
+function getDirname() {
+  if (typeof import.meta?.url === "string") {
+    // console.log('import.meta.url===>', import.meta.url);
+    // console.log('fileURLToPath(import.meta.url)===>', fileURLToPath(import.meta.url));
+    // console.log('path.dirname(fileURLToPath(import.meta.url))===>', path.dirname(fileURLToPath(import.meta.url)));
+    const ret = path.resolve(fileURLToPath(import.meta.url), "..");
+    return pathToFileURL(ret).href;
   }
-
-  // CommonJS 环境
-  return __dirname
+  return path.resolve(__dirname,'..');
 }
-
-export const currentDir = path.resolve(new URL(getDirname()).pathname, '..');
+var currentDir = getDirname();//path.resolve(new URL(getDirname()).pathname, "..");
 console.log('currentDir===>', currentDir);
 // export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
 // export const currentDir = path.dirname(fileURLToPath(import.meta.url));

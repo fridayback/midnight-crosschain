@@ -23,7 +23,7 @@ import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { toHex, fromHex, assertIsContractAddress } from '@midnight-ntwrk/midnight-js-utils';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -10191,11 +10191,12 @@ new Contract({});
 var CrossChainPrivateStateId = "crossChainPrivateState";
 function getDirname() {
   if (typeof import.meta?.url === "string") {
-    return path.dirname(fileURLToPath(import.meta.url));
+    const ret = path.resolve(fileURLToPath(import.meta.url), "..");
+    return pathToFileURL(ret).href;
   }
-  return __dirname;
+  return path.resolve(__dirname, "..");
 }
-var currentDir = path.resolve(new URL(getDirname()).pathname, "..");
+var currentDir = getDirname();
 console.log("currentDir===>", currentDir);
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
@@ -10837,6 +10838,6 @@ var initNetwork = (network) => {
   setNetworkId(network);
 };
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, currentDir, genSigningKey, getCoinPublicKeyFromShieldAddress, getDirname, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

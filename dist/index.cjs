@@ -10220,11 +10220,12 @@ new Contract({});
 var CrossChainPrivateStateId = "crossChainPrivateState";
 function getDirname() {
   if (typeof (typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href)) === "string") {
-    return path__default.default.dirname(url.fileURLToPath((typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href))));
+    const ret = path__default.default.resolve(url.fileURLToPath((typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href))), "..");
+    return url.pathToFileURL(ret).href;
   }
-  return __dirname;
+  return path__default.default.resolve(__dirname, "..");
 }
-var currentDir = path__default.default.resolve(new URL(getDirname()).pathname, "..");
+var currentDir = getDirname();
 console.log("currentDir===>", currentDir);
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
@@ -10876,10 +10877,8 @@ exports.createInitialPrivateState = createInitialPrivateState;
 exports.createPrivateState = createPrivateState;
 exports.createWalletAndMidnightProvider = createWalletAndMidnightProvider;
 exports.crosschainContractInstance = crosschainContractInstance;
-exports.currentDir = currentDir;
 exports.genSigningKey = genSigningKey;
 exports.getCoinPublicKeyFromShieldAddress = getCoinPublicKeyFromShieldAddress;
-exports.getDirname = getDirname;
 exports.getUserAddressFromUnshieldAddress = getUserAddressFromUnshieldAddress;
 exports.initFacadeWallet = initFacadeWallet;
 exports.initNetwork = initNetwork;
