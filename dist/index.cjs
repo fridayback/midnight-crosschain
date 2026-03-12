@@ -10866,10 +10866,24 @@ var getUserAddressFromUnshieldAddress = (unshieldAddr) => {
 var initNetwork = (network) => {
   midnightJsNetworkId.setNetworkId(network);
 };
+var CrossChainState = class {
+  constructor(indexer, indexerWS, contractAddress) {
+    this.MaxSmgSignators = 29;
+    this.MaxMergeCoins = 4;
+    midnightJsUtils.assertIsContractAddress(contractAddress);
+    this.publicDataProvider = midnightJsIndexerPublicDataProvider.indexerPublicDataProvider(indexer, indexerWS);
+    this.contractAddress = contractAddress;
+  }
+  async getLedgerState() {
+    const state = await this.publicDataProvider.queryContractState(this.contractAddress).then((contractState) => contractState != null ? ledger2(contractState.data) : null);
+    return state;
+  }
+};
 
 exports.CompiledSimpleContract = CompiledSimpleContract;
 exports.CrossChainApi = CrossChainApi;
 exports.CrossChainPrivateStateId = CrossChainPrivateStateId;
+exports.CrossChainState = CrossChainState;
 exports.MidnightWalletSDK = MidnightWalletSDK;
 exports.ZKConfig = ZKConfig;
 exports.configuration = configuration;

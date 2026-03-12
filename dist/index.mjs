@@ -10837,7 +10837,20 @@ var getUserAddressFromUnshieldAddress = (unshieldAddr) => {
 var initNetwork = (network) => {
   setNetworkId(network);
 };
+var CrossChainState = class {
+  constructor(indexer, indexerWS, contractAddress) {
+    this.MaxSmgSignators = 29;
+    this.MaxMergeCoins = 4;
+    assertIsContractAddress(contractAddress);
+    this.publicDataProvider = indexerPublicDataProvider(indexer, indexerWS);
+    this.contractAddress = contractAddress;
+  }
+  async getLedgerState() {
+    const state = await this.publicDataProvider.queryContractState(this.contractAddress).then((contractState) => contractState != null ? ledger2(contractState.data) : null);
+    return state;
+  }
+};
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, CrossChainState, MidnightWalletSDK, ZKConfig, configuration, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

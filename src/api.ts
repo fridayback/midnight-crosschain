@@ -14,8 +14,8 @@ import path from 'node:path';
 
 import { witnesses, type CrossChainPrivateState } from './witnesses';
 import * as CrossChain from "./managed/crosschain/contract/index.js";
-import { type ImpureCircuitId, CompiledContract} from '@midnight-ntwrk/compact-js';
-import { UnboundTransaction,type MidnightProvider, type MidnightProviders, type WalletProvider,  createVerifierKey, type VerifierKey } from '@midnight-ntwrk/midnight-js-types';
+import { type ImpureCircuitId, CompiledContract } from '@midnight-ntwrk/compact-js';
+import { UnboundTransaction, type MidnightProvider, type MidnightProviders, type WalletProvider, createVerifierKey, type VerifierKey, PublicDataProvider } from '@midnight-ntwrk/midnight-js-types';
 import { deployContract, FinalizedCallTxData, findDeployedContract, type DeployedContract, submitInsertVerifierKeyTx, type FoundContract, submitRemoveVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
@@ -32,7 +32,7 @@ import * as Rx from 'rxjs';
 import { ContractState, ContractAddress, degradeToTransient, ecAdd, ecMul, ecMulGenerator, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash, encodeShieldedCoinInfo, ShieldedTokenType, RawTokenType, encodeUserAddress, rawTokenType } from '@midnight-ntwrk/compact-runtime';
 import assert from 'node:assert';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { MidnightWalletSDK, signTransactionIntents} from './wallet-sdk.js';
+import { MidnightWalletSDK, signTransactionIntents } from './wallet-sdk.js';
 // import { FinalizedTransaction } from '@midnight-ntwrk/ledger-v7';
 
 
@@ -71,7 +71,7 @@ function getDirname() {
     // return pathToFileURL(ret).href;
     return ret;
   }
-  return path.resolve(__dirname,'..');
+  return path.resolve(__dirname, '..');
 }
 var currentDir = getDirname();//path.resolve(new URL(getDirname()).pathname, "..");
 console.log('currentDir===>', currentDir);
@@ -126,7 +126,7 @@ export const crosschainContractInstance: CrossChainContract = new CrossChain.Con
 
 export const CompiledSimpleContract =
   CompiledContract.make('CrossChain', CrossChain.Contract).pipe(
-   CompiledContract.withWitnesses(witnesses),
+    CompiledContract.withWitnesses(witnesses),
     CompiledContract.withCompiledFileAssets(path.resolve(currentDir, 'managed', 'crosschain'))
   );
 
@@ -350,14 +350,14 @@ export class CrossChainApi {
     };
   }
 
-  async deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint,feeReceiver: string, signingKey: SigningKey): Promise<ContractAddress> {
+  async deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, feeReceiver: string, signingKey: SigningKey): Promise<ContractAddress> {
     const feeReceiver_0 = { bytes: getUserAddressFromUnshieldAddress(feeReceiver) };
     this.crossChainContract = (await deployContract(this.providers, {
       compiledContract: CompiledSimpleContract,
       privateStateId: CrossChainPrivateStateId,
       initialPrivateState: {},
       signingKey: signingKey,
-      args: [BigInt(adminThreshold), BigInt(smgPkThreshold),feeReceiver_0]
+      args: [BigInt(adminThreshold), BigInt(smgPkThreshold), feeReceiver_0]
     })) as DeployedCrossChainContract;
     // // logger.info(`Deployed contract at address: ${this.crossChainContract.deployTxData.public.contractAddress}`);
     return this.crossChainContract.deployTxData.public.contractAddress;
@@ -388,7 +388,7 @@ export class CrossChainApi {
     const tokenPairId_0 = BigInt(tokenPairId);
     const amount_0 = BigInt(amount);
     const fee_0 = BigInt(fee);
-    const toAddr_0 = toAddr.includes('mn_shield')?{ bytes: getCoinPublicKeyFromShieldAddress(toAddr) }:{bytes: getUserAddressFromUnshieldAddress(toAddr)};
+    const toAddr_0 = toAddr.includes('mn_shield') ? { bytes: getCoinPublicKeyFromShieldAddress(toAddr) } : { bytes: getUserAddressFromUnshieldAddress(toAddr) };
 
     const ttl_0 = BigInt(ttl);
     return {
@@ -606,7 +606,7 @@ export class CrossChainApi {
     const maxCount = 5;
     let items = [{ uniqueId: uniqueId_0, ttl: ttl_0 }];
     for (let index = 1; index < maxCount; index++) {
-      items.push({ uniqueId: Buffer.alloc(32,0), ttl: 0n});
+      items.push({ uniqueId: Buffer.alloc(32, 0), ttl: 0n });
     }
     const finalizedTxData = await this.crossChainContract.callTx.voteMultiCrossProposal(items);
     return finalizedTxData;
@@ -855,7 +855,7 @@ export class CrossChainApi {
     const tokenPairId_0 = BigInt(tokenPairId);
     const fromChainId_0 = BigInt(fromChainId);
     const toChainId_0 = BigInt(toChainId);
-    const midnigtAccount_0 = Buffer.from(midnigthTokenAccount,'hex');//encodeRawTokenType(midnigthTokenAccount);
+    const midnigtAccount_0 = Buffer.from(midnigthTokenAccount, 'hex');//encodeRawTokenType(midnigthTokenAccount);
     const domainSep_0 = pad(domainSep, 32);
     if (domainSep) {
       const expectedTokenType = rawTokenType(domainSep_0, this.crossChainContract.deployTxData.public.contractAddress);
@@ -1016,7 +1016,7 @@ export const upgradeContractCircuit = async (providers: MidnightProviders, contr
   } else {
     newVk = await providers.zkConfigProvider.getVerifierKey(circuitId as CrossChainCircuits);
   }
-  return await submitInsertVerifierKeyTx(providers, CompiledSimpleContract,contractAddress, circuitId as CrossChainCircuits, newVk);
+  return await submitInsertVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId as CrossChainCircuits, newVk);
 }
 
 export const removeContractCircuit = async (providers: MidnightProviders, contractAddress: Address, circuitId: string) => {
@@ -1057,7 +1057,7 @@ export const getCoinPublicKeyFromShieldAddress = (shieldAddr: string) => {
 }
 
 export const getUserAddressFromUnshieldAddress = (unshieldAddr: string) => {
-   const tmp1 = MidnightBech32m.parse(unshieldAddr);
+  const tmp1 = MidnightBech32m.parse(unshieldAddr);
   // const tmp1 = MidnightBech32m.parse('mn_shield-addr_test10th0dtqgnpanzwmqj236zccpkmj9xxpkl7r7e7cr5e3v7k0stm5qxqxa9m6z5f4603nyuu4kw9c65ektu48hhyrtu2f07h42ycppkvw9ccyry600');
   const tmp2 = UnshieldedAddress.codec.decode(tmp1.network, tmp1);
   // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
@@ -1072,4 +1072,25 @@ export const getUserAddressFromUnshieldAddress = (unshieldAddr: string) => {
 // • 'undeployed' — Local testing
 export const initNetwork = (network: 'mainnet' | 'testnet-02' | 'preview' | 'devnet' | 'undeployed') => {
   setNetworkId(network);
+}
+
+
+export class CrossChainState {
+  publicDataProvider!: PublicDataProvider;
+  contractAddress!: string;
+  MaxSmgSignators = 29;
+  MaxMergeCoins = 4;
+  constructor(indexer: string, indexerWS: string, contractAddress: string) {
+    assertIsContractAddress(contractAddress);
+    this.publicDataProvider = indexerPublicDataProvider(indexer, indexerWS);
+    this.contractAddress = contractAddress;
+  }
+
+  async getLedgerState(): Promise<CrossChain.Ledger | null> {
+    const state = await this.publicDataProvider
+      .queryContractState(this.contractAddress)
+      .then((contractState) => (contractState != null ? CrossChain.ledger(contractState.data) : null));
+    return state;
+  }
+
 }
