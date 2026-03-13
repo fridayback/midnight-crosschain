@@ -17,11 +17,11 @@ import * as CrossChain from "./managed/crosschain/contract/index.js";
 import { type ImpureCircuitId, CompiledContract} from '@midnight-ntwrk/compact-js';
 import { UnboundTransaction,type MidnightProvider, type MidnightProviders, type WalletProvider,  createVerifierKey, type VerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import { deployContract, FinalizedCallTxData, findDeployedContract, type DeployedContract, submitInsertVerifierKeyTx, type FoundContract, submitRemoveVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
-import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
-import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
-import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
-// import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
-import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
+// import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
+// import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
+// import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
+// // import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
+// import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 // import { Address, CoinPublicKey, WalletFacade } from '@midnight-ntwrk/wallet-api';
 import { ShieldedCoinInfo, DustParameters, LedgerParameters, Transaction, TransactionId, type UnprovenTransaction, sampleCoinPublicKey, FinalizedTransaction, nativeToken, TokenType, encodeRawTokenType, decodeRawTokenType, createShieldedCoinInfo, dummyUserAddress, UnshieldedTokenType, UserAddress, decodeUserAddress } from '@midnight-ntwrk/ledger-v7';
 // import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
@@ -316,21 +316,21 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
 //   return state.balances;
 // }
 // only for node.js environment, in browser environment, the zk config should be fetched from server or embedded in the bundle
-export const createCrossChainProviders = async (config: Config, wallet: MidnightWalletSDK): Promise<CrossChainProviders> => {
-  const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-  const zkConfigProvider = new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath);
-  return {
-    privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
-      privateStateStoreName: 'CCPSSN',
-      walletProvider: walletAndMidnightProvider
-    }),
-    publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
-    zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
-    proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
-    walletProvider: walletAndMidnightProvider,
-    midnightProvider: walletAndMidnightProvider,
-  };
-};
+// export const createCrossChainProviders = async (config: Config, wallet: MidnightWalletSDK): Promise<CrossChainProviders> => {
+//   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+//   const zkConfigProvider = new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath);
+//   return {
+//     privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
+//       privateStateStoreName: 'CCPSSN',
+//       walletProvider: walletAndMidnightProvider
+//     }),
+//     publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+//     zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
+//     proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+//     walletProvider: walletAndMidnightProvider,
+//     midnightProvider: walletAndMidnightProvider,
+//   };
+// };
 
 const MAX_SIGNER_COUNT = 29;
 export class CrossChainApi {
@@ -346,21 +346,21 @@ export class CrossChainApi {
     this.providers = providers;
   }
 
-  async init(config: Config, wallet: MidnightWalletSDK) {
-    const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-    const zkConfigProvider = new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath);
-    this.providers = {
-      privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
-        privateStateStoreName: 'CCPSSN',
-        walletProvider: walletAndMidnightProvider
-      }),
-      publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
-      zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
-      proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
-      walletProvider: walletAndMidnightProvider,
-      midnightProvider: walletAndMidnightProvider,
-    };
-  }
+  // async init(config: Config, wallet: MidnightWalletSDK) {
+  //   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+  //   const zkConfigProvider = new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath);
+  //   this.providers = {
+  //     privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
+  //       privateStateStoreName: 'CCPSSN',
+  //       walletProvider: walletAndMidnightProvider
+  //     }),
+  //     publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+  //     zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
+  //     proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+  //     walletProvider: walletAndMidnightProvider,
+  //     midnightProvider: walletAndMidnightProvider,
+  //   };
+  // }
 
   async setWallet(wallet: MidnightWalletSDK) {
     const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
