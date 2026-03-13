@@ -17,10 +17,7 @@ var __compactRuntime = require('@midnight-ntwrk/compact-runtime');
 var compactJs = require('@midnight-ntwrk/compact-js');
 var midnightJsTypes = require('@midnight-ntwrk/midnight-js-types');
 var midnightJsContracts = require('@midnight-ntwrk/midnight-js-contracts');
-var midnightJsLevelPrivateStateProvider = require('@midnight-ntwrk/midnight-js-level-private-state-provider');
 var midnightJsIndexerPublicDataProvider = require('@midnight-ntwrk/midnight-js-indexer-public-data-provider');
-var midnightJsNodeZkConfigProvider = require('@midnight-ntwrk/midnight-js-node-zk-config-provider');
-var midnightJsHttpClientProofProvider = require('@midnight-ntwrk/midnight-js-http-client-proof-provider');
 var midnightJsNetworkId = require('@midnight-ntwrk/midnight-js-network-id');
 var midnightJsUtils = require('@midnight-ntwrk/midnight-js-utils');
 var url = require('url');
@@ -10277,21 +10274,6 @@ var createWalletAndMidnightProvider = async (wallet) => {
     }
   };
 };
-var createCrossChainProviders = async (config, wallet) => {
-  const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-  const zkConfigProvider = new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath);
-  return {
-    privateStateProvider: midnightJsLevelPrivateStateProvider.levelPrivateStateProvider({
-      privateStateStoreName: "CCPSSN",
-      walletProvider: walletAndMidnightProvider
-    }),
-    publicDataProvider: midnightJsIndexerPublicDataProvider.indexerPublicDataProvider(config.indexer, config.indexerWS),
-    zkConfigProvider: new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath),
-    proofProvider: midnightJsHttpClientProofProvider.httpClientProofProvider(config.proofServer, zkConfigProvider),
-    walletProvider: walletAndMidnightProvider,
-    midnightProvider: walletAndMidnightProvider
-  };
-};
 var MAX_SIGNER_COUNT = 29;
 var CrossChainApi = class _CrossChainApi {
   constructor() {
@@ -10301,21 +10283,21 @@ var CrossChainApi = class _CrossChainApi {
   async init2(providers) {
     this.providers = providers;
   }
-  async init(config, wallet) {
-    const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-    const zkConfigProvider = new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath);
-    this.providers = {
-      privateStateProvider: midnightJsLevelPrivateStateProvider.levelPrivateStateProvider({
-        privateStateStoreName: "CCPSSN",
-        walletProvider: walletAndMidnightProvider
-      }),
-      publicDataProvider: midnightJsIndexerPublicDataProvider.indexerPublicDataProvider(config.indexer, config.indexerWS),
-      zkConfigProvider: new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath),
-      proofProvider: midnightJsHttpClientProofProvider.httpClientProofProvider(config.proofServer, zkConfigProvider),
-      walletProvider: walletAndMidnightProvider,
-      midnightProvider: walletAndMidnightProvider
-    };
-  }
+  // async init(config: Config, wallet: MidnightWalletSDK) {
+  //   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+  //   const zkConfigProvider = new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath);
+  //   this.providers = {
+  //     privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
+  //       privateStateStoreName: 'CCPSSN',
+  //       walletProvider: walletAndMidnightProvider
+  //     }),
+  //     publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+  //     zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
+  //     proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+  //     walletProvider: walletAndMidnightProvider,
+  //     midnightProvider: walletAndMidnightProvider,
+  //   };
+  // }
   // async setWallet(wallet: MidnightWalletSDK) {
   //   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
   //   this.providers = {
@@ -10905,7 +10887,6 @@ exports.CrossChainState = CrossChainState;
 exports.MidnightWalletSDK = MidnightWalletSDK;
 exports.ZKConfig = ZKConfig;
 exports.configuration = configuration;
-exports.createCrossChainProviders = createCrossChainProviders;
 exports.createInitialPrivateState = createInitialPrivateState;
 exports.createPrivateState = createPrivateState;
 exports.createWalletAndMidnightProvider = createWalletAndMidnightProvider;
