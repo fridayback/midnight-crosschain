@@ -10248,11 +10248,29 @@ var createWalletAndMidnightProvider = async (wallet) => {
     }
   };
 };
+var createCrossChainProviders = async (config, wallet) => {
+  const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+  const zkConfigProvider = new NodeZkConfigProvider(ZKConfig.zkConfigPath);
+  return {
+    privateStateProvider: levelPrivateStateProvider({
+      privateStateStoreName: "CCPSSN",
+      walletProvider: walletAndMidnightProvider
+    }),
+    publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+    zkConfigProvider: new NodeZkConfigProvider(ZKConfig.zkConfigPath),
+    proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+    walletProvider: walletAndMidnightProvider,
+    midnightProvider: walletAndMidnightProvider
+  };
+};
 var MAX_SIGNER_COUNT = 29;
 var CrossChainApi = class _CrossChainApi {
   constructor() {
     this.MaxSmgSignators = 29;
     this.MaxMergeCoins = 4;
+  }
+  async init2(providers) {
+    this.providers = providers;
   }
   async init(config, wallet) {
     const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
@@ -10838,6 +10856,6 @@ var initNetwork = (network) => {
   setNetworkId(network);
 };
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

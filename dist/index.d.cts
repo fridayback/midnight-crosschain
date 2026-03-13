@@ -400,12 +400,14 @@ interface Config {
 declare const crosschainContractInstance: CrossChainContract;
 declare const CompiledSimpleContract: CompiledContract.CompiledContract<Contract<any, any>, any, never>;
 declare const createWalletAndMidnightProvider: (wallet: MidnightWalletSDK) => Promise<WalletProvider & MidnightProvider>;
+declare const createCrossChainProviders: (config: Config, wallet: MidnightWalletSDK) => Promise<CrossChainProviders>;
 declare class CrossChainApi {
     providers: CrossChainProviders;
     crossChainContract: DeployedCrossChainContract;
     MaxSmgSignators: number;
     MaxMergeCoins: number;
     constructor();
+    init2(providers: CrossChainProviders): Promise<void>;
     init(config: Config, wallet: MidnightWalletSDK): Promise<void>;
     setWallet(wallet: MidnightWalletSDK): Promise<void>;
     deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, feeReceiver: string, signingKey: SigningKey): Promise<ContractAddress>;
@@ -505,4 +507,4 @@ declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<
 declare const getUserAddressFromUnshieldAddress: (unshieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const initNetwork: (network: "mainnet" | "testnet-02" | "preview" | "devnet" | "undeployed") => void;
 
-export { type Address, CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { type Address, CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };

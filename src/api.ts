@@ -315,6 +315,23 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
 //   const state = await Rx.firstValueFrom(wallet.state());
 //   return state.balances;
 // }
+// only for node.js environment, in browser environment, the zk config should be fetched from server or embedded in the bundle
+export const createCrossChainProviders = async (config: Config, wallet: MidnightWalletSDK): Promise<CrossChainProviders> => {
+  const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+  const zkConfigProvider = new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath);
+  return {
+    privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
+      privateStateStoreName: 'CCPSSN',
+      walletProvider: walletAndMidnightProvider
+    }),
+    publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+    zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
+    proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+    walletProvider: walletAndMidnightProvider,
+    midnightProvider: walletAndMidnightProvider,
+  };
+};
+
 const MAX_SIGNER_COUNT = 29;
 export class CrossChainApi {
   providers!: CrossChainProviders;
@@ -323,6 +340,10 @@ export class CrossChainApi {
   MaxMergeCoins = 4;
   constructor() {
     // setNetworkId(networkId);
+  }
+
+  async init2(providers: CrossChainProviders) {
+    this.providers = providers;
   }
 
   async init(config: Config, wallet: MidnightWalletSDK) {
