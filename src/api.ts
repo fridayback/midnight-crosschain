@@ -315,6 +315,24 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
 //   const state = await Rx.firstValueFrom(wallet.state());
 //   return state.balances;
 // }
+
+// only for node.js environment, in browser environment, the zk config should be fetched from server or embedded in the bundle
+export const createCrossChainProviders = async (config: Config, wallet: MidnightWalletSDK): Promise<CrossChainProviders> => {
+  const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+  const zkConfigProvider = new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath);
+  return {
+    privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
+      privateStateStoreName: 'CCPSSN',
+      walletProvider: walletAndMidnightProvider
+    }),
+    publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+    zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
+    proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+    walletProvider: walletAndMidnightProvider,
+    midnightProvider: walletAndMidnightProvider,
+  };
+};
+
 const MAX_SIGNER_COUNT = 29;
 export class CrossChainApi {
   providers!: CrossChainProviders;
@@ -324,6 +342,11 @@ export class CrossChainApi {
   constructor() {
     // setNetworkId(networkId);
   }
+
+  async init2(providers: CrossChainProviders) {
+    this.providers = providers;
+  }
+
 
   async init(config: Config, wallet: MidnightWalletSDK) {
     const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
@@ -341,14 +364,14 @@ export class CrossChainApi {
     };
   }
 
-  async setWallet(wallet: MidnightWalletSDK) {
-    const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-    this.providers = {
-      ...this.providers,
-      walletProvider: walletAndMidnightProvider,
-      midnightProvider: walletAndMidnightProvider,
-    };
-  }
+  // async setWallet(wallet: MidnightWalletSDK) {
+  //   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+  //   this.providers = {
+  //     ...this.providers,
+  //     walletProvider: walletAndMidnightProvider,
+  //     midnightProvider: walletAndMidnightProvider,
+  //   };
+  // }
 
   async deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, feeReceiver: string, signingKey: SigningKey): Promise<ContractAddress> {
     const feeReceiver_0 = { bytes: getUserAddressFromUnshieldAddress(feeReceiver) };

@@ -10277,11 +10277,29 @@ var createWalletAndMidnightProvider = async (wallet) => {
     }
   };
 };
+var createCrossChainProviders = async (config, wallet) => {
+  const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+  const zkConfigProvider = new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath);
+  return {
+    privateStateProvider: midnightJsLevelPrivateStateProvider.levelPrivateStateProvider({
+      privateStateStoreName: "CCPSSN",
+      walletProvider: walletAndMidnightProvider
+    }),
+    publicDataProvider: midnightJsIndexerPublicDataProvider.indexerPublicDataProvider(config.indexer, config.indexerWS),
+    zkConfigProvider: new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath),
+    proofProvider: midnightJsHttpClientProofProvider.httpClientProofProvider(config.proofServer, zkConfigProvider),
+    walletProvider: walletAndMidnightProvider,
+    midnightProvider: walletAndMidnightProvider
+  };
+};
 var MAX_SIGNER_COUNT = 29;
 var CrossChainApi = class _CrossChainApi {
   constructor() {
     this.MaxSmgSignators = 29;
     this.MaxMergeCoins = 4;
+  }
+  async init2(providers) {
+    this.providers = providers;
   }
   async init(config, wallet) {
     const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
@@ -10298,14 +10316,14 @@ var CrossChainApi = class _CrossChainApi {
       midnightProvider: walletAndMidnightProvider
     };
   }
-  async setWallet(wallet) {
-    const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-    this.providers = {
-      ...this.providers,
-      walletProvider: walletAndMidnightProvider,
-      midnightProvider: walletAndMidnightProvider
-    };
-  }
+  // async setWallet(wallet: MidnightWalletSDK) {
+  //   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+  //   this.providers = {
+  //     ...this.providers,
+  //     walletProvider: walletAndMidnightProvider,
+  //     midnightProvider: walletAndMidnightProvider,
+  //   };
+  // }
   async deployContract(adminThreshold, smgPkThreshold, feeReceiver, signingKey) {
     const feeReceiver_0 = { bytes: getUserAddressFromUnshieldAddress(feeReceiver) };
     this.crossChainContract = await midnightJsContracts.deployContract(this.providers, {
@@ -10887,6 +10905,7 @@ exports.CrossChainState = CrossChainState;
 exports.MidnightWalletSDK = MidnightWalletSDK;
 exports.ZKConfig = ZKConfig;
 exports.configuration = configuration;
+exports.createCrossChainProviders = createCrossChainProviders;
 exports.createInitialPrivateState = createInitialPrivateState;
 exports.createPrivateState = createPrivateState;
 exports.createWalletAndMidnightProvider = createWalletAndMidnightProvider;
