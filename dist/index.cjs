@@ -20,9 +20,7 @@ var midnightJsContracts = require('@midnight-ntwrk/midnight-js-contracts');
 var midnightJsIndexerPublicDataProvider = require('@midnight-ntwrk/midnight-js-indexer-public-data-provider');
 var midnightJsNetworkId = require('@midnight-ntwrk/midnight-js-network-id');
 var midnightJsUtils = require('@midnight-ntwrk/midnight-js-utils');
-var url = require('url');
 
-var _documentCurrentScript = typeof document !== 'undefined' ? document.currentScript : null;
 function _interopDefault (e) { return e && e.__esModule ? e : { default: e }; }
 
 function _interopNamespace(e) {
@@ -10215,14 +10213,7 @@ function ledger2(stateOrChargedState) {
 });
 new Contract({});
 var CrossChainPrivateStateId = "crossChainPrivateState";
-function getDirname() {
-  if (typeof (typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href)) === "string") {
-    const ret = path__default.default.resolve(url.fileURLToPath((typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href))), "..");
-    return ret;
-  }
-  return path__default.default.resolve(__dirname, "..");
-}
-var currentDir = getDirname();
+var currentDir = "";
 console.log("currentDir===>", currentDir);
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",

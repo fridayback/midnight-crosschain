@@ -20,7 +20,6 @@ import { deployContract, findDeployedContract, submitInsertVerifierKeyTx } from 
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { toHex, fromHex, assertIsContractAddress } from '@midnight-ntwrk/midnight-js-utils';
-import { fileURLToPath } from 'url';
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -10186,14 +10185,7 @@ function ledger2(stateOrChargedState) {
 });
 new Contract({});
 var CrossChainPrivateStateId = "crossChainPrivateState";
-function getDirname() {
-  if (typeof import.meta?.url === "string") {
-    const ret = path.resolve(fileURLToPath(import.meta.url), "..");
-    return ret;
-  }
-  return path.resolve(__dirname, "..");
-}
-var currentDir = getDirname();
+var currentDir = "";
 console.log("currentDir===>", currentDir);
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
