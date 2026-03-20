@@ -1,5 +1,5 @@
-import * as ledger from '@midnight-ntwrk/ledger-v7';
-import { decodeRawTokenType } from '@midnight-ntwrk/ledger-v7';
+import * as ledger from '@midnight-ntwrk/ledger-v8';
+import { decodeRawTokenType } from '@midnight-ntwrk/ledger-v8';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
@@ -7,7 +7,7 @@ import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 import { createKeystore, UnshieldedWallet, NoOpTransactionHistoryStorage, PublicKey } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
 import * as Rx from 'rxjs';
-import { UnshieldedAddress, ShieldedAddress, MidnightBech32m } from '@midnight-ntwrk/wallet-sdk-address-format';
+import { DustAddress, UnshieldedAddress, ShieldedAddress, MidnightBech32m } from '@midnight-ntwrk/wallet-sdk-address-format';
 import assert3 from 'assert';
 import * as graphHttp from 'graphql-http';
 import axios from 'axios';
@@ -136,9 +136,9 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
   const shieldedSecretKeys = ledger.ZswapSecretKeys.fromSeed(derivationResult.keys[Roles.Zswap]);
   const dustSecretKey = ledger.DustSecretKey.fromSeed(derivationResult.keys[Roles.Dust]);
   const unshieldedKeystore = createKeystore(derivationResult.keys[Roles.NightExternal], configuration2.networkId);
-  const shieldedWallet = strSerializedState && strSerializedState.shieldedWalletState ? ShieldedWallet(configuration2).restore(strSerializedState.shieldedWalletState) : ShieldedWallet(configuration2).startWithSecretKeys(shieldedSecretKeys);
-  const dustWallet = strSerializedState && strSerializedState.dustWalletState ? DustWallet(configuration2).restore(strSerializedState.dustWalletState) : DustWallet(configuration2).startWithSecretKey(dustSecretKey, ledger.LedgerParameters.initialParameters().dust);
-  const unshieldedWallet = strSerializedState && strSerializedState.unshieldedWalletState ? UnshieldedWallet({
+  strSerializedState && strSerializedState.shieldedWalletState ? ShieldedWallet(configuration2).restore(strSerializedState.shieldedWalletState) : ShieldedWallet(configuration2).startWithSecretKeys(shieldedSecretKeys);
+  strSerializedState && strSerializedState.dustWalletState ? DustWallet(configuration2).restore(strSerializedState.dustWalletState) : DustWallet(configuration2).startWithSecretKey(dustSecretKey, ledger.LedgerParameters.initialParameters().dust);
+  strSerializedState && strSerializedState.unshieldedWalletState ? UnshieldedWallet({
     ...configuration2,
     txHistoryStorage: new NoOpTransactionHistoryStorage()
     //此处不对交易历史进行保留
@@ -147,7 +147,16 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
     txHistoryStorage: new NoOpTransactionHistoryStorage()
     //此处不对交易历史进行保留
   }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore));
-  const wallet = new WalletFacade(shieldedWallet, unshieldedWallet, dustWallet);
+  const initParams = {
+    configuration: configuration2,
+    // submissionService?: (config: TConfig) => MaybePromise<SubmissionService<ledger.FinalizedTransaction>>;
+    // pendingTransactionsService?: (config: TConfig) => MaybePromise<PendingTransactionsService<ledger.FinalizedTransaction>>;
+    // provingService?: (config: TConfig) => MaybePromise<ProvingService<UnboundTransaction>>;
+    shielded: (config) => ShieldedWallet(config).startWithSecretKeys(shieldedSecretKeys),
+    unshielded: (config) => UnshieldedWallet(config).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore)),
+    dust: (config) => DustWallet(config).startWithSecretKey(dustSecretKey, ledger.LedgerParameters.initialParameters().dust)
+  };
+  const wallet = await WalletFacade.init(initParams);
   await wallet.start(shieldedSecretKeys, dustSecretKey);
   return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
@@ -183,7 +192,7 @@ var MidnightWalletSDK = class {
     this.walletAddress = {
       shieldedAddress: ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString(),
       unshieldedAddress: UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString(),
-      dustAddress: state.dust.dustAddress
+      dustAddress: DustAddress.codec.encode(this.config.networkId, state.dust.address).asString()
     };
     const callBack = async () => {
       const state2 = await waitForFullySynced(selfWallet);
@@ -269,7 +278,7 @@ var MidnightWalletSDK = class {
   async getBalances() {
     assert3(this.walletObj, "walletObj is not initialized!");
     let curState = await waitForFullySynced(this.walletObj);
-    const dustBalance = curState.dust.walletBalance(/* @__PURE__ */ new Date());
+    const dustBalance = curState.dust.balance(/* @__PURE__ */ new Date());
     const shieldedBlance = curState.shielded.balances;
     const unshieldedBlance = curState.unshielded.balances;
     const replacer = (key, value) => typeof value === "bigint" ? value.toString() : value;
@@ -390,7 +399,7 @@ var witnesses = {
   //     []
   //   ]
 };
-__compactRuntime.checkRuntimeVersion("0.14.0");
+__compactRuntime.checkRuntimeVersion("0.15.0");
 var ProposalType;
 (function(ProposalType2) {
   ProposalType2[ProposalType2["AddAdmin"] = 0] = "AddAdmin";
@@ -1398,6 +1407,21 @@ var Contract = class {
       }
     };
     this.impureCircuits = {
+      userLock: this.circuits.userLock,
+      smgRelease: this.circuits.smgRelease,
+      smgMint: this.circuits.smgMint,
+      userBurn: this.circuits.userBurn,
+      voteMultiCrossProposal: this.circuits.voteMultiCrossProposal,
+      executeMultiCrossProposal: this.circuits.executeMultiCrossProposal,
+      userClaim: this.circuits.userClaim,
+      setFeeReceiver: this.circuits.setFeeReceiver,
+      setSmgPksks: this.circuits.setSmgPksks,
+      setSmgPKThreold: this.circuits.setSmgPKThreold,
+      setFeeCommonConfig: this.circuits.setFeeCommonConfig,
+      addTokenPair: this.circuits.addTokenPair,
+      removeTokenPair: this.circuits.removeTokenPair
+    };
+    this.provableCircuits = {
       userLock: this.circuits.userLock,
       smgRelease: this.circuits.smgRelease,
       smgMint: this.circuits.smgMint,
@@ -3137,7 +3161,11 @@ var Contract = class {
     return [];
   }
   _userLock_0(context, partialProofData, smgId_0, toAddr_0, tokenPairId_0, amount_0) {
-    __compactRuntime.assert(amount_0 > 0n, "amount must be greater than 0");
+    let t_0;
+    __compactRuntime.assert(
+      (t_0 = amount_0, t_0 > 0n),
+      "amount must be greater than 0"
+    );
     __compactRuntime.assert(
       _descriptor_6.fromValue(__compactRuntime.queryLedgerState(
         context,
@@ -3550,7 +3578,11 @@ var Contract = class {
       ).value),
       "tokenpairId not exists"
     );
-    __compactRuntime.assert(amount_0 > 0n, "amount must be greater than 0");
+    let t_0;
+    __compactRuntime.assert(
+      (t_0 = amount_0, t_0 > 0n),
+      "amount must be greater than 0"
+    );
     const tokenPair_0 = _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
@@ -3756,8 +3788,16 @@ var Contract = class {
       ).value)),
       "not smg member"
     );
-    __compactRuntime.assert(amount_0 > 0n, "amount must be greater than 0");
-    __compactRuntime.assert(amount_0 > fee_0, "amount must be greater than fee");
+    let t_0;
+    __compactRuntime.assert(
+      (t_0 = amount_0, t_0 > 0n),
+      "amount must be greater than 0"
+    );
+    let t_1;
+    __compactRuntime.assert(
+      (t_1 = amount_0, t_1 > fee_0),
+      "amount must be greater than fee"
+    );
     if (_descriptor_6.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
@@ -4913,6 +4953,7 @@ var Contract = class {
       context,
       partialProofData,
       ((context2, partialProofData2, t_0, uniqueId_0) => {
+        let t_1;
         if (!this._equal_12(uniqueId_0, new Uint8Array(32)) && _descriptor_6.fromValue(__compactRuntime.queryLedgerState(
           context2,
           partialProofData2,
@@ -4951,7 +4992,7 @@ var Contract = class {
               result: void 0
             } }
           ]
-        ).value) && _descriptor_8.fromValue(__compactRuntime.queryLedgerState(
+        ).value) && (t_1 = _descriptor_8.fromValue(__compactRuntime.queryLedgerState(
           context2,
           partialProofData2,
           [
@@ -4989,7 +5030,7 @@ var Contract = class {
               result: void 0
             } }
           ]
-        ).value) >= _descriptor_7.fromValue(__compactRuntime.queryLedgerState(
+        ).value), t_1 >= _descriptor_7.fromValue(__compactRuntime.queryLedgerState(
           context2,
           partialProofData2,
           [
@@ -5019,7 +5060,7 @@ var Contract = class {
               result: void 0
             } }
           ]
-        ).value)) {
+        ).value))) {
           const proposal_0 = _descriptor_12.fromValue(__compactRuntime.queryLedgerState(
             context2,
             partialProofData2,
@@ -6027,8 +6068,8 @@ var Contract = class {
         partialProofData
       )
     );
-    let tmp_0, tmp_1;
-    const isAdminAuthorized_0 = (tmp_1 = _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
+    let t_0, tmp_1, tmp_0;
+    const isAdminAuthorized_0 = (tmp_0 = _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6086,7 +6127,7 @@ var Contract = class {
         { push: {
           storage: false,
           value: __compactRuntime.StateValue.newCell({
-            value: _descriptor_2.toValue(tmp_1),
+            value: _descriptor_2.toValue(tmp_0),
             alignment: _descriptor_2.alignment()
           }).encode()
         } },
@@ -6096,7 +6137,7 @@ var Contract = class {
           result: void 0
         } }
       ]
-    ).value)) && (tmp_0 = _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
+    ).value)) && (t_0 = (tmp_1 = _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6152,7 +6193,7 @@ var Contract = class {
             {
               tag: "value",
               value: {
-                value: _descriptor_2.toValue(tmp_0),
+                value: _descriptor_2.toValue(tmp_1),
                 alignment: _descriptor_2.alignment()
               }
             }
@@ -6164,7 +6205,7 @@ var Contract = class {
           result: void 0
         } }
       ]
-    ).value)) >= _descriptor_7.fromValue(__compactRuntime.queryLedgerState(
+    ).value)), t_0 >= _descriptor_7.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6194,7 +6235,7 @@ var Contract = class {
           result: void 0
         } }
       ]
-    ).value);
+    ).value));
     return isOwner_0 && this._equal_17(
       _descriptor_7.fromValue(__compactRuntime.queryLedgerState(
         context,
@@ -10254,7 +10295,8 @@ var createCrossChainProviders = async (config, wallet) => {
   return {
     privateStateProvider: levelPrivateStateProvider({
       privateStateStoreName: "CCPSSN",
-      walletProvider: walletAndMidnightProvider
+      privateStoragePasswordProvider: () => "Pwd_" + wallet.getUnshieldedKeystore().getSecretKey().toString("hex"),
+      accountId: wallet.getUnshieldedKeystore().getPublicKey()
     }),
     publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
     zkConfigProvider: new NodeZkConfigProvider(ZKConfig.zkConfigPath),
@@ -10278,7 +10320,8 @@ var CrossChainApi = class _CrossChainApi {
     this.providers = {
       privateStateProvider: levelPrivateStateProvider({
         privateStateStoreName: "CCPSSN",
-        walletProvider: walletAndMidnightProvider
+        privateStoragePasswordProvider: () => "Pwd_" + wallet.getUnshieldedKeystore().getSecretKey().toString("hex"),
+        accountId: wallet.getUnshieldedKeystore().getPublicKey()
       }),
       publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
       zkConfigProvider: new NodeZkConfigProvider(ZKConfig.zkConfigPath),

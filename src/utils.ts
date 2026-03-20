@@ -1,6 +1,6 @@
 // import "dotenv/config";
 import * as graphHttp from 'graphql-http';
-import { type FinalizedTransaction } from '@midnight-ntwrk/ledger-v7';
+import { type FinalizedTransaction } from '@midnight-ntwrk/ledger-v8';
 
 
 

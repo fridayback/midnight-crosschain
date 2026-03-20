@@ -14,7 +14,7 @@ import path from 'node:path';
 
 import { witnesses, type CrossChainPrivateState } from './witnesses';
 import * as CrossChain from "./managed/crosschain/contract/index.js";
-import { type ImpureCircuitId, CompiledContract} from '@midnight-ntwrk/compact-js';
+import { type ProvableCircuitId, CompiledContract} from '@midnight-ntwrk/compact-js';
 import { UnboundTransaction,type MidnightProvider, type MidnightProviders, type WalletProvider,  createVerifierKey, type VerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import { deployContract, FinalizedCallTxData, findDeployedContract, type DeployedContract, submitInsertVerifierKeyTx, type FoundContract, submitRemoveVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
@@ -23,7 +23,7 @@ import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config
 // import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 // import { Address, CoinPublicKey, WalletFacade } from '@midnight-ntwrk/wallet-api';
-import { ShieldedCoinInfo, DustParameters, LedgerParameters, Transaction, TransactionId, type UnprovenTransaction, sampleCoinPublicKey, FinalizedTransaction, nativeToken, TokenType, encodeRawTokenType, decodeRawTokenType, createShieldedCoinInfo, dummyUserAddress, UnshieldedTokenType, UserAddress, decodeUserAddress } from '@midnight-ntwrk/ledger-v7';
+import { ShieldedCoinInfo, DustParameters, LedgerParameters, Transaction, TransactionId, type UnprovenTransaction, sampleCoinPublicKey, FinalizedTransaction, nativeToken, TokenType, encodeRawTokenType, decodeRawTokenType, createShieldedCoinInfo, dummyUserAddress, UnshieldedTokenType, UserAddress, decodeUserAddress } from '@midnight-ntwrk/ledger-v8';
 // import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
@@ -37,7 +37,7 @@ import { MidnightWalletSDK, signTransactionIntents} from './wallet-sdk.js';
 
 
 
-export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
+export type CrossChainCircuits = ProvableCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
 
 export const CrossChainPrivateStateId = 'crossChainPrivateState';
 
@@ -322,7 +322,8 @@ export const createCrossChainProviders = async (config: Config, wallet: Midnight
   return {
     privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
       privateStateStoreName: 'CCPSSN',
-      walletProvider: walletAndMidnightProvider
+      privateStoragePasswordProvider: () => 'Pwd_'+wallet.getUnshieldedKeystore().getSecretKey().toString('hex'),
+      accountId: wallet.getUnshieldedKeystore().getPublicKey(),
     }),
     publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
     zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
@@ -352,7 +353,8 @@ export class CrossChainApi {
     this.providers = {
       privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
         privateStateStoreName: 'CCPSSN',
-        walletProvider: walletAndMidnightProvider
+        privateStoragePasswordProvider: () => 'Pwd_'+wallet.getUnshieldedKeystore().getSecretKey().toString('hex'),
+        accountId: wallet.getUnshieldedKeystore().getPublicKey(),
       }),
       publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
       zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),

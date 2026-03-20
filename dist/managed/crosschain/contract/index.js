@@ -1,5 +1,5 @@
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
-__compactRuntime.checkRuntimeVersion('0.14.0');
+__compactRuntime.checkRuntimeVersion('0.15.0');
 
 export var ProposalType;
 (function (ProposalType) {
@@ -940,6 +940,21 @@ export class Contract {
       }
     };
     this.impureCircuits = {
+      userLock: this.circuits.userLock,
+      smgRelease: this.circuits.smgRelease,
+      smgMint: this.circuits.smgMint,
+      userBurn: this.circuits.userBurn,
+      voteMultiCrossProposal: this.circuits.voteMultiCrossProposal,
+      executeMultiCrossProposal: this.circuits.executeMultiCrossProposal,
+      userClaim: this.circuits.userClaim,
+      setFeeReceiver: this.circuits.setFeeReceiver,
+      setSmgPksks: this.circuits.setSmgPksks,
+      setSmgPKThreold: this.circuits.setSmgPKThreold,
+      setFeeCommonConfig: this.circuits.setFeeCommonConfig,
+      addTokenPair: this.circuits.addTokenPair,
+      removeTokenPair: this.circuits.removeTokenPair
+    };
+    this.provableCircuits = {
       userLock: this.circuits.userLock,
       smgRelease: this.circuits.smgRelease,
       smgMint: this.circuits.smgMint,
@@ -1951,7 +1966,9 @@ export class Contract {
               tokenPairId_0,
               amount_0)
   {
-    __compactRuntime.assert(amount_0 > 0n, 'amount must be greater than 0');
+    let t_0;
+    __compactRuntime.assert((t_0 = amount_0, t_0 > 0n),
+                            'amount must be greater than 0');
     __compactRuntime.assert(_descriptor_6.fromValue(__compactRuntime.queryLedgerState(context,
                                                                                       partialProofData,
                                                                                       [
@@ -2191,7 +2208,9 @@ export class Contract {
                                                                                        { popeq: { cached: true,
                                                                                                   result: undefined } }]).value),
                             'tokenpairId not exists');
-    __compactRuntime.assert(amount_0 > 0n, 'amount must be greater than 0');
+    let t_0;
+    __compactRuntime.assert((t_0 = amount_0, t_0 > 0n),
+                            'amount must be greater than 0');
     const tokenPair_0 = _descriptor_4.fromValue(__compactRuntime.queryLedgerState(context,
                                                                                   partialProofData,
                                                                                   [
@@ -2313,8 +2332,12 @@ export class Contract {
                                                                                         { popeq: { cached: true,
                                                                                                    result: undefined } }]).value)),
                             'not smg member');
-    __compactRuntime.assert(amount_0 > 0n, 'amount must be greater than 0');
-    __compactRuntime.assert(amount_0 > fee_0, 'amount must be greater than fee');
+    let t_0;
+    __compactRuntime.assert((t_0 = amount_0, t_0 > 0n),
+                            'amount must be greater than 0');
+    let t_1;
+    __compactRuntime.assert((t_1 = amount_0, t_1 > fee_0),
+                            'amount must be greater than fee');
     if (_descriptor_6.fromValue(__compactRuntime.queryLedgerState(context,
                                                                   partialProofData,
                                                                   [
@@ -2962,6 +2985,7 @@ export class Contract {
                    partialProofData,
                    ((context, partialProofData, t_0, uniqueId_0) =>
                     {
+                      let t_1;
                       if (!this._equal_12(uniqueId_0, new Uint8Array(32))
                           &&
                           _descriptor_6.fromValue(__compactRuntime.queryLedgerState(context,
@@ -2984,41 +3008,42 @@ export class Contract {
                                                                                      { popeq: { cached: true,
                                                                                                 result: undefined } }]).value)
                           &&
-                          _descriptor_8.fromValue(__compactRuntime.queryLedgerState(context,
-                                                                                    partialProofData,
-                                                                                    [
-                                                                                     { dup: { n: 0 } },
-                                                                                     { idx: { cached: false,
-                                                                                              pushPath: false,
-                                                                                              path: [
-                                                                                                     { tag: 'value',
-                                                                                                       value: { value: _descriptor_7.toValue(1n),
-                                                                                                                alignment: _descriptor_7.alignment() } },
-                                                                                                     { tag: 'value',
-                                                                                                       value: { value: _descriptor_7.toValue(6n),
-                                                                                                                alignment: _descriptor_7.alignment() } },
-                                                                                                     { tag: 'value',
-                                                                                                       value: { value: _descriptor_0.toValue(uniqueId_0),
-                                                                                                                alignment: _descriptor_0.alignment() } }] } },
-                                                                                     'size',
-                                                                                     { popeq: { cached: true,
-                                                                                                result: undefined } }]).value)
-                          >=
-                          _descriptor_7.fromValue(__compactRuntime.queryLedgerState(context,
-                                                                                    partialProofData,
-                                                                                    [
-                                                                                     { dup: { n: 0 } },
-                                                                                     { idx: { cached: false,
-                                                                                              pushPath: false,
-                                                                                              path: [
-                                                                                                     { tag: 'value',
-                                                                                                       value: { value: _descriptor_7.toValue(0n),
-                                                                                                                alignment: _descriptor_7.alignment() } },
-                                                                                                     { tag: 'value',
-                                                                                                       value: { value: _descriptor_7.toValue(7n),
-                                                                                                                alignment: _descriptor_7.alignment() } }] } },
-                                                                                     { popeq: { cached: false,
-                                                                                                result: undefined } }]).value))
+                          (t_1 = _descriptor_8.fromValue(__compactRuntime.queryLedgerState(context,
+                                                                                           partialProofData,
+                                                                                           [
+                                                                                            { dup: { n: 0 } },
+                                                                                            { idx: { cached: false,
+                                                                                                     pushPath: false,
+                                                                                                     path: [
+                                                                                                            { tag: 'value',
+                                                                                                              value: { value: _descriptor_7.toValue(1n),
+                                                                                                                       alignment: _descriptor_7.alignment() } },
+                                                                                                            { tag: 'value',
+                                                                                                              value: { value: _descriptor_7.toValue(6n),
+                                                                                                                       alignment: _descriptor_7.alignment() } },
+                                                                                                            { tag: 'value',
+                                                                                                              value: { value: _descriptor_0.toValue(uniqueId_0),
+                                                                                                                       alignment: _descriptor_0.alignment() } }] } },
+                                                                                            'size',
+                                                                                            { popeq: { cached: true,
+                                                                                                       result: undefined } }]).value),
+                           t_1
+                           >=
+                           _descriptor_7.fromValue(__compactRuntime.queryLedgerState(context,
+                                                                                     partialProofData,
+                                                                                     [
+                                                                                      { dup: { n: 0 } },
+                                                                                      { idx: { cached: false,
+                                                                                               pushPath: false,
+                                                                                               path: [
+                                                                                                      { tag: 'value',
+                                                                                                        value: { value: _descriptor_7.toValue(0n),
+                                                                                                                 alignment: _descriptor_7.alignment() } },
+                                                                                                      { tag: 'value',
+                                                                                                        value: { value: _descriptor_7.toValue(7n),
+                                                                                                                 alignment: _descriptor_7.alignment() } }] } },
+                                                                                      { popeq: { cached: false,
+                                                                                                 result: undefined } }]).value)))
                       {
                         const proposal_0 = _descriptor_12.fromValue(__compactRuntime.queryLedgerState(context,
                                                                                                       partialProofData,
@@ -3565,8 +3590,8 @@ export class Contract {
                                                                                                            result: undefined } }]).value),
                                      this._ownPublicKey_0(context,
                                                           partialProofData));
-    let tmp_0, tmp_1;
-    const isAdminAuthorized_0 = (tmp_1 = _descriptor_2.fromValue(__compactRuntime.queryLedgerState(context,
+    let t_0, tmp_1, tmp_0;
+    const isAdminAuthorized_0 = (tmp_0 = _descriptor_2.fromValue(__compactRuntime.queryLedgerState(context,
                                                                                                    partialProofData,
                                                                                                    [
                                                                                                     { dup: { n: 0 } },
@@ -3595,28 +3620,49 @@ export class Contract {
                                                                                                               value: { value: _descriptor_7.toValue(4n),
                                                                                                                        alignment: _descriptor_7.alignment() } }] } },
                                                                                             { push: { storage: false,
-                                                                                                      value: __compactRuntime.StateValue.newCell({ value: _descriptor_2.toValue(tmp_1),
+                                                                                                      value: __compactRuntime.StateValue.newCell({ value: _descriptor_2.toValue(tmp_0),
                                                                                                                                                    alignment: _descriptor_2.alignment() }).encode() } },
                                                                                             'member',
                                                                                             { popeq: { cached: true,
                                                                                                        result: undefined } }]).value))
                                 &&
-                                (tmp_0 = _descriptor_2.fromValue(__compactRuntime.queryLedgerState(context,
-                                                                                                   partialProofData,
-                                                                                                   [
-                                                                                                    { dup: { n: 0 } },
-                                                                                                    { idx: { cached: false,
-                                                                                                             pushPath: false,
-                                                                                                             path: [
-                                                                                                                    { tag: 'value',
-                                                                                                                      value: { value: _descriptor_7.toValue(1n),
-                                                                                                                               alignment: _descriptor_7.alignment() } },
-                                                                                                                    { tag: 'value',
-                                                                                                                      value: { value: _descriptor_7.toValue(3n),
-                                                                                                                               alignment: _descriptor_7.alignment() } }] } },
-                                                                                                    { popeq: { cached: false,
-                                                                                                               result: undefined } }]).value),
-                                 _descriptor_8.fromValue(__compactRuntime.queryLedgerState(context,
+                                (t_0 = (tmp_1 = _descriptor_2.fromValue(__compactRuntime.queryLedgerState(context,
+                                                                                                          partialProofData,
+                                                                                                          [
+                                                                                                           { dup: { n: 0 } },
+                                                                                                           { idx: { cached: false,
+                                                                                                                    pushPath: false,
+                                                                                                                    path: [
+                                                                                                                           { tag: 'value',
+                                                                                                                             value: { value: _descriptor_7.toValue(1n),
+                                                                                                                                      alignment: _descriptor_7.alignment() } },
+                                                                                                                           { tag: 'value',
+                                                                                                                             value: { value: _descriptor_7.toValue(3n),
+                                                                                                                                      alignment: _descriptor_7.alignment() } }] } },
+                                                                                                           { popeq: { cached: false,
+                                                                                                                      result: undefined } }]).value),
+                                        _descriptor_8.fromValue(__compactRuntime.queryLedgerState(context,
+                                                                                                  partialProofData,
+                                                                                                  [
+                                                                                                   { dup: { n: 0 } },
+                                                                                                   { idx: { cached: false,
+                                                                                                            pushPath: false,
+                                                                                                            path: [
+                                                                                                                   { tag: 'value',
+                                                                                                                     value: { value: _descriptor_7.toValue(1n),
+                                                                                                                              alignment: _descriptor_7.alignment() } },
+                                                                                                                   { tag: 'value',
+                                                                                                                     value: { value: _descriptor_7.toValue(4n),
+                                                                                                                              alignment: _descriptor_7.alignment() } },
+                                                                                                                   { tag: 'value',
+                                                                                                                     value: { value: _descriptor_2.toValue(tmp_1),
+                                                                                                                              alignment: _descriptor_2.alignment() } }] } },
+                                                                                                   'size',
+                                                                                                   { popeq: { cached: true,
+                                                                                                              result: undefined } }]).value)),
+                                 t_0
+                                 >=
+                                 _descriptor_7.fromValue(__compactRuntime.queryLedgerState(context,
                                                                                            partialProofData,
                                                                                            [
                                                                                             { dup: { n: 0 } },
@@ -3627,30 +3673,10 @@ export class Contract {
                                                                                                               value: { value: _descriptor_7.toValue(1n),
                                                                                                                        alignment: _descriptor_7.alignment() } },
                                                                                                             { tag: 'value',
-                                                                                                              value: { value: _descriptor_7.toValue(4n),
-                                                                                                                       alignment: _descriptor_7.alignment() } },
-                                                                                                            { tag: 'value',
-                                                                                                              value: { value: _descriptor_2.toValue(tmp_0),
-                                                                                                                       alignment: _descriptor_2.alignment() } }] } },
-                                                                                            'size',
-                                                                                            { popeq: { cached: true,
-                                                                                                       result: undefined } }]).value))
-                                >=
-                                _descriptor_7.fromValue(__compactRuntime.queryLedgerState(context,
-                                                                                          partialProofData,
-                                                                                          [
-                                                                                           { dup: { n: 0 } },
-                                                                                           { idx: { cached: false,
-                                                                                                    pushPath: false,
-                                                                                                    path: [
-                                                                                                           { tag: 'value',
-                                                                                                             value: { value: _descriptor_7.toValue(1n),
-                                                                                                                      alignment: _descriptor_7.alignment() } },
-                                                                                                           { tag: 'value',
-                                                                                                             value: { value: _descriptor_7.toValue(0n),
-                                                                                                                      alignment: _descriptor_7.alignment() } }] } },
-                                                                                           { popeq: { cached: false,
-                                                                                                      result: undefined } }]).value);
+                                                                                                              value: { value: _descriptor_7.toValue(0n),
+                                                                                                                       alignment: _descriptor_7.alignment() } }] } },
+                                                                                            { popeq: { cached: false,
+                                                                                                       result: undefined } }]).value));
     return isOwner_0
            &&
            this._equal_17(_descriptor_7.fromValue(__compactRuntime.queryLedgerState(context,

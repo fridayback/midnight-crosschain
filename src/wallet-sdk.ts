@@ -1,8 +1,7 @@
-import * as ledger from '@midnight-ntwrk/ledger-v7';
+import * as ledger from '@midnight-ntwrk/ledger-v8';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
-import type { DefaultV1Configuration as DustConfiguration, TotalCostParameters } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
-import { CombinedSwapOutputs, FacadeState, WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
+import { CombinedSwapOutputs, DefaultConfiguration, FacadeState, WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
 import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 
@@ -20,12 +19,12 @@ import * as Rx from 'rxjs';
 import { ShieldedAddress, UnshieldedAddress, DustAddress } from "@midnight-ntwrk/wallet-sdk-address-format"
 import assert from 'node:assert';
 import { stat } from 'fs';
-import { LedgerParameters } from '@midnight-ntwrk/ledger-v7';
+// import { LedgerParameters } from '@midnight-ntwrk/ledger-v7';
 
 import { ToolKitClient } from './utils.js';
 import { UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
 
-export type Configuration = ShieldedConfiguration & DustConfiguration & { indexerUrl: string };
+export type Configuration = DefaultConfiguration;//ShieldedConfiguration & DustConfiguration & { indexerUrl: string };
 // export const defaultConfiguration: Configuration = {
 //     networkId: 'preview',
 //     costParameters: {
@@ -43,7 +42,7 @@ export type Configuration = ShieldedConfiguration & DustConfiguration & { indexe
 
 export const configuration = function (indexerHttpUrl: string, indexerWsUrl: string, provingServerUrl: string, node: string
     , network: NetworkId.NetworkId = 'preview'
-    , costParameters: TotalCostParameters = {
+    , costParameters = {
         additionalFeeOverhead: 300_000_000_000_000n,
         feeBlocksMargin: 5,
     }): Configuration {
@@ -110,7 +109,16 @@ export const initFacadeWallet = async (
             txHistoryStorage: new NoOpTransactionHistoryStorage(), //此处不对交易历史进行保留
         }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore));
 
-    const wallet: WalletFacade = new WalletFacade(shieldedWallet, unshieldedWallet, dustWallet);
+    const initParams = {
+        configuration,
+        // submissionService?: (config: TConfig) => MaybePromise<SubmissionService<ledger.FinalizedTransaction>>;
+        // pendingTransactionsService?: (config: TConfig) => MaybePromise<PendingTransactionsService<ledger.FinalizedTransaction>>;
+        // provingService?: (config: TConfig) => MaybePromise<ProvingService<UnboundTransaction>>;
+        shielded: (config: DefaultConfiguration) => ShieldedWallet(config).startWithSecretKeys(shieldedSecretKeys),
+        unshielded: (config: DefaultConfiguration) => UnshieldedWallet(config).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore)),
+        dust: (config: DefaultConfiguration) => DustWallet(config).startWithSecretKey(dustSecretKey, ledger.LedgerParameters.initialParameters().dust),
+      };
+      const wallet = await WalletFacade.init(initParams);
     await wallet.start(shieldedSecretKeys, dustSecretKey);
     return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
@@ -171,7 +179,7 @@ export class MidnightWalletSDK {
         this.walletAddress = {
             shieldedAddress: ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString()
             , unshieldedAddress: UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString()
-            , dustAddress: state.dust.dustAddress
+            , dustAddress: DustAddress.codec.encode(this.config.networkId, state.dust.address).asString()
         };
 
         const callBack = async () => {
@@ -289,7 +297,7 @@ export class MidnightWalletSDK {
         // balances: Record<TokenType, bigint>;
         // let aryBalance = new Array();
 
-        const dustBalance = curState.dust.walletBalance(new Date());
+        const dustBalance = curState.dust.balance(new Date());
         const shieldedBlance = curState.shielded.balances;
         const unshieldedBlance = curState.unshielded.balances;
 

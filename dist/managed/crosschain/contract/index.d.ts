@@ -69,7 +69,7 @@ export type QualifiedShieldedCoinInfo = { nonce: Uint8Array;
                                           mt_index: bigint
                                         };
 
-export type NativePoint = { x: bigint, y: bigint };
+export type JubjubPoint = __compactRuntime.JubjubPoint;
 
 export type ZswapCoinPublicKey = { bytes: Uint8Array };
 
@@ -79,6 +79,54 @@ export type Witnesses<PS> = {
 }
 
 export type ImpureCircuits<PS> = {
+  userLock(context: __compactRuntime.CircuitContext<PS>,
+           smgId_0: Uint8Array,
+           toAddr_0: string,
+           tokenPairId_0: bigint,
+           amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  smgRelease(context: __compactRuntime.CircuitContext<PS>,
+             uniqueId_0: Uint8Array,
+             smgId_0: Uint8Array,
+             tokenPairId_0: bigint,
+             amount_0: bigint,
+             toAddr_0: UserAddress,
+             fee_0: bigint,
+             ttl_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  smgMint(context: __compactRuntime.CircuitContext<PS>,
+          uniqueId_0: Uint8Array,
+          smgId_0: Uint8Array,
+          tokenPairId_0: bigint,
+          amount_0: bigint,
+          fee_0: bigint,
+          toAddr_0: UserAddress,
+          ttl_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  userBurn(context: __compactRuntime.CircuitContext<PS>,
+           smgId_0: Uint8Array,
+           toAddr_0: string,
+           tokenPairId_0: bigint,
+           amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  voteMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
+                         uniqueIds_0: VoteForCrossPropasal[]): __compactRuntime.CircuitResults<PS, []>;
+  executeMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
+                            mutiEx_0: Uint8Array[]): __compactRuntime.CircuitResults<PS, []>;
+  userClaim(context: __compactRuntime.CircuitContext<PS>, id_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
+  setFeeReceiver(context: __compactRuntime.CircuitContext<PS>,
+                 newFeeReceiver_0: UserAddress): __compactRuntime.CircuitResults<PS, []>;
+  setSmgPksks(context: __compactRuntime.CircuitContext<PS>,
+              voters_0: ZswapCoinPublicKey[]): __compactRuntime.CircuitResults<PS, []>;
+  setSmgPKThreold(context: __compactRuntime.CircuitContext<PS>,
+                  threshold_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  setFeeCommonConfig(context: __compactRuntime.CircuitContext<PS>,
+                     chainId_0: bigint,
+                     fee_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  addTokenPair(context: __compactRuntime.CircuitContext<PS>,
+               tokenPairId_0: bigint,
+               pairInfo_0: TokenPairInfo): __compactRuntime.CircuitResults<PS, []>;
+  removeTokenPair(context: __compactRuntime.CircuitContext<PS>,
+                  tokenPairId_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+}
+
+export type ProvableCircuits<PS> = {
   userLock(context: __compactRuntime.CircuitContext<PS>,
            smgId_0: Uint8Array,
            toAddr_0: string,
@@ -297,6 +345,7 @@ export declare class Contract<PS = any, W extends Witnesses<PS> = Witnesses<PS>>
   witnesses: W;
   circuits: Circuits<PS>;
   impureCircuits: ImpureCircuits<PS>;
+  provableCircuits: ProvableCircuits<PS>;
   constructor(witnesses: W);
   initialState(context: __compactRuntime.ConstructorContext<PS>,
                adminThresholdInit_0: bigint,
