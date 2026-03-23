@@ -69,8 +69,6 @@ export type QualifiedShieldedCoinInfo = { nonce: Uint8Array;
                                           mt_index: bigint
                                         };
 
-export type JubjubPoint = __compactRuntime.JubjubPoint;
-
 export type ZswapCoinPublicKey = { bytes: Uint8Array };
 
 export type UserAddress = { bytes: Uint8Array };

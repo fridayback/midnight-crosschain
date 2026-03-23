@@ -18,7 +18,7 @@ pragma language_version >= 0.20;
 import CompactStandardLibrary;
 
 
-export { ShieldedCoinInfo, QualifiedShieldedCoinInfo, NativePoint, ZswapCoinPublicKey
+export { ShieldedCoinInfo, QualifiedShieldedCoinInfo, ZswapCoinPublicKey
 ,TokenPairInfo,FeeConfig,ProposalType,Proposal,CrossOutBound,UserAddress
 , CrossProposal,SmgEvent}
 
