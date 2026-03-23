@@ -1,24 +1,23 @@
 import * as _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js from '@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/UnshieldedState.js';
 import * as _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances.js';
-import * as _midnight_ntwrk_wallet_sdk_dust_wallet from '@midnight-ntwrk/wallet-sdk-dust-wallet';
-import { DefaultV1Configuration as DefaultV1Configuration$1, TotalCostParameters } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
-import * as ledger from '@midnight-ntwrk/ledger-v7';
+import * as _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types_Dust_js from '@midnight-ntwrk/wallet-sdk-dust-wallet/dist/v1/types/Dust.js';
+import * as ledger from '@midnight-ntwrk/ledger-v8';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
-import { WalletFacade, CombinedSwapOutputs, FacadeState } from '@midnight-ntwrk/wallet-sdk-facade';
-import { DefaultV1Configuration } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
+import { DefaultConfiguration, WalletFacade, CombinedSwapOutputs, FacadeState } from '@midnight-ntwrk/wallet-sdk-facade';
 import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
 import * as _midnight_ntwrk_midnight_js_types from '@midnight-ntwrk/midnight-js-types';
 import { UnboundTransaction, MidnightProviders, PublicDataProvider, WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { SigningKey, ContractAddress, RawTokenType } from '@midnight-ntwrk/compact-runtime';
-import { CompiledContract, ImpureCircuitId } from '@midnight-ntwrk/compact-js';
+import { CompiledContract, ProvableCircuitId } from '@midnight-ntwrk/compact-js';
 import { DeployedContract, FoundContract, FinalizedCallTxData } from '@midnight-ntwrk/midnight-js-contracts';
 
-type Configuration = DefaultV1Configuration & DefaultV1Configuration$1 & {
-    indexerUrl: string;
-};
-declare const configuration: (indexerHttpUrl: string, indexerWsUrl: string, provingServerUrl: string, node: string, network?: NetworkId.NetworkId, costParameters?: TotalCostParameters) => Configuration;
+type Configuration = DefaultConfiguration;
+declare const configuration: (indexerHttpUrl: string, indexerWsUrl: string, provingServerUrl: string, node: string, network?: NetworkId.NetworkId, costParameters?: {
+    additionalFeeOverhead: bigint;
+    feeBlocksMargin: number;
+}) => Configuration;
 declare const initFacadeWallet: (seed: Buffer$1, configuration: Configuration, // = defaultConfiguration,
 strSerializedState?: FacadeSerializedState) => Promise<{
     wallet: WalletFacade;
@@ -63,7 +62,7 @@ declare class MidnightWalletSDK {
         unshieldedBlance: any;
     }>;
     getAvailableCoins(): Promise<{
-        dustAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_dust_wallet.DustToken[];
+        dustAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types_Dust_js.Dust[];
         shieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js.AvailableCoin[];
         unshieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js.UtxoWithMeta[];
     }>;
@@ -161,6 +160,54 @@ type Witnesses<PS> = {
 }
 
 type ImpureCircuits<PS> = {
+  userLock(context: __compactRuntime.CircuitContext<PS>,
+           smgId_0: Uint8Array,
+           toAddr_0: string,
+           tokenPairId_0: bigint,
+           amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  smgRelease(context: __compactRuntime.CircuitContext<PS>,
+             uniqueId_0: Uint8Array,
+             smgId_0: Uint8Array,
+             tokenPairId_0: bigint,
+             amount_0: bigint,
+             toAddr_0: UserAddress,
+             fee_0: bigint,
+             ttl_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  smgMint(context: __compactRuntime.CircuitContext<PS>,
+          uniqueId_0: Uint8Array,
+          smgId_0: Uint8Array,
+          tokenPairId_0: bigint,
+          amount_0: bigint,
+          fee_0: bigint,
+          toAddr_0: UserAddress,
+          ttl_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  userBurn(context: __compactRuntime.CircuitContext<PS>,
+           smgId_0: Uint8Array,
+           toAddr_0: string,
+           tokenPairId_0: bigint,
+           amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  voteMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
+                         uniqueIds_0: VoteForCrossPropasal[]): __compactRuntime.CircuitResults<PS, []>;
+  executeMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
+                            mutiEx_0: Uint8Array[]): __compactRuntime.CircuitResults<PS, []>;
+  userClaim(context: __compactRuntime.CircuitContext<PS>, id_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
+  setFeeReceiver(context: __compactRuntime.CircuitContext<PS>,
+                 newFeeReceiver_0: UserAddress): __compactRuntime.CircuitResults<PS, []>;
+  setSmgPksks(context: __compactRuntime.CircuitContext<PS>,
+              voters_0: ZswapCoinPublicKey[]): __compactRuntime.CircuitResults<PS, []>;
+  setSmgPKThreold(context: __compactRuntime.CircuitContext<PS>,
+                  threshold_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  setFeeCommonConfig(context: __compactRuntime.CircuitContext<PS>,
+                     chainId_0: bigint,
+                     fee_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  addTokenPair(context: __compactRuntime.CircuitContext<PS>,
+               tokenPairId_0: bigint,
+               pairInfo_0: TokenPairInfo): __compactRuntime.CircuitResults<PS, []>;
+  removeTokenPair(context: __compactRuntime.CircuitContext<PS>,
+                  tokenPairId_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+}
+
+type ProvableCircuits<PS> = {
   userLock(context: __compactRuntime.CircuitContext<PS>,
            smgId_0: Uint8Array,
            toAddr_0: string,
@@ -372,6 +419,7 @@ declare class Contract<PS = any, W extends Witnesses<PS> = Witnesses<PS>> {
   witnesses: W;
   circuits: Circuits<PS>;
   impureCircuits: ImpureCircuits<PS>;
+  provableCircuits: ProvableCircuits<PS>;
   constructor(witnesses: W);
   initialState(context: __compactRuntime.ConstructorContext<PS>,
                adminThresholdInit_0: bigint,
@@ -379,7 +427,7 @@ declare class Contract<PS = any, W extends Witnesses<PS> = Witnesses<PS>> {
                feeReceiverInit_0: UserAddress): __compactRuntime.ConstructorResult<PS>;
 }
 
-type CrossChainCircuits = ImpureCircuitId<Contract<CrossChainPrivateState>>;
+type CrossChainCircuits = ProvableCircuitId<Contract<CrossChainPrivateState>>;
 declare const CrossChainPrivateStateId = "crossChainPrivateState";
 type CrossChainProviders = MidnightProviders<CrossChainCircuits, typeof CrossChainPrivateStateId, CrossChainPrivateState>;
 type CrossChainContract = Contract<CrossChainPrivateState>;
@@ -407,6 +455,7 @@ declare class CrossChainApi {
     MaxMergeCoins: number;
     constructor();
     init2(providers: CrossChainProviders): Promise<void>;
+    setWallet(wallet: MidnightWalletSDK): Promise<void>;
     deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, feeReceiver: string, signingKey: SigningKey): Promise<ContractAddress>;
     join(contractAddress: ContractAddress): Promise<void>;
     checkCrossData(uniqueId: string, smgId: string, tokenPairId: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, coins: string[] | number[] | bigint[] | undefined, ttl: string | number | bigint): {

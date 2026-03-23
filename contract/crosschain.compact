@@ -18,7 +18,7 @@ pragma language_version >= 0.20;
 import CompactStandardLibrary;
 
 
-export { ShieldedCoinInfo, QualifiedShieldedCoinInfo, NativePoint, ZswapCoinPublicKey
+export { ShieldedCoinInfo, QualifiedShieldedCoinInfo, ZswapCoinPublicKey
 ,TokenPairInfo,FeeConfig,ProposalType,Proposal,CrossOutBound,UserAddress
 , CrossProposal,SmgEvent}
 
@@ -197,7 +197,7 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
     , fromAddr: ownPublicKey()
     , toAddr: disclose(toAddr)
     , tokenPairId: disclose(tokenPairId)
-    , tokenAccount: nativeToken()//midnightTokenAccount
+    , tokenAccount: tokenPair.midnigthTokenAccount
     , amount: disclose(amount)
     , fee: 0//contractFee // service fee not specified by origin chain????
   };

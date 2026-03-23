@@ -14,16 +14,17 @@ import path from 'node:path';
 
 import { witnesses, type CrossChainPrivateState } from './witnesses';
 import * as CrossChain from "./managed/crosschain/contract/index.js";
-import { type ImpureCircuitId, CompiledContract } from '@midnight-ntwrk/compact-js';
-import { UnboundTransaction, type MidnightProvider, type MidnightProviders, type WalletProvider, createVerifierKey, type VerifierKey, PublicDataProvider } from '@midnight-ntwrk/midnight-js-types';
+import { type ProvableCircuitId, CompiledContract} from '@midnight-ntwrk/compact-js';
+import { UnboundTransaction,type MidnightProvider, type MidnightProviders, type WalletProvider,  createVerifierKey, type VerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import { deployContract, FinalizedCallTxData, findDeployedContract, type DeployedContract, submitInsertVerifierKeyTx, type FoundContract, submitRemoveVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
 // import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
+import { PublicDataProvider} from '@midnight-ntwrk/midnight-js-types';
 // import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 // // import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
 // import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 // import { Address, CoinPublicKey, WalletFacade } from '@midnight-ntwrk/wallet-api';
-import { ShieldedCoinInfo, DustParameters, LedgerParameters, Transaction, TransactionId, type UnprovenTransaction, sampleCoinPublicKey, FinalizedTransaction, nativeToken, TokenType, encodeRawTokenType, decodeRawTokenType, createShieldedCoinInfo, dummyUserAddress, UnshieldedTokenType, UserAddress, decodeUserAddress } from '@midnight-ntwrk/ledger-v7';
+import { ShieldedCoinInfo, DustParameters, LedgerParameters, Transaction, TransactionId, type UnprovenTransaction, sampleCoinPublicKey, FinalizedTransaction, nativeToken, TokenType, encodeRawTokenType, decodeRawTokenType, createShieldedCoinInfo, dummyUserAddress, UnshieldedTokenType, UserAddress, decodeUserAddress } from '@midnight-ntwrk/ledger-v8';
 // import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
@@ -37,7 +38,7 @@ import { MidnightWalletSDK, signTransactionIntents } from './wallet-sdk.js';
 
 
 
-export type CrossChainCircuits = ImpureCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
+export type CrossChainCircuits = ProvableCircuitId<CrossChain.Contract<CrossChainPrivateState>>;
 
 export const CrossChainPrivateStateId = 'crossChainPrivateState';
 
@@ -343,7 +344,7 @@ export class CrossChainApi {
     // setNetworkId(networkId);
   }
 
-  async init2(providers: CrossChainProviders) {
+  async init(providers: CrossChainProviders) {
     this.providers = providers;
   }
 
