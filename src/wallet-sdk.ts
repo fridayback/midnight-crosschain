@@ -110,7 +110,10 @@ export const initFacadeWallet = async (
         }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore));
 
     const initParams = {
-        configuration,
+        configuration:{
+            ...configuration,
+            txHistoryStorage: new NoOpTransactionHistoryStorage()
+        },
         // submissionService?: (config: TConfig) => MaybePromise<SubmissionService<ledger.FinalizedTransaction>>;
         // pendingTransactionsService?: (config: TConfig) => MaybePromise<PendingTransactionsService<ledger.FinalizedTransaction>>;
         // provingService?: (config: TConfig) => MaybePromise<ProvingService<UnboundTransaction>>;

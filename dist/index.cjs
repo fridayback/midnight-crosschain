@@ -177,7 +177,10 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
     //此处不对交易历史进行保留
   }).startWithPublicKey(walletSdkUnshieldedWallet.PublicKey.fromKeyStore(unshieldedKeystore));
   const initParams = {
-    configuration: configuration2,
+    configuration: {
+      ...configuration2,
+      txHistoryStorage: new walletSdkUnshieldedWallet.NoOpTransactionHistoryStorage()
+    },
     // submissionService?: (config: TConfig) => MaybePromise<SubmissionService<ledger.FinalizedTransaction>>;
     // pendingTransactionsService?: (config: TConfig) => MaybePromise<PendingTransactionsService<ledger.FinalizedTransaction>>;
     // provingService?: (config: TConfig) => MaybePromise<ProvingService<UnboundTransaction>>;
