@@ -507,15 +507,16 @@ declare class CrossChainApi {
         fee: string;
     } | undefined;
     isVoter(ledger: Ledger, voter: Address | undefined): Promise<boolean>;
-    getUnVotedCrossProposal(ledger: Ledger, voter: Address | undefined): Promise<({
-        smgId: string;
-        token: string;
-        tokenPairId: string;
-        amount: string;
-        fee: string;
-        toAddr: UserAddress;
-        ttl: string;
-    } | undefined)[]>;
+    getUnVotedCrossProposal(ledger: Ledger, voter: Address | undefined): Promise<{
+        smgId?: string | undefined;
+        token?: string | undefined;
+        tokenPairId?: string | undefined;
+        amount?: string | undefined;
+        fee?: string | undefined;
+        toAddr?: UserAddress | undefined;
+        ttl?: string | undefined;
+        uniquId: string;
+    }[]>;
     getUnExecuteCrossProposal(ledger: Ledger): Promise<{
         uniqueId: string;
         smgId: string;
