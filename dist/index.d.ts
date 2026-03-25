@@ -454,8 +454,7 @@ declare class CrossChainApi {
     MaxSmgSignators: number;
     MaxMergeCoins: number;
     constructor();
-    init2(providers: CrossChainProviders): Promise<void>;
-    setWallet(wallet: MidnightWalletSDK): Promise<void>;
+    init(providers: CrossChainProviders): Promise<void>;
     deployContract(adminThreshold: number | string | bigint, smgPkThreshold: number | string | bigint, feeReceiver: string, signingKey: SigningKey): Promise<ContractAddress>;
     join(contractAddress: ContractAddress): Promise<void>;
     checkCrossData(uniqueId: string, smgId: string, tokenPairId: string | number | bigint, amount: string | number | bigint, fee: string | number | bigint, toAddr: string, coins: string[] | number[] | bigint[] | undefined, ttl: string | number | bigint): {
@@ -505,15 +504,16 @@ declare class CrossChainApi {
         fee: string;
     } | undefined;
     isVoter(ledger: Ledger, voter: Address | undefined): Promise<boolean>;
-    getUnVotedCrossProposal(ledger: Ledger, voter: Address | undefined): Promise<({
-        smgId: string;
-        token: string;
-        tokenPairId: string;
-        amount: string;
-        fee: string;
-        toAddr: UserAddress;
-        ttl: string;
-    } | undefined)[]>;
+    getUnVotedCrossProposal(ledger: Ledger, voter: Address | undefined): Promise<{
+        smgId?: string | undefined;
+        token?: string | undefined;
+        tokenPairId?: string | undefined;
+        amount?: string | undefined;
+        fee?: string | undefined;
+        toAddr?: UserAddress | undefined;
+        ttl?: string | undefined;
+        uniquId: string;
+    }[]>;
     getUnExecuteCrossProposal(ledger: Ledger): Promise<{
         uniqueId: string;
         smgId: string;

@@ -542,7 +542,7 @@ export class CrossChainApi {
       if (voters.member(voterIndex)) continue;
       else {
         const crossTxInfo = CrossChainApi.getCrossTxInfo(ledger, toHex(uniquId));
-        res.push(crossTxInfo);
+        res.push({uniquId: toHex(uniquId), ...crossTxInfo});
       }
     }
     return res;

@@ -10315,7 +10315,7 @@ var CrossChainApi = class _CrossChainApi {
     this.MaxSmgSignators = 29;
     this.MaxMergeCoins = 4;
   }
-  async init2(providers) {
+  async init(providers) {
     this.providers = providers;
   }
   // async init(config: Config, wallet: MidnightWalletSDK) {
@@ -10333,14 +10333,14 @@ var CrossChainApi = class _CrossChainApi {
   //     midnightProvider: walletAndMidnightProvider,
   //   };
   // }
-  async setWallet(wallet) {
-    const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-    this.providers = {
-      ...this.providers,
-      walletProvider: walletAndMidnightProvider,
-      midnightProvider: walletAndMidnightProvider
-    };
-  }
+  // async setWallet(wallet: MidnightWalletSDK) {
+  //   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+  //   this.providers = {
+  //     ...this.providers,
+  //     walletProvider: walletAndMidnightProvider,
+  //     midnightProvider: walletAndMidnightProvider,
+  //   };
+  // }
   async deployContract(adminThreshold, smgPkThreshold, feeReceiver, signingKey) {
     const feeReceiver_0 = { bytes: getUserAddressFromUnshieldAddress(feeReceiver) };
     this.crossChainContract = await midnightJsContracts.deployContract(this.providers, {
@@ -10487,7 +10487,7 @@ var CrossChainApi = class _CrossChainApi {
       if (voters.member(voterIndex)) continue;
       else {
         const crossTxInfo = _CrossChainApi.getCrossTxInfo(ledger3, midnightJsUtils.toHex(uniquId));
-        res.push(crossTxInfo);
+        res.push({ uniquId: midnightJsUtils.toHex(uniquId), ...crossTxInfo });
       }
     }
     return res;
