@@ -155,12 +155,10 @@ export class MidnightWalletSDK {
     private walletAddress: { shieldedAddress: string, unshieldedAddress: string, dustAddress: string };
     private bActiveFlag: boolean;
     private storeTimer?: NodeJS.Timeout;
-    readonly ISMimic: boolean = false;
-    constructor(config: Configuration, mimic: boolean = false) {
+    constructor(config: Configuration) {
         this.config = config;
         this.walletAddress = { shieldedAddress: '', unshieldedAddress: '', dustAddress: '' };
         this.bActiveFlag = false;
-        this.ISMimic = mimic;
     }
 
     //////////////////////////////////////////
@@ -232,7 +230,6 @@ export class MidnightWalletSDK {
         const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
 
         const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
-        // const dustRegistrationTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
 
         this.isGenerating = false;
     }
@@ -265,8 +262,6 @@ export class MidnightWalletSDK {
 
         const finalizedDustTx = await this.walletObj.finalizeRecipe(recipe);
 
-        // const dustRegistrationTxHash = await this.walletObj.submitTransaction(finalizedDustTx);
-        // const dustRegistrationTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedDustTx) : await this.walletObj.submitTransaction(finalizedDustTx);
         const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
 
         this.isUnGenerating = false;
@@ -275,19 +270,7 @@ export class MidnightWalletSDK {
     async submitTx(tx: ledger.FinalizedTransaction) {
         assert(this.walletObj, "walletObj is not initialized!");
         // const txHash = await this.walletObj.submitTransaction(tx);
-        const ret = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(tx) : await this.walletObj.submitTransaction(tx);
-        if (this.ISMimic) {
-            console.log("Submitted tx string to mimic, response: ", ret);
-            const separator = '"midnight_tx_hash":"0x';
-            const offset = ret.indexOf(separator);
-            if (offset !== -1) {
-                const txHash = ret.substring(offset + separator.length, offset + separator.length + 64);
-                console.log("Extracted tx hash from response: ", txHash);
-                return txHash;
-            } else {
-                throw ret;
-            }
-        }
+        const ret = await this.walletObj.submitTransaction(tx);
         return ret;
     }
 
@@ -395,7 +378,6 @@ export class MidnightWalletSDK {
         const finalizedTx = await this.walletObj.finalizeRecipe(signedTransferTxRecipe);
 
         const submittedTxHash = await this.submitTx(finalizedTx);
-        // const submittedTxHash = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(finalizedTx) : await this.walletObj.submitTransaction(finalizedTx);
         return submittedTxHash;
     }
 

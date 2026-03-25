@@ -10,8 +10,6 @@ var buffer = require('buffer');
 var Rx = require('rxjs');
 var walletSdkAddressFormat = require('@midnight-ntwrk/wallet-sdk-address-format');
 var assert3 = require('assert');
-var graphHttp = require('graphql-http');
-var axios = require('axios');
 var path = require('path');
 var __compactRuntime = require('@midnight-ntwrk/compact-runtime');
 var compactJs = require('@midnight-ntwrk/compact-js');
@@ -49,92 +47,12 @@ function _interopNamespace(e) {
 var ledger__namespace = /*#__PURE__*/_interopNamespace(ledger);
 var Rx__namespace = /*#__PURE__*/_interopNamespace(Rx);
 var assert3__default = /*#__PURE__*/_interopDefault(assert3);
-var graphHttp__namespace = /*#__PURE__*/_interopNamespace(graphHttp);
-var axios__default = /*#__PURE__*/_interopDefault(axios);
 var path__default = /*#__PURE__*/_interopDefault(path);
 var __compactRuntime__namespace = /*#__PURE__*/_interopNamespace(__compactRuntime);
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, key + "" , value);
-var indexerURL = (process.env.INDEXER_URL || "http://10.211.55.6:8088") + "/api/v3/graphql";
-var txServerURL = (process.env.TX_SERVER_URL || "http://10.211.55.6:3000") + "/submit";
-var client = graphHttp__namespace.createClient({ url: indexerURL });
-var TXClient = class {
-  static async post(apiURL, txStringWithContext) {
-    try {
-      const response = await axios__default.default.post(
-        apiURL,
-        txStringWithContext
-      );
-      console.log("\u2705 Post successfully!");
-      return response.data;
-    } catch (error) {
-      if (axios__default.default.isAxiosError(error)) {
-        console.error("\u274C Axios error:", error.message);
-      } else {
-        console.error("\u274C Unexpected error:", error);
-      }
-      throw error;
-    }
-  }
-};
-var ToolKitClient = class _ToolKitClient {
-  static async getBlockNumberSync() {
-    let qryOption = `{
-            block {
-                height
-                hash
-            }
-        }`;
-    const ret = await new Promise((resolve, reject) => {
-      let result;
-      client.subscribe(
-        {
-          query: qryOption
-        },
-        {
-          next: (data) => result = data,
-          error: reject,
-          complete: () => resolve(result)
-        }
-      );
-    });
-    console.log("midnight getBlockNumberSync query result: ", ret);
-    return ret;
-  }
-  static async prepareTXStringWithContext(txData) {
-    let txBlock = await _ToolKitClient.getBlockNumberSync();
-    let initialTX = {
-      tx: [],
-      block_context: {
-        secondsSinceEpoch: 0,
-        secondsSinceEpochErr: 30,
-        parentBlockHash: ""
-      }
-    };
-    const timestampSec = Math.floor(Date.now() / 1e3);
-    initialTX.tx = Array.from(txData);
-    initialTX.block_context.secondsSinceEpoch = timestampSec;
-    initialTX.block_context.parentBlockHash = txBlock.data.block.hash;
-    let txStringWithContext = {
-      initial_tx: JSON.stringify(initialTX),
-      batches: []
-    };
-    return txStringWithContext;
-  }
-  static async submitTXStringWithContext(tx) {
-    const txStringWithContext = await _ToolKitClient.prepareTXStringWithContext(tx.serialize());
-    const ret = await TXClient.post(txServerURL, txStringWithContext);
-    if (ret.success === true) {
-      return ret.data;
-    } else {
-      throw new Error(`Failed to submit transaction: ${ret}`);
-    }
-  }
-};
-
-// src/wallet-sdk.ts
 var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, node, network = "preview", costParameters = {
   additionalFeeOverhead: 300000000000000n,
   feeBlocksMargin: 5
@@ -199,14 +117,12 @@ var waitForFullySynced = async (facade) => {
   return state;
 };
 var MidnightWalletSDK = class {
-  constructor(config, mimic = false) {
+  constructor(config) {
     this.isGenerating = false;
     this.isUnGenerating = false;
-    this.ISMimic = false;
     this.config = config;
     this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "" };
     this.bActiveFlag = false;
-    this.ISMimic = mimic;
   }
   //////////////////////////////////////////
   // to generate a wallet instance
@@ -292,19 +208,7 @@ var MidnightWalletSDK = class {
   }
   async submitTx(tx) {
     assert3__default.default(this.walletObj, "walletObj is not initialized!");
-    const ret = this.ISMimic ? await ToolKitClient.submitTXStringWithContext(tx) : await this.walletObj.submitTransaction(tx);
-    if (this.ISMimic) {
-      console.log("Submitted tx string to mimic, response: ", ret);
-      const separator = '"midnight_tx_hash":"0x';
-      const offset = ret.indexOf(separator);
-      if (offset !== -1) {
-        const txHash = ret.substring(offset + separator.length, offset + separator.length + 64);
-        console.log("Extracted tx hash from response: ", txHash);
-        return txHash;
-      } else {
-        throw ret;
-      }
-    }
+    const ret = await this.walletObj.submitTransaction(tx);
     return ret;
   }
   async getBalances() {

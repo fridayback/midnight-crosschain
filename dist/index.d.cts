@@ -45,8 +45,7 @@ declare class MidnightWalletSDK {
     private walletAddress;
     private bActiveFlag;
     private storeTimer?;
-    readonly ISMimic: boolean;
-    constructor(config: Configuration, mimic?: boolean);
+    constructor(config: Configuration);
     initWallet(strSeed: string, store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
     getAccountAddress(): {
         shieldedAddress: string;
