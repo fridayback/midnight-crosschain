@@ -10481,24 +10481,24 @@ var CrossChainApi = class _CrossChainApi {
     if (!this.isVoter(ledger3, voter)) return [];
     const voterIndex = ledger3.smgTxSigners.lookup({ bytes: voterPK });
     let res = [];
-    for (const [uniquId, _] of ledger3.crossProposal) {
-      const voters = ledger3.crossProposalVoters.lookup(uniquId);
+    for (const [uniqueId, _] of ledger3.crossProposal) {
+      const voters = ledger3.crossProposalVoters.lookup(uniqueId);
       if (voters.size() >= ledger3.smgPKThreshold) continue;
       if (voters.member(voterIndex)) continue;
       else {
-        const crossTxInfo = _CrossChainApi.getCrossTxInfo(ledger3, toHex(uniquId));
-        res.push({ uniquId: toHex(uniquId), ...crossTxInfo });
+        const crossTxInfo = _CrossChainApi.getCrossTxInfo(ledger3, toHex(uniqueId));
+        res.push({ uniqueId: toHex(uniqueId), ...crossTxInfo });
       }
     }
     return res;
   }
   async getUnExecuteCrossProposal(ledger3) {
     let res = [];
-    for (const [uniquId, crossProposal] of ledger3.crossProposal) {
-      const voters = ledger3.crossProposalVoters.lookup(uniquId);
+    for (const [uniqueId, crossProposal] of ledger3.crossProposal) {
+      const voters = ledger3.crossProposalVoters.lookup(uniqueId);
       if (voters.size() >= ledger3.smgPKThreshold) {
         res.push({
-          uniqueId: toHex(uniquId),
+          uniqueId: toHex(uniqueId),
           smgId: toHex(crossProposal.smgId),
           tokenPairId: crossProposal.tokenPairId.toString(10),
           token: toHex(crossProposal.token),

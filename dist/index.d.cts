@@ -515,7 +515,7 @@ declare class CrossChainApi {
         fee?: string | undefined;
         toAddr?: UserAddress | undefined;
         ttl?: string | undefined;
-        uniquId: string;
+        uniqueId: string;
     }[]>;
     getUnExecuteCrossProposal(ledger: Ledger): Promise<{
         uniqueId: string;
