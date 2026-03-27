@@ -2,6 +2,7 @@ import * as _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState
 import * as _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances.js';
 import * as _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types_Dust_js from '@midnight-ntwrk/wallet-sdk-dust-wallet/dist/v1/types/Dust.js';
 import * as ledger from '@midnight-ntwrk/ledger-v8';
+import { UserAddress as UserAddress$1 } from '@midnight-ntwrk/ledger-v8';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DefaultConfiguration, WalletFacade, CombinedSwapOutputs, FacadeState } from '@midnight-ntwrk/wallet-sdk-facade';
 import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
@@ -93,12 +94,6 @@ declare const createPrivateState: (privateCounter: number) => CrossChainPrivateS
 declare const createInitialPrivateState: (privateCounter: number) => CrossChainPrivateState;
 declare const witnesses: {};
 
-type ClaimTokenInfo = { receiver: UserAddress;
-                               token: Uint8Array;
-                               isMappingToken: boolean;
-                               amount: bigint
-                             };
-
 type ReserveOfToken = { total: bigint; isMappingToken: boolean };
 
 declare enum ProposalType { AddAdmin = 0,
@@ -187,13 +182,25 @@ type ImpureCircuits<PS> = {
            amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   voteMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
                          uniqueIds_0: VoteForCrossPropasal[]): __compactRuntime.CircuitResults<PS, []>;
-  executeMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
-                            mutiEx_0: Uint8Array[]): __compactRuntime.CircuitResults<PS, []>;
-  userClaim(context: __compactRuntime.CircuitContext<PS>, id_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
+  executeCrossProposal(context: __compactRuntime.CircuitContext<PS>,
+                       uniqueId_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
+  transferOwner(context: __compactRuntime.CircuitContext<PS>,
+                newOwner_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  acceptOwner(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
   setFeeReceiver(context: __compactRuntime.CircuitContext<PS>,
                  newFeeReceiver_0: UserAddress): __compactRuntime.CircuitResults<PS, []>;
+  setTokenManager(context: __compactRuntime.CircuitContext<PS>,
+                  newTokenManager_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  addAdmin(context: __compactRuntime.CircuitContext<PS>,
+           admin_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  removeAdmin(context: __compactRuntime.CircuitContext<PS>,
+              admin_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  setAdminThreshold(context: __compactRuntime.CircuitContext<PS>,
+                    threshold_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   setSmgPksks(context: __compactRuntime.CircuitContext<PS>,
               voters_0: ZswapCoinPublicKey[]): __compactRuntime.CircuitResults<PS, []>;
+  updateSmgPk(context: __compactRuntime.CircuitContext<PS>,
+              newVoter_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
   setSmgPKThreold(context: __compactRuntime.CircuitContext<PS>,
                   threshold_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   setFeeCommonConfig(context: __compactRuntime.CircuitContext<PS>,
@@ -204,6 +211,14 @@ type ImpureCircuits<PS> = {
                pairInfo_0: TokenPairInfo): __compactRuntime.CircuitResults<PS, []>;
   removeTokenPair(context: __compactRuntime.CircuitContext<PS>,
                   tokenPairId_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  newProposal(context: __compactRuntime.CircuitContext<PS>,
+              newProposal_0: Proposal): __compactRuntime.CircuitResults<PS, []>;
+  voteProposal(context: __compactRuntime.CircuitContext<PS>,
+               proposalId_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  executeProposal(context: __compactRuntime.CircuitContext<PS>,
+                  proposalId_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  removeExpiredHisTxs(context: __compactRuntime.CircuitContext<PS>,
+                      txs_0: Uint8Array[]): __compactRuntime.CircuitResults<PS, []>;
 }
 
 type ProvableCircuits<PS> = {
@@ -235,13 +250,25 @@ type ProvableCircuits<PS> = {
            amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   voteMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
                          uniqueIds_0: VoteForCrossPropasal[]): __compactRuntime.CircuitResults<PS, []>;
-  executeMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
-                            mutiEx_0: Uint8Array[]): __compactRuntime.CircuitResults<PS, []>;
-  userClaim(context: __compactRuntime.CircuitContext<PS>, id_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
+  executeCrossProposal(context: __compactRuntime.CircuitContext<PS>,
+                       uniqueId_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
+  transferOwner(context: __compactRuntime.CircuitContext<PS>,
+                newOwner_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  acceptOwner(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
   setFeeReceiver(context: __compactRuntime.CircuitContext<PS>,
                  newFeeReceiver_0: UserAddress): __compactRuntime.CircuitResults<PS, []>;
+  setTokenManager(context: __compactRuntime.CircuitContext<PS>,
+                  newTokenManager_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  addAdmin(context: __compactRuntime.CircuitContext<PS>,
+           admin_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  removeAdmin(context: __compactRuntime.CircuitContext<PS>,
+              admin_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  setAdminThreshold(context: __compactRuntime.CircuitContext<PS>,
+                    threshold_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   setSmgPksks(context: __compactRuntime.CircuitContext<PS>,
               voters_0: ZswapCoinPublicKey[]): __compactRuntime.CircuitResults<PS, []>;
+  updateSmgPk(context: __compactRuntime.CircuitContext<PS>,
+              newVoter_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
   setSmgPKThreold(context: __compactRuntime.CircuitContext<PS>,
                   threshold_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   setFeeCommonConfig(context: __compactRuntime.CircuitContext<PS>,
@@ -252,6 +279,14 @@ type ProvableCircuits<PS> = {
                pairInfo_0: TokenPairInfo): __compactRuntime.CircuitResults<PS, []>;
   removeTokenPair(context: __compactRuntime.CircuitContext<PS>,
                   tokenPairId_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  newProposal(context: __compactRuntime.CircuitContext<PS>,
+              newProposal_0: Proposal): __compactRuntime.CircuitResults<PS, []>;
+  voteProposal(context: __compactRuntime.CircuitContext<PS>,
+               proposalId_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  executeProposal(context: __compactRuntime.CircuitContext<PS>,
+                  proposalId_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  removeExpiredHisTxs(context: __compactRuntime.CircuitContext<PS>,
+                      txs_0: Uint8Array[]): __compactRuntime.CircuitResults<PS, []>;
 }
 
 type Circuits<PS> = {
@@ -283,13 +318,25 @@ type Circuits<PS> = {
            amount_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   voteMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
                          uniqueIds_0: VoteForCrossPropasal[]): __compactRuntime.CircuitResults<PS, []>;
-  executeMultiCrossProposal(context: __compactRuntime.CircuitContext<PS>,
-                            mutiEx_0: Uint8Array[]): __compactRuntime.CircuitResults<PS, []>;
-  userClaim(context: __compactRuntime.CircuitContext<PS>, id_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
+  executeCrossProposal(context: __compactRuntime.CircuitContext<PS>,
+                       uniqueId_0: Uint8Array): __compactRuntime.CircuitResults<PS, []>;
+  transferOwner(context: __compactRuntime.CircuitContext<PS>,
+                newOwner_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  acceptOwner(context: __compactRuntime.CircuitContext<PS>): __compactRuntime.CircuitResults<PS, []>;
   setFeeReceiver(context: __compactRuntime.CircuitContext<PS>,
                  newFeeReceiver_0: UserAddress): __compactRuntime.CircuitResults<PS, []>;
+  setTokenManager(context: __compactRuntime.CircuitContext<PS>,
+                  newTokenManager_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  addAdmin(context: __compactRuntime.CircuitContext<PS>,
+           admin_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  removeAdmin(context: __compactRuntime.CircuitContext<PS>,
+              admin_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
+  setAdminThreshold(context: __compactRuntime.CircuitContext<PS>,
+                    threshold_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   setSmgPksks(context: __compactRuntime.CircuitContext<PS>,
               voters_0: ZswapCoinPublicKey[]): __compactRuntime.CircuitResults<PS, []>;
+  updateSmgPk(context: __compactRuntime.CircuitContext<PS>,
+              newVoter_0: ZswapCoinPublicKey): __compactRuntime.CircuitResults<PS, []>;
   setSmgPKThreold(context: __compactRuntime.CircuitContext<PS>,
                   threshold_0: bigint): __compactRuntime.CircuitResults<PS, []>;
   setFeeCommonConfig(context: __compactRuntime.CircuitContext<PS>,
@@ -300,6 +347,14 @@ type Circuits<PS> = {
                pairInfo_0: TokenPairInfo): __compactRuntime.CircuitResults<PS, []>;
   removeTokenPair(context: __compactRuntime.CircuitContext<PS>,
                   tokenPairId_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  newProposal(context: __compactRuntime.CircuitContext<PS>,
+              newProposal_0: Proposal): __compactRuntime.CircuitResults<PS, []>;
+  voteProposal(context: __compactRuntime.CircuitContext<PS>,
+               proposalId_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  executeProposal(context: __compactRuntime.CircuitContext<PS>,
+                  proposalId_0: bigint): __compactRuntime.CircuitResults<PS, []>;
+  removeExpiredHisTxs(context: __compactRuntime.CircuitContext<PS>,
+                      txs_0: Uint8Array[]): __compactRuntime.CircuitResults<PS, []>;
 }
 
 type Ledger = {
@@ -311,12 +366,7 @@ type Ledger = {
     [Symbol.iterator](): Iterator<[ZswapCoinPublicKey, bigint]>
   };
   readonly latestOutBoundCrosstxInfo: CrossOutBound;
-  currentExecuteCrossProposal: {
-    isEmpty(): boolean;
-    size(): bigint;
-    member(elem_0: SmgEvent): boolean;
-    [Symbol.iterator](): Iterator<SmgEvent>
-  };
+  readonly currentExecuteCrossProposal: SmgEvent;
   tokenPairs: {
     isEmpty(): boolean;
     size(): bigint;
@@ -394,13 +444,6 @@ type Ledger = {
     lookup(key_0: Uint8Array): ReserveOfToken;
     [Symbol.iterator](): Iterator<[Uint8Array, ReserveOfToken]>
   };
-  tokenToBeClaimed: {
-    isEmpty(): boolean;
-    size(): bigint;
-    member(key_0: Uint8Array): boolean;
-    lookup(key_0: Uint8Array): ClaimTokenInfo;
-    [Symbol.iterator](): Iterator<[Uint8Array, ClaimTokenInfo]>
-  };
   mappingTokenTotalSupply: {
     isEmpty(): boolean;
     size(): bigint;
@@ -431,7 +474,6 @@ declare const CrossChainPrivateStateId = "crossChainPrivateState";
 type CrossChainProviders = MidnightProviders<CrossChainCircuits, typeof CrossChainPrivateStateId, CrossChainPrivateState>;
 type CrossChainContract = Contract<CrossChainPrivateState>;
 type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
-type Address = string;
 declare const ZKConfig: {
     privateStateStoreName: string;
     zkConfigPath: string;
@@ -495,7 +537,7 @@ declare class CrossChainApi {
         fee: string;
         toAddr: string;
         ttl: string;
-    }[];
+    };
     static latestOutBoundCrosstxInfo(ledger: Ledger): {
         smgId: string;
         fromAddr: string;
@@ -505,8 +547,8 @@ declare class CrossChainApi {
         amount: string;
         fee: string;
     } | undefined;
-    isVoter(ledger: Ledger, voter: Address | undefined): Promise<boolean>;
-    getUnVotedCrossProposal(ledger: Ledger, voter: Address | undefined): Promise<{
+    isVoter(ledger: Ledger, voter: string | undefined): Promise<boolean>;
+    getUnVotedCrossProposal(ledger: Ledger, voter: string | undefined): Promise<{
         smgId?: string | undefined;
         token?: string | undefined;
         tokenPairId?: string | undefined;
@@ -535,24 +577,41 @@ declare class CrossChainApi {
         uniqueId: string;
         ttl: string | number | bigint;
     }[]): Promise<FinalizedCallTxData<CrossChainContract, "voteMultiCrossProposal">>;
-    executeCrossProposal(uniqueId: string, coinIndex: string | number | bigint | undefined): Promise<void>;
-    executeMultiCrossProposal(uniqueIds: string[]): Promise<FinalizedCallTxData<CrossChainContract, "executeMultiCrossProposal">>;
-    userClaim(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "userClaim">>;
+    executeCrossProposal(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "executeCrossProposal">>;
     getLedgerState(): Promise<Ledger | null>;
-    setSmgPksks(voters: Address[]): Promise<FinalizedCallTxData<CrossChainContract, "setSmgPksks">>;
+    transferOwner(newOwner: string): Promise<FinalizedCallTxData<CrossChainContract, "transferOwner">>;
+    acceptOwner(): Promise<FinalizedCallTxData<CrossChainContract, "acceptOwner">>;
+    updateSmgPk(newVoter: string): Promise<FinalizedCallTxData<CrossChainContract, "updateSmgPk">>;
+    setFeeReceiver(feeReceiver: UserAddress$1): Promise<FinalizedCallTxData<CrossChainContract, "setFeeReceiver">>;
+    setTokenManager(tokenManager: string): Promise<FinalizedCallTxData<CrossChainContract, "setTokenManager">>;
+    addAdmin(admin: string): Promise<FinalizedCallTxData<CrossChainContract, "addAdmin">>;
+    removeAdmin(admin: string): Promise<FinalizedCallTxData<CrossChainContract, "removeAdmin">>;
+    setAdminThreshold(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "setAdminThreshold">>;
+    setSmgPksks(voters: string[]): Promise<FinalizedCallTxData<CrossChainContract, "setSmgPksks">>;
     setSmgPKThreold(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "setSmgPKThreold">>;
     setFeeCommonConfig(chainId: number | string | bigint, fee: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "setFeeCommonConfig">>;
     addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, midnigthTokenAccount: RawTokenType, domainSep: string, fee: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "addTokenPair">>;
     removeTokenPair(tokenPairId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "removeTokenPair">>;
+    newProposal(proposal: Proposal): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    addAdminProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    removeAdminProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    updateFeeReceiver(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    updateTokenManagerProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    updateAdminThresholdProposal(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     defaultProsal(): Proposal;
+    updateSMGPKThresholdProposal(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    updateFeeCommonConfigProposal(chainId: number | string | bigint, fee: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    voteProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "voteProposal">>;
+    executeProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "executeProposal">>;
+    removeExpiredHisTxs(txs: string[]): Promise<FinalizedCallTxData<CrossChainContract, "removeExpiredHisTxs">>;
     updateContractAuthority(newKey: SigningKey): Promise<void>;
     upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<void>;
 }
 declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: string, circuitId: string, newVkHex: string | undefined) => Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
-declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string) => Promise<void>;
+declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: string, circuitId: string) => Promise<void>;
 declare const genSigningKey: () => string;
 declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const getUserAddressFromUnshieldAddress: (unshieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const initNetwork: (network: "mainnet" | "testnet-02" | "preview" | "devnet" | "undeployed") => void;
 
-export { type Address, CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };

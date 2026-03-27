@@ -263,19 +263,15 @@
       }
     },
     {
-      "name": "executeMultiCrossProposal",
+      "name": "executeCrossProposal",
       "pure": false,
       "proof": true,
       "arguments": [
         {
-          "name": "mutiEx",
+          "name": "uniqueId",
           "type": {
-            "type-name": "Vector",
-            "length": 3,
-            "type": {
-              "type-name": "Bytes",
-              "length": 32
-            }
+            "type-name": "Bytes",
+            "length": 32
           }
         }
       ],
@@ -286,17 +282,38 @@
       }
     },
     {
-      "name": "userClaim",
+      "name": "transferOwner",
       "pure": false,
       "proof": true,
       "arguments": [
         {
-          "name": "id",
+          "name": "newOwner",
           "type": {
-            "type-name": "Bytes",
-            "length": 32
+            "type-name": "Struct",
+            "name": "ZswapCoinPublicKey",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
           }
         }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "acceptOwner",
+      "pure": false,
+      "proof": true,
+      "arguments": [
       ],
       "result-type": {
         "type-name": "Tuple",
@@ -333,6 +350,109 @@
       }
     },
     {
+      "name": "setTokenManager",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "newTokenManager",
+          "type": {
+            "type-name": "Struct",
+            "name": "ZswapCoinPublicKey",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "addAdmin",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "admin",
+          "type": {
+            "type-name": "Struct",
+            "name": "ZswapCoinPublicKey",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "removeAdmin",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "admin",
+          "type": {
+            "type-name": "Struct",
+            "name": "ZswapCoinPublicKey",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "setAdminThreshold",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "threshold",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 255
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
       "name": "setSmgPksks",
       "pure": false,
       "proof": true,
@@ -355,6 +475,34 @@
                 }
               ]
             }
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "updateSmgPk",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "newVoter",
+          "type": {
+            "type-name": "Struct",
+            "name": "ZswapCoinPublicKey",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
           }
         }
       ],
@@ -482,6 +630,187 @@
           "type": {
             "type-name": "Uint",
             "maxval": 4294967295
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "newProposal",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "newProposal",
+          "type": {
+            "type-name": "Struct",
+            "name": "Proposal",
+            "elements": [
+              {
+                "name": "pType",
+                "type": {
+                  "type-name": "Enum",
+                  "name": "ProposalType",
+                  "elements": [
+                    "AddAdmin",
+                    "RemoveAdmin",
+                    "UpdateFeeReceiver",
+                    "UpdateTokenManager",
+                    "UpdateAdminThreshold",
+                    "UpdateSMGPKThreshold",
+                    "UpdateFeeCommonConfig",
+                    "SetSmgPKS"
+                  ]
+                }
+              },
+              {
+                "name": "addr",
+                "type": {
+                  "type-name": "Struct",
+                  "name": "ZswapCoinPublicKey",
+                  "elements": [
+                    {
+                      "name": "bytes",
+                      "type": {
+                        "type-name": "Bytes",
+                        "length": 32
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "addrUnshielded",
+                "type": {
+                  "type-name": "Struct",
+                  "name": "UserAddress",
+                  "elements": [
+                    {
+                      "name": "bytes",
+                      "type": {
+                        "type-name": "Bytes",
+                        "length": 32
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "threshold",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              },
+              {
+                "name": "feeConfig",
+                "type": {
+                  "type-name": "Struct",
+                  "name": "FeeConfig",
+                  "elements": [
+                    {
+                      "name": "chainId",
+                      "type": {
+                        "type-name": "Uint",
+                        "maxval": 4294967295
+                      }
+                    },
+                    {
+                      "name": "fee",
+                      "type": {
+                        "type-name": "Uint",
+                        "maxval": 340282366920938463463374607431768211455
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "smgPubkeys",
+                "type": {
+                  "type-name": "Vector",
+                  "length": 29,
+                  "type": {
+                    "type-name": "Struct",
+                    "name": "ZswapCoinPublicKey",
+                    "elements": [
+                      {
+                        "name": "bytes",
+                        "type": {
+                          "type-name": "Bytes",
+                          "length": 32
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "voteProposal",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "proposalId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "executeProposal",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "proposalId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "removeExpiredHisTxs",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "txs",
+          "type": {
+            "type-name": "Vector",
+            "length": 20,
+            "type": {
+              "type-name": "Bytes",
+              "length": 32
+            }
           }
         }
       ],
