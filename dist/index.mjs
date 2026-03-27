@@ -1,54 +1,27 @@
-'use strict';
-
-var ledger = require('@midnight-ntwrk/ledger-v8');
-var walletSdkDustWallet = require('@midnight-ntwrk/wallet-sdk-dust-wallet');
-var walletSdkFacade = require('@midnight-ntwrk/wallet-sdk-facade');
-var walletSdkHd = require('@midnight-ntwrk/wallet-sdk-hd');
-var walletSdkShielded = require('@midnight-ntwrk/wallet-sdk-shielded');
-var walletSdkUnshieldedWallet = require('@midnight-ntwrk/wallet-sdk-unshielded-wallet');
-var buffer = require('buffer');
-var Rx = require('rxjs');
-var walletSdkAddressFormat = require('@midnight-ntwrk/wallet-sdk-address-format');
-var assert3 = require('assert');
-var path = require('path');
-var __compactRuntime = require('@midnight-ntwrk/compact-runtime');
-var compactJs = require('@midnight-ntwrk/compact-js');
-var midnightJsTypes = require('@midnight-ntwrk/midnight-js-types');
-var midnightJsContracts = require('@midnight-ntwrk/midnight-js-contracts');
-var midnightJsLevelPrivateStateProvider = require('@midnight-ntwrk/midnight-js-level-private-state-provider');
-var midnightJsIndexerPublicDataProvider = require('@midnight-ntwrk/midnight-js-indexer-public-data-provider');
-var midnightJsNodeZkConfigProvider = require('@midnight-ntwrk/midnight-js-node-zk-config-provider');
-var midnightJsHttpClientProofProvider = require('@midnight-ntwrk/midnight-js-http-client-proof-provider');
-var midnightJsNetworkId = require('@midnight-ntwrk/midnight-js-network-id');
-var midnightJsUtils = require('@midnight-ntwrk/midnight-js-utils');
-var url = require('url');
-
-var _documentCurrentScript = typeof document !== 'undefined' ? document.currentScript : null;
-function _interopDefault (e) { return e && e.__esModule ? e : { default: e }; }
-
-function _interopNamespace(e) {
-  if (e && e.__esModule) return e;
-  var n = Object.create(null);
-  if (e) {
-    Object.keys(e).forEach(function (k) {
-      if (k !== 'default') {
-        var d = Object.getOwnPropertyDescriptor(e, k);
-        Object.defineProperty(n, k, d.get ? d : {
-          enumerable: true,
-          get: function () { return e[k]; }
-        });
-      }
-    });
-  }
-  n.default = e;
-  return Object.freeze(n);
-}
-
-var ledger__namespace = /*#__PURE__*/_interopNamespace(ledger);
-var Rx__namespace = /*#__PURE__*/_interopNamespace(Rx);
-var assert3__default = /*#__PURE__*/_interopDefault(assert3);
-var path__default = /*#__PURE__*/_interopDefault(path);
-var __compactRuntime__namespace = /*#__PURE__*/_interopNamespace(__compactRuntime);
+import * as ledger from '@midnight-ntwrk/ledger-v8';
+import { decodeRawTokenType } from '@midnight-ntwrk/ledger-v8';
+import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
+import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
+import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
+import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
+import { createKeystore, UnshieldedWallet, NoOpTransactionHistoryStorage, PublicKey } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
+import { Buffer as Buffer$1 } from 'buffer';
+import * as Rx from 'rxjs';
+import { DustAddress, UnshieldedAddress, ShieldedAddress, MidnightBech32m } from '@midnight-ntwrk/wallet-sdk-address-format';
+import assert3 from 'assert';
+import path from 'path';
+import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
+import { ContractState, rawTokenType, sampleSigningKey } from '@midnight-ntwrk/compact-runtime';
+import { CompiledContract } from '@midnight-ntwrk/compact-js';
+import { createVerifierKey } from '@midnight-ntwrk/midnight-js-types';
+import { deployContract, findDeployedContract, submitRemoveVerifierKeyTx, submitInsertVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
+import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
+import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
+import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
+import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
+import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { toHex, fromHex, assertIsContractAddress } from '@midnight-ntwrk/midnight-js-utils';
+import { fileURLToPath } from 'url';
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -71,48 +44,48 @@ var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, nod
   };
 };
 var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
-  const hdWallet = walletSdkHd.HDWallet.fromSeed(seed);
+  const hdWallet = HDWallet.fromSeed(seed);
   if (hdWallet.type !== "seedOk") {
     throw new Error("Failed to initialize HDWallet");
   }
-  const derivationResult = hdWallet.hdWallet.selectAccount(0).selectRoles([walletSdkHd.Roles.Zswap, walletSdkHd.Roles.NightExternal, walletSdkHd.Roles.Dust]).deriveKeysAt(0);
+  const derivationResult = hdWallet.hdWallet.selectAccount(0).selectRoles([Roles.Zswap, Roles.NightExternal, Roles.Dust]).deriveKeysAt(0);
   if (derivationResult.type !== "keysDerived") {
     throw new Error("Failed to derive keys");
   }
   hdWallet.hdWallet.clear();
-  const shieldedSecretKeys = ledger__namespace.ZswapSecretKeys.fromSeed(derivationResult.keys[walletSdkHd.Roles.Zswap]);
-  const dustSecretKey = ledger__namespace.DustSecretKey.fromSeed(derivationResult.keys[walletSdkHd.Roles.Dust]);
-  const unshieldedKeystore = walletSdkUnshieldedWallet.createKeystore(derivationResult.keys[walletSdkHd.Roles.NightExternal], configuration2.networkId);
-  strSerializedState && strSerializedState.shieldedWalletState ? walletSdkShielded.ShieldedWallet(configuration2).restore(strSerializedState.shieldedWalletState) : walletSdkShielded.ShieldedWallet(configuration2).startWithSecretKeys(shieldedSecretKeys);
-  strSerializedState && strSerializedState.dustWalletState ? walletSdkDustWallet.DustWallet(configuration2).restore(strSerializedState.dustWalletState) : walletSdkDustWallet.DustWallet(configuration2).startWithSecretKey(dustSecretKey, ledger__namespace.LedgerParameters.initialParameters().dust);
-  strSerializedState && strSerializedState.unshieldedWalletState ? walletSdkUnshieldedWallet.UnshieldedWallet({
+  const shieldedSecretKeys = ledger.ZswapSecretKeys.fromSeed(derivationResult.keys[Roles.Zswap]);
+  const dustSecretKey = ledger.DustSecretKey.fromSeed(derivationResult.keys[Roles.Dust]);
+  const unshieldedKeystore = createKeystore(derivationResult.keys[Roles.NightExternal], configuration2.networkId);
+  strSerializedState && strSerializedState.shieldedWalletState ? ShieldedWallet(configuration2).restore(strSerializedState.shieldedWalletState) : ShieldedWallet(configuration2).startWithSecretKeys(shieldedSecretKeys);
+  strSerializedState && strSerializedState.dustWalletState ? DustWallet(configuration2).restore(strSerializedState.dustWalletState) : DustWallet(configuration2).startWithSecretKey(dustSecretKey, ledger.LedgerParameters.initialParameters().dust);
+  strSerializedState && strSerializedState.unshieldedWalletState ? UnshieldedWallet({
     ...configuration2,
-    txHistoryStorage: new walletSdkUnshieldedWallet.NoOpTransactionHistoryStorage()
+    txHistoryStorage: new NoOpTransactionHistoryStorage()
     //此处不对交易历史进行保留
-  }).restore(strSerializedState.unshieldedWalletState) : walletSdkUnshieldedWallet.UnshieldedWallet({
+  }).restore(strSerializedState.unshieldedWalletState) : UnshieldedWallet({
     ...configuration2,
-    txHistoryStorage: new walletSdkUnshieldedWallet.NoOpTransactionHistoryStorage()
+    txHistoryStorage: new NoOpTransactionHistoryStorage()
     //此处不对交易历史进行保留
-  }).startWithPublicKey(walletSdkUnshieldedWallet.PublicKey.fromKeyStore(unshieldedKeystore));
+  }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore));
   const initParams = {
     configuration: {
       ...configuration2,
-      txHistoryStorage: new walletSdkUnshieldedWallet.NoOpTransactionHistoryStorage()
+      txHistoryStorage: new NoOpTransactionHistoryStorage()
     },
     // submissionService?: (config: TConfig) => MaybePromise<SubmissionService<ledger.FinalizedTransaction>>;
     // pendingTransactionsService?: (config: TConfig) => MaybePromise<PendingTransactionsService<ledger.FinalizedTransaction>>;
     // provingService?: (config: TConfig) => MaybePromise<ProvingService<UnboundTransaction>>;
-    shielded: (config) => walletSdkShielded.ShieldedWallet(config).startWithSecretKeys(shieldedSecretKeys),
-    unshielded: (config) => walletSdkUnshieldedWallet.UnshieldedWallet(config).startWithPublicKey(walletSdkUnshieldedWallet.PublicKey.fromKeyStore(unshieldedKeystore)),
-    dust: (config) => walletSdkDustWallet.DustWallet(config).startWithSecretKey(dustSecretKey, ledger__namespace.LedgerParameters.initialParameters().dust)
+    shielded: (config) => ShieldedWallet(config).startWithSecretKeys(shieldedSecretKeys),
+    unshielded: (config) => UnshieldedWallet(config).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore)),
+    dust: (config) => DustWallet(config).startWithSecretKey(dustSecretKey, ledger.LedgerParameters.initialParameters().dust)
   };
-  const wallet = await walletSdkFacade.WalletFacade.init(initParams);
+  const wallet = await WalletFacade.init(initParams);
   await wallet.start(shieldedSecretKeys, dustSecretKey);
   return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
 var waitForFullySynced = async (facade) => {
   const timeCur = Date.now();
-  const state = await Rx__namespace.firstValueFrom(facade.state().pipe(Rx__namespace.filter((s) => s.isSynced)));
+  const state = await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
   console.log(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
   return state;
 };
@@ -128,7 +101,7 @@ var MidnightWalletSDK = class {
   // to generate a wallet instance
   //////////////////////////////////////////
   async initWallet(strSeed, store, strSerializedState, saveInterval = 6e5) {
-    const seed = buffer.Buffer.from(strSeed, "hex");
+    const seed = Buffer$1.from(strSeed, "hex");
     if (seed.toString("hex").toLowerCase() != strSeed.toLowerCase()) throw "bad seed";
     const ret = await initFacadeWallet(seed, this.config, strSerializedState);
     this.walletObj = ret.wallet;
@@ -138,9 +111,9 @@ var MidnightWalletSDK = class {
     const selfWallet = this.walletObj;
     const state = await waitForFullySynced(this.walletObj);
     this.walletAddress = {
-      shieldedAddress: walletSdkAddressFormat.ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString(),
-      unshieldedAddress: walletSdkAddressFormat.UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString(),
-      dustAddress: walletSdkAddressFormat.DustAddress.codec.encode(this.config.networkId, state.dust.address).asString()
+      shieldedAddress: ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString(),
+      unshieldedAddress: UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString(),
+      dustAddress: DustAddress.codec.encode(this.config.networkId, state.dust.address).asString()
     };
     const callBack = async () => {
       const state2 = await waitForFullySynced(selfWallet);
@@ -161,10 +134,10 @@ var MidnightWalletSDK = class {
   async registerNightUtxosForDustGeneration() {
     if (this.isGenerating) return;
     this.isGenerating = true;
-    assert3__default.default(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+    assert3(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
     const state = await waitForFullySynced(this.walletObj);
     const nightUtxos = state.unshielded.availableCoins.filter(
-      (coin) => coin.meta.registeredForDustGeneration === false && coin.utxo.type === ledger__namespace.nativeToken().raw
+      (coin) => coin.meta.registeredForDustGeneration === false && coin.utxo.type === ledger.nativeToken().raw
     );
     if (nightUtxos.length === 0) {
       this.isGenerating = false;
@@ -184,10 +157,10 @@ var MidnightWalletSDK = class {
   async deregisterFromDustGeneration() {
     if (this.isUnGenerating) return;
     this.isUnGenerating = true;
-    assert3__default.default(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+    assert3(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
     const state = await waitForFullySynced(this.walletObj);
     const nightUtxos = state.unshielded.availableCoins.filter(
-      (coin) => coin.meta.registeredForDustGeneration === true && coin.utxo.type === ledger__namespace.nativeToken().raw
+      (coin) => coin.meta.registeredForDustGeneration === true && coin.utxo.type === ledger.nativeToken().raw
     );
     if (nightUtxos.length === 0) {
       this.isUnGenerating = false;
@@ -207,12 +180,12 @@ var MidnightWalletSDK = class {
     this.isUnGenerating = false;
   }
   async submitTx(tx) {
-    assert3__default.default(this.walletObj, "walletObj is not initialized!");
+    assert3(this.walletObj, "walletObj is not initialized!");
     const ret = await this.walletObj.submitTransaction(tx);
     return ret;
   }
   async getBalances() {
-    assert3__default.default(this.walletObj, "walletObj is not initialized!");
+    assert3(this.walletObj, "walletObj is not initialized!");
     let curState = await waitForFullySynced(this.walletObj);
     const dustBalance = curState.dust.balance(/* @__PURE__ */ new Date());
     const shieldedBlance = curState.shielded.balances;
@@ -222,7 +195,7 @@ var MidnightWalletSDK = class {
     return { dustBalance, shieldedBlance: JSON.parse(JSON.stringify(shieldedBlance, replacer), reviver), unshieldedBlance: JSON.parse(JSON.stringify(unshieldedBlance, replacer), reviver) };
   }
   async getAvailableCoins() {
-    assert3__default.default(this.walletObj, "walletObj is not initialized!");
+    assert3(this.walletObj, "walletObj is not initialized!");
     let curState = await waitForFullySynced(this.walletObj);
     const dustAvailableCoins = curState.dust.availableCoins;
     const shieldedAvailableCoins = curState.shielded.availableCoins;
@@ -243,15 +216,15 @@ var MidnightWalletSDK = class {
     return this.walletObj;
   }
   getShieldedSecretKeys() {
-    assert3__default.default(this.shieldedSecretKeys, "shieldedSecretKeys is undefined");
+    assert3(this.shieldedSecretKeys, "shieldedSecretKeys is undefined");
     return this.shieldedSecretKeys;
   }
   getUnshieldedKeystore() {
-    assert3__default.default(this.unshieldedKeystore, "unshieldedKeystore is undefined");
+    assert3(this.unshieldedKeystore, "unshieldedKeystore is undefined");
     return this.unshieldedKeystore;
   }
   getDustSecretKey() {
-    assert3__default.default(this.dustSecretKey, "dustSecretKey is undefined");
+    assert3(this.dustSecretKey, "dustSecretKey is undefined");
     return this.dustSecretKey;
   }
   async getSerializedWalletState() {
@@ -263,7 +236,7 @@ var MidnightWalletSDK = class {
     return { dustWalletState, shieldedWalletState, unshieldedWalletState };
   }
   async transferTo(transferInfo, ttl) {
-    assert3__default.default(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+    assert3(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
     const recipe = await this.walletObj?.transferTransaction(
       transferInfo,
       {
@@ -279,7 +252,7 @@ var MidnightWalletSDK = class {
     return submittedTxHash;
   }
   async balanceTx(tx, ttl) {
-    assert3__default.default(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+    assert3(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
     const recipe = await this.walletObj.balanceUnboundTransaction(
       tx,
       { shieldedSecretKeys: this.shieldedSecretKeys, dustSecretKey: this.dustSecretKey },
@@ -301,7 +274,7 @@ var signTransactionIntents = (tx, signFn, proofMarker) => {
   for (const segment of intents.keys()) {
     const intent = intents.get(segment);
     if (!intent) continue;
-    const cloned = ledger__namespace.Intent.deserialize(
+    const cloned = ledger.Intent.deserialize(
       "signature",
       proofMarker,
       "pre-binding",
@@ -335,7 +308,7 @@ var witnesses = {
   //     []
   //   ]
 };
-__compactRuntime__namespace.checkRuntimeVersion("0.15.0");
+__compactRuntime.checkRuntimeVersion("0.15.0");
 var ProposalType;
 (function(ProposalType2) {
   ProposalType2[ProposalType2["AddAdmin"] = 0] = "AddAdmin";
@@ -347,10 +320,10 @@ var ProposalType;
   ProposalType2[ProposalType2["UpdateFeeCommonConfig"] = 6] = "UpdateFeeCommonConfig";
   ProposalType2[ProposalType2["SetSmgPKS"] = 7] = "SetSmgPKS";
 })(ProposalType || (ProposalType = {}));
-var _descriptor_0 = new __compactRuntime__namespace.CompactTypeBytes(32);
-var _descriptor_1 = new __compactRuntime__namespace.CompactTypeUnsignedInteger(18446744073709551615n, 8);
-var _descriptor_2 = __compactRuntime__namespace.CompactTypeBoolean;
-var _descriptor_3 = new __compactRuntime__namespace.CompactTypeUnsignedInteger(4294967295n, 4);
+var _descriptor_0 = new __compactRuntime.CompactTypeBytes(32);
+var _descriptor_1 = new __compactRuntime.CompactTypeUnsignedInteger(18446744073709551615n, 8);
+var _descriptor_2 = __compactRuntime.CompactTypeBoolean;
+var _descriptor_3 = new __compactRuntime.CompactTypeUnsignedInteger(4294967295n, 4);
 var _ZswapCoinPublicKey_0 = class {
   alignment() {
     return _descriptor_0.alignment();
@@ -365,7 +338,7 @@ var _ZswapCoinPublicKey_0 = class {
   }
 };
 var _descriptor_4 = new _ZswapCoinPublicKey_0();
-var _descriptor_5 = new __compactRuntime__namespace.CompactTypeEnum(7, 1);
+var _descriptor_5 = new __compactRuntime.CompactTypeEnum(7, 1);
 var _UserAddress_0 = class {
   alignment() {
     return _descriptor_0.alignment();
@@ -380,7 +353,7 @@ var _UserAddress_0 = class {
   }
 };
 var _descriptor_6 = new _UserAddress_0();
-var _descriptor_7 = new __compactRuntime__namespace.CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16);
+var _descriptor_7 = new __compactRuntime.CompactTypeUnsignedInteger(340282366920938463463374607431768211455n, 16);
 var _FeeConfig_0 = class {
   alignment() {
     return _descriptor_3.alignment().concat(_descriptor_7.alignment());
@@ -396,7 +369,7 @@ var _FeeConfig_0 = class {
   }
 };
 var _descriptor_8 = new _FeeConfig_0();
-var _descriptor_9 = new __compactRuntime__namespace.CompactTypeVector(29, _descriptor_4);
+var _descriptor_9 = new __compactRuntime.CompactTypeVector(29, _descriptor_4);
 var _Proposal_0 = class {
   alignment() {
     return _descriptor_5.alignment().concat(_descriptor_4.alignment().concat(_descriptor_6.alignment().concat(_descriptor_7.alignment().concat(_descriptor_8.alignment().concat(_descriptor_9.alignment())))));
@@ -416,8 +389,8 @@ var _Proposal_0 = class {
   }
 };
 var _descriptor_10 = new _Proposal_0();
-var _descriptor_11 = new __compactRuntime__namespace.CompactTypeVector(20, _descriptor_0);
-var _descriptor_12 = new __compactRuntime__namespace.CompactTypeUnsignedInteger(65535n, 2);
+var _descriptor_11 = new __compactRuntime.CompactTypeVector(20, _descriptor_0);
+var _descriptor_12 = new __compactRuntime.CompactTypeUnsignedInteger(65535n, 2);
 var _ContractAddress_0 = class {
   alignment() {
     return _descriptor_0.alignment();
@@ -450,7 +423,7 @@ var _TokenPairInfo_0 = class {
   }
 };
 var _descriptor_14 = new _TokenPairInfo_0();
-var _descriptor_15 = new __compactRuntime__namespace.CompactTypeUnsignedInteger(255n, 1);
+var _descriptor_15 = new __compactRuntime.CompactTypeUnsignedInteger(255n, 1);
 var _CrossProposal_0 = class {
   alignment() {
     return _descriptor_0.alignment().concat(_descriptor_0.alignment().concat(_descriptor_3.alignment().concat(_descriptor_2.alignment().concat(_descriptor_7.alignment().concat(_descriptor_7.alignment().concat(_descriptor_6.alignment().concat(_descriptor_1.alignment())))))));
@@ -502,7 +475,7 @@ var _VoteForCrossPropasal_0 = class {
   }
 };
 var _descriptor_18 = new _VoteForCrossPropasal_0();
-var _descriptor_19 = new __compactRuntime__namespace.CompactTypeVector(5, _descriptor_18);
+var _descriptor_19 = new __compactRuntime.CompactTypeVector(5, _descriptor_18);
 var _ReserveOfToken_0 = class {
   alignment() {
     return _descriptor_7.alignment().concat(_descriptor_2.alignment());
@@ -518,7 +491,7 @@ var _ReserveOfToken_0 = class {
   }
 };
 var _descriptor_20 = new _ReserveOfToken_0();
-var _descriptor_21 = __compactRuntime__namespace.CompactTypeOpaqueString;
+var _descriptor_21 = __compactRuntime.CompactTypeOpaqueString;
 var _CrossOutBound_0 = class {
   alignment() {
     return _descriptor_0.alignment().concat(_descriptor_4.alignment().concat(_descriptor_21.alignment().concat(_descriptor_3.alignment().concat(_descriptor_0.alignment().concat(_descriptor_7.alignment().concat(_descriptor_7.alignment()))))));
@@ -539,7 +512,7 @@ var _CrossOutBound_0 = class {
   }
 };
 var _descriptor_22 = new _CrossOutBound_0();
-var _descriptor_23 = new __compactRuntime__namespace.CompactTypeVector(2, _descriptor_0);
+var _descriptor_23 = new __compactRuntime.CompactTypeVector(2, _descriptor_0);
 var _Either_0 = class {
   alignment() {
     return _descriptor_2.alignment().concat(_descriptor_0.alignment().concat(_descriptor_0.alignment()));
@@ -576,17 +549,17 @@ var Contract = class {
   constructor(...args_0) {
     __publicField(this, "witnesses");
     if (args_0.length !== 1) {
-      throw new __compactRuntime__namespace.CompactError(`Contract constructor: expected 1 argument, received ${args_0.length}`);
+      throw new __compactRuntime.CompactError(`Contract constructor: expected 1 argument, received ${args_0.length}`);
     }
     const witnesses_0 = args_0[0];
     if (typeof witnesses_0 !== "object") {
-      throw new __compactRuntime__namespace.CompactError("first (witnesses) argument to Contract constructor is not an object");
+      throw new __compactRuntime.CompactError("first (witnesses) argument to Contract constructor is not an object");
     }
     this.witnesses = witnesses_0;
     this.circuits = {
       userLock: (...args_1) => {
         if (args_1.length !== 5) {
-          throw new __compactRuntime__namespace.CompactError(`userLock: expected 5 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`userLock: expected 5 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const smgId_0 = args_1[1];
@@ -594,7 +567,7 @@ var Contract = class {
         const tokenPairId_0 = args_1[3];
         const amount_0 = args_1[4];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "userLock",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 180 char 1",
@@ -603,7 +576,7 @@ var Contract = class {
           );
         }
         if (!(smgId_0.buffer instanceof ArrayBuffer && smgId_0.BYTES_PER_ELEMENT === 1 && smgId_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "userLock",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 180 char 1",
@@ -612,7 +585,7 @@ var Contract = class {
           );
         }
         if (!(typeof tokenPairId_0 === "bigint" && tokenPairId_0 >= 0n && tokenPairId_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "userLock",
             "argument 3 (argument 4 as invoked from Typescript)",
             "crosschain.compact line 180 char 1",
@@ -621,7 +594,7 @@ var Contract = class {
           );
         }
         if (!(typeof amount_0 === "bigint" && amount_0 >= 0n && amount_0 <= 340282366920938463463374607431768211455n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "userLock",
             "argument 4 (argument 5 as invoked from Typescript)",
             "crosschain.compact line 180 char 1",
@@ -629,7 +602,7 @@ var Contract = class {
             amount_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_0.toValue(smgId_0).concat(_descriptor_21.toValue(toAddr_0).concat(_descriptor_3.toValue(tokenPairId_0).concat(_descriptor_7.toValue(amount_0)))),
@@ -652,7 +625,7 @@ var Contract = class {
       },
       smgRelease: (...args_1) => {
         if (args_1.length !== 8) {
-          throw new __compactRuntime__namespace.CompactError(`smgRelease: expected 8 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`smgRelease: expected 8 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const uniqueId_0 = args_1[1];
@@ -663,7 +636,7 @@ var Contract = class {
         const fee_0 = args_1[6];
         const ttl_0 = args_1[7];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgRelease",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 206 char 1",
@@ -672,7 +645,7 @@ var Contract = class {
           );
         }
         if (!(uniqueId_0.buffer instanceof ArrayBuffer && uniqueId_0.BYTES_PER_ELEMENT === 1 && uniqueId_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgRelease",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 206 char 1",
@@ -681,7 +654,7 @@ var Contract = class {
           );
         }
         if (!(smgId_0.buffer instanceof ArrayBuffer && smgId_0.BYTES_PER_ELEMENT === 1 && smgId_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgRelease",
             "argument 2 (argument 3 as invoked from Typescript)",
             "crosschain.compact line 206 char 1",
@@ -690,7 +663,7 @@ var Contract = class {
           );
         }
         if (!(typeof tokenPairId_0 === "bigint" && tokenPairId_0 >= 0n && tokenPairId_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgRelease",
             "argument 3 (argument 4 as invoked from Typescript)",
             "crosschain.compact line 206 char 1",
@@ -699,7 +672,7 @@ var Contract = class {
           );
         }
         if (!(typeof amount_0 === "bigint" && amount_0 >= 0n && amount_0 <= 340282366920938463463374607431768211455n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgRelease",
             "argument 4 (argument 5 as invoked from Typescript)",
             "crosschain.compact line 206 char 1",
@@ -708,7 +681,7 @@ var Contract = class {
           );
         }
         if (!(typeof toAddr_0 === "object" && toAddr_0.bytes.buffer instanceof ArrayBuffer && toAddr_0.bytes.BYTES_PER_ELEMENT === 1 && toAddr_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgRelease",
             "argument 5 (argument 6 as invoked from Typescript)",
             "crosschain.compact line 206 char 1",
@@ -717,7 +690,7 @@ var Contract = class {
           );
         }
         if (!(typeof fee_0 === "bigint" && fee_0 >= 0n && fee_0 <= 340282366920938463463374607431768211455n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgRelease",
             "argument 6 (argument 7 as invoked from Typescript)",
             "crosschain.compact line 206 char 1",
@@ -726,7 +699,7 @@ var Contract = class {
           );
         }
         if (!(typeof ttl_0 === "bigint" && ttl_0 >= 0n && ttl_0 <= 18446744073709551615n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgRelease",
             "argument 7 (argument 8 as invoked from Typescript)",
             "crosschain.compact line 206 char 1",
@@ -734,7 +707,7 @@ var Contract = class {
             ttl_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_0.toValue(uniqueId_0).concat(_descriptor_0.toValue(smgId_0).concat(_descriptor_3.toValue(tokenPairId_0).concat(_descriptor_7.toValue(amount_0).concat(_descriptor_6.toValue(toAddr_0).concat(_descriptor_7.toValue(fee_0).concat(_descriptor_1.toValue(ttl_0))))))),
@@ -760,7 +733,7 @@ var Contract = class {
       },
       smgMint: (...args_1) => {
         if (args_1.length !== 8) {
-          throw new __compactRuntime__namespace.CompactError(`smgMint: expected 8 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`smgMint: expected 8 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const uniqueId_0 = args_1[1];
@@ -771,7 +744,7 @@ var Contract = class {
         const toAddr_0 = args_1[6];
         const ttl_0 = args_1[7];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgMint",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 221 char 1",
@@ -780,7 +753,7 @@ var Contract = class {
           );
         }
         if (!(uniqueId_0.buffer instanceof ArrayBuffer && uniqueId_0.BYTES_PER_ELEMENT === 1 && uniqueId_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgMint",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 221 char 1",
@@ -789,7 +762,7 @@ var Contract = class {
           );
         }
         if (!(smgId_0.buffer instanceof ArrayBuffer && smgId_0.BYTES_PER_ELEMENT === 1 && smgId_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgMint",
             "argument 2 (argument 3 as invoked from Typescript)",
             "crosschain.compact line 221 char 1",
@@ -798,7 +771,7 @@ var Contract = class {
           );
         }
         if (!(typeof tokenPairId_0 === "bigint" && tokenPairId_0 >= 0n && tokenPairId_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgMint",
             "argument 3 (argument 4 as invoked from Typescript)",
             "crosschain.compact line 221 char 1",
@@ -807,7 +780,7 @@ var Contract = class {
           );
         }
         if (!(typeof amount_0 === "bigint" && amount_0 >= 0n && amount_0 <= 340282366920938463463374607431768211455n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgMint",
             "argument 4 (argument 5 as invoked from Typescript)",
             "crosschain.compact line 221 char 1",
@@ -816,7 +789,7 @@ var Contract = class {
           );
         }
         if (!(typeof fee_0 === "bigint" && fee_0 >= 0n && fee_0 <= 340282366920938463463374607431768211455n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgMint",
             "argument 5 (argument 6 as invoked from Typescript)",
             "crosschain.compact line 221 char 1",
@@ -825,7 +798,7 @@ var Contract = class {
           );
         }
         if (!(typeof toAddr_0 === "object" && toAddr_0.bytes.buffer instanceof ArrayBuffer && toAddr_0.bytes.BYTES_PER_ELEMENT === 1 && toAddr_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgMint",
             "argument 6 (argument 7 as invoked from Typescript)",
             "crosschain.compact line 221 char 1",
@@ -834,7 +807,7 @@ var Contract = class {
           );
         }
         if (!(typeof ttl_0 === "bigint" && ttl_0 >= 0n && ttl_0 <= 18446744073709551615n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "smgMint",
             "argument 7 (argument 8 as invoked from Typescript)",
             "crosschain.compact line 221 char 1",
@@ -842,7 +815,7 @@ var Contract = class {
             ttl_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_0.toValue(uniqueId_0).concat(_descriptor_0.toValue(smgId_0).concat(_descriptor_3.toValue(tokenPairId_0).concat(_descriptor_7.toValue(amount_0).concat(_descriptor_7.toValue(fee_0).concat(_descriptor_6.toValue(toAddr_0).concat(_descriptor_1.toValue(ttl_0))))))),
@@ -868,7 +841,7 @@ var Contract = class {
       },
       userBurn: (...args_1) => {
         if (args_1.length !== 5) {
-          throw new __compactRuntime__namespace.CompactError(`userBurn: expected 5 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`userBurn: expected 5 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const smgId_0 = args_1[1];
@@ -876,7 +849,7 @@ var Contract = class {
         const tokenPairId_0 = args_1[3];
         const amount_0 = args_1[4];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "userBurn",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 236 char 1",
@@ -885,7 +858,7 @@ var Contract = class {
           );
         }
         if (!(smgId_0.buffer instanceof ArrayBuffer && smgId_0.BYTES_PER_ELEMENT === 1 && smgId_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "userBurn",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 236 char 1",
@@ -894,7 +867,7 @@ var Contract = class {
           );
         }
         if (!(typeof tokenPairId_0 === "bigint" && tokenPairId_0 >= 0n && tokenPairId_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "userBurn",
             "argument 3 (argument 4 as invoked from Typescript)",
             "crosschain.compact line 236 char 1",
@@ -903,7 +876,7 @@ var Contract = class {
           );
         }
         if (!(typeof amount_0 === "bigint" && amount_0 >= 0n && amount_0 <= 340282366920938463463374607431768211455n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "userBurn",
             "argument 4 (argument 5 as invoked from Typescript)",
             "crosschain.compact line 236 char 1",
@@ -911,7 +884,7 @@ var Contract = class {
             amount_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_0.toValue(smgId_0).concat(_descriptor_21.toValue(toAddr_0).concat(_descriptor_3.toValue(tokenPairId_0).concat(_descriptor_7.toValue(amount_0)))),
@@ -934,12 +907,12 @@ var Contract = class {
       },
       voteMultiCrossProposal: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`voteMultiCrossProposal: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`voteMultiCrossProposal: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const uniqueIds_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "voteMultiCrossProposal",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 314 char 1",
@@ -948,7 +921,7 @@ var Contract = class {
           );
         }
         if (!(Array.isArray(uniqueIds_0) && uniqueIds_0.length === 5 && uniqueIds_0.every((t) => typeof t === "object" && t.uniqueId.buffer instanceof ArrayBuffer && t.uniqueId.BYTES_PER_ELEMENT === 1 && t.uniqueId.length === 32 && typeof t.ttl === "bigint" && t.ttl >= 0n && t.ttl <= 18446744073709551615n))) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "voteMultiCrossProposal",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 314 char 1",
@@ -956,7 +929,7 @@ var Contract = class {
             uniqueIds_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_19.toValue(uniqueIds_0),
@@ -976,12 +949,12 @@ var Contract = class {
       },
       executeCrossProposal: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`executeCrossProposal: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`executeCrossProposal: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const uniqueId_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "executeCrossProposal",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 401 char 1",
@@ -990,7 +963,7 @@ var Contract = class {
           );
         }
         if (!(uniqueId_0.buffer instanceof ArrayBuffer && uniqueId_0.BYTES_PER_ELEMENT === 1 && uniqueId_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "executeCrossProposal",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 401 char 1",
@@ -998,7 +971,7 @@ var Contract = class {
             uniqueId_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_0.toValue(uniqueId_0),
@@ -1018,12 +991,12 @@ var Contract = class {
       },
       transferOwner: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`transferOwner: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`transferOwner: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const newOwner_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "transferOwner",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 476 char 1",
@@ -1032,7 +1005,7 @@ var Contract = class {
           );
         }
         if (!(typeof newOwner_0 === "object" && newOwner_0.bytes.buffer instanceof ArrayBuffer && newOwner_0.bytes.BYTES_PER_ELEMENT === 1 && newOwner_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "transferOwner",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 476 char 1",
@@ -1040,7 +1013,7 @@ var Contract = class {
             newOwner_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_4.toValue(newOwner_0),
@@ -1060,11 +1033,11 @@ var Contract = class {
       },
       acceptOwner: (...args_1) => {
         if (args_1.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`acceptOwner: expected 1 argument (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`acceptOwner: expected 1 argument (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "acceptOwner",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 481 char 1",
@@ -1072,7 +1045,7 @@ var Contract = class {
             contextOrig_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: { value: [], alignment: [] },
           output: void 0,
@@ -1085,12 +1058,12 @@ var Contract = class {
       },
       setFeeReceiver: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`setFeeReceiver: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`setFeeReceiver: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const newFeeReceiver_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setFeeReceiver",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 486 char 1",
@@ -1099,7 +1072,7 @@ var Contract = class {
           );
         }
         if (!(typeof newFeeReceiver_0 === "object" && newFeeReceiver_0.bytes.buffer instanceof ArrayBuffer && newFeeReceiver_0.bytes.BYTES_PER_ELEMENT === 1 && newFeeReceiver_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setFeeReceiver",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 486 char 1",
@@ -1107,7 +1080,7 @@ var Contract = class {
             newFeeReceiver_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_6.toValue(newFeeReceiver_0),
@@ -1127,12 +1100,12 @@ var Contract = class {
       },
       setTokenManager: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`setTokenManager: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`setTokenManager: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const newTokenManager_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setTokenManager",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 491 char 1",
@@ -1141,7 +1114,7 @@ var Contract = class {
           );
         }
         if (!(typeof newTokenManager_0 === "object" && newTokenManager_0.bytes.buffer instanceof ArrayBuffer && newTokenManager_0.bytes.BYTES_PER_ELEMENT === 1 && newTokenManager_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setTokenManager",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 491 char 1",
@@ -1149,7 +1122,7 @@ var Contract = class {
             newTokenManager_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_4.toValue(newTokenManager_0),
@@ -1169,12 +1142,12 @@ var Contract = class {
       },
       addAdmin: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`addAdmin: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`addAdmin: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const admin_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "addAdmin",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 501 char 1",
@@ -1183,7 +1156,7 @@ var Contract = class {
           );
         }
         if (!(typeof admin_0 === "object" && admin_0.bytes.buffer instanceof ArrayBuffer && admin_0.bytes.BYTES_PER_ELEMENT === 1 && admin_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "addAdmin",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 501 char 1",
@@ -1191,7 +1164,7 @@ var Contract = class {
             admin_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_4.toValue(admin_0),
@@ -1207,12 +1180,12 @@ var Contract = class {
       },
       removeAdmin: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`removeAdmin: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`removeAdmin: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const admin_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "removeAdmin",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 507 char 1",
@@ -1221,7 +1194,7 @@ var Contract = class {
           );
         }
         if (!(typeof admin_0 === "object" && admin_0.bytes.buffer instanceof ArrayBuffer && admin_0.bytes.BYTES_PER_ELEMENT === 1 && admin_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "removeAdmin",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 507 char 1",
@@ -1229,7 +1202,7 @@ var Contract = class {
             admin_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_4.toValue(admin_0),
@@ -1245,12 +1218,12 @@ var Contract = class {
       },
       setAdminThreshold: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`setAdminThreshold: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`setAdminThreshold: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const threshold_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setAdminThreshold",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 513 char 1",
@@ -1259,7 +1232,7 @@ var Contract = class {
           );
         }
         if (!(typeof threshold_0 === "bigint" && threshold_0 >= 0n && threshold_0 <= 255n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setAdminThreshold",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 513 char 1",
@@ -1267,7 +1240,7 @@ var Contract = class {
             threshold_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_15.toValue(threshold_0),
@@ -1287,12 +1260,12 @@ var Contract = class {
       },
       setSmgPksks: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`setSmgPksks: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`setSmgPksks: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const voters_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setSmgPksks",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 519 char 1",
@@ -1301,7 +1274,7 @@ var Contract = class {
           );
         }
         if (!(Array.isArray(voters_0) && voters_0.length === 29 && voters_0.every((t) => typeof t === "object" && t.bytes.buffer instanceof ArrayBuffer && t.bytes.BYTES_PER_ELEMENT === 1 && t.bytes.length === 32))) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setSmgPksks",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 519 char 1",
@@ -1309,7 +1282,7 @@ var Contract = class {
             voters_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_9.toValue(voters_0),
@@ -1325,12 +1298,12 @@ var Contract = class {
       },
       updateSmgPk: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`updateSmgPk: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`updateSmgPk: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const newVoter_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "updateSmgPk",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 534 char 1",
@@ -1339,7 +1312,7 @@ var Contract = class {
           );
         }
         if (!(typeof newVoter_0 === "object" && newVoter_0.bytes.buffer instanceof ArrayBuffer && newVoter_0.bytes.BYTES_PER_ELEMENT === 1 && newVoter_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "updateSmgPk",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 534 char 1",
@@ -1347,7 +1320,7 @@ var Contract = class {
             newVoter_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_4.toValue(newVoter_0),
@@ -1367,12 +1340,12 @@ var Contract = class {
       },
       setSmgPKThreold: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`setSmgPKThreold: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`setSmgPKThreold: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const threshold_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setSmgPKThreold",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 550 char 1",
@@ -1381,7 +1354,7 @@ var Contract = class {
           );
         }
         if (!(typeof threshold_0 === "bigint" && threshold_0 >= 0n && threshold_0 <= 255n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setSmgPKThreold",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 550 char 1",
@@ -1389,7 +1362,7 @@ var Contract = class {
             threshold_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_15.toValue(threshold_0),
@@ -1409,13 +1382,13 @@ var Contract = class {
       },
       setFeeCommonConfig: (...args_1) => {
         if (args_1.length !== 3) {
-          throw new __compactRuntime__namespace.CompactError(`setFeeCommonConfig: expected 3 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`setFeeCommonConfig: expected 3 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const chainId_0 = args_1[1];
         const fee_0 = args_1[2];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setFeeCommonConfig",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 556 char 1",
@@ -1424,7 +1397,7 @@ var Contract = class {
           );
         }
         if (!(typeof chainId_0 === "bigint" && chainId_0 >= 0n && chainId_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setFeeCommonConfig",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 556 char 1",
@@ -1433,7 +1406,7 @@ var Contract = class {
           );
         }
         if (!(typeof fee_0 === "bigint" && fee_0 >= 0n && fee_0 <= 340282366920938463463374607431768211455n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "setFeeCommonConfig",
             "argument 2 (argument 3 as invoked from Typescript)",
             "crosschain.compact line 556 char 1",
@@ -1441,7 +1414,7 @@ var Contract = class {
             fee_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_3.toValue(chainId_0).concat(_descriptor_7.toValue(fee_0)),
@@ -1462,13 +1435,13 @@ var Contract = class {
       },
       addTokenPair: (...args_1) => {
         if (args_1.length !== 3) {
-          throw new __compactRuntime__namespace.CompactError(`addTokenPair: expected 3 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`addTokenPair: expected 3 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const tokenPairId_0 = args_1[1];
         const pairInfo_0 = args_1[2];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "addTokenPair",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 565 char 1",
@@ -1477,7 +1450,7 @@ var Contract = class {
           );
         }
         if (!(typeof tokenPairId_0 === "bigint" && tokenPairId_0 >= 0n && tokenPairId_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "addTokenPair",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 565 char 1",
@@ -1486,7 +1459,7 @@ var Contract = class {
           );
         }
         if (!(typeof pairInfo_0 === "object" && typeof pairInfo_0.fromChainId === "bigint" && pairInfo_0.fromChainId >= 0n && pairInfo_0.fromChainId <= 4294967295n && typeof pairInfo_0.toChainId === "bigint" && pairInfo_0.toChainId >= 0n && pairInfo_0.toChainId <= 4294967295n && pairInfo_0.midnigthTokenAccount.buffer instanceof ArrayBuffer && pairInfo_0.midnigthTokenAccount.BYTES_PER_ELEMENT === 1 && pairInfo_0.midnigthTokenAccount.length === 32 && pairInfo_0.domainSep.buffer instanceof ArrayBuffer && pairInfo_0.domainSep.BYTES_PER_ELEMENT === 1 && pairInfo_0.domainSep.length === 32 && typeof pairInfo_0.fee === "bigint" && pairInfo_0.fee >= 0n && pairInfo_0.fee <= 340282366920938463463374607431768211455n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "addTokenPair",
             "argument 2 (argument 3 as invoked from Typescript)",
             "crosschain.compact line 565 char 1",
@@ -1494,7 +1467,7 @@ var Contract = class {
             pairInfo_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_3.toValue(tokenPairId_0).concat(_descriptor_14.toValue(pairInfo_0)),
@@ -1515,12 +1488,12 @@ var Contract = class {
       },
       removeTokenPair: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`removeTokenPair: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`removeTokenPair: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const tokenPairId_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "removeTokenPair",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 577 char 1",
@@ -1529,7 +1502,7 @@ var Contract = class {
           );
         }
         if (!(typeof tokenPairId_0 === "bigint" && tokenPairId_0 >= 0n && tokenPairId_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "removeTokenPair",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 577 char 1",
@@ -1537,7 +1510,7 @@ var Contract = class {
             tokenPairId_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_3.toValue(tokenPairId_0),
@@ -1557,12 +1530,12 @@ var Contract = class {
       },
       newProposal: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`newProposal: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`newProposal: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const newProposal_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "newProposal",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 583 char 1",
@@ -1571,7 +1544,7 @@ var Contract = class {
           );
         }
         if (!(typeof newProposal_0 === "object" && typeof newProposal_0.pType === "number" && newProposal_0.pType >= 0 && newProposal_0.pType <= 7 && typeof newProposal_0.addr === "object" && newProposal_0.addr.bytes.buffer instanceof ArrayBuffer && newProposal_0.addr.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addr.bytes.length === 32 && typeof newProposal_0.addrUnshielded === "object" && newProposal_0.addrUnshielded.bytes.buffer instanceof ArrayBuffer && newProposal_0.addrUnshielded.bytes.BYTES_PER_ELEMENT === 1 && newProposal_0.addrUnshielded.bytes.length === 32 && typeof newProposal_0.threshold === "bigint" && newProposal_0.threshold >= 0n && newProposal_0.threshold <= 340282366920938463463374607431768211455n && typeof newProposal_0.feeConfig === "object" && typeof newProposal_0.feeConfig.chainId === "bigint" && newProposal_0.feeConfig.chainId >= 0n && newProposal_0.feeConfig.chainId <= 4294967295n && typeof newProposal_0.feeConfig.fee === "bigint" && newProposal_0.feeConfig.fee >= 0n && newProposal_0.feeConfig.fee <= 340282366920938463463374607431768211455n && Array.isArray(newProposal_0.smgPubkeys) && newProposal_0.smgPubkeys.length === 29 && newProposal_0.smgPubkeys.every((t) => typeof t === "object" && t.bytes.buffer instanceof ArrayBuffer && t.bytes.BYTES_PER_ELEMENT === 1 && t.bytes.length === 32))) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "newProposal",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 583 char 1",
@@ -1579,7 +1552,7 @@ var Contract = class {
             newProposal_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_10.toValue(newProposal_0),
@@ -1599,12 +1572,12 @@ var Contract = class {
       },
       voteProposal: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`voteProposal: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`voteProposal: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const proposalId_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "voteProposal",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 593 char 1",
@@ -1613,7 +1586,7 @@ var Contract = class {
           );
         }
         if (!(typeof proposalId_0 === "bigint" && proposalId_0 >= 0n && proposalId_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "voteProposal",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 593 char 1",
@@ -1621,7 +1594,7 @@ var Contract = class {
             proposalId_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_3.toValue(proposalId_0),
@@ -1641,12 +1614,12 @@ var Contract = class {
       },
       executeProposal: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`executeProposal: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`executeProposal: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const proposalId_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "executeProposal",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 602 char 1",
@@ -1655,7 +1628,7 @@ var Contract = class {
           );
         }
         if (!(typeof proposalId_0 === "bigint" && proposalId_0 >= 0n && proposalId_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "executeProposal",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 602 char 1",
@@ -1663,7 +1636,7 @@ var Contract = class {
             proposalId_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_3.toValue(proposalId_0),
@@ -1683,12 +1656,12 @@ var Contract = class {
       },
       removeExpiredHisTxs: (...args_1) => {
         if (args_1.length !== 2) {
-          throw new __compactRuntime__namespace.CompactError(`removeExpiredHisTxs: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`removeExpiredHisTxs: expected 2 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const txs_0 = args_1[1];
         if (!(typeof contextOrig_0 === "object" && contextOrig_0.currentQueryContext != void 0)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "removeExpiredHisTxs",
             "argument 1 (as invoked from Typescript)",
             "crosschain.compact line 636 char 1",
@@ -1697,7 +1670,7 @@ var Contract = class {
           );
         }
         if (!(Array.isArray(txs_0) && txs_0.length === 20 && txs_0.every((t) => t.buffer instanceof ArrayBuffer && t.BYTES_PER_ELEMENT === 1 && t.length === 32))) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "removeExpiredHisTxs",
             "argument 1 (argument 2 as invoked from Typescript)",
             "crosschain.compact line 636 char 1",
@@ -1705,7 +1678,7 @@ var Contract = class {
             txs_0
           );
         }
-        const context = { ...contextOrig_0, gasCost: __compactRuntime__namespace.emptyRunningCost() };
+        const context = { ...contextOrig_0, gasCost: __compactRuntime.emptyRunningCost() };
         const partialProofData = {
           input: {
             value: _descriptor_11.toValue(txs_0),
@@ -1777,23 +1750,23 @@ var Contract = class {
   }
   initialState(...args_0) {
     if (args_0.length !== 4) {
-      throw new __compactRuntime__namespace.CompactError(`Contract state constructor: expected 4 arguments (as invoked from Typescript), received ${args_0.length}`);
+      throw new __compactRuntime.CompactError(`Contract state constructor: expected 4 arguments (as invoked from Typescript), received ${args_0.length}`);
     }
     const constructorContext_0 = args_0[0];
     const adminThresholdInit_0 = args_0[1];
     const smgPKThresholdInit_0 = args_0[2];
     const feeReceiverInit_0 = args_0[3];
     if (typeof constructorContext_0 !== "object") {
-      throw new __compactRuntime__namespace.CompactError(`Contract state constructor: expected 'constructorContext' in argument 1 (as invoked from Typescript) to be an object`);
+      throw new __compactRuntime.CompactError(`Contract state constructor: expected 'constructorContext' in argument 1 (as invoked from Typescript) to be an object`);
     }
     if (!("initialZswapLocalState" in constructorContext_0)) {
-      throw new __compactRuntime__namespace.CompactError(`Contract state constructor: expected 'initialZswapLocalState' in argument 1 (as invoked from Typescript)`);
+      throw new __compactRuntime.CompactError(`Contract state constructor: expected 'initialZswapLocalState' in argument 1 (as invoked from Typescript)`);
     }
     if (typeof constructorContext_0.initialZswapLocalState !== "object") {
-      throw new __compactRuntime__namespace.CompactError(`Contract state constructor: expected 'initialZswapLocalState' in argument 1 (as invoked from Typescript) to be an object`);
+      throw new __compactRuntime.CompactError(`Contract state constructor: expected 'initialZswapLocalState' in argument 1 (as invoked from Typescript) to be an object`);
     }
     if (!(typeof adminThresholdInit_0 === "bigint" && adminThresholdInit_0 >= 0n && adminThresholdInit_0 <= 255n)) {
-      __compactRuntime__namespace.typeError(
+      __compactRuntime.typeError(
         "Contract state constructor",
         "argument 1 (argument 2 as invoked from Typescript)",
         "crosschain.compact line 151 char 1",
@@ -1802,7 +1775,7 @@ var Contract = class {
       );
     }
     if (!(typeof smgPKThresholdInit_0 === "bigint" && smgPKThresholdInit_0 >= 0n && smgPKThresholdInit_0 <= 255n)) {
-      __compactRuntime__namespace.typeError(
+      __compactRuntime.typeError(
         "Contract state constructor",
         "argument 2 (argument 3 as invoked from Typescript)",
         "crosschain.compact line 151 char 1",
@@ -1811,7 +1784,7 @@ var Contract = class {
       );
     }
     if (!(typeof feeReceiverInit_0 === "object" && feeReceiverInit_0.bytes.buffer instanceof ArrayBuffer && feeReceiverInit_0.bytes.BYTES_PER_ELEMENT === 1 && feeReceiverInit_0.bytes.length === 32)) {
-      __compactRuntime__namespace.typeError(
+      __compactRuntime.typeError(
         "Contract state constructor",
         "argument 3 (argument 4 as invoked from Typescript)",
         "crosschain.compact line 151 char 1",
@@ -1819,67 +1792,67 @@ var Contract = class {
         feeReceiverInit_0
       );
     }
-    const state_0 = new __compactRuntime__namespace.ContractState();
-    let stateValue_0 = __compactRuntime__namespace.StateValue.newArray();
-    let stateValue_2 = __compactRuntime__namespace.StateValue.newArray();
-    stateValue_2 = stateValue_2.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_2 = stateValue_2.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_2 = stateValue_2.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_2 = stateValue_2.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_2 = stateValue_2.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_2 = stateValue_2.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_2 = stateValue_2.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_2 = stateValue_2.arrayPush(__compactRuntime__namespace.StateValue.newNull());
+    const state_0 = new __compactRuntime.ContractState();
+    let stateValue_0 = __compactRuntime.StateValue.newArray();
+    let stateValue_2 = __compactRuntime.StateValue.newArray();
+    stateValue_2 = stateValue_2.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_2 = stateValue_2.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_2 = stateValue_2.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_2 = stateValue_2.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_2 = stateValue_2.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_2 = stateValue_2.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_2 = stateValue_2.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_2 = stateValue_2.arrayPush(__compactRuntime.StateValue.newNull());
     stateValue_0 = stateValue_0.arrayPush(stateValue_2);
-    let stateValue_1 = __compactRuntime__namespace.StateValue.newArray();
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
-    stateValue_1 = stateValue_1.arrayPush(__compactRuntime__namespace.StateValue.newNull());
+    let stateValue_1 = __compactRuntime.StateValue.newArray();
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
+    stateValue_1 = stateValue_1.arrayPush(__compactRuntime.StateValue.newNull());
     stateValue_0 = stateValue_0.arrayPush(stateValue_1);
-    state_0.data = new __compactRuntime__namespace.ChargedState(stateValue_0);
-    state_0.setOperation("userLock", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("smgRelease", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("smgMint", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("userBurn", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("voteMultiCrossProposal", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("executeCrossProposal", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("transferOwner", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("acceptOwner", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("setFeeReceiver", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("setTokenManager", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("addAdmin", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("removeAdmin", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("setAdminThreshold", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("setSmgPksks", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("updateSmgPk", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("setSmgPKThreold", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("setFeeCommonConfig", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("addTokenPair", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("removeTokenPair", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("newProposal", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("voteProposal", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("executeProposal", new __compactRuntime__namespace.ContractOperation());
-    state_0.setOperation("removeExpiredHisTxs", new __compactRuntime__namespace.ContractOperation());
-    const context = __compactRuntime__namespace.createCircuitContext(__compactRuntime__namespace.dummyContractAddress(), constructorContext_0.initialZswapLocalState.coinPublicKey, state_0.data, constructorContext_0.initialPrivateState);
+    state_0.data = new __compactRuntime.ChargedState(stateValue_0);
+    state_0.setOperation("userLock", new __compactRuntime.ContractOperation());
+    state_0.setOperation("smgRelease", new __compactRuntime.ContractOperation());
+    state_0.setOperation("smgMint", new __compactRuntime.ContractOperation());
+    state_0.setOperation("userBurn", new __compactRuntime.ContractOperation());
+    state_0.setOperation("voteMultiCrossProposal", new __compactRuntime.ContractOperation());
+    state_0.setOperation("executeCrossProposal", new __compactRuntime.ContractOperation());
+    state_0.setOperation("transferOwner", new __compactRuntime.ContractOperation());
+    state_0.setOperation("acceptOwner", new __compactRuntime.ContractOperation());
+    state_0.setOperation("setFeeReceiver", new __compactRuntime.ContractOperation());
+    state_0.setOperation("setTokenManager", new __compactRuntime.ContractOperation());
+    state_0.setOperation("addAdmin", new __compactRuntime.ContractOperation());
+    state_0.setOperation("removeAdmin", new __compactRuntime.ContractOperation());
+    state_0.setOperation("setAdminThreshold", new __compactRuntime.ContractOperation());
+    state_0.setOperation("setSmgPksks", new __compactRuntime.ContractOperation());
+    state_0.setOperation("updateSmgPk", new __compactRuntime.ContractOperation());
+    state_0.setOperation("setSmgPKThreold", new __compactRuntime.ContractOperation());
+    state_0.setOperation("setFeeCommonConfig", new __compactRuntime.ContractOperation());
+    state_0.setOperation("addTokenPair", new __compactRuntime.ContractOperation());
+    state_0.setOperation("removeTokenPair", new __compactRuntime.ContractOperation());
+    state_0.setOperation("newProposal", new __compactRuntime.ContractOperation());
+    state_0.setOperation("voteProposal", new __compactRuntime.ContractOperation());
+    state_0.setOperation("executeProposal", new __compactRuntime.ContractOperation());
+    state_0.setOperation("removeExpiredHisTxs", new __compactRuntime.ContractOperation());
+    const context = __compactRuntime.createCircuitContext(__compactRuntime.dummyContractAddress(), constructorContext_0.initialZswapLocalState.coinPublicKey, state_0.data, constructorContext_0.initialPrivateState);
     const partialProofData = {
       input: { value: [], alignment: [] },
       output: void 0,
       publicTranscript: [],
       privateTranscriptOutputs: []
     };
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -1898,22 +1871,22 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(0n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -1932,14 +1905,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(1n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_22.toValue({ smgId: new Uint8Array(32), fromAddr: { bytes: new Uint8Array(32) }, toAddr: "", tokenPairId: 0n, tokenAccount: new Uint8Array(32), amount: 0n, fee: 0n }),
             alignment: _descriptor_22.alignment()
           }).encode()
@@ -1948,7 +1921,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -1967,14 +1940,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(2n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_17.toValue({ uniqueId: new Uint8Array(32), crossProposal: { smgId: new Uint8Array(32), token: new Uint8Array(32), tokenPairId: 0n, isMappingToken: false, amount: 0n, fee: 0n, toAddr: { bytes: new Uint8Array(32) }, ttl: 0n } }),
             alignment: _descriptor_17.alignment()
           }).encode()
@@ -1983,7 +1956,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2002,22 +1975,22 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(3n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2036,14 +2009,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(4n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue({ bytes: new Uint8Array(32) }),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -2052,7 +2025,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2071,22 +2044,22 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(5n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2105,14 +2078,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(6n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_6.toValue({ bytes: new Uint8Array(32) }),
             alignment: _descriptor_6.alignment()
           }).encode()
@@ -2121,7 +2094,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2140,14 +2113,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(7n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(0n),
             alignment: _descriptor_15.alignment()
           }).encode()
@@ -2156,7 +2129,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2175,22 +2148,22 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(0n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2209,14 +2182,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(1n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(0n),
             alignment: _descriptor_15.alignment()
           }).encode()
@@ -2225,7 +2198,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2244,14 +2217,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(2n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_1.toValue(0n),
             alignment: _descriptor_1.alignment()
           }).encode()
@@ -2260,7 +2233,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2279,22 +2252,22 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(3n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2313,14 +2286,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(4n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(0n),
             alignment: _descriptor_3.alignment()
           }).encode()
@@ -2329,7 +2302,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2348,22 +2321,22 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(5n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2382,22 +2355,22 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(6n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2416,22 +2389,22 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(7n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2450,22 +2423,22 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(8n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2484,22 +2457,22 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(9n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2518,22 +2491,22 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(10n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2552,14 +2525,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(11n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_1.toValue(0n),
             alignment: _descriptor_1.alignment()
           }).encode()
@@ -2568,7 +2541,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2587,14 +2560,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(12n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue({ bytes: new Uint8Array(32) }),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -2603,7 +2576,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2622,14 +2595,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(13n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue({ bytes: new Uint8Array(32) }),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -2638,7 +2611,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2657,14 +2630,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(14n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue({ bytes: new Uint8Array(32) }),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -2674,7 +2647,7 @@ var Contract = class {
       ]
     );
     const tmp_0 = this._ownPublicKey_0(context, partialProofData);
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2693,14 +2666,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(12n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(tmp_0),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -2710,7 +2683,7 @@ var Contract = class {
       ]
     );
     const tmp_1 = this._ownPublicKey_0(context, partialProofData);
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2729,14 +2702,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(14n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(tmp_1),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -2746,7 +2719,7 @@ var Contract = class {
       ]
     );
     const tmp_2 = this._ownPublicKey_0(context, partialProofData);
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2765,14 +2738,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(4n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(tmp_2),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -2781,7 +2754,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2800,14 +2773,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(1n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(adminThresholdInit_0),
             alignment: _descriptor_15.alignment()
           }).encode()
@@ -2816,7 +2789,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2835,14 +2808,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(7n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(smgPKThresholdInit_0),
             alignment: _descriptor_15.alignment()
           }).encode()
@@ -2851,7 +2824,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2870,14 +2843,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(6n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_6.toValue(feeReceiverInit_0),
             alignment: _descriptor_6.alignment()
           }).encode()
@@ -2887,7 +2860,7 @@ var Contract = class {
       ]
     );
     const tmp_3 = 1n;
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2911,7 +2884,7 @@ var Contract = class {
             }
           ]
         } },
-        { addi: { immediate: parseInt(__compactRuntime__namespace.valueToBigInt(
+        { addi: { immediate: parseInt(__compactRuntime.valueToBigInt(
           {
             value: _descriptor_12.toValue(tmp_3),
             alignment: _descriptor_12.alignment()
@@ -2920,7 +2893,7 @@ var Contract = class {
         { ins: { cached: true, n: 2 } }
       ]
     );
-    state_0.data = new __compactRuntime__namespace.ChargedState(context.currentQueryContext.state.state);
+    state_0.data = new __compactRuntime.ChargedState(context.currentQueryContext.state.state);
     return {
       currentContractState: state_0,
       currentPrivateState: context.currentPrivateState,
@@ -2943,7 +2916,7 @@ var Contract = class {
     );
   }
   _blockTimeLt_0(context, partialProofData, time_0) {
-    return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -2963,7 +2936,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_1.toValue(time_0),
             alignment: _descriptor_1.alignment()
           }).encode()
@@ -2980,7 +2953,7 @@ var Contract = class {
     return !this._blockTimeLt_0(context, partialProofData, time_0);
   }
   _mintUnshieldedToken_0(context, partialProofData, domainSep_0, amount_0, recipient_0) {
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -3000,7 +2973,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_0.toValue(domainSep_0),
             alignment: _descriptor_0.alignment()
           }).encode()
@@ -3010,7 +2983,7 @@ var Contract = class {
         "member",
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_1.toValue(amount_0),
             alignment: _descriptor_1.alignment()
           }).encode()
@@ -3032,7 +3005,7 @@ var Contract = class {
     );
     const color_0 = this._tokenType_0(
       domainSep_0,
-      _descriptor_13.fromValue(__compactRuntime__namespace.queryLedgerState(
+      _descriptor_13.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -3059,7 +3032,7 @@ var Contract = class {
     );
     const tmp_0 = this._left_0(color_0);
     const tmp_1 = amount_0;
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -3079,7 +3052,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell(__compactRuntime__namespace.alignedConcat(
+          value: __compactRuntime.StateValue.newCell(__compactRuntime.alignedConcat(
             {
               value: _descriptor_24.toValue(tmp_0),
               alignment: _descriptor_24.alignment()
@@ -3095,7 +3068,7 @@ var Contract = class {
         "member",
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_7.toValue(tmp_1),
             alignment: _descriptor_7.alignment()
           }).encode()
@@ -3117,7 +3090,7 @@ var Contract = class {
     );
     if (recipient_0.is_left && this._equal_0(
       recipient_0.left.bytes,
-      _descriptor_13.fromValue(__compactRuntime__namespace.queryLedgerState(
+      _descriptor_13.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -3144,7 +3117,7 @@ var Contract = class {
     )) {
       const tmp_2 = this._left_0(color_0);
       const tmp_3 = amount_0;
-      __compactRuntime__namespace.queryLedgerState(
+      __compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -3164,7 +3137,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_24.toValue(tmp_2),
               alignment: _descriptor_24.alignment()
             }).encode()
@@ -3174,7 +3147,7 @@ var Contract = class {
           "member",
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_7.toValue(tmp_3),
               alignment: _descriptor_7.alignment()
             }).encode()
@@ -3199,7 +3172,7 @@ var Contract = class {
   }
   _sendUnshielded_0(context, partialProofData, color_0, amount_0, recipient_0) {
     const tmp_0 = this._left_0(color_0);
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -3219,7 +3192,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_24.toValue(tmp_0),
             alignment: _descriptor_24.alignment()
           }).encode()
@@ -3229,7 +3202,7 @@ var Contract = class {
         "member",
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_7.toValue(amount_0),
             alignment: _descriptor_7.alignment()
           }).encode()
@@ -3250,7 +3223,7 @@ var Contract = class {
       ]
     );
     const tmp_1 = this._left_0(color_0);
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -3270,7 +3243,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell(__compactRuntime__namespace.alignedConcat(
+          value: __compactRuntime.StateValue.newCell(__compactRuntime.alignedConcat(
             {
               value: _descriptor_24.toValue(tmp_1),
               alignment: _descriptor_24.alignment()
@@ -3286,7 +3259,7 @@ var Contract = class {
         "member",
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_7.toValue(amount_0),
             alignment: _descriptor_7.alignment()
           }).encode()
@@ -3308,7 +3281,7 @@ var Contract = class {
     );
     if (recipient_0.is_left && this._equal_1(
       recipient_0.left.bytes,
-      _descriptor_13.fromValue(__compactRuntime__namespace.queryLedgerState(
+      _descriptor_13.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -3334,7 +3307,7 @@ var Contract = class {
       ).value).bytes
     )) {
       const tmp_2 = this._left_0(color_0);
-      __compactRuntime__namespace.queryLedgerState(
+      __compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -3354,7 +3327,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_24.toValue(tmp_2),
               alignment: _descriptor_24.alignment()
             }).encode()
@@ -3364,7 +3337,7 @@ var Contract = class {
           "member",
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_7.toValue(amount_0),
               alignment: _descriptor_7.alignment()
             }).encode()
@@ -3389,7 +3362,7 @@ var Contract = class {
   }
   _receiveUnshielded_0(context, partialProofData, color_0, amount_0) {
     const tmp_0 = this._left_0(color_0);
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -3409,7 +3382,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_24.toValue(tmp_0),
             alignment: _descriptor_24.alignment()
           }).encode()
@@ -3419,7 +3392,7 @@ var Contract = class {
         "member",
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_7.toValue(amount_0),
             alignment: _descriptor_7.alignment()
           }).encode()
@@ -3442,7 +3415,7 @@ var Contract = class {
     return [];
   }
   _persistentCommit_0(value_0, rand_0) {
-    const result_0 = __compactRuntime__namespace.persistentCommit(
+    const result_0 = __compactRuntime.persistentCommit(
       _descriptor_23,
       value_0,
       rand_0
@@ -3450,7 +3423,7 @@ var Contract = class {
     return result_0;
   }
   _ownPublicKey_0(context, partialProofData) {
-    const result_0 = __compactRuntime__namespace.ownPublicKey(context);
+    const result_0 = __compactRuntime.ownPublicKey(context);
     partialProofData.privateTranscriptOutputs.push({
       value: _descriptor_4.toValue(result_0),
       alignment: _descriptor_4.alignment()
@@ -3476,12 +3449,12 @@ var Contract = class {
   }
   _userLock_0(context, partialProofData, smgId_0, toAddr_0, tokenPairId_0, amount_0) {
     let t_0;
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       (t_0 = amount_0, t_0 > 0n),
       "amount must be greater than 0"
     );
-    __compactRuntime__namespace.assert(
-      _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -3508,7 +3481,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_3.toValue(tokenPairId_0),
               alignment: _descriptor_3.alignment()
             }).encode()
@@ -3522,7 +3495,7 @@ var Contract = class {
       ).value),
       "tokenpairId not exists"
     );
-    const tokenPair_0 = _descriptor_14.fromValue(__compactRuntime__namespace.queryLedgerState(
+    const tokenPair_0 = _descriptor_14.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -3566,7 +3539,7 @@ var Contract = class {
         } }
       ]
     ).value);
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._equal_2(
         tokenPair_0.domainSep,
         new Uint8Array(32)
@@ -3596,7 +3569,7 @@ var Contract = class {
       amount: amount_0,
       fee: 0n
     };
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -3615,14 +3588,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(1n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_22.toValue(tmp_0),
             alignment: _descriptor_22.alignment()
           }).encode()
@@ -3634,8 +3607,8 @@ var Contract = class {
     return [];
   }
   _smgRelease_0(context, partialProofData, uniqueId_0, smgId_0, tokenPairId_0, amount_0, toAddr_0, fee_0, ttl_0) {
-    __compactRuntime__namespace.assert(
-      _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -3662,7 +3635,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_3.toValue(tokenPairId_0),
               alignment: _descriptor_3.alignment()
             }).encode()
@@ -3676,7 +3649,7 @@ var Contract = class {
       ).value),
       "tokenpairId not exists"
     );
-    const tokenPair_0 = _descriptor_14.fromValue(__compactRuntime__namespace.queryLedgerState(
+    const tokenPair_0 = _descriptor_14.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -3720,7 +3693,7 @@ var Contract = class {
         } }
       ]
     ).value);
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._equal_3(
         tokenPair_0.domainSep,
         new Uint8Array(32)
@@ -3742,8 +3715,8 @@ var Contract = class {
     return [];
   }
   _smgMint_0(context, partialProofData, uniqueId_0, smgId_0, tokenPairId_0, amount_0, fee_0, toAddr_0, ttl_0) {
-    __compactRuntime__namespace.assert(
-      _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -3770,7 +3743,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_3.toValue(tokenPairId_0),
               alignment: _descriptor_3.alignment()
             }).encode()
@@ -3784,7 +3757,7 @@ var Contract = class {
       ).value),
       "tokenpairId not exists"
     );
-    const tokenPair_0 = _descriptor_14.fromValue(__compactRuntime__namespace.queryLedgerState(
+    const tokenPair_0 = _descriptor_14.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -3828,7 +3801,7 @@ var Contract = class {
         } }
       ]
     ).value);
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       !this._equal_4(
         tokenPair_0.domainSep,
         new Uint8Array(32)
@@ -3850,8 +3823,8 @@ var Contract = class {
     return [];
   }
   _userBurn_0(context, partialProofData, smgId_0, toAddr_0, tokenPairId_0, amount_0) {
-    __compactRuntime__namespace.assert(
-      _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -3878,7 +3851,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_3.toValue(tokenPairId_0),
               alignment: _descriptor_3.alignment()
             }).encode()
@@ -3893,11 +3866,11 @@ var Contract = class {
       "tokenpairId not exists"
     );
     let t_0;
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       (t_0 = amount_0, t_0 > 0n),
       "amount must be greater than 0"
     );
-    const tokenPair_0 = _descriptor_14.fromValue(__compactRuntime__namespace.queryLedgerState(
+    const tokenPair_0 = _descriptor_14.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -3941,7 +3914,7 @@ var Contract = class {
         } }
       ]
     ).value);
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       !this._equal_5(
         tokenPair_0.domainSep,
         new Uint8Array(32)
@@ -3971,7 +3944,7 @@ var Contract = class {
       amount: amount_0,
       fee: contractFee_0
     };
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -3990,14 +3963,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(1n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_22.toValue(tmp_0),
             alignment: _descriptor_22.alignment()
           }).encode()
@@ -4009,8 +3982,8 @@ var Contract = class {
     return [];
   }
   _addCrossProposal_0(context, partialProofData, uniqueId_0, smgId_0, tokenPairId_0, tokenPair_0, amount_0, toAddr_0, fee_0, ttl_0) {
-    __compactRuntime__namespace.assert(
-      _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -4037,7 +4010,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_0.toValue(uniqueId_0),
               alignment: _descriptor_0.alignment()
             }).encode()
@@ -4052,11 +4025,11 @@ var Contract = class {
       "crossTx has finished"
     );
     let tmp_0;
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       (tmp_0 = this._ownPublicKey_0(
         context,
         partialProofData
-      ), _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+      ), _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -4083,7 +4056,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_4.toValue(tmp_0),
               alignment: _descriptor_4.alignment()
             }).encode()
@@ -4098,16 +4071,16 @@ var Contract = class {
       "not smg member"
     );
     let t_0;
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       (t_0 = amount_0, t_0 > 0n),
       "amount must be greater than 0"
     );
     let t_1;
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       (t_1 = amount_0, t_1 > fee_0),
       "amount must be greater than fee"
     );
-    if (_descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    if (_descriptor_2.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -4134,7 +4107,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_0.toValue(uniqueId_0),
             alignment: _descriptor_0.alignment()
           }).encode()
@@ -4150,7 +4123,7 @@ var Contract = class {
       if (this._blockTimeLt_0(
         context,
         partialProofData,
-        _descriptor_16.fromValue(__compactRuntime__namespace.queryLedgerState(
+        _descriptor_16.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -4194,7 +4167,7 @@ var Contract = class {
             } }
           ]
         ).value).ttl
-      ) || (t_2 = _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+      ) || (t_2 = _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -4232,7 +4205,7 @@ var Contract = class {
             result: void 0
           } }
         ]
-      ).value), t_2 >= _descriptor_15.fromValue(__compactRuntime__namespace.queryLedgerState(
+      ).value), t_2 >= _descriptor_15.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -4263,9 +4236,9 @@ var Contract = class {
           } }
         ]
       ).value))) {
-        __compactRuntime__namespace.assert(false, "proposal exists");
+        __compactRuntime.assert(false, "proposal exists");
       } else {
-        __compactRuntime__namespace.queryLedgerState(
+        __compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -4291,7 +4264,7 @@ var Contract = class {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_0.toValue(uniqueId_0),
                 alignment: _descriptor_0.alignment()
               }).encode()
@@ -4300,7 +4273,7 @@ var Contract = class {
             { ins: { cached: true, n: 2 } }
           ]
         );
-        __compactRuntime__namespace.queryLedgerState(
+        __compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -4326,7 +4299,7 @@ var Contract = class {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_0.toValue(uniqueId_0),
                 alignment: _descriptor_0.alignment()
               }).encode()
@@ -4337,7 +4310,7 @@ var Contract = class {
         );
       }
     }
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._blockTimeLt_0(context, partialProofData, ttl_0),
       "ttl expired"
     );
@@ -4355,7 +4328,7 @@ var Contract = class {
       toAddr: toAddr_0,
       ttl: ttl_0
     };
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -4381,14 +4354,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_0.toValue(uniqueId_0),
             alignment: _descriptor_0.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_16.toValue(newCrossProposal_0),
             alignment: _descriptor_16.alignment()
           }).encode()
@@ -4397,7 +4370,7 @@ var Contract = class {
         { ins: { cached: true, n: 2 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -4423,15 +4396,15 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_0.toValue(uniqueId_0),
             alignment: _descriptor_0.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
@@ -4439,7 +4412,7 @@ var Contract = class {
       ]
     );
     let tmp_1;
-    const voterIndex_0 = (tmp_1 = this._ownPublicKey_0(context, partialProofData), _descriptor_15.fromValue(__compactRuntime__namespace.queryLedgerState(
+    const voterIndex_0 = (tmp_1 = this._ownPublicKey_0(context, partialProofData), _descriptor_15.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -4483,7 +4456,7 @@ var Contract = class {
         } }
       ]
     ).value));
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -4516,14 +4489,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(voterIndex_0),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newNull().encode()
+          value: __compactRuntime.StateValue.newNull().encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 3 } }
@@ -4533,7 +4506,7 @@ var Contract = class {
   }
   _voteMultiCrossProposal_0(context, partialProofData, uniqueIds_0) {
     let tmp_0;
-    if (!(tmp_0 = this._ownPublicKey_0(context, partialProofData), _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    if (!(tmp_0 = this._ownPublicKey_0(context, partialProofData), _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -4560,7 +4533,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(tmp_0),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -4579,7 +4552,7 @@ var Contract = class {
         partialProofData,
         ((context2, partialProofData2, t_0, target_0) => {
           let tmp_1;
-          if (!this._equal_7(target_0.uniqueId, new Uint8Array(32)) && (tmp_1 = target_0.uniqueId, _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+          if (!this._equal_7(target_0.uniqueId, new Uint8Array(32)) && (tmp_1 = target_0.uniqueId, _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
             context2,
             partialProofData2,
             [
@@ -4606,7 +4579,7 @@ var Contract = class {
               } },
               { push: {
                 storage: false,
-                value: __compactRuntime__namespace.StateValue.newCell({
+                value: __compactRuntime.StateValue.newCell({
                   value: _descriptor_0.toValue(tmp_1),
                   alignment: _descriptor_0.alignment()
                 }).encode()
@@ -4619,7 +4592,7 @@ var Contract = class {
             ]
           ).value))) {
             let tmp_2;
-            const proposal_0 = (tmp_2 = target_0.uniqueId, _descriptor_16.fromValue(__compactRuntime__namespace.queryLedgerState(
+            const proposal_0 = (tmp_2 = target_0.uniqueId, _descriptor_16.fromValue(__compactRuntime.queryLedgerState(
               context2,
               partialProofData2,
               [
@@ -4664,7 +4637,7 @@ var Contract = class {
               ]
             ).value));
             let t_1, tmp_3;
-            if (t_1 = (tmp_3 = target_0.uniqueId, _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+            if (t_1 = (tmp_3 = target_0.uniqueId, _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
               context2,
               partialProofData2,
               [
@@ -4702,7 +4675,7 @@ var Contract = class {
                   result: void 0
                 } }
               ]
-            ).value)), t_1 < _descriptor_15.fromValue(__compactRuntime__namespace.queryLedgerState(
+            ).value)), t_1 < _descriptor_15.fromValue(__compactRuntime.queryLedgerState(
               context2,
               partialProofData2,
               [
@@ -4740,7 +4713,7 @@ var Contract = class {
                   proposal_0.ttl
                 )) {
                   const tmp_4 = target_0.uniqueId;
-                  __compactRuntime__namespace.queryLedgerState(
+                  __compactRuntime.queryLedgerState(
                     context2,
                     partialProofData2,
                     [
@@ -4766,7 +4739,7 @@ var Contract = class {
                       } },
                       { push: {
                         storage: false,
-                        value: __compactRuntime__namespace.StateValue.newCell({
+                        value: __compactRuntime.StateValue.newCell({
                           value: _descriptor_0.toValue(tmp_4),
                           alignment: _descriptor_0.alignment()
                         }).encode()
@@ -4779,7 +4752,7 @@ var Contract = class {
                     ]
                   );
                   const tmp_5 = target_0.uniqueId;
-                  __compactRuntime__namespace.queryLedgerState(
+                  __compactRuntime.queryLedgerState(
                     context2,
                     partialProofData2,
                     [
@@ -4805,7 +4778,7 @@ var Contract = class {
                       } },
                       { push: {
                         storage: false,
-                        value: __compactRuntime__namespace.StateValue.newCell({
+                        value: __compactRuntime.StateValue.newCell({
                           value: _descriptor_0.toValue(tmp_5),
                           alignment: _descriptor_0.alignment()
                         }).encode()
@@ -4822,7 +4795,7 @@ var Contract = class {
                   const voterIndex_0 = (tmp_6 = this._ownPublicKey_0(
                     context2,
                     partialProofData2
-                  ), _descriptor_15.fromValue(__compactRuntime__namespace.queryLedgerState(
+                  ), _descriptor_15.fromValue(__compactRuntime.queryLedgerState(
                     context2,
                     partialProofData2,
                     [
@@ -4867,7 +4840,7 @@ var Contract = class {
                     ]
                   ).value));
                   const tmp_7 = target_0.uniqueId;
-                  __compactRuntime__namespace.queryLedgerState(
+                  __compactRuntime.queryLedgerState(
                     context2,
                     partialProofData2,
                     [
@@ -4900,14 +4873,14 @@ var Contract = class {
                       } },
                       { push: {
                         storage: false,
-                        value: __compactRuntime__namespace.StateValue.newCell({
+                        value: __compactRuntime.StateValue.newCell({
                           value: _descriptor_15.toValue(voterIndex_0),
                           alignment: _descriptor_15.alignment()
                         }).encode()
                       } },
                       { push: {
                         storage: true,
-                        value: __compactRuntime__namespace.StateValue.newNull().encode()
+                        value: __compactRuntime.StateValue.newNull().encode()
                       } },
                       { ins: {
                         cached: false,
@@ -4932,8 +4905,8 @@ var Contract = class {
     }
   }
   _updateReserve_0(context, partialProofData, isMappingToken_0, token_0, delta_0, isAdd_0) {
-    __compactRuntime__namespace.assert(delta_0 > 0n, "delta must be positive");
-    const oldAmount_0 = _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(delta_0 > 0n, "delta must be positive");
+    const oldAmount_0 = _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -4960,7 +4933,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_0.toValue(token_0),
             alignment: _descriptor_0.alignment()
           }).encode()
@@ -4971,7 +4944,7 @@ var Contract = class {
           result: void 0
         } }
       ]
-    ).value) ? _descriptor_20.fromValue(__compactRuntime__namespace.queryLedgerState(
+    ).value) ? _descriptor_20.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -5015,12 +4988,12 @@ var Contract = class {
         } }
       ]
     ).value).total : 0n;
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       isAdd_0 || oldAmount_0 >= delta_0,
       "delta must be less than or equal to oldAmount"
     );
-    __compactRuntime__namespace.assert(
-      this._equal_9(oldAmount_0, 0n) || _descriptor_20.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      this._equal_9(oldAmount_0, 0n) || _descriptor_20.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -5066,12 +5039,12 @@ var Contract = class {
       ).value).isMappingToken === isMappingToken_0,
       "token type mismatch"
     );
-    const newAmount_0 = isAdd_0 ? oldAmount_0 + delta_0 : (__compactRuntime__namespace.assert(
+    const newAmount_0 = isAdd_0 ? oldAmount_0 + delta_0 : (__compactRuntime.assert(
       oldAmount_0 >= delta_0,
       "result of subtraction would be negative"
     ), oldAmount_0 - delta_0);
     if (this._equal_10(newAmount_0, 0n)) {
-      __compactRuntime__namespace.queryLedgerState(
+      __compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -5097,7 +5070,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_0.toValue(token_0),
               alignment: _descriptor_0.alignment()
             }).encode()
@@ -5110,13 +5083,13 @@ var Contract = class {
       const tmp_0 = {
         total: ((t1) => {
           if (t1 > 340282366920938463463374607431768211455n) {
-            throw new __compactRuntime__namespace.CompactError("crosschain.compact line 350 char 68: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 340282366920938463463374607431768211455");
+            throw new __compactRuntime.CompactError("crosschain.compact line 350 char 68: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 340282366920938463463374607431768211455");
           }
           return t1;
         })(newAmount_0),
         isMappingToken: isMappingToken_0
       };
-      __compactRuntime__namespace.queryLedgerState(
+      __compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -5142,14 +5115,14 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_0.toValue(token_0),
               alignment: _descriptor_0.alignment()
             }).encode()
           } },
           { push: {
             storage: true,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_20.toValue(tmp_0),
               alignment: _descriptor_20.alignment()
             }).encode()
@@ -5168,7 +5141,7 @@ var Contract = class {
         partialProofData,
         token_0,
         fee_0,
-        this._right_0(_descriptor_6.fromValue(__compactRuntime__namespace.queryLedgerState(
+        this._right_0(_descriptor_6.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -5213,7 +5186,7 @@ var Contract = class {
   __mint_0(context, partialProofData, uniqueId_0, domainSep_0, toAddr_0, amount_0, fee_0) {
     const color_0 = this._tokenType_0(
       domainSep_0,
-      _descriptor_13.fromValue(__compactRuntime__namespace.queryLedgerState(
+      _descriptor_13.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -5252,11 +5225,11 @@ var Contract = class {
         color_0,
         ((t1) => {
           if (t1 > 18446744073709551615n) {
-            throw new __compactRuntime__namespace.CompactError("crosschain.compact line 389 char 32: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
+            throw new __compactRuntime.CompactError("crosschain.compact line 389 char 32: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
           }
           return t1;
         })(fee_0),
-        this._right_0(_descriptor_6.fromValue(__compactRuntime__namespace.queryLedgerState(
+        this._right_0(_descriptor_6.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -5295,7 +5268,7 @@ var Contract = class {
       color_0,
       ((t1) => {
         if (t1 > 18446744073709551615n) {
-          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 398 char 30: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
+          throw new __compactRuntime.CompactError("crosschain.compact line 398 char 30: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
         }
         return t1;
       })(amount_0),
@@ -5305,11 +5278,11 @@ var Contract = class {
   }
   _executeCrossProposal_0(context, partialProofData, uniqueId_0) {
     let tmp_0;
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       (tmp_0 = this._ownPublicKey_0(
         context,
         partialProofData
-      ), _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+      ), _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -5336,7 +5309,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_4.toValue(tmp_0),
               alignment: _descriptor_4.alignment()
             }).encode()
@@ -5350,8 +5323,8 @@ var Contract = class {
       ).value)),
       "only smgTxSigners can executeCrossProposal "
     );
-    __compactRuntime__namespace.assert(
-      _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -5378,7 +5351,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_0.toValue(uniqueId_0),
               alignment: _descriptor_0.alignment()
             }).encode()
@@ -5393,8 +5366,8 @@ var Contract = class {
       "proposal not exists"
     );
     let t_0;
-    __compactRuntime__namespace.assert(
-      (t_0 = _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      (t_0 = _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -5432,7 +5405,7 @@ var Contract = class {
             result: void 0
           } }
         ]
-      ).value), t_0 >= _descriptor_15.fromValue(__compactRuntime__namespace.queryLedgerState(
+      ).value), t_0 >= _descriptor_15.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -5465,7 +5438,7 @@ var Contract = class {
       ).value)),
       "not enough votes"
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -5484,14 +5457,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(2n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_17.toValue({ uniqueId: new Uint8Array(32), crossProposal: { smgId: new Uint8Array(32), token: new Uint8Array(32), tokenPairId: 0n, isMappingToken: false, amount: 0n, fee: 0n, toAddr: { bytes: new Uint8Array(32) }, ttl: 0n } }),
             alignment: _descriptor_17.alignment()
           }).encode()
@@ -5500,7 +5473,7 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
-    const proposal_0 = _descriptor_16.fromValue(__compactRuntime__namespace.queryLedgerState(
+    const proposal_0 = _descriptor_16.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -5556,7 +5529,7 @@ var Contract = class {
       );
     } else {
       let tmp_1;
-      (tmp_1 = proposal_0.tokenPairId, _descriptor_14.fromValue(__compactRuntime__namespace.queryLedgerState(
+      (tmp_1 = proposal_0.tokenPairId, _descriptor_14.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -5611,7 +5584,7 @@ var Contract = class {
       );
     }
     const tmp_2 = { uniqueId: uniqueId_0, crossProposal: proposal_0 };
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -5630,14 +5603,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(2n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_17.toValue(tmp_2),
             alignment: _descriptor_17.alignment()
           }).encode()
@@ -5647,7 +5620,7 @@ var Contract = class {
       ]
     );
     const tmp_3 = proposal_0.ttl;
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -5673,14 +5646,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_0.toValue(uniqueId_0),
             alignment: _descriptor_0.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_1.toValue(tmp_3),
             alignment: _descriptor_1.alignment()
           }).encode()
@@ -5689,7 +5662,7 @@ var Contract = class {
         { ins: { cached: true, n: 2 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -5715,7 +5688,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_0.toValue(uniqueId_0),
             alignment: _descriptor_0.alignment()
           }).encode()
@@ -5724,7 +5697,7 @@ var Contract = class {
         { ins: { cached: true, n: 2 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -5750,7 +5723,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_0.toValue(uniqueId_0),
             alignment: _descriptor_0.alignment()
           }).encode()
@@ -5762,8 +5735,8 @@ var Contract = class {
     return [];
   }
   _updateTokenTotalSupply_0(context, partialProofData, token_0, delta_0, isAdd_0) {
-    __compactRuntime__namespace.assert(delta_0 > 0n, "delta must be positive");
-    const oldTotalSupply_0 = _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(delta_0 > 0n, "delta must be positive");
+    const oldTotalSupply_0 = _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -5790,7 +5763,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_0.toValue(token_0),
             alignment: _descriptor_0.alignment()
           }).encode()
@@ -5801,7 +5774,7 @@ var Contract = class {
           result: void 0
         } }
       ]
-    ).value) ? _descriptor_7.fromValue(__compactRuntime__namespace.queryLedgerState(
+    ).value) ? _descriptor_7.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -5845,16 +5818,16 @@ var Contract = class {
         } }
       ]
     ).value) : 0n;
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       isAdd_0 || oldTotalSupply_0 >= delta_0,
       "delta must be less than or equal to oldTotalSupply"
     );
-    const newTotalSupply_0 = isAdd_0 ? oldTotalSupply_0 + delta_0 : (__compactRuntime__namespace.assert(
+    const newTotalSupply_0 = isAdd_0 ? oldTotalSupply_0 + delta_0 : (__compactRuntime.assert(
       oldTotalSupply_0 >= delta_0,
       "result of subtraction would be negative"
     ), oldTotalSupply_0 - delta_0);
     if (this._equal_11(newTotalSupply_0, 0n)) {
-      __compactRuntime__namespace.queryLedgerState(
+      __compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -5880,7 +5853,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_0.toValue(token_0),
               alignment: _descriptor_0.alignment()
             }).encode()
@@ -5892,11 +5865,11 @@ var Contract = class {
     } else {
       const tmp_0 = ((t1) => {
         if (t1 > 340282366920938463463374607431768211455n) {
-          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 433 char 52: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 340282366920938463463374607431768211455");
+          throw new __compactRuntime.CompactError("crosschain.compact line 433 char 52: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 340282366920938463463374607431768211455");
         }
         return t1;
       })(newTotalSupply_0);
-      __compactRuntime__namespace.queryLedgerState(
+      __compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -5922,14 +5895,14 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_0.toValue(token_0),
               alignment: _descriptor_0.alignment()
             }).encode()
           } },
           { push: {
             storage: true,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_7.toValue(tmp_0),
               alignment: _descriptor_7.alignment()
             }).encode()
@@ -5948,7 +5921,7 @@ var Contract = class {
       partialProofData,
       color_0,
       amount_0,
-      this._right_0({ bytes: __compactRuntime__namespace.convertFieldToBytes(
+      this._right_0({ bytes: __compactRuntime.convertFieldToBytes(
         32,
         0n,
         "crosschain.compact line 440 char 98"
@@ -5964,7 +5937,7 @@ var Contract = class {
     return [];
   }
   _getFee_0(context, partialProofData, tokenPairId_0) {
-    const tokenPair_0 = _descriptor_14.fromValue(__compactRuntime__namespace.queryLedgerState(
+    const tokenPair_0 = _descriptor_14.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6010,7 +5983,7 @@ var Contract = class {
     ).value);
     if (this._equal_12(tokenPair_0.fee, 0n)) {
       let tmp_0;
-      if (tmp_0 = tokenPair_0.toChainId, _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+      if (tmp_0 = tokenPair_0.toChainId, _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -6037,7 +6010,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_3.toValue(tmp_0),
               alignment: _descriptor_3.alignment()
             }).encode()
@@ -6050,7 +6023,7 @@ var Contract = class {
         ]
       ).value)) {
         const tmp_1 = tokenPair_0.toChainId;
-        return _descriptor_7.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_7.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -6102,9 +6075,9 @@ var Contract = class {
     }
   }
   _transferOwner_0(context, partialProofData, newOwner_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._equal_13(
-        _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+        _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -6142,7 +6115,7 @@ var Contract = class {
       ),
       "only owner can transfer ownership"
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6161,14 +6134,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(13n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(newOwner_0),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -6180,9 +6153,9 @@ var Contract = class {
     return [];
   }
   _acceptOwner_0(context, partialProofData) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._equal_14(
-        _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+        _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -6220,7 +6193,7 @@ var Contract = class {
       ),
       "only pending owner can accept ownership"
     );
-    const tmp_0 = _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+    const tmp_0 = _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6251,7 +6224,7 @@ var Contract = class {
         } }
       ]
     ).value);
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6270,14 +6243,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(12n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(tmp_0),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -6289,14 +6262,14 @@ var Contract = class {
     return [];
   }
   _setFeeReceiver_0(context, partialProofData, newFeeReceiver_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._checkAdminAuthorized_0(
         context,
         partialProofData
       ),
       "not admin authorized"
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6315,14 +6288,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(6n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_6.toValue(newFeeReceiver_0),
             alignment: _descriptor_6.alignment()
           }).encode()
@@ -6334,14 +6307,14 @@ var Contract = class {
     return [];
   }
   _setTokenManager_0(context, partialProofData, newTokenManager_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._checkAdminAuthorized_0(
         context,
         partialProofData
       ),
       "not admin authorized"
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6360,14 +6333,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(4n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(newTokenManager_0),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -6379,15 +6352,15 @@ var Contract = class {
     return [];
   }
   _addAdmin_0(context, partialProofData, admin_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._checkAdminAuthorized_0(
         context,
         partialProofData
       ),
       "not admin authorized"
     );
-    __compactRuntime__namespace.assert(
-      !_descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      !_descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -6414,7 +6387,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_4.toValue(admin_0),
               alignment: _descriptor_4.alignment()
             }).encode()
@@ -6428,7 +6401,7 @@ var Contract = class {
       ).value),
       "admin already exists"
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6454,14 +6427,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(admin_0),
             alignment: _descriptor_4.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_2.toValue(true),
             alignment: _descriptor_2.alignment()
           }).encode()
@@ -6473,15 +6446,15 @@ var Contract = class {
     return [];
   }
   _removeAdmin_0(context, partialProofData, admin_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._checkAdminAuthorized_0(
         context,
         partialProofData
       ),
       "not admin authorized"
     );
-    __compactRuntime__namespace.assert(
-      _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -6508,7 +6481,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_4.toValue(admin_0),
               alignment: _descriptor_4.alignment()
             }).encode()
@@ -6522,7 +6495,7 @@ var Contract = class {
       ).value),
       "admin does not exist"
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6548,7 +6521,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(admin_0),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -6560,7 +6533,7 @@ var Contract = class {
     return [];
   }
   _setAdminThreshold_0(context, partialProofData, threshold_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._checkAdminAuthorized_0(
         context,
         partialProofData
@@ -6568,8 +6541,8 @@ var Contract = class {
       "not admin authorized"
     );
     let t_0;
-    __compactRuntime__namespace.assert(
-      (t_0 = threshold_0, t_0 <= _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      (t_0 = threshold_0, t_0 <= _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -6603,7 +6576,7 @@ var Contract = class {
       ).value)),
       "threshold must be less than or equal to the number of admins"
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6622,14 +6595,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(1n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(threshold_0),
             alignment: _descriptor_15.alignment()
           }).encode()
@@ -6641,14 +6614,14 @@ var Contract = class {
     return [];
   }
   _setSmgPksks_0(context, partialProofData, voters_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._checkAdminAuthorized_0(
         context,
         partialProofData
       ),
       "only owner can set smg pks"
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6667,15 +6640,15 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(0n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
@@ -6686,8 +6659,8 @@ var Contract = class {
       context,
       partialProofData,
       ((context2, partialProofData2, index_0, voter_0) => {
-        __compactRuntime__namespace.assert(
-          !_descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        __compactRuntime.assert(
+          !_descriptor_2.fromValue(__compactRuntime.queryLedgerState(
             context2,
             partialProofData2,
             [
@@ -6714,7 +6687,7 @@ var Contract = class {
               } },
               { push: {
                 storage: false,
-                value: __compactRuntime__namespace.StateValue.newCell({
+                value: __compactRuntime.StateValue.newCell({
                   value: _descriptor_4.toValue(voter_0),
                   alignment: _descriptor_4.alignment()
                 }).encode()
@@ -6729,7 +6702,7 @@ var Contract = class {
           "smg voter Repeatedly adding"
         );
         if (!this._equal_15(voter_0, { bytes: new Uint8Array(32) })) {
-          __compactRuntime__namespace.queryLedgerState(
+          __compactRuntime.queryLedgerState(
             context2,
             partialProofData2,
             [
@@ -6755,14 +6728,14 @@ var Contract = class {
               } },
               { push: {
                 storage: false,
-                value: __compactRuntime__namespace.StateValue.newCell({
+                value: __compactRuntime.StateValue.newCell({
                   value: _descriptor_4.toValue(voter_0),
                   alignment: _descriptor_4.alignment()
                 }).encode()
               } },
               { push: {
                 storage: true,
-                value: __compactRuntime__namespace.StateValue.newCell({
+                value: __compactRuntime.StateValue.newCell({
                   value: _descriptor_15.toValue(index_0),
                   alignment: _descriptor_15.alignment()
                 }).encode()
@@ -6779,7 +6752,7 @@ var Contract = class {
           );
           return ((t1) => {
             if (t1 > 255n) {
-              throw new __compactRuntime__namespace.CompactError("crosschain.compact line 527 char 14: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
+              throw new __compactRuntime.CompactError("crosschain.compact line 527 char 14: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
             }
             return t1;
           })(index_0 + 1n);
@@ -6794,11 +6767,11 @@ var Contract = class {
   }
   _updateSmgPk_0(context, partialProofData, newVoter_0) {
     let tmp_0;
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       (tmp_0 = this._ownPublicKey_0(
         context,
         partialProofData
-      ), _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+      ), _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -6825,7 +6798,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_4.toValue(tmp_0),
               alignment: _descriptor_4.alignment()
             }).encode()
@@ -6839,8 +6812,8 @@ var Contract = class {
       ).value)),
       "voter does not exist"
     );
-    __compactRuntime__namespace.assert(
-      !_descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      !_descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -6867,7 +6840,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_4.toValue(newVoter_0),
               alignment: _descriptor_4.alignment()
             }).encode()
@@ -6882,7 +6855,7 @@ var Contract = class {
       "the new voter exist"
     );
     let tmp_1;
-    const index_0 = (tmp_1 = this._ownPublicKey_0(context, partialProofData), _descriptor_15.fromValue(__compactRuntime__namespace.queryLedgerState(
+    const index_0 = (tmp_1 = this._ownPublicKey_0(context, partialProofData), _descriptor_15.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6927,7 +6900,7 @@ var Contract = class {
       ]
     ).value));
     const tmp_2 = this._ownPublicKey_0(context, partialProofData);
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6953,7 +6926,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(tmp_2),
             alignment: _descriptor_4.alignment()
           }).encode()
@@ -6962,7 +6935,7 @@ var Contract = class {
         { ins: { cached: true, n: 2 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -6988,14 +6961,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(newVoter_0),
             alignment: _descriptor_4.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(index_0),
             alignment: _descriptor_15.alignment()
           }).encode()
@@ -7008,7 +6981,7 @@ var Contract = class {
   }
   _checkAdminAuthorized_0(context, partialProofData) {
     const isOwner_0 = this._equal_16(
-      _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+      _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -7045,7 +7018,7 @@ var Contract = class {
       )
     );
     let t_0, tmp_1, tmp_0;
-    const isAdminAuthorized_0 = (tmp_0 = _descriptor_3.fromValue(__compactRuntime__namespace.queryLedgerState(
+    const isAdminAuthorized_0 = (tmp_0 = _descriptor_3.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7075,7 +7048,7 @@ var Contract = class {
           result: void 0
         } }
       ]
-    ).value), _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    ).value), _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7102,7 +7075,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(tmp_0),
             alignment: _descriptor_3.alignment()
           }).encode()
@@ -7113,7 +7086,7 @@ var Contract = class {
           result: void 0
         } }
       ]
-    ).value)) && (t_0 = (tmp_1 = _descriptor_3.fromValue(__compactRuntime__namespace.queryLedgerState(
+    ).value)) && (t_0 = (tmp_1 = _descriptor_3.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7143,7 +7116,7 @@ var Contract = class {
           result: void 0
         } }
       ]
-    ).value), _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+    ).value), _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7181,7 +7154,7 @@ var Contract = class {
           result: void 0
         } }
       ]
-    ).value)), t_0 >= _descriptor_15.fromValue(__compactRuntime__namespace.queryLedgerState(
+    ).value)), t_0 >= _descriptor_15.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7213,7 +7186,7 @@ var Contract = class {
       ]
     ).value));
     return isOwner_0 && this._equal_17(
-      _descriptor_15.fromValue(__compactRuntime__namespace.queryLedgerState(
+      _descriptor_15.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -7248,15 +7221,15 @@ var Contract = class {
     ) || isAdminAuthorized_0;
   }
   _setSmgPKThreold_0(context, partialProofData, threshold_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._checkAdminAuthorized_0(
         context,
         partialProofData
       ),
       "not admin authorized"
     );
-    __compactRuntime__namespace.assert(
-      threshold_0 <= _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      threshold_0 <= _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -7290,7 +7263,7 @@ var Contract = class {
       ).value),
       "threshold must be less than or equal to the number of smg pks"
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7309,14 +7282,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(7n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(threshold_0),
             alignment: _descriptor_15.alignment()
           }).encode()
@@ -7328,13 +7301,13 @@ var Contract = class {
     return [];
   }
   _setFeeCommonConfig_0(context, partialProofData, chainId_0, fee_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._equal_18(
         this._ownPublicKey_0(
           context,
           partialProofData
         ),
-        _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+        _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -7368,7 +7341,7 @@ var Contract = class {
       ),
       "not tokenManager"
     );
-    if (_descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    if (_descriptor_2.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7395,7 +7368,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(chainId_0),
             alignment: _descriptor_3.alignment()
           }).encode()
@@ -7407,7 +7380,7 @@ var Contract = class {
         } }
       ]
     ).value)) {
-      __compactRuntime__namespace.queryLedgerState(
+      __compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -7433,7 +7406,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_3.toValue(chainId_0),
               alignment: _descriptor_3.alignment()
             }).encode()
@@ -7443,7 +7416,7 @@ var Contract = class {
         ]
       );
     }
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7469,14 +7442,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(chainId_0),
             alignment: _descriptor_3.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_7.toValue(fee_0),
             alignment: _descriptor_7.alignment()
           }).encode()
@@ -7488,9 +7461,9 @@ var Contract = class {
     return [];
   }
   _addTokenPair_0(context, partialProofData, tokenPairId_0, pairInfo_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._equal_19(
-        _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+        _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -7528,8 +7501,8 @@ var Contract = class {
       ),
       "not authorized"
     );
-    __compactRuntime__namespace.assert(
-      !_descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      !_descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -7556,7 +7529,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_3.toValue(tokenPairId_0),
               alignment: _descriptor_3.alignment()
             }).encode()
@@ -7573,7 +7546,7 @@ var Contract = class {
     if (!this._equal_20(pairInfo_0.domainSep, new Uint8Array(32))) {
       const expectColor_0 = this._tokenType_0(
         pairInfo_0.domainSep,
-        _descriptor_13.fromValue(__compactRuntime__namespace.queryLedgerState(
+        _descriptor_13.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -7598,7 +7571,7 @@ var Contract = class {
           ]
         ).value)
       );
-      __compactRuntime__namespace.assert(
+      __compactRuntime.assert(
         this._equal_21(
           pairInfo_0.midnigthTokenAccount,
           expectColor_0
@@ -7606,7 +7579,7 @@ var Contract = class {
         "midnigthTokenAccount is not valid"
       );
     }
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7632,14 +7605,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(tokenPairId_0),
             alignment: _descriptor_3.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_14.toValue(pairInfo_0),
             alignment: _descriptor_14.alignment()
           }).encode()
@@ -7651,9 +7624,9 @@ var Contract = class {
     return [];
   }
   _removeTokenPair_0(context, partialProofData, tokenPairId_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._equal_22(
-        _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+        _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -7691,8 +7664,8 @@ var Contract = class {
       ),
       "not authorized"
     );
-    __compactRuntime__namespace.assert(
-      _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -7719,7 +7692,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_3.toValue(tokenPairId_0),
               alignment: _descriptor_3.alignment()
             }).encode()
@@ -7733,7 +7706,7 @@ var Contract = class {
       ).value),
       "token pair does not exist"
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7759,7 +7732,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(tokenPairId_0),
             alignment: _descriptor_3.alignment()
           }).encode()
@@ -7771,12 +7744,12 @@ var Contract = class {
     return [];
   }
   _newProposal_0(context, partialProofData, newProposal_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       newProposal_0.pType !== 6 && newProposal_0.pType !== 3,
       "ProposalType not supoorted"
     );
     const tmp_0 = 1n;
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7800,7 +7773,7 @@ var Contract = class {
             }
           ]
         } },
-        { addi: { immediate: parseInt(__compactRuntime__namespace.valueToBigInt(
+        { addi: { immediate: parseInt(__compactRuntime.valueToBigInt(
           {
             value: _descriptor_12.toValue(tmp_0),
             alignment: _descriptor_12.alignment()
@@ -7811,10 +7784,10 @@ var Contract = class {
     );
     const tmp_1 = ((t1) => {
       if (t1 > 4294967295n) {
-        throw new __compactRuntime__namespace.CompactError("crosschain.compact line 587 char 20: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
+        throw new __compactRuntime.CompactError("crosschain.compact line 587 char 20: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
       }
       return t1;
-    })(_descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+    })(_descriptor_1.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7845,7 +7818,7 @@ var Contract = class {
         } }
       ]
     ).value));
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7871,14 +7844,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(tmp_1),
             alignment: _descriptor_3.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_10.toValue(newProposal_0),
             alignment: _descriptor_10.alignment()
           }).encode()
@@ -7889,10 +7862,10 @@ var Contract = class {
     );
     const tmp_2 = ((t1) => {
       if (t1 > 4294967295n) {
-        throw new __compactRuntime__namespace.CompactError("crosschain.compact line 588 char 32: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
+        throw new __compactRuntime.CompactError("crosschain.compact line 588 char 32: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
       }
       return t1;
-    })(_descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+    })(_descriptor_1.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7923,7 +7896,7 @@ var Contract = class {
         } }
       ]
     ).value));
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -7949,15 +7922,15 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(tmp_2),
             alignment: _descriptor_3.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newMap(
-            new __compactRuntime__namespace.StateMap()
+          value: __compactRuntime.StateValue.newMap(
+            new __compactRuntime.StateMap()
           ).encode()
         } },
         { ins: { cached: false, n: 1 } },
@@ -7969,10 +7942,10 @@ var Contract = class {
       partialProofData,
       ((t1) => {
         if (t1 > 4294967295n) {
-          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 589 char 16: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
+          throw new __compactRuntime.CompactError("crosschain.compact line 589 char 16: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 4294967295");
         }
         return t1;
-      })(_descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+      })(_descriptor_1.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -8008,11 +7981,11 @@ var Contract = class {
   }
   _voteProposal_0(context, partialProofData, proposalId_0) {
     let tmp_0;
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       (tmp_0 = this._ownPublicKey_0(
         context,
         partialProofData
-      ), _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+      ), _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -8039,7 +8012,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_4.toValue(tmp_0),
               alignment: _descriptor_4.alignment()
             }).encode()
@@ -8053,8 +8026,8 @@ var Contract = class {
       ).value)),
       "only admin can vote proposal"
     );
-    __compactRuntime__namespace.assert(
-      _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -8081,7 +8054,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_3.toValue(proposalId_0),
               alignment: _descriptor_3.alignment()
             }).encode()
@@ -8096,7 +8069,7 @@ var Contract = class {
       "proposal does not exist"
     );
     const tmp_1 = this._ownPublicKey_0(context, partialProofData);
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -8129,14 +8102,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_4.toValue(tmp_1),
             alignment: _descriptor_4.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newNull().encode()
+          value: __compactRuntime.StateValue.newNull().encode()
         } },
         { ins: { cached: false, n: 1 } },
         { ins: { cached: true, n: 3 } }
@@ -8145,8 +8118,8 @@ var Contract = class {
     return [];
   }
   _executeProposal_0(context, partialProofData, proposalId_0) {
-    __compactRuntime__namespace.assert(
-      _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.assert(
+      _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -8173,7 +8146,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_3.toValue(proposalId_0),
               alignment: _descriptor_3.alignment()
             }).encode()
@@ -8187,7 +8160,7 @@ var Contract = class {
       ).value),
       "proposal does not exist"
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -8206,14 +8179,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(4n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(proposalId_0),
             alignment: _descriptor_3.alignment()
           }).encode()
@@ -8223,7 +8196,7 @@ var Contract = class {
       ]
     );
     let tmp_0;
-    const currentProposal_0 = (tmp_0 = _descriptor_3.fromValue(__compactRuntime__namespace.queryLedgerState(
+    const currentProposal_0 = (tmp_0 = _descriptor_3.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -8253,7 +8226,7 @@ var Contract = class {
           result: void 0
         } }
       ]
-    ).value), _descriptor_10.fromValue(__compactRuntime__namespace.queryLedgerState(
+    ).value), _descriptor_10.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -8323,7 +8296,7 @@ var Contract = class {
                 partialProofData,
                 ((t1) => {
                   if (t1 > 255n) {
-                    throw new __compactRuntime__namespace.CompactError("crosschain.compact line 617 char 23: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
+                    throw new __compactRuntime.CompactError("crosschain.compact line 617 char 23: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
                   }
                   return t1;
                 })(currentProposal_0.threshold)
@@ -8335,7 +8308,7 @@ var Contract = class {
                   partialProofData,
                   ((t1) => {
                     if (t1 > 255n) {
-                      throw new __compactRuntime__namespace.CompactError("crosschain.compact line 619 char 21: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
+                      throw new __compactRuntime.CompactError("crosschain.compact line 619 char 21: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 255");
                     }
                     return t1;
                   })(currentProposal_0.threshold)
@@ -8363,7 +8336,7 @@ var Contract = class {
         }
       }
     }
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -8389,7 +8362,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(proposalId_0),
             alignment: _descriptor_3.alignment()
           }).encode()
@@ -8398,7 +8371,7 @@ var Contract = class {
         { ins: { cached: true, n: 2 } }
       ]
     );
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -8424,7 +8397,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(proposalId_0),
             alignment: _descriptor_3.alignment()
           }).encode()
@@ -8434,7 +8407,7 @@ var Contract = class {
       ]
     );
     const tmp_1 = 0n;
-    __compactRuntime__namespace.queryLedgerState(
+    __compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -8453,14 +8426,14 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_15.toValue(4n),
             alignment: _descriptor_15.alignment()
           }).encode()
         } },
         { push: {
           storage: true,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_3.toValue(tmp_1),
             alignment: _descriptor_3.alignment()
           }).encode()
@@ -8470,7 +8443,7 @@ var Contract = class {
       ]
     );
     if (currentProposal_0.pType === 1) {
-      __compactRuntime__namespace.queryLedgerState(
+      __compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -8489,22 +8462,22 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_15.toValue(3n),
               alignment: _descriptor_15.alignment()
             }).encode()
           } },
           { push: {
             storage: true,
-            value: __compactRuntime__namespace.StateValue.newMap(
-              new __compactRuntime__namespace.StateMap()
+            value: __compactRuntime.StateValue.newMap(
+              new __compactRuntime.StateMap()
             ).encode()
           } },
           { ins: { cached: false, n: 1 } },
           { ins: { cached: true, n: 1 } }
         ]
       );
-      __compactRuntime__namespace.queryLedgerState(
+      __compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -8523,15 +8496,15 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_15.toValue(5n),
               alignment: _descriptor_15.alignment()
             }).encode()
           } },
           { push: {
             storage: true,
-            value: __compactRuntime__namespace.StateValue.newMap(
-              new __compactRuntime__namespace.StateMap()
+            value: __compactRuntime.StateValue.newMap(
+              new __compactRuntime.StateMap()
             ).encode()
           } },
           { ins: { cached: false, n: 1 } },
@@ -8542,9 +8515,9 @@ var Contract = class {
     return [];
   }
   _removeExpiredHisTxs_0(context, partialProofData, txs_0) {
-    __compactRuntime__namespace.assert(
+    __compactRuntime.assert(
       this._equal_23(
-        _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+        _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -8595,7 +8568,7 @@ var Contract = class {
     return [];
   }
   _removeExpiredHisTx_0(context, partialProofData, tx_0) {
-    if (_descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+    if (_descriptor_2.fromValue(__compactRuntime.queryLedgerState(
       context,
       partialProofData,
       [
@@ -8622,7 +8595,7 @@ var Contract = class {
         } },
         { push: {
           storage: false,
-          value: __compactRuntime__namespace.StateValue.newCell({
+          value: __compactRuntime.StateValue.newCell({
             value: _descriptor_0.toValue(tx_0),
             alignment: _descriptor_0.alignment()
           }).encode()
@@ -8638,10 +8611,10 @@ var Contract = class {
       partialProofData,
       ((t1) => {
         if (t1 > 18446744073709551615n) {
-          throw new __compactRuntime__namespace.CompactError("crosschain.compact line 644 char 51: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
+          throw new __compactRuntime.CompactError("crosschain.compact line 644 char 51: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
         }
         return t1;
-      })(_descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+      })(_descriptor_1.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -8686,7 +8659,7 @@ var Contract = class {
         ]
       ).value) + 3600n * 24n * 60n)
     )) {
-      __compactRuntime__namespace.queryLedgerState(
+      __compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -8712,7 +8685,7 @@ var Contract = class {
           } },
           { push: {
             storage: false,
-            value: __compactRuntime__namespace.StateValue.newCell({
+            value: __compactRuntime.StateValue.newCell({
               value: _descriptor_0.toValue(tx_0),
               alignment: _descriptor_0.alignment()
             }).encode()
@@ -8920,11 +8893,11 @@ var Contract = class {
   }
 };
 function ledger2(stateOrChargedState) {
-  const state = stateOrChargedState instanceof __compactRuntime__namespace.StateValue ? stateOrChargedState : stateOrChargedState.state;
-  const chargedState = stateOrChargedState instanceof __compactRuntime__namespace.StateValue ? new __compactRuntime__namespace.ChargedState(stateOrChargedState) : stateOrChargedState;
+  const state = stateOrChargedState instanceof __compactRuntime.StateValue ? stateOrChargedState : stateOrChargedState.state;
+  const chargedState = stateOrChargedState instanceof __compactRuntime.StateValue ? new __compactRuntime.ChargedState(stateOrChargedState) : stateOrChargedState;
   const context = {
-    currentQueryContext: new __compactRuntime__namespace.QueryContext(chargedState, __compactRuntime__namespace.dummyContractAddress()),
-    costModel: __compactRuntime__namespace.CostModel.initialCostModel()
+    currentQueryContext: new __compactRuntime.QueryContext(chargedState, __compactRuntime.dummyContractAddress()),
+    costModel: __compactRuntime.CostModel.initialCostModel()
   };
   const partialProofData = {
     input: { value: [], alignment: [] },
@@ -8936,9 +8909,9 @@ function ledger2(stateOrChargedState) {
     smgTxSigners: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -8966,7 +8939,7 @@ function ledger2(stateOrChargedState) {
             "size",
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_1.toValue(0n),
                 alignment: _descriptor_1.alignment()
               }).encode()
@@ -8981,9 +8954,9 @@ function ledger2(stateOrChargedState) {
       },
       size(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9018,11 +8991,11 @@ function ledger2(stateOrChargedState) {
       },
       member(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "object" && key_0.bytes.buffer instanceof ArrayBuffer && key_0.bytes.BYTES_PER_ELEMENT === 1 && key_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "member",
             "argument 1",
             "crosschain.compact line 28 char 1",
@@ -9030,7 +9003,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9057,7 +9030,7 @@ function ledger2(stateOrChargedState) {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_4.toValue(key_0),
                 alignment: _descriptor_4.alignment()
               }).encode()
@@ -9072,11 +9045,11 @@ function ledger2(stateOrChargedState) {
       },
       lookup(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "object" && key_0.bytes.buffer instanceof ArrayBuffer && key_0.bytes.BYTES_PER_ELEMENT === 1 && key_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "lookup",
             "argument 1",
             "crosschain.compact line 28 char 1",
@@ -9084,7 +9057,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_15.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_15.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9131,7 +9104,7 @@ function ledger2(stateOrChargedState) {
       },
       [Symbol.iterator](...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
         }
         const self_0 = state.asArray()[0].asArray()[0];
         return self_0.asMap().keys().map((key) => {
@@ -9141,7 +9114,7 @@ function ledger2(stateOrChargedState) {
       }
     },
     get latestOutBoundCrosstxInfo() {
-      return _descriptor_22.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_22.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -9174,7 +9147,7 @@ function ledger2(stateOrChargedState) {
       ).value);
     },
     get currentExecuteCrossProposal() {
-      return _descriptor_17.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_17.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -9209,9 +9182,9 @@ function ledger2(stateOrChargedState) {
     tokenPairs: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9239,7 +9212,7 @@ function ledger2(stateOrChargedState) {
             "size",
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_1.toValue(0n),
                 alignment: _descriptor_1.alignment()
               }).encode()
@@ -9254,9 +9227,9 @@ function ledger2(stateOrChargedState) {
       },
       size(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9291,11 +9264,11 @@ function ledger2(stateOrChargedState) {
       },
       member(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "bigint" && key_0 >= 0n && key_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "member",
             "argument 1",
             "crosschain.compact line 34 char 1",
@@ -9303,7 +9276,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9330,7 +9303,7 @@ function ledger2(stateOrChargedState) {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_3.toValue(key_0),
                 alignment: _descriptor_3.alignment()
               }).encode()
@@ -9345,11 +9318,11 @@ function ledger2(stateOrChargedState) {
       },
       lookup(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "bigint" && key_0 >= 0n && key_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "lookup",
             "argument 1",
             "crosschain.compact line 34 char 1",
@@ -9357,7 +9330,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_14.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_14.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9404,7 +9377,7 @@ function ledger2(stateOrChargedState) {
       },
       [Symbol.iterator](...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
         }
         const self_0 = state.asArray()[0].asArray()[3];
         return self_0.asMap().keys().map((key) => {
@@ -9414,7 +9387,7 @@ function ledger2(stateOrChargedState) {
       }
     },
     get tokenManager() {
-      return _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -9449,9 +9422,9 @@ function ledger2(stateOrChargedState) {
     feeCommonConfig: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9479,7 +9452,7 @@ function ledger2(stateOrChargedState) {
             "size",
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_1.toValue(0n),
                 alignment: _descriptor_1.alignment()
               }).encode()
@@ -9494,9 +9467,9 @@ function ledger2(stateOrChargedState) {
       },
       size(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9531,11 +9504,11 @@ function ledger2(stateOrChargedState) {
       },
       member(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "bigint" && key_0 >= 0n && key_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "member",
             "argument 1",
             "crosschain.compact line 38 char 1",
@@ -9543,7 +9516,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9570,7 +9543,7 @@ function ledger2(stateOrChargedState) {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_3.toValue(key_0),
                 alignment: _descriptor_3.alignment()
               }).encode()
@@ -9585,11 +9558,11 @@ function ledger2(stateOrChargedState) {
       },
       lookup(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "bigint" && key_0 >= 0n && key_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "lookup",
             "argument 1",
             "crosschain.compact line 38 char 1",
@@ -9597,7 +9570,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_7.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_7.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9644,7 +9617,7 @@ function ledger2(stateOrChargedState) {
       },
       [Symbol.iterator](...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
         }
         const self_0 = state.asArray()[0].asArray()[5];
         return self_0.asMap().keys().map((key) => {
@@ -9654,7 +9627,7 @@ function ledger2(stateOrChargedState) {
       }
     },
     get feeReceiver() {
-      return _descriptor_6.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_6.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -9687,7 +9660,7 @@ function ledger2(stateOrChargedState) {
       ).value);
     },
     get smgPKThreshold() {
-      return _descriptor_15.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_15.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -9722,9 +9695,9 @@ function ledger2(stateOrChargedState) {
     admins: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9752,7 +9725,7 @@ function ledger2(stateOrChargedState) {
             "size",
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_1.toValue(0n),
                 alignment: _descriptor_1.alignment()
               }).encode()
@@ -9767,9 +9740,9 @@ function ledger2(stateOrChargedState) {
       },
       size(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9804,11 +9777,11 @@ function ledger2(stateOrChargedState) {
       },
       member(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "object" && key_0.bytes.buffer instanceof ArrayBuffer && key_0.bytes.BYTES_PER_ELEMENT === 1 && key_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "member",
             "argument 1",
             "crosschain.compact line 46 char 1",
@@ -9816,7 +9789,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9843,7 +9816,7 @@ function ledger2(stateOrChargedState) {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_4.toValue(key_0),
                 alignment: _descriptor_4.alignment()
               }).encode()
@@ -9858,11 +9831,11 @@ function ledger2(stateOrChargedState) {
       },
       lookup(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "object" && key_0.bytes.buffer instanceof ArrayBuffer && key_0.bytes.BYTES_PER_ELEMENT === 1 && key_0.bytes.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "lookup",
             "argument 1",
             "crosschain.compact line 46 char 1",
@@ -9870,7 +9843,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -9917,7 +9890,7 @@ function ledger2(stateOrChargedState) {
       },
       [Symbol.iterator](...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
         }
         const self_0 = state.asArray()[1].asArray()[0];
         return self_0.asMap().keys().map((key) => {
@@ -9927,7 +9900,7 @@ function ledger2(stateOrChargedState) {
       }
     },
     get adminThreshold() {
-      return _descriptor_15.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_15.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -9960,7 +9933,7 @@ function ledger2(stateOrChargedState) {
       ).value);
     },
     get proposalId() {
-      return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -9995,9 +9968,9 @@ function ledger2(stateOrChargedState) {
     proposals: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10025,7 +9998,7 @@ function ledger2(stateOrChargedState) {
             "size",
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_1.toValue(0n),
                 alignment: _descriptor_1.alignment()
               }).encode()
@@ -10040,9 +10013,9 @@ function ledger2(stateOrChargedState) {
       },
       size(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10077,11 +10050,11 @@ function ledger2(stateOrChargedState) {
       },
       member(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "bigint" && key_0 >= 0n && key_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "member",
             "argument 1",
             "crosschain.compact line 51 char 1",
@@ -10089,7 +10062,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10116,7 +10089,7 @@ function ledger2(stateOrChargedState) {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_3.toValue(key_0),
                 alignment: _descriptor_3.alignment()
               }).encode()
@@ -10131,11 +10104,11 @@ function ledger2(stateOrChargedState) {
       },
       lookup(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "bigint" && key_0 >= 0n && key_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "lookup",
             "argument 1",
             "crosschain.compact line 51 char 1",
@@ -10143,7 +10116,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_10.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_10.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10190,7 +10163,7 @@ function ledger2(stateOrChargedState) {
       },
       [Symbol.iterator](...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
         }
         const self_0 = state.asArray()[1].asArray()[3];
         return self_0.asMap().keys().map((key) => {
@@ -10200,7 +10173,7 @@ function ledger2(stateOrChargedState) {
       }
     },
     get currentExcuteProposalId() {
-      return _descriptor_3.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_3.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -10235,9 +10208,9 @@ function ledger2(stateOrChargedState) {
     proposalVoters: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10265,7 +10238,7 @@ function ledger2(stateOrChargedState) {
             "size",
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_1.toValue(0n),
                 alignment: _descriptor_1.alignment()
               }).encode()
@@ -10280,9 +10253,9 @@ function ledger2(stateOrChargedState) {
       },
       size(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10317,11 +10290,11 @@ function ledger2(stateOrChargedState) {
       },
       member(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "bigint" && key_0 >= 0n && key_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "member",
             "argument 1",
             "crosschain.compact line 53 char 1",
@@ -10329,7 +10302,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10356,7 +10329,7 @@ function ledger2(stateOrChargedState) {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_3.toValue(key_0),
                 alignment: _descriptor_3.alignment()
               }).encode()
@@ -10371,11 +10344,11 @@ function ledger2(stateOrChargedState) {
       },
       lookup(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(typeof key_0 === "bigint" && key_0 >= 0n && key_0 <= 4294967295n)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "lookup",
             "argument 1",
             "crosschain.compact line 53 char 1",
@@ -10387,14 +10360,14 @@ function ledger2(stateOrChargedState) {
           value: _descriptor_3.toValue(key_0),
           alignment: _descriptor_3.alignment()
         }) === void 0) {
-          throw new __compactRuntime__namespace.CompactError(`Map value undefined for ${key_0}`);
+          throw new __compactRuntime.CompactError(`Map value undefined for ${key_0}`);
         }
         return {
           isEmpty(...args_1) {
             if (args_1.length !== 0) {
-              throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_1.length}`);
+              throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_1.length}`);
             }
-            return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+            return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
               context,
               partialProofData,
               [
@@ -10429,7 +10402,7 @@ function ledger2(stateOrChargedState) {
                 "size",
                 { push: {
                   storage: false,
-                  value: __compactRuntime__namespace.StateValue.newCell({
+                  value: __compactRuntime.StateValue.newCell({
                     value: _descriptor_1.toValue(0n),
                     alignment: _descriptor_1.alignment()
                   }).encode()
@@ -10444,9 +10417,9 @@ function ledger2(stateOrChargedState) {
           },
           size(...args_1) {
             if (args_1.length !== 0) {
-              throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_1.length}`);
+              throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_1.length}`);
             }
-            return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+            return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
               context,
               partialProofData,
               [
@@ -10488,11 +10461,11 @@ function ledger2(stateOrChargedState) {
           },
           member(...args_1) {
             if (args_1.length !== 1) {
-              throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_1.length}`);
+              throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_1.length}`);
             }
             const elem_0 = args_1[0];
             if (!(typeof elem_0 === "object" && elem_0.bytes.buffer instanceof ArrayBuffer && elem_0.bytes.BYTES_PER_ELEMENT === 1 && elem_0.bytes.length === 32)) {
-              __compactRuntime__namespace.typeError(
+              __compactRuntime.typeError(
                 "member",
                 "argument 1",
                 "crosschain.compact line 53 char 45",
@@ -10500,7 +10473,7 @@ function ledger2(stateOrChargedState) {
                 elem_0
               );
             }
-            return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+            return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
               context,
               partialProofData,
               [
@@ -10534,7 +10507,7 @@ function ledger2(stateOrChargedState) {
                 } },
                 { push: {
                   storage: false,
-                  value: __compactRuntime__namespace.StateValue.newCell({
+                  value: __compactRuntime.StateValue.newCell({
                     value: _descriptor_4.toValue(elem_0),
                     alignment: _descriptor_4.alignment()
                   }).encode()
@@ -10549,7 +10522,7 @@ function ledger2(stateOrChargedState) {
           },
           [Symbol.iterator](...args_1) {
             if (args_1.length !== 0) {
-              throw new __compactRuntime__namespace.CompactError(`iter: expected 0 arguments, received ${args_1.length}`);
+              throw new __compactRuntime.CompactError(`iter: expected 0 arguments, received ${args_1.length}`);
             }
             const self_0 = state.asArray()[1].asArray()[5].asMap().get({
               value: _descriptor_3.toValue(key_0),
@@ -10563,9 +10536,9 @@ function ledger2(stateOrChargedState) {
     crossProposal: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10593,7 +10566,7 @@ function ledger2(stateOrChargedState) {
             "size",
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_1.toValue(0n),
                 alignment: _descriptor_1.alignment()
               }).encode()
@@ -10608,9 +10581,9 @@ function ledger2(stateOrChargedState) {
       },
       size(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10645,11 +10618,11 @@ function ledger2(stateOrChargedState) {
       },
       member(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "member",
             "argument 1",
             "crosschain.compact line 56 char 1",
@@ -10657,7 +10630,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10684,7 +10657,7 @@ function ledger2(stateOrChargedState) {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_0.toValue(key_0),
                 alignment: _descriptor_0.alignment()
               }).encode()
@@ -10699,11 +10672,11 @@ function ledger2(stateOrChargedState) {
       },
       lookup(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "lookup",
             "argument 1",
             "crosschain.compact line 56 char 1",
@@ -10711,7 +10684,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_16.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_16.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10758,7 +10731,7 @@ function ledger2(stateOrChargedState) {
       },
       [Symbol.iterator](...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
         }
         const self_0 = state.asArray()[1].asArray()[6];
         return self_0.asMap().keys().map((key) => {
@@ -10770,9 +10743,9 @@ function ledger2(stateOrChargedState) {
     crossProposalVoters: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10800,7 +10773,7 @@ function ledger2(stateOrChargedState) {
             "size",
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_1.toValue(0n),
                 alignment: _descriptor_1.alignment()
               }).encode()
@@ -10815,9 +10788,9 @@ function ledger2(stateOrChargedState) {
       },
       size(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10852,11 +10825,11 @@ function ledger2(stateOrChargedState) {
       },
       member(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "member",
             "argument 1",
             "crosschain.compact line 57 char 1",
@@ -10864,7 +10837,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -10891,7 +10864,7 @@ function ledger2(stateOrChargedState) {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_0.toValue(key_0),
                 alignment: _descriptor_0.alignment()
               }).encode()
@@ -10906,11 +10879,11 @@ function ledger2(stateOrChargedState) {
       },
       lookup(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "lookup",
             "argument 1",
             "crosschain.compact line 57 char 1",
@@ -10922,14 +10895,14 @@ function ledger2(stateOrChargedState) {
           value: _descriptor_0.toValue(key_0),
           alignment: _descriptor_0.alignment()
         }) === void 0) {
-          throw new __compactRuntime__namespace.CompactError(`Map value undefined for ${key_0}`);
+          throw new __compactRuntime.CompactError(`Map value undefined for ${key_0}`);
         }
         return {
           isEmpty(...args_1) {
             if (args_1.length !== 0) {
-              throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_1.length}`);
+              throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_1.length}`);
             }
-            return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+            return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
               context,
               partialProofData,
               [
@@ -10964,7 +10937,7 @@ function ledger2(stateOrChargedState) {
                 "size",
                 { push: {
                   storage: false,
-                  value: __compactRuntime__namespace.StateValue.newCell({
+                  value: __compactRuntime.StateValue.newCell({
                     value: _descriptor_1.toValue(0n),
                     alignment: _descriptor_1.alignment()
                   }).encode()
@@ -10979,9 +10952,9 @@ function ledger2(stateOrChargedState) {
           },
           size(...args_1) {
             if (args_1.length !== 0) {
-              throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_1.length}`);
+              throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_1.length}`);
             }
-            return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+            return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
               context,
               partialProofData,
               [
@@ -11023,11 +10996,11 @@ function ledger2(stateOrChargedState) {
           },
           member(...args_1) {
             if (args_1.length !== 1) {
-              throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_1.length}`);
+              throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_1.length}`);
             }
             const elem_0 = args_1[0];
             if (!(typeof elem_0 === "bigint" && elem_0 >= 0n && elem_0 <= 255n)) {
-              __compactRuntime__namespace.typeError(
+              __compactRuntime.typeError(
                 "member",
                 "argument 1",
                 "crosschain.compact line 57 char 51",
@@ -11035,7 +11008,7 @@ function ledger2(stateOrChargedState) {
                 elem_0
               );
             }
-            return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+            return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
               context,
               partialProofData,
               [
@@ -11069,7 +11042,7 @@ function ledger2(stateOrChargedState) {
                 } },
                 { push: {
                   storage: false,
-                  value: __compactRuntime__namespace.StateValue.newCell({
+                  value: __compactRuntime.StateValue.newCell({
                     value: _descriptor_15.toValue(elem_0),
                     alignment: _descriptor_15.alignment()
                   }).encode()
@@ -11084,7 +11057,7 @@ function ledger2(stateOrChargedState) {
           },
           [Symbol.iterator](...args_1) {
             if (args_1.length !== 0) {
-              throw new __compactRuntime__namespace.CompactError(`iter: expected 0 arguments, received ${args_1.length}`);
+              throw new __compactRuntime.CompactError(`iter: expected 0 arguments, received ${args_1.length}`);
             }
             const self_0 = state.asArray()[1].asArray()[7].asMap().get({
               value: _descriptor_0.toValue(key_0),
@@ -11098,9 +11071,9 @@ function ledger2(stateOrChargedState) {
     crossProposalHis: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11128,7 +11101,7 @@ function ledger2(stateOrChargedState) {
             "size",
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_1.toValue(0n),
                 alignment: _descriptor_1.alignment()
               }).encode()
@@ -11143,9 +11116,9 @@ function ledger2(stateOrChargedState) {
       },
       size(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11180,11 +11153,11 @@ function ledger2(stateOrChargedState) {
       },
       member(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "member",
             "argument 1",
             "crosschain.compact line 58 char 1",
@@ -11192,7 +11165,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11219,7 +11192,7 @@ function ledger2(stateOrChargedState) {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_0.toValue(key_0),
                 alignment: _descriptor_0.alignment()
               }).encode()
@@ -11234,11 +11207,11 @@ function ledger2(stateOrChargedState) {
       },
       lookup(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "lookup",
             "argument 1",
             "crosschain.compact line 58 char 1",
@@ -11246,7 +11219,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11293,7 +11266,7 @@ function ledger2(stateOrChargedState) {
       },
       [Symbol.iterator](...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
         }
         const self_0 = state.asArray()[1].asArray()[8];
         return self_0.asMap().keys().map((key) => {
@@ -11305,9 +11278,9 @@ function ledger2(stateOrChargedState) {
     reserveOfAllToken: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11335,7 +11308,7 @@ function ledger2(stateOrChargedState) {
             "size",
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_1.toValue(0n),
                 alignment: _descriptor_1.alignment()
               }).encode()
@@ -11350,9 +11323,9 @@ function ledger2(stateOrChargedState) {
       },
       size(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11387,11 +11360,11 @@ function ledger2(stateOrChargedState) {
       },
       member(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "member",
             "argument 1",
             "crosschain.compact line 60 char 1",
@@ -11399,7 +11372,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11426,7 +11399,7 @@ function ledger2(stateOrChargedState) {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_0.toValue(key_0),
                 alignment: _descriptor_0.alignment()
               }).encode()
@@ -11441,11 +11414,11 @@ function ledger2(stateOrChargedState) {
       },
       lookup(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "lookup",
             "argument 1",
             "crosschain.compact line 60 char 1",
@@ -11453,7 +11426,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_20.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_20.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11500,7 +11473,7 @@ function ledger2(stateOrChargedState) {
       },
       [Symbol.iterator](...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
         }
         const self_0 = state.asArray()[1].asArray()[9];
         return self_0.asMap().keys().map((key) => {
@@ -11512,9 +11485,9 @@ function ledger2(stateOrChargedState) {
     mappingTokenTotalSupply: {
       isEmpty(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`isEmpty: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11542,7 +11515,7 @@ function ledger2(stateOrChargedState) {
             "size",
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_1.toValue(0n),
                 alignment: _descriptor_1.alignment()
               }).encode()
@@ -11557,9 +11530,9 @@ function ledger2(stateOrChargedState) {
       },
       size(...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`size: expected 0 arguments, received ${args_0.length}`);
         }
-        return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11594,11 +11567,11 @@ function ledger2(stateOrChargedState) {
       },
       member(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`member: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`member: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "member",
             "argument 1",
             "crosschain.compact line 64 char 1",
@@ -11606,7 +11579,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_2.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_2.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11633,7 +11606,7 @@ function ledger2(stateOrChargedState) {
             } },
             { push: {
               storage: false,
-              value: __compactRuntime__namespace.StateValue.newCell({
+              value: __compactRuntime.StateValue.newCell({
                 value: _descriptor_0.toValue(key_0),
                 alignment: _descriptor_0.alignment()
               }).encode()
@@ -11648,11 +11621,11 @@ function ledger2(stateOrChargedState) {
       },
       lookup(...args_0) {
         if (args_0.length !== 1) {
-          throw new __compactRuntime__namespace.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`lookup: expected 1 argument, received ${args_0.length}`);
         }
         const key_0 = args_0[0];
         if (!(key_0.buffer instanceof ArrayBuffer && key_0.BYTES_PER_ELEMENT === 1 && key_0.length === 32)) {
-          __compactRuntime__namespace.typeError(
+          __compactRuntime.typeError(
             "lookup",
             "argument 1",
             "crosschain.compact line 64 char 1",
@@ -11660,7 +11633,7 @@ function ledger2(stateOrChargedState) {
             key_0
           );
         }
-        return _descriptor_7.fromValue(__compactRuntime__namespace.queryLedgerState(
+        return _descriptor_7.fromValue(__compactRuntime.queryLedgerState(
           context,
           partialProofData,
           [
@@ -11707,7 +11680,7 @@ function ledger2(stateOrChargedState) {
       },
       [Symbol.iterator](...args_0) {
         if (args_0.length !== 0) {
-          throw new __compactRuntime__namespace.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
+          throw new __compactRuntime.CompactError(`iter: expected 0 arguments, received ${args_0.length}`);
         }
         const self_0 = state.asArray()[1].asArray()[10];
         return self_0.asMap().keys().map((key) => {
@@ -11717,7 +11690,7 @@ function ledger2(stateOrChargedState) {
       }
     },
     get round() {
-      return _descriptor_1.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_1.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -11750,7 +11723,7 @@ function ledger2(stateOrChargedState) {
       ).value);
     },
     get owner() {
-      return _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -11783,7 +11756,7 @@ function ledger2(stateOrChargedState) {
       ).value);
     },
     get pendingOwner() {
-      return _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -11816,7 +11789,7 @@ function ledger2(stateOrChargedState) {
       ).value);
     },
     get worker() {
-      return _descriptor_4.fromValue(__compactRuntime__namespace.queryLedgerState(
+      return _descriptor_4.fromValue(__compactRuntime.queryLedgerState(
         context,
         partialProofData,
         [
@@ -11851,28 +11824,28 @@ function ledger2(stateOrChargedState) {
   };
 }
 ({
-  currentQueryContext: new __compactRuntime__namespace.QueryContext(new __compactRuntime__namespace.ContractState().data, __compactRuntime__namespace.dummyContractAddress())
+  currentQueryContext: new __compactRuntime.QueryContext(new __compactRuntime.ContractState().data, __compactRuntime.dummyContractAddress())
 });
 new Contract({});
 var CrossChainPrivateStateId = "crossChainPrivateState";
 function getDirname() {
-  if (typeof (typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href)) === "string") {
-    const ret = path__default.default.resolve(url.fileURLToPath((typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href))), "..");
+  if (typeof import.meta?.url === "string") {
+    const ret = path.resolve(fileURLToPath(import.meta.url), "..");
     return ret;
   }
-  return path__default.default.resolve(__dirname, "..");
+  return path.resolve(__dirname, "..");
 }
 var currentDir = getDirname();
 console.log("currentDir===>", currentDir);
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
-  zkConfigPath: path__default.default.resolve(currentDir, "managed", "crosschain")
+  zkConfigPath: path.resolve(currentDir, "managed", "crosschain")
 };
 var fromHexWithOrNoPrefix = (hex) => {
   if (hex.startsWith("0x")) {
-    return midnightJsUtils.fromHex(hex.slice(2));
+    return fromHex(hex.slice(2));
   }
-  return midnightJsUtils.fromHex(hex);
+  return fromHex(hex);
 };
 function pad(s, n) {
   const encoder = new TextEncoder();
@@ -11885,14 +11858,14 @@ function pad(s, n) {
   return paddedArray;
 }
 var crosschainContractInstance = new Contract(witnesses);
-var CompiledSimpleContract = compactJs.CompiledContract.make("CrossChain", Contract).pipe(
-  compactJs.CompiledContract.withWitnesses(witnesses),
-  compactJs.CompiledContract.withCompiledFileAssets(path__default.default.resolve(currentDir, "managed", "crosschain"))
+var CompiledSimpleContract = CompiledContract.make("CrossChain", Contract).pipe(
+  CompiledContract.withWitnesses(witnesses),
+  CompiledContract.withCompiledFileAssets(path.resolve(currentDir, "managed", "crosschain"))
 );
 var createWalletAndMidnightProvider = async (wallet) => {
   const walletFacade = wallet.getWalletInstance();
-  assert3__default.default(walletFacade, "wallet not initialized");
-  const state = await Rx__namespace.firstValueFrom(walletFacade.state().pipe(Rx__namespace.filter((s) => s.isSynced)));
+  assert3(walletFacade, "wallet not initialized");
+  const state = await Rx.firstValueFrom(walletFacade.state().pipe(Rx.filter((s) => s.isSynced)));
   return {
     getCoinPublicKey: () => state.shielded.coinPublicKey.toHexString(),
     getEncryptionPublicKey: () => state.shielded.encryptionPublicKey.toHexString(),
@@ -11916,16 +11889,16 @@ var createWalletAndMidnightProvider = async (wallet) => {
 };
 var createCrossChainProviders = async (config, wallet) => {
   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-  const zkConfigProvider = new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath);
+  const zkConfigProvider = new NodeZkConfigProvider(ZKConfig.zkConfigPath);
   return {
-    privateStateProvider: midnightJsLevelPrivateStateProvider.levelPrivateStateProvider({
+    privateStateProvider: levelPrivateStateProvider({
       privateStateStoreName: "CCPSSN",
       privateStoragePasswordProvider: () => "Pwd_" + wallet.getUnshieldedKeystore().getSecretKey().toString("hex"),
       accountId: wallet.getUnshieldedKeystore().getPublicKey()
     }),
-    publicDataProvider: midnightJsIndexerPublicDataProvider.indexerPublicDataProvider(config.indexer, config.indexerWS),
-    zkConfigProvider: new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath),
-    proofProvider: midnightJsHttpClientProofProvider.httpClientProofProvider(config.proofServer, zkConfigProvider),
+    publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+    zkConfigProvider: new NodeZkConfigProvider(ZKConfig.zkConfigPath),
+    proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
     walletProvider: walletAndMidnightProvider,
     midnightProvider: walletAndMidnightProvider
   };
@@ -11941,16 +11914,16 @@ var CrossChainApi = class _CrossChainApi {
   }
   async init(config, wallet) {
     const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-    const zkConfigProvider = new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath);
+    const zkConfigProvider = new NodeZkConfigProvider(ZKConfig.zkConfigPath);
     this.providers = {
-      privateStateProvider: midnightJsLevelPrivateStateProvider.levelPrivateStateProvider({
+      privateStateProvider: levelPrivateStateProvider({
         privateStateStoreName: "CCPSSN",
         privateStoragePasswordProvider: () => "Pwd_" + wallet.getUnshieldedKeystore().getSecretKey().toString("hex"),
         accountId: wallet.getUnshieldedKeystore().getPublicKey()
       }),
-      publicDataProvider: midnightJsIndexerPublicDataProvider.indexerPublicDataProvider(config.indexer, config.indexerWS),
-      zkConfigProvider: new midnightJsNodeZkConfigProvider.NodeZkConfigProvider(ZKConfig.zkConfigPath),
-      proofProvider: midnightJsHttpClientProofProvider.httpClientProofProvider(config.proofServer, zkConfigProvider),
+      publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+      zkConfigProvider: new NodeZkConfigProvider(ZKConfig.zkConfigPath),
+      proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
       walletProvider: walletAndMidnightProvider,
       midnightProvider: walletAndMidnightProvider
     };
@@ -11965,7 +11938,7 @@ var CrossChainApi = class _CrossChainApi {
   }
   async deployContract(adminThreshold, smgPkThreshold, feeReceiver, signingKey) {
     const feeReceiver_0 = { bytes: getUserAddressFromUnshieldAddress(feeReceiver) };
-    this.crossChainContract = await midnightJsContracts.deployContract(this.providers, {
+    this.crossChainContract = await deployContract(this.providers, {
       compiledContract: CompiledSimpleContract,
       privateStateId: CrossChainPrivateStateId,
       initialPrivateState: {},
@@ -11975,7 +11948,7 @@ var CrossChainApi = class _CrossChainApi {
     return this.crossChainContract.deployTxData.public.contractAddress;
   }
   async join(contractAddress) {
-    this.crossChainContract = await midnightJsContracts.findDeployedContract(this.providers, {
+    this.crossChainContract = await findDeployedContract(this.providers, {
       contractAddress,
       compiledContract: CompiledSimpleContract,
       privateStateId: CrossChainPrivateStateId,
@@ -11984,9 +11957,9 @@ var CrossChainApi = class _CrossChainApi {
   }
   checkCrossData(uniqueId, smgId, tokenPairId, amount, fee, toAddr, coins, ttl) {
     const uniqueId_0 = Buffer.from(uniqueId, "hex");
-    assert3__default.default(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
+    assert3(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
     const smgId_0 = Buffer.from(smgId, "hex");
-    assert3__default.default(smgId_0.length === 32, `smgId must be 32 bytes long`);
+    assert3(smgId_0.length === 32, `smgId must be 32 bytes long`);
     const tokenPairId_0 = BigInt(tokenPairId);
     const amount_0 = BigInt(amount);
     const fee_0 = BigInt(fee);
@@ -12037,8 +12010,8 @@ var CrossChainApi = class _CrossChainApi {
     if (ledger3.crossProposal.member(uniquId_0)) {
       const crossTxInfo = ledger3.crossProposal.lookup(uniquId_0);
       return {
-        smgId: midnightJsUtils.toHex(crossTxInfo.smgId),
-        token: midnightJsUtils.toHex(crossTxInfo.token),
+        smgId: toHex(crossTxInfo.smgId),
+        token: toHex(crossTxInfo.token),
         tokenPairId: crossTxInfo.tokenPairId.toString(10),
         amount: crossTxInfo.amount.toString(10),
         fee: crossTxInfo.fee.toString(10),
@@ -12048,20 +12021,20 @@ var CrossChainApi = class _CrossChainApi {
     }
   }
   static parseContractState(stateHex) {
-    const state = __compactRuntime.ContractState.deserialize(Buffer.from(stateHex, "hex"));
+    const state = ContractState.deserialize(Buffer.from(stateHex, "hex"));
     return ledger2(state.data);
   }
   static currentExecuteCrossProposal(ledger3) {
     const smgEvent = ledger3.currentExecuteCrossProposal;
     return {
-      smgId: midnightJsUtils.toHex(smgEvent.crossProposal.smgId),
-      uniqueId: midnightJsUtils.toHex(smgEvent.uniqueId),
-      token: midnightJsUtils.toHex(smgEvent.crossProposal.token),
+      smgId: toHex(smgEvent.crossProposal.smgId),
+      uniqueId: toHex(smgEvent.uniqueId),
+      token: toHex(smgEvent.crossProposal.token),
       tokenPairId: smgEvent.crossProposal.tokenPairId.toString(10),
       isMappingToken: smgEvent.crossProposal.isMappingToken,
       amount: smgEvent.crossProposal.amount.toString(10),
       fee: smgEvent.crossProposal.fee.toString(10),
-      toAddr: midnightJsUtils.toHex(smgEvent.crossProposal.toAddr.bytes),
+      toAddr: toHex(smgEvent.crossProposal.toAddr.bytes),
       ttl: smgEvent.crossProposal.ttl.toString(10)
     };
   }
@@ -12070,8 +12043,8 @@ var CrossChainApi = class _CrossChainApi {
       return;
     } else {
       return {
-        smgId: midnightJsUtils.toHex(ledger3.latestOutBoundCrosstxInfo.smgId),
-        fromAddr: midnightJsUtils.toHex(ledger3.latestOutBoundCrosstxInfo.fromAddr.bytes),
+        smgId: toHex(ledger3.latestOutBoundCrosstxInfo.smgId),
+        fromAddr: toHex(ledger3.latestOutBoundCrosstxInfo.fromAddr.bytes),
         toAddr: ledger3.latestOutBoundCrosstxInfo.toAddr,
         tokenPairId: ledger3.latestOutBoundCrosstxInfo.tokenPairId.toString(10),
         tokenAccount: ledger3.latestOutBoundCrosstxInfo.tokenAccount,
@@ -12086,7 +12059,7 @@ var CrossChainApi = class _CrossChainApi {
     if (voter) {
       voterPK = getCoinPublicKeyFromShieldAddress(voter);
     } else {
-      voterPK = midnightJsUtils.fromHex(this.providers.walletProvider.getCoinPublicKey());
+      voterPK = fromHex(this.providers.walletProvider.getCoinPublicKey());
     }
     return ledger3.smgTxSigners.member({ bytes: voterPK });
   }
@@ -12095,7 +12068,7 @@ var CrossChainApi = class _CrossChainApi {
     if (voter) {
       voterPK = getCoinPublicKeyFromShieldAddress(voter);
     } else {
-      voterPK = midnightJsUtils.fromHex(this.providers.walletProvider.getCoinPublicKey());
+      voterPK = fromHex(this.providers.walletProvider.getCoinPublicKey());
     }
     if (!this.isVoter(ledger3, voter)) return [];
     const voterIndex = ledger3.smgTxSigners.lookup({ bytes: voterPK });
@@ -12105,8 +12078,8 @@ var CrossChainApi = class _CrossChainApi {
       if (voters.size() >= ledger3.smgPKThreshold) continue;
       if (voters.member(voterIndex)) continue;
       else {
-        const crossTxInfo = _CrossChainApi.getCrossTxInfo(ledger3, midnightJsUtils.toHex(uniqueId));
-        res.push({ uniqueId: midnightJsUtils.toHex(uniqueId), ...crossTxInfo });
+        const crossTxInfo = _CrossChainApi.getCrossTxInfo(ledger3, toHex(uniqueId));
+        res.push({ uniqueId: toHex(uniqueId), ...crossTxInfo });
       }
     }
     return res;
@@ -12117,13 +12090,13 @@ var CrossChainApi = class _CrossChainApi {
       const voters = ledger3.crossProposalVoters.lookup(uniqueId);
       if (voters.size() >= ledger3.smgPKThreshold) {
         res.push({
-          uniqueId: midnightJsUtils.toHex(uniqueId),
-          smgId: midnightJsUtils.toHex(crossProposal.smgId),
+          uniqueId: toHex(uniqueId),
+          smgId: toHex(crossProposal.smgId),
           tokenPairId: crossProposal.tokenPairId.toString(10),
-          token: midnightJsUtils.toHex(crossProposal.token),
+          token: toHex(crossProposal.token),
           amount: crossProposal.amount.toString(10),
           fee: crossProposal.fee.toString(10),
-          toAddr: midnightJsUtils.toHex(crossProposal.toAddr.bytes),
+          toAddr: toHex(crossProposal.toAddr.bytes),
           ttl: crossProposal.ttl.toString(10)
         });
       }
@@ -12133,7 +12106,7 @@ var CrossChainApi = class _CrossChainApi {
   /////////////////////////////////////////////////  Cross Tx  /////////////////////////////////////////////////////////////
   async userLock(smgId, toAddress, tokenPair, amount) {
     const smgId_0 = Buffer.from(smgId, "hex");
-    assert3__default.default(smgId_0.length === 32, `smgId must be 32 bytes long`);
+    assert3(smgId_0.length === 32, `smgId must be 32 bytes long`);
     const tokenPair_0 = BigInt(tokenPair);
     const amount_0 = BigInt(amount);
     const finalizedTxData = await this.crossChainContract.callTx.userLock(smgId_0, toAddress, tokenPair_0, amount_0);
@@ -12159,19 +12132,19 @@ var CrossChainApi = class _CrossChainApi {
   }
   async userBurn(smgId, toAddress, tokenPair, amount) {
     const smgId_0 = Buffer.from(smgId, "hex");
-    assert3__default.default(smgId_0.length === 32, `smgId must be 32 bytes long`);
+    assert3(smgId_0.length === 32, `smgId must be 32 bytes long`);
     const tokenPair_0 = BigInt(tokenPair);
     const pairInfo = await this.getTokenPairInfo(tokenPair_0);
-    assert3__default.default(pairInfo, `tokenPairId ${tokenPair} not found`);
+    assert3(pairInfo, `tokenPairId ${tokenPair} not found`);
     const amount_0 = BigInt(amount);
-    ledger.decodeRawTokenType(pairInfo.midnigthTokenAccount);
+    decodeRawTokenType(pairInfo.midnigthTokenAccount);
     const finalizedTxData = await this.crossChainContract.callTx.userBurn(smgId_0, toAddress, tokenPair_0, amount_0);
     return finalizedTxData;
   }
   async voteCrossProposal(uniqueId, ttl) {
     const uniqueId_0 = Buffer.from(uniqueId, "hex");
     const ttl_0 = BigInt(ttl);
-    assert3__default.default(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
+    assert3(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
     const maxCount = 5;
     let items = [{ uniqueId: uniqueId_0, ttl: ttl_0 }];
     for (let index = 1; index < maxCount; index++) {
@@ -12184,11 +12157,11 @@ var CrossChainApi = class _CrossChainApi {
     const uniqueIds_0 = uniqueIds.map((item) => {
       const uniqueId_0 = Buffer.from(item.uniqueId, "hex");
       const ttl_0 = BigInt(item.ttl);
-      assert3__default.default(uniqueId_0.length === 32, `uniqueId(${uniqueId_0}) must be 32 bytes long`);
+      assert3(uniqueId_0.length === 32, `uniqueId(${uniqueId_0}) must be 32 bytes long`);
       return { uniqueId: uniqueId_0, ttl: ttl_0 };
     });
     const maxCount = 5;
-    assert3__default.default(uniqueIds_0.length <= maxCount && uniqueIds_0.length > 0, `uniqueIds length must be between 1 and ${maxCount}`);
+    assert3(uniqueIds_0.length <= maxCount && uniqueIds_0.length > 0, `uniqueIds length must be between 1 and ${maxCount}`);
     for (let index = uniqueIds_0.length; index < maxCount; index++) {
       uniqueIds_0.push({ uniqueId: Buffer.alloc(32), ttl: BigInt(0) });
     }
@@ -12197,7 +12170,7 @@ var CrossChainApi = class _CrossChainApi {
   }
   async executeCrossProposal(uniqueId) {
     const uniqueId_0 = Buffer.from(uniqueId, "hex");
-    assert3__default.default(uniqueId_0.length === 32, `uniqueId(${uniqueId_0}) must be 32 bytes long`);
+    assert3(uniqueId_0.length === 32, `uniqueId(${uniqueId_0}) must be 32 bytes long`);
     const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposal(uniqueId_0);
     return finalizedTxData;
   }
@@ -12273,7 +12246,7 @@ var CrossChainApi = class _CrossChainApi {
   // }
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   async getLedgerState() {
-    midnightJsUtils.assertIsContractAddress(this.crossChainContract?.deployTxData.public.contractAddress);
+    assertIsContractAddress(this.crossChainContract?.deployTxData.public.contractAddress);
     const state = await this.providers.publicDataProvider.queryContractState(this.crossChainContract?.deployTxData.public.contractAddress).then((contractState) => contractState != null ? ledger2(contractState.data) : null);
     return state;
   }
@@ -12330,7 +12303,7 @@ var CrossChainApi = class _CrossChainApi {
     return finalizedTxData;
   }
   async setSmgPksks(voters) {
-    assert3__default.default(voters.length > 0, "voters must not be empty");
+    assert3(voters.length > 0, "voters must not be empty");
     const voters_0 = voters.map((voter) => {
       return { bytes: getCoinPublicKeyFromShieldAddress(voter) };
     });
@@ -12358,8 +12331,8 @@ var CrossChainApi = class _CrossChainApi {
     const midnigtAccount_0 = Buffer.from(midnigthTokenAccount, "hex");
     const domainSep_0 = pad(domainSep, 32);
     if (domainSep) {
-      const expectedTokenType = __compactRuntime.rawTokenType(domainSep_0, this.crossChainContract.deployTxData.public.contractAddress);
-      assert3__default.default(expectedTokenType == midnigthTokenAccount, `token type not match ,${expectedTokenType} expected but got ${midnigthTokenAccount}`);
+      const expectedTokenType = rawTokenType(domainSep_0, this.crossChainContract.deployTxData.public.contractAddress);
+      assert3(expectedTokenType == midnigthTokenAccount, `token type not match ,${expectedTokenType} expected but got ${midnigthTokenAccount}`);
     }
     const fee_0 = BigInt(fee);
     const tokenPair = {
@@ -12453,7 +12426,7 @@ var CrossChainApi = class _CrossChainApi {
     return finalizedTxData;
   }
   async removeExpiredHisTxs(txs) {
-    assert3__default.default(txs.length <= 20, "txs length should be less than 20");
+    assert3(txs.length <= 20, "txs length should be less than 20");
     const txs_0 = txs.map((tx) => Buffer.from(tx, "hex"));
     for (let index = txs_0.length; index < 20; index++) {
       txs_0.push(Buffer.alloc(32));
@@ -12465,7 +12438,7 @@ var CrossChainApi = class _CrossChainApi {
   }
   async upgradeContract(circuitId, newCircuitHex) {
     if (newCircuitHex) {
-      midnightJsTypes.createVerifierKey(midnightJsUtils.fromHex(newCircuitHex));
+      createVerifierKey(fromHex(newCircuitHex));
     } else {
       await this.providers.zkConfigProvider.getVerifierKey(circuitId);
     }
@@ -12476,61 +12449,40 @@ var CrossChainApi = class _CrossChainApi {
   // }
 };
 var upgradeContractCircuit = async (providers, contractAddress, circuitId, newVkHex) => {
-  midnightJsUtils.assertIsContractAddress(contractAddress);
+  assertIsContractAddress(contractAddress);
   let newVk;
   if (newVkHex) {
-    newVk = midnightJsTypes.createVerifierKey(midnightJsUtils.fromHex(newVkHex));
+    newVk = createVerifierKey(fromHex(newVkHex));
   } else {
     newVk = await providers.zkConfigProvider.getVerifierKey(circuitId);
   }
   const contractState = await providers.publicDataProvider.queryContractState(contractAddress);
   if (contractState?.operation(circuitId)) {
-    await midnightJsContracts.submitRemoveVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId);
+    await submitRemoveVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId);
   }
-  const finalizedTxData = await midnightJsContracts.submitInsertVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId, newVk);
+  const finalizedTxData = await submitInsertVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId, newVk);
   return finalizedTxData;
 };
 var removeContractCircuit = async (providers, contractAddress, circuitId) => {
-  midnightJsUtils.assertIsContractAddress(contractAddress);
+  assertIsContractAddress(contractAddress);
 };
 var genSigningKey = () => {
-  return __compactRuntime.sampleSigningKey();
+  return sampleSigningKey();
 };
 var getCoinPublicKeyFromShieldAddress = (shieldAddr) => {
-  const tmp1 = walletSdkAddressFormat.MidnightBech32m.parse(shieldAddr);
-  const tmp2 = walletSdkAddressFormat.ShieldedAddress.codec.decode(tmp1.network, tmp1);
+  const tmp1 = MidnightBech32m.parse(shieldAddr);
+  const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
   return tmp2.coinPublicKey.data;
 };
 var getUserAddressFromUnshieldAddress = (unshieldAddr) => {
-  const tmp1 = walletSdkAddressFormat.MidnightBech32m.parse(unshieldAddr);
-  const tmp2 = walletSdkAddressFormat.UnshieldedAddress.codec.decode(tmp1.network, tmp1);
+  const tmp1 = MidnightBech32m.parse(unshieldAddr);
+  const tmp2 = UnshieldedAddress.codec.decode(tmp1.network, tmp1);
   return tmp2.data;
 };
 var initNetwork = (network) => {
-  midnightJsNetworkId.setNetworkId(network);
+  setNetworkId(network);
 };
 
-exports.CompiledSimpleContract = CompiledSimpleContract;
-exports.CrossChainApi = CrossChainApi;
-exports.CrossChainPrivateStateId = CrossChainPrivateStateId;
-exports.MidnightWalletSDK = MidnightWalletSDK;
-exports.ZKConfig = ZKConfig;
-exports.configuration = configuration;
-exports.createCrossChainProviders = createCrossChainProviders;
-exports.createInitialPrivateState = createInitialPrivateState;
-exports.createPrivateState = createPrivateState;
-exports.createWalletAndMidnightProvider = createWalletAndMidnightProvider;
-exports.crosschainContractInstance = crosschainContractInstance;
-exports.genSigningKey = genSigningKey;
-exports.getCoinPublicKeyFromShieldAddress = getCoinPublicKeyFromShieldAddress;
-exports.getUserAddressFromUnshieldAddress = getUserAddressFromUnshieldAddress;
-exports.initFacadeWallet = initFacadeWallet;
-exports.initNetwork = initNetwork;
-exports.pad = pad;
-exports.removeContractCircuit = removeContractCircuit;
-exports.signTransactionIntents = signTransactionIntents;
-exports.upgradeContractCircuit = upgradeContractCircuit;
-exports.waitForFullySynced = waitForFullySynced;
-exports.witnesses = witnesses;
-//# sourceMappingURL=index.cjs.map
-//# sourceMappingURL=index.cjs.map
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
+//# sourceMappingURL=index.mjs.map
+//# sourceMappingURL=index.mjs.map

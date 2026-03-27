@@ -1,23 +1,19 @@
 {
-  "include": ["./**/*"],
-  "exclude": ["eslint.config.mjs"],
   "compilerOptions": {
-    "rootDir": ".",
-    "outDir": "dist",
-    "declaration": true,
-    "lib": ["ESNext"],
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020"],
     "moduleResolution": "node",
-    "allowJs": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true,
-    "strict": true,
-    "isolatedModules": true,
-    "sourceMap": true,
-    "resolveJsonModule": true,
     "esModuleInterop": true,
+    "strict": true,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports":true
-  }
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

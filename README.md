@@ -1,12 +1,81 @@
-<!--
- * @Author: liulin blue-sky-dl5@163.com
- * @Date: 2025-06-19 14:46:24
- * @LastEditors: liulin blue-sky-dl5@163.com
- * @LastEditTime: 2025-06-23 15:05:38
- * @FilePath: /midnight-crosschain/README.md
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 # midnight-crosschain
-## yarn
-## yarn compact
-## yarn build
+
+## 1. install
+
+```
+yarn add midnight-crosschain@https://github.com/fridayback/midnight-crosschain.git#0.8
+```
+
+## 2. How to use
+
+```js
+import {
+  CrossChainApi,
+  MidnightWalletSDK,
+  initNetwork,
+  createWalletAndMidnightProvider,
+  buildWalletAndWaitForFunds,
+  pad,
+  getTreasuryCoinsFromState,
+  upgradeContractCircuit,
+  removeContractCircuit,
+} from "midnight-crosschain";
+
+const config = {
+  // logDir: `testnet-remote.log`,
+  indexer: "https://indexer.testnet-02.midnight.network/api/v1/graphql",
+  indexerWS: "wss://indexer.testnet-02.midnight.network/api/v1/graphql/ws",
+  node: "https://rpc.testnet-02.midnight.network",
+  proofServer: "http://44.229.225.45:6300",
+};
+
+const tokenPair = [
+    {
+        tokenPairId: 2,
+        fromChainId: 1,
+        toChainId: 2,
+        midnightTokenAccount: 'Wan',
+        fee: 0,
+        isMappingToken: true
+    }
+]
+const seed = "testnet seed";
+const storeWalletSate = (state) => {
+  // save state
+};
+const readWalletState = () => {
+  // read state
+};
+
+const network = initNetwork("testnet");
+const walletSdk = new MidnightWalletSDK(config);
+const serializedState = await readWalletState();
+await walletSdk.initWallet(seed, storeWalletSate, serializedState);
+const wallet = walletSdk.getWalletInstance();
+const api = new CrossChainApi();
+await api.init(config, wallet);
+
+let domainSep = "";
+let midnightTokenAccount = tokenPair.midnightTokenAccount;
+if (tokenPair.isMappingToken) {
+  midnightTokenAccount = tokenType(
+    pad(tokenPair.midnightTokenAccount, 32),
+    api.crossChainContract.deployTxData.public.contractAddress
+  );
+  domainSep = tokenPair.midnightTokenAccount;
+}
+await api.addTokenPair(
+  tokenPair.tokenPairId,
+  tokenPair.fromChainId,
+  tokenPair.toChainId,
+  midnightTokenAccount,
+  domainSep,
+  tokenPair.fee
+);
+
+await api.setFeeCommonConfig(chainId, fee);
+
+const tokenPair = await api.getTokenPairInfo(tokenPairId);
+
+const totalSupply = await api.getTokensTotalSupply([midnightTokenAccount]);
+```
