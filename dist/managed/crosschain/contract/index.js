@@ -1201,14 +1201,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('executeProposal',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 602 char 1',
+                                     'crosschain.compact line 601 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(proposalId_0) === 'bigint' && proposalId_0 >= 0n && proposalId_0 <= 4294967295n)) {
           __compactRuntime.typeError('executeProposal',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 602 char 1',
+                                     'crosschain.compact line 601 char 1',
                                      'Uint<0..4294967296>',
                                      proposalId_0)
         }
@@ -1237,14 +1237,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('removeExpiredHisTxs',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 636 char 1',
+                                     'crosschain.compact line 635 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(Array.isArray(txs_0) && txs_0.length === 20 && txs_0.every((t) => t.buffer instanceof ArrayBuffer && t.BYTES_PER_ELEMENT === 1 && t.length === 32))) {
           __compactRuntime.typeError('removeExpiredHisTxs',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 636 char 1',
+                                     'crosschain.compact line 635 char 1',
                                      'Vector<20, Bytes<32>>',
                                      txs_0)
         }
@@ -4913,7 +4913,7 @@ export class Contract {
                                         partialProofData,
                                         ((t1) => {
                                           if (t1 > 255n) {
-                                            throw new __compactRuntime.CompactError('crosschain.compact line 617 char 23: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
+                                            throw new __compactRuntime.CompactError('crosschain.compact line 616 char 23: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                                           }
                                           return t1;
                                         })(currentProposal_0.threshold));
@@ -4923,7 +4923,7 @@ export class Contract {
                                         partialProofData,
                                         ((t1) => {
                                           if (t1 > 255n) {
-                                            throw new __compactRuntime.CompactError('crosschain.compact line 619 char 21: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
+                                            throw new __compactRuntime.CompactError('crosschain.compact line 618 char 21: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                                           }
                                           return t1;
                                         })(currentProposal_0.threshold));
@@ -5093,7 +5093,7 @@ export class Contract {
                              partialProofData,
                              ((t1) => {
                                if (t1 > 18446744073709551615n) {
-                                 throw new __compactRuntime.CompactError('crosschain.compact line 644 char 51: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
+                                 throw new __compactRuntime.CompactError('crosschain.compact line 643 char 51: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                                }
                                return t1;
                              })(_descriptor_1.fromValue(__compactRuntime.queryLedgerState(context,

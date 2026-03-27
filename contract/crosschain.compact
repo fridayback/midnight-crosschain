@@ -598,6 +598,7 @@ export circuit voteProposal(proposalId: Uint<32>): [] {
   proposalVoters.lookup(disclose(proposalId)).insert(ownPublicKey());
 }
 
+
 export circuit executeProposal(proposalId: Uint<32>): [] {
   assert(proposalVoters.member(disclose(proposalId)), "proposal does not exist");
   currentExcuteProposalId = disclose(proposalId);
