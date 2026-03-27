@@ -1031,7 +1031,7 @@ export class CrossChainApi {
 
 }
 
-export const upgradeContractCircuit = async (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => {
+export const upgradeContractCircuit = async (providers: MidnightProviders, contractAddress: string, circuitId: string, newVkHex: string | undefined) => {
   assertIsContractAddress(contractAddress);
   let newVk;
   if (newVkHex) {
@@ -1039,8 +1039,27 @@ export const upgradeContractCircuit = async (providers: MidnightProviders, contr
   } else {
     newVk = await providers.zkConfigProvider.getVerifierKey(circuitId as CrossChainCircuits);
   }
-  return await submitInsertVerifierKeyTx(providers, CompiledSimpleContract,contractAddress, circuitId as CrossChainCircuits, newVk);
+  const contractState = await providers.publicDataProvider.queryContractState(contractAddress);
+  if (contractState?.operation(circuitId as CrossChainCircuits)) {
+    const finalizedTxData = await submitRemoveVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId as CrossChainCircuits);
+    // logger.info(`remove old circuit Transaction ${finalizedTxData.txHash} added in block ${finalizedTxData.blockHeight}`);
+  }
+
+  const finalizedTxData = await submitInsertVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId as CrossChainCircuits, newVk);
+  // logger.info(`insert new circuit Transaction ${finalizedTxData.txHash} added in block ${finalizedTxData.blockHeight}`);
+  return finalizedTxData;
 }
+
+// export const upgradeContractCircuit = async (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => {
+//   assertIsContractAddress(contractAddress);
+//   let newVk;
+//   if (newVkHex) {
+//     newVk = createVerifierKey(fromHex(newVkHex));
+//   } else {
+//     newVk = await providers.zkConfigProvider.getVerifierKey(circuitId as CrossChainCircuits);
+//   }
+//   return await submitInsertVerifierKeyTx(providers, CompiledSimpleContract,contractAddress, circuitId as CrossChainCircuits, newVk);
+// }
 
 export const removeContractCircuit = async (providers: MidnightProviders, contractAddress: Address, circuitId: string) => {
   assertIsContractAddress(contractAddress);

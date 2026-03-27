@@ -10953,7 +10953,12 @@ var upgradeContractCircuit = async (providers, contractAddress, circuitId, newVk
   } else {
     newVk = await providers.zkConfigProvider.getVerifierKey(circuitId);
   }
-  return await midnightJsContracts.submitInsertVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId, newVk);
+  const contractState = await providers.publicDataProvider.queryContractState(contractAddress);
+  if (contractState?.operation(circuitId)) {
+    await midnightJsContracts.submitRemoveVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId);
+  }
+  const finalizedTxData = await midnightJsContracts.submitInsertVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId, newVk);
+  return finalizedTxData;
 };
 var removeContractCircuit = async (providers, contractAddress, circuitId) => {
   midnightJsUtils.assertIsContractAddress(contractAddress);

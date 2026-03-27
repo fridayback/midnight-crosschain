@@ -14,7 +14,7 @@ import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { ContractState, rawTokenType, sampleSigningKey } from '@midnight-ntwrk/compact-runtime';
 import { CompiledContract } from '@midnight-ntwrk/compact-js';
 import { createVerifierKey } from '@midnight-ntwrk/midnight-js-types';
-import { deployContract, findDeployedContract, submitInsertVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
+import { deployContract, findDeployedContract, submitRemoveVerifierKeyTx, submitInsertVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
@@ -10926,7 +10926,12 @@ var upgradeContractCircuit = async (providers, contractAddress, circuitId, newVk
   } else {
     newVk = await providers.zkConfigProvider.getVerifierKey(circuitId);
   }
-  return await submitInsertVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId, newVk);
+  const contractState = await providers.publicDataProvider.queryContractState(contractAddress);
+  if (contractState?.operation(circuitId)) {
+    await submitRemoveVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId);
+  }
+  const finalizedTxData = await submitInsertVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId, newVk);
+  return finalizedTxData;
 };
 var removeContractCircuit = async (providers, contractAddress, circuitId) => {
   assertIsContractAddress(contractAddress);
