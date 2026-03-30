@@ -877,7 +877,8 @@ export const upgradeContractCircuit = async (providers: MidnightProviders, contr
 
 export const removeContractCircuit = async (providers: MidnightProviders, contractAddress: string, circuitId: string) => {
   assertIsContractAddress(contractAddress);
-  // return await submitRemoveVerifierKeyTx(providers, contractAddress, circuitId);
+  const finalizedTxData = await submitRemoveVerifierKeyTx(providers, CompiledSimpleContract, contractAddress, circuitId as CrossChainCircuits);
+  return finalizedTxData;
 }
 
 export const genSigningKey = () => {
