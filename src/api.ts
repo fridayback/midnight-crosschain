@@ -483,9 +483,9 @@ export class CrossChainApi {
   }
 
   static currentExecuteCrossProposal(ledger: CrossChain.Ledger) {
-    let res = [];
-    for (const smgEvent of ledger.currentExecuteCrossProposal) {
-      res.push({
+    const smgEvent = ledger.currentExecuteCrossProposal
+    
+    return {
         smgId: toHex(smgEvent.crossProposal.smgId)
         , uniqueId: toHex(smgEvent.uniqueId)
         , token: toHex(smgEvent.crossProposal.token)
@@ -495,9 +495,7 @@ export class CrossChainApi {
         , fee: smgEvent.crossProposal.fee.toString(10)
         , toAddr: toHex(smgEvent.crossProposal.toAddr.bytes)
         , ttl: smgEvent.crossProposal.ttl.toString(10)
-      });
-    }
-    return res;
+      };
   }
 
   static latestOutBoundCrosstxInfo(ledger: CrossChain.Ledger) {
@@ -654,31 +652,19 @@ export class CrossChainApi {
     return finalizedTxData;
   }
 
-
-  async executeCrossProposal(uniqueId: string, coinIndex: string | number | bigint | undefined) {
-    // const uniqueId_0 = Buffer.from(uniqueId, 'hex');
-    // assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
-    // let coinIndex_0 = BigInt(0);
-    // if (coinIndex) {
-    //   coinIndex_0 = BigInt(coinIndex);
-    // }
-    // const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposal(uniqueId_0, coinIndex_0);
-    // return finalizedTxData;
-  }
-
-  async executeMultiCrossProposal(uniqueIds: string[]): Promise<FinalizedCallTxData<CrossChainContract, "executeMultiCrossProposal">> {
-    const uniqueIds_0 = uniqueIds.map((item) => {
-      const uniqueId_0 = Buffer.from(item, 'hex');
+  async executeCrossProposal(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "executeCrossProposal">> {
+    // const uniqueIds_0 = uniqueIds.map((item) => {
+      const uniqueId_0 = Buffer.from(uniqueId, 'hex');
       assert(uniqueId_0.length === 32, `uniqueId(${uniqueId_0}) must be 32 bytes long`);
-      return uniqueId_0;
-    });
-    const maxCount = 3;
-    assert(uniqueIds_0.length <= maxCount && uniqueIds_0.length > 0, `uniqueIds must be between 1 and ${maxCount}`);
-    for (let index = uniqueIds_0.length; index < maxCount; index++) {
-      uniqueIds_0.push(Buffer.alloc(32));
-    }
+      // return uniqueId_0;
+    // });
+    // const maxCount = 3;
+    // assert(uniqueIds_0.length <= maxCount && uniqueIds_0.length > 0, `uniqueIds must be between 1 and ${maxCount}`);
+    // for (let index = uniqueIds_0.length; index < maxCount; index++) {
+    //   uniqueIds_0.push(Buffer.alloc(32));
+    // }
 
-    const finalizedTxData = await this.crossChainContract.callTx.executeMultiCrossProposal(uniqueIds_0);
+    const finalizedTxData = await this.crossChainContract.callTx.executeCrossProposal(uniqueId_0);
     return finalizedTxData;
   }
 
@@ -701,13 +687,6 @@ export class CrossChainApi {
   //   return finalizedTxData;
   // }
 
-  async userClaim(uniqueId: string) {
-    const uniqueId_0 = Buffer.from(uniqueId, 'hex');
-    assert(uniqueId_0.length === 32, `uniqueId must be 32 bytes long`);
-
-    const finalizedTxData = await this.crossChainContract.callTx.userClaim(uniqueId_0);
-    return finalizedTxData;
-  }
 
   // async userFeeWithdrawRequest(receiptor: UserAddress) {
   //   const receiptor_0 = { bytes: encodeUserAddress(receiptor) };
