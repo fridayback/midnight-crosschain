@@ -504,6 +504,7 @@ declare class CrossChainApi {
 declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
 declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string) => Promise<void>;
 declare const genSigningKey: () => string;
+declare const getUnshieldAddressFromUserAddress: (userAddrHex: string, networkId?: string) => string;
 declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const getUserAddressFromUnshieldAddress: (unshieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const initNetwork: (network: "mainnet" | "testnet-02" | "preview" | "devnet" | "undeployed") => void;
@@ -516,4 +517,4 @@ declare class CrossChainState {
     getLedgerState(): Promise<Ledger | null>;
 }
 
-export { type Address, CompiledSimpleContract, type Config, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, CrossChainState, type DeployedCrossChainContract, ZKConfig, createInitialPrivateState, createPrivateState, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, witnesses };
+export { type Address, CompiledSimpleContract, type Config, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, CrossChainState, type DeployedCrossChainContract, ZKConfig, createInitialPrivateState, createPrivateState, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, witnesses };

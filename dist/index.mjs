@@ -6,9 +6,9 @@ import { createVerifierKey } from '@midnight-ntwrk/midnight-js-types';
 import { deployContract, findDeployedContract, submitInsertVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { decodeRawTokenType } from '@midnight-ntwrk/ledger-v8';
-import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { getNetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { toHex, fromHex, assertIsContractAddress } from '@midnight-ntwrk/midnight-js-utils';
-import { MidnightBech32m, ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
+import { UnshieldedAddress, MidnightBech32m, ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import assert2 from 'assert';
 
 var __defProp = Object.defineProperty;
@@ -12131,6 +12131,13 @@ var removeContractCircuit = async (providers, contractAddress, circuitId) => {
 var genSigningKey = () => {
   return sampleSigningKey();
 };
+var getUnshieldAddressFromUserAddress = (userAddrHex, networkId) => {
+  const unshieldAddr = UnshieldedAddress.codec.encode(
+    networkId || getNetworkId(),
+    new UnshieldedAddress(fromHex(userAddrHex))
+  );
+  return unshieldAddr.asString();
+};
 var getCoinPublicKeyFromShieldAddress = (shieldAddr) => {
   const tmp1 = MidnightBech32m.parse(shieldAddr);
   const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
@@ -12158,6 +12165,6 @@ var CrossChainState = class {
   }
 };
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, CrossChainState, ZKConfig, createInitialPrivateState, createPrivateState, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, CrossChainState, ZKConfig, createInitialPrivateState, createPrivateState, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

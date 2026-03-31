@@ -12156,6 +12156,13 @@ var removeContractCircuit = async (providers, contractAddress, circuitId) => {
 var genSigningKey = () => {
   return __compactRuntime.sampleSigningKey();
 };
+var getUnshieldAddressFromUserAddress = (userAddrHex, networkId) => {
+  const unshieldAddr = walletSdkAddressFormat.UnshieldedAddress.codec.encode(
+    networkId || midnightJsNetworkId.getNetworkId(),
+    new walletSdkAddressFormat.UnshieldedAddress(midnightJsUtils.fromHex(userAddrHex))
+  );
+  return unshieldAddr.asString();
+};
 var getCoinPublicKeyFromShieldAddress = (shieldAddr) => {
   const tmp1 = walletSdkAddressFormat.MidnightBech32m.parse(shieldAddr);
   const tmp2 = walletSdkAddressFormat.ShieldedAddress.codec.decode(tmp1.network, tmp1);
@@ -12193,6 +12200,7 @@ exports.createPrivateState = createPrivateState;
 exports.crosschainContractInstance = crosschainContractInstance;
 exports.genSigningKey = genSigningKey;
 exports.getCoinPublicKeyFromShieldAddress = getCoinPublicKeyFromShieldAddress;
+exports.getUnshieldAddressFromUserAddress = getUnshieldAddressFromUserAddress;
 exports.getUserAddressFromUnshieldAddress = getUserAddressFromUnshieldAddress;
 exports.initNetwork = initNetwork;
 exports.pad = pad;
