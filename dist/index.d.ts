@@ -1,15 +1,93 @@
+import * as _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js from '@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/UnshieldedState.js';
+import * as _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances.js';
+import * as _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types_Dust_js from '@midnight-ntwrk/wallet-sdk-dust-wallet/dist/v1/types/Dust.js';
+import * as ledger from '@midnight-ntwrk/ledger-v8';
+import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
+import { DefaultConfiguration, WalletFacade, CombinedSwapOutputs, FacadeState } from '@midnight-ntwrk/wallet-sdk-facade';
+import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
+import { Buffer as Buffer$1 } from 'buffer';
 import * as _midnight_ntwrk_midnight_js_types from '@midnight-ntwrk/midnight-js-types';
 import { UnboundTransaction, MidnightProviders, PublicDataProvider, WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { SigningKey, ContractAddress, RawTokenType } from '@midnight-ntwrk/compact-runtime';
 import { CompiledContract, ProvableCircuitId } from '@midnight-ntwrk/compact-js';
 import { DeployedContract, FoundContract, FinalizedCallTxData } from '@midnight-ntwrk/midnight-js-contracts';
-import * as _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js from '@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/UnshieldedState.js';
-import * as _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances.js';
-import * as _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types_Dust_js from '@midnight-ntwrk/wallet-sdk-dust-wallet/dist/v1/types/Dust.js';
-import * as ledger from '@midnight-ntwrk/ledger-v8';
-import { DefaultConfiguration, WalletFacade, CombinedSwapOutputs } from '@midnight-ntwrk/wallet-sdk-facade';
-import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
+
+type Configuration = DefaultConfiguration;
+declare const configuration: (indexerHttpUrl: string, indexerWsUrl: string, provingServerUrl: string, node: string, network?: NetworkId.NetworkId, costParameters?: {
+    additionalFeeOverhead: bigint;
+    feeBlocksMargin: number;
+}) => Configuration;
+declare const initFacadeWallet: (seed: Buffer$1, configuration: Configuration, // = defaultConfiguration,
+strSerializedState?: FacadeSerializedState) => Promise<{
+    wallet: WalletFacade;
+    shieldedSecretKeys: ledger.ZswapSecretKeys;
+    dustSecretKey: ledger.DustSecretKey;
+    unshieldedKeystore: UnshieldedKeystore;
+}>;
+declare const waitForFullySynced: (facade: WalletFacade) => Promise<FacadeState>;
+interface FacadeSerializedState {
+    readonly shieldedWalletState: string;
+    readonly unshieldedWalletState: string;
+    readonly dustWalletState: string;
+}
+interface WalletStore {
+    (walletState: FacadeSerializedState): Promise<void>;
+}
+declare class MidnightWalletSDK {
+    private config;
+    private isGenerating;
+    private isUnGenerating;
+    private walletObj?;
+    private shieldedSecretKeys?;
+    private dustSecretKey?;
+    private unshieldedKeystore?;
+    private walletAddress;
+    private bActiveFlag;
+    private storeTimer?;
+    readonly ISMimic: boolean;
+    constructor(config: Configuration, mimic?: boolean);
+    initWallet(strSeed: string, store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
+    getAccountAddress(): {
+        shieldedAddress: string;
+        unshieldedAddress: string;
+        dustAddress: string;
+    };
+    registerNightUtxosForDustGeneration(): Promise<void>;
+    deregisterFromDustGeneration(): Promise<void>;
+    submitTx(tx: ledger.FinalizedTransaction): Promise<string>;
+    getBalances(): Promise<{
+        dustBalance: bigint;
+        shieldedBlance: any;
+        unshieldedBlance: any;
+    }>;
+    getAvailableCoins(): Promise<{
+        dustAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types_Dust_js.Dust[];
+        shieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js.AvailableCoin[];
+        unshieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js.UtxoWithMeta[];
+    }>;
+    uninitWallet(): Promise<void>;
+    getWalletInstance(): WalletFacade | undefined;
+    getShieldedSecretKeys(): ledger.ZswapSecretKeys;
+    getUnshieldedKeystore(): UnshieldedKeystore;
+    getDustSecretKey(): ledger.DustSecretKey;
+    getSerializedWalletState(): Promise<"" | {
+        dustWalletState: string;
+        shieldedWalletState: string;
+        unshieldedWalletState: string;
+    }>;
+    transferTo(transferInfo: CombinedSwapOutputs[], ttl: Date): Promise<string>;
+    balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<ledger.FinalizedTransaction>;
+}
+/**
+ * Sign all unshielded offers in a transaction's intents, using the correct
+ * proof marker for Intent.deserialize. This works around a bug in the wallet
+ * SDK where signRecipe hardcodes 'pre-proof', which fails for proven
+ * (UnboundTransaction) intents that contain 'proof' data.
+ */
+declare const signTransactionIntents: (tx: {
+    intents?: Map<number, any>;
+}, signFn: (payload: Uint8Array) => ledger.Signature, proofMarker: "proof" | "pre-proof") => void;
 
 type CrossChainPrivateState = {};
 declare const createPrivateState: (privateCounter: number) => CrossChainPrivateState;
@@ -391,61 +469,6 @@ declare class Contract<PS = any, W extends Witnesses<PS> = Witnesses<PS>> {
                feeReceiverInit_0: UserAddress): __compactRuntime.ConstructorResult<PS>;
 }
 
-type Configuration = DefaultConfiguration;
-interface FacadeSerializedState {
-    readonly shieldedWalletState: string;
-    readonly unshieldedWalletState: string;
-    readonly dustWalletState: string;
-}
-interface WalletStore {
-    (walletState: FacadeSerializedState): Promise<void>;
-}
-declare class MidnightWalletSDK {
-    private config;
-    private isGenerating;
-    private isUnGenerating;
-    private walletObj?;
-    private shieldedSecretKeys?;
-    private dustSecretKey?;
-    private unshieldedKeystore?;
-    private walletAddress;
-    private bActiveFlag;
-    private storeTimer?;
-    readonly ISMimic: boolean;
-    constructor(config: Configuration, mimic?: boolean);
-    initWallet(strSeed: string, store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
-    getAccountAddress(): {
-        shieldedAddress: string;
-        unshieldedAddress: string;
-        dustAddress: string;
-    };
-    registerNightUtxosForDustGeneration(): Promise<void>;
-    deregisterFromDustGeneration(): Promise<void>;
-    submitTx(tx: ledger.FinalizedTransaction): Promise<string>;
-    getBalances(): Promise<{
-        dustBalance: bigint;
-        shieldedBlance: any;
-        unshieldedBlance: any;
-    }>;
-    getAvailableCoins(): Promise<{
-        dustAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types_Dust_js.Dust[];
-        shieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js.AvailableCoin[];
-        unshieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js.UtxoWithMeta[];
-    }>;
-    uninitWallet(): Promise<void>;
-    getWalletInstance(): WalletFacade | undefined;
-    getShieldedSecretKeys(): ledger.ZswapSecretKeys;
-    getUnshieldedKeystore(): UnshieldedKeystore;
-    getDustSecretKey(): ledger.DustSecretKey;
-    getSerializedWalletState(): Promise<"" | {
-        dustWalletState: string;
-        shieldedWalletState: string;
-        unshieldedWalletState: string;
-    }>;
-    transferTo(transferInfo: CombinedSwapOutputs[], ttl: Date): Promise<string>;
-    balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<ledger.FinalizedTransaction>;
-}
-
 type CrossChainCircuits = ProvableCircuitId<Contract<CrossChainPrivateState>>;
 declare const CrossChainPrivateStateId = "crossChainPrivateState";
 type CrossChainProviders = MidnightProviders<CrossChainCircuits, typeof CrossChainPrivateStateId, CrossChainPrivateState>;
@@ -578,4 +601,4 @@ declare class CrossChainState {
     getLedgerState(): Promise<Ledger | null>;
 }
 
-export { type Address, CompiledSimpleContract, type Config, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, CrossChainState, type DeployedCrossChainContract, ZKConfig, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, witnesses };
+export { type Address, CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, CrossChainState, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
