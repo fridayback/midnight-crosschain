@@ -25,7 +25,7 @@ import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client
 // import { string, CoinPublicKey, WalletFacade } from '@midnight-ntwrk/wallet-api';
 import { ShieldedCoinInfo, DustParameters, LedgerParameters, Transaction, TransactionId, type UnprovenTransaction, sampleCoinPublicKey, FinalizedTransaction, nativeToken, TokenType, encodeRawTokenType, decodeRawTokenType, createShieldedCoinInfo, dummyUserAddress, UnshieldedTokenType, UserAddress, decodeUserAddress } from '@midnight-ntwrk/ledger-v8';
 // import { TokenType, Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
-import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { getNetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { assertIsContractAddress, fromHex, parseCoinPublicKeyToHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
 import { MidnightBech32m, ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as Rx from 'rxjs';
@@ -906,6 +906,14 @@ export const getUserAddressFromUnshieldAddress = (unshieldAddr: string) => {
   const tmp2 = UnshieldedAddress.codec.decode(tmp1.network, tmp1);
   // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
   return tmp2.data;
+}
+
+export const getUnshieldAddressFromUserAddress = (userAddrHex: string, networkId?: string) => {
+  const unshieldAddr = UnshieldedAddress.codec.encode(
+    networkId || getNetworkId(),
+    new UnshieldedAddress(fromHex(userAddrHex))
+  );
+  return unshieldAddr.asString();
 }
 
 //only support 

@@ -12497,6 +12497,13 @@ var getUserAddressFromUnshieldAddress = (unshieldAddr) => {
   const tmp2 = walletSdkAddressFormat.UnshieldedAddress.codec.decode(tmp1.network, tmp1);
   return tmp2.data;
 };
+var getUnshieldAddressFromUserAddress = (userAddrHex, networkId) => {
+  const unshieldAddr = walletSdkAddressFormat.UnshieldedAddress.codec.encode(
+    networkId || midnightJsNetworkId.getNetworkId(),
+    new walletSdkAddressFormat.UnshieldedAddress(midnightJsUtils.fromHex(userAddrHex))
+  );
+  return unshieldAddr.asString();
+};
 var initNetwork = (network) => {
   midnightJsNetworkId.setNetworkId(network);
 };
@@ -12514,6 +12521,7 @@ exports.createWalletAndMidnightProvider = createWalletAndMidnightProvider;
 exports.crosschainContractInstance = crosschainContractInstance;
 exports.genSigningKey = genSigningKey;
 exports.getCoinPublicKeyFromShieldAddress = getCoinPublicKeyFromShieldAddress;
+exports.getUnshieldAddressFromUserAddress = getUnshieldAddressFromUserAddress;
 exports.getUserAddressFromUnshieldAddress = getUserAddressFromUnshieldAddress;
 exports.initFacadeWallet = initFacadeWallet;
 exports.initNetwork = initNetwork;

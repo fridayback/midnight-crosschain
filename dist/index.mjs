@@ -19,7 +19,7 @@ import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-pri
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
-import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { getNetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { toHex, fromHex, assertIsContractAddress } from '@midnight-ntwrk/midnight-js-utils';
 import { fileURLToPath } from 'url';
 
@@ -12470,10 +12470,17 @@ var getUserAddressFromUnshieldAddress = (unshieldAddr) => {
   const tmp2 = UnshieldedAddress.codec.decode(tmp1.network, tmp1);
   return tmp2.data;
 };
+var getUnshieldAddressFromUserAddress = (userAddrHex, networkId) => {
+  const unshieldAddr = UnshieldedAddress.codec.encode(
+    networkId || getNetworkId(),
+    new UnshieldedAddress(fromHex(userAddrHex))
+  );
+  return unshieldAddr.asString();
+};
 var initNetwork = (network) => {
   setNetworkId(network);
 };
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map
