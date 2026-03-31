@@ -33,7 +33,7 @@ import * as Rx from 'rxjs';
 import { ContractState, ContractAddress, degradeToTransient, ecAdd, ecMul, ecMulGenerator, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash, encodeShieldedCoinInfo, ShieldedTokenType, RawTokenType, encodeUserAddress, rawTokenType } from '@midnight-ntwrk/compact-runtime';
 import assert from 'node:assert';
 // import { fileURLToPath, pathToFileURL } from 'url';
-import { MidnightWalletSDK, signTransactionIntents } from './wallet-sdk.js';
+// import { MidnightWalletSDK, signTransactionIntents } from './wallet-sdk.js';
 // import { FinalizedTransaction } from '@midnight-ntwrk/ledger-v7';
 
 
@@ -132,44 +132,44 @@ export const CompiledSimpleContract =
   );
 
 
-export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK): Promise<WalletProvider & MidnightProvider> => {
-  const walletFacade = wallet.getWalletInstance();
-  assert(walletFacade, "wallet not initialized");
-  const state = await Rx.firstValueFrom(walletFacade.state().pipe(Rx.filter((s) => s.isSynced)));
-  return {
-    getCoinPublicKey: () => state.shielded.coinPublicKey.toHexString(),
-    getEncryptionPublicKey: () => state.shielded.encryptionPublicKey.toHexString(),
-    async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> {
-      // return await wallet.balanceTx(tx, ttl);
-      // return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
-      //   .then((tx) => walletFacade.finalizeRecipe(tx));
-      const recipe = await walletFacade.balanceUnboundTransaction(
-        tx,
-        { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
-        { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) },
-      );
+// export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK): Promise<WalletProvider & MidnightProvider> => {
+//   const walletFacade = wallet.getWalletInstance();
+//   assert(walletFacade, "wallet not initialized");
+//   const state = await Rx.firstValueFrom(walletFacade.state().pipe(Rx.filter((s) => s.isSynced)));
+//   return {
+//     getCoinPublicKey: () => state.shielded.coinPublicKey.toHexString(),
+//     getEncryptionPublicKey: () => state.shielded.encryptionPublicKey.toHexString(),
+//     async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> {
+//       // return await wallet.balanceTx(tx, ttl);
+//       // return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
+//       //   .then((tx) => walletFacade.finalizeRecipe(tx));
+//       const recipe = await walletFacade.balanceUnboundTransaction(
+//         tx,
+//         { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
+//         { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) },
+//       );
 
-      // Work around wallet SDK bug: signRecipe uses hardcoded 'pre-proof'
-      // marker when cloning intents, but proven (UnboundTransaction) intents
-      // have 'proof' data, causing "Failed to clone intent". We sign manually
-      // with the correct proof markers.
-      const signFn = (payload: Uint8Array) => wallet.getUnshieldedKeystore().signData(payload);
-      signTransactionIntents(recipe.baseTransaction, signFn, 'proof');
-      if (recipe.balancingTransaction) {
-        signTransactionIntents(recipe.balancingTransaction, signFn, 'pre-proof');
-      }
+//       // Work around wallet SDK bug: signRecipe uses hardcoded 'pre-proof'
+//       // marker when cloning intents, but proven (UnboundTransaction) intents
+//       // have 'proof' data, causing "Failed to clone intent". We sign manually
+//       // with the correct proof markers.
+//       const signFn = (payload: Uint8Array) => wallet.getUnshieldedKeystore().signData(payload);
+//       signTransactionIntents(recipe.baseTransaction, signFn, 'proof');
+//       if (recipe.balancingTransaction) {
+//         signTransactionIntents(recipe.balancingTransaction, signFn, 'pre-proof');
+//       }
 
-      // const recipeFinalized = await ctx.wallet.signRecipe(recipe, (payload) => ctx.unshieldedKeystore.signData(payload));
+//       // const recipeFinalized = await ctx.wallet.signRecipe(recipe, (payload) => ctx.unshieldedKeystore.signData(payload));
 
-      return walletFacade.finalizeRecipe(recipe);
+//       return walletFacade.finalizeRecipe(recipe);
 
-    },
-    submitTx(tx: FinalizedTransaction): Promise<TransactionId> {
-      // return walletFacade.submitTransaction(tx);
-      return wallet.submitTx(tx);
-    },
-  };
-};
+//     },
+//     submitTx(tx: FinalizedTransaction): Promise<TransactionId> {
+//       // return walletFacade.submitTransaction(tx);
+//       return wallet.submitTx(tx);
+//     },
+//   };
+// };
 
 // export const waitForSync = (wallet: WalletFacade) =>
 //   Rx.firstValueFrom(
