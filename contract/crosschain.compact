@@ -386,7 +386,7 @@ circuit _mint(uniqueId: Bytes<32>, domainSep: Bytes<32>, toAddr: UserAddress, am
 
   if(fee > 0) {
     // updateReserve(true, domainSep, fee, true);
-    mintUnshieldedToken(color, fee as Uint<64>, right<ContractAddress, UserAddress>(feeReceiver));
+    mintUnshieldedToken(domainSep, fee as Uint<64>, right<ContractAddress, UserAddress>(feeReceiver));
   }
 
   // tokenToBeClaimed.insert(uniqueId, ClaimTokenInfo{
@@ -395,7 +395,7 @@ circuit _mint(uniqueId: Bytes<32>, domainSep: Bytes<32>, toAddr: UserAddress, am
   //   , isMappingToken: true
   //   , amount: (amount - fee) as Uint<128>
   // });
-  mintUnshieldedToken(color, amount as Uint<64>, right<ContractAddress, UserAddress>(toAddr));
+  mintUnshieldedToken(domainSep, amount as Uint<64>, right<ContractAddress, UserAddress>(toAddr));
 }
 
 export circuit executeCrossProposal(uniqueId: Bytes<32>): [] {

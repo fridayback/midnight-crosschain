@@ -5222,10 +5222,10 @@ var Contract = class {
       this._mintUnshieldedToken_0(
         context,
         partialProofData,
-        color_0,
+        domainSep_0,
         ((t1) => {
           if (t1 > 18446744073709551615n) {
-            throw new __compactRuntime.CompactError("crosschain.compact line 389 char 32: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
+            throw new __compactRuntime.CompactError("crosschain.compact line 389 char 36: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
           }
           return t1;
         })(fee_0),
@@ -5265,10 +5265,10 @@ var Contract = class {
     this._mintUnshieldedToken_0(
       context,
       partialProofData,
-      color_0,
+      domainSep_0,
       ((t1) => {
         if (t1 > 18446744073709551615n) {
-          throw new __compactRuntime.CompactError("crosschain.compact line 398 char 30: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
+          throw new __compactRuntime.CompactError("crosschain.compact line 398 char 34: cast from Field or Uint value to smaller Uint value failed: " + t1 + " is greater than 18446744073709551615");
         }
         return t1;
       })(amount_0),
