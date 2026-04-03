@@ -199,7 +199,7 @@ export circuit userLock(smgId: Bytes<32>, toAddr: Opaque<"string">, tokenPairId:
     , tokenPairId: disclose(tokenPairId)
     , tokenAccount: tokenPair.midnigthTokenAccount
     , amount: disclose(amount)
-    , fee: 0//contractFee // service fee not specified by origin chain????
+    , fee: contractFee 
   };
 }
 

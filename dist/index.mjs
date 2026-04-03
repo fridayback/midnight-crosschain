@@ -172843,7 +172843,7 @@ var Contract = class {
       tokenPairId: tokenPairId_0,
       tokenAccount: tokenPair_0.midnigthTokenAccount,
       amount: amount_0,
-      fee: 0n
+      fee: contractFee_0
     };
     queryLedgerState(
       context10,

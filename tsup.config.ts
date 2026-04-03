@@ -13,8 +13,6 @@ export default defineConfig({
   // 源码映射
   sourcemap: true,
 
-  minify: true, 
-
   // 清理输出目录
   clean: true,
 
@@ -26,6 +24,7 @@ export default defineConfig({
   external: [],
   // noExternal: ['wallet-sdk', 'api', 'witnesses'], // 将 wallet-sdk 内联打包
   noExternal: [/(.*)/],
+  splitting: true,
 
   // 内联依赖
   // noExternal: [],
