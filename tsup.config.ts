@@ -23,7 +23,7 @@ export default defineConfig({
   // 外部依赖（不打包进 bundle）
   external: [],
   // noExternal: ['wallet-sdk', 'api', 'witnesses'], // 将 wallet-sdk 内联打包
-  noExternal: [/(.*)/],
+  // noExternal: [/(.*)/],
   splitting: true,
 
   // 内联依赖
