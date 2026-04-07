@@ -22,9 +22,9 @@ export default defineConfig({
 
   // 外部依赖（不打包进 bundle）
   external: [],
-  // noExternal: ['wallet-sdk', 'api', 'witnesses'], // 将 wallet-sdk 内联打包
-  // noExternal: [/^(?!msgpackr|@msgpackr-extract).*$/],
-  // splitting: true,
+  // noExternal: [/(.*)/], // 将 wallet-sdk 内联打包
+  noExternal: [/^(?!(@msgpackr-extract|classic-level|cpu-features|ssh2)).*$/],
+  splitting: false,
 
   // 内联依赖
   // noExternal: [],
@@ -46,13 +46,13 @@ export default defineConfig({
   // 按需启用 tree shaking
   treeshake: true,
 
-  // 解决 named 和 default exports 警告
-  output: {
-    exports: 'named',
-  },
-
-  // // 处理 WASM 文件
-  // loader: {
-  //   '.wasm': 'file',
+  // // 解决 named 和 default exports 警告
+  // output: {
+  //   exports: 'named',
   // },
+
+  // 处理 WASM 文件
+  loader: {
+    '.wasm': 'file',
+  },
 })

@@ -181389,8 +181389,6 @@ var httpClientProofProvider = (url2, zkConfigProvider, config3) => {
 
 // src/api.ts
 var Rx3 = __toESM(require_cjs());
-process.env.MSGPACKR_NO_NATIVE = "1";
-process.env.LEVELDOWN_FORCE_BUILD_FROM_SOURCE = "1";
 var CrossChainPrivateStateId = "crossChainPrivateState";
 function getDirname() {
   if (typeof (typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href)) === "string") {

@@ -181354,8 +181354,6 @@ var httpClientProofProvider = (url2, zkConfigProvider, config3) => {
 
 // src/api.ts
 var Rx3 = __toESM(require_cjs());
-process.env.MSGPACKR_NO_NATIVE = "1";
-process.env.LEVELDOWN_FORCE_BUILD_FROM_SOURCE = "1";
 var CrossChainPrivateStateId = "crossChainPrivateState";
 function getDirname() {
   if (typeof import.meta?.url === "string") {
