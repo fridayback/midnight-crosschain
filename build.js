@@ -10,7 +10,8 @@ esbuild.build({
   target: 'node22',                  // 指定 Node.js 版本，建议与 pkg 目标版本一致
   format: 'cjs',                     // 输出 CommonJS 格式，与 pkg 最佳兼容
   outfile: './dist/bundle.cjs',      // 输出文件路径和名称
-  external: ['classic-level'],                      // 一般不设 external，让 esbuild 打包所有内容
+  external: [],    
+//   external: ['classic-level'],                      // 一般不设 external，让 esbuild 打包所有内容
   loader: {
     // 关键: 将 .wasm 文件作为 binary 加载，直接嵌入为 Uint8Array
     '.wasm': 'binary',
