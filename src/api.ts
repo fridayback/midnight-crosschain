@@ -922,6 +922,9 @@ export const getUnshieldAddressFromUserAddress = (userAddrHex: string, networkId
   return unshieldAddr.asString();
 }
 
+export * as ledgerV8 from '@midnight-ntwrk/ledger-v8';
+export * as midnightjsutils from '@midnight-ntwrk/midnight-js-utils';
+
 //only support 
 // • 'mainnet' — Production network
 // • 'testnet-02' — Public testnet
