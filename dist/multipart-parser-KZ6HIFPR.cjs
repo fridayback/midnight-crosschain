@@ -1,5 +1,7 @@
-import { FormData, file_default } from './chunk-PMBGWWC4.mjs';
-import './chunk-CI3KPFIO.mjs';
+'use strict';
+
+var chunk2URFYEPQ_cjs = require('./chunk-2URFYEPQ.cjs');
+require('./chunk-JBVKWKD4.cjs');
 
 // node_modules/@polkadot/x-fetch/node_modules/node-fetch/src/utils/multipart-parser.js
 var s = 0;
@@ -293,7 +295,7 @@ async function toFormData(Body, ct) {
   let contentType;
   let filename;
   const entryChunks = [];
-  const formData = new FormData();
+  const formData = new chunk2URFYEPQ_cjs.FormData();
   const onPartData = (ui8a) => {
     entryValue += decoder.decode(ui8a, { stream: true });
   };
@@ -301,7 +303,7 @@ async function toFormData(Body, ct) {
     entryChunks.push(ui8a);
   };
   const appendFileToFormData = () => {
-    const file = new file_default(entryChunks, filename, { type: contentType });
+    const file = new chunk2URFYEPQ_cjs.file_default(entryChunks, filename, { type: contentType });
     formData.append(entryName, file);
   };
   const appendEntryToFormData = () => {
@@ -352,6 +354,6 @@ async function toFormData(Body, ct) {
   return formData;
 }
 
-export { toFormData };
-//# sourceMappingURL=multipart-parser-I64TPCDW.mjs.map
-//# sourceMappingURL=multipart-parser-I64TPCDW.mjs.map
+exports.toFormData = toFormData;
+//# sourceMappingURL=multipart-parser-KZ6HIFPR.cjs.map
+//# sourceMappingURL=multipart-parser-KZ6HIFPR.cjs.map

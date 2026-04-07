@@ -17,7 +17,7 @@ export default defineConfig({
   clean: true,
 
   // 目标环境
-  target: 'es2020',
+  target: 'es2022',
   skipNodeModulesBundle: true,
 
   // 外部依赖（不打包进 bundle）

@@ -1,24 +1,14 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var chunkVND52AST_cjs = require('./chunk-VND52AST.cjs');
-require('./chunk-HCCQLAA4.cjs');
-var http = require('http');
-var https = require('https');
-var zlib = require('zlib');
-var Stream = require('stream');
-var buffer = require('buffer');
-var util = require('util');
-var url = require('url');
-var net = require('net');
-
-function _interopDefault (e) { return e && e.__esModule ? e : { default: e }; }
-
-var http__default = /*#__PURE__*/_interopDefault(http);
-var https__default = /*#__PURE__*/_interopDefault(https);
-var zlib__default = /*#__PURE__*/_interopDefault(zlib);
-var Stream__default = /*#__PURE__*/_interopDefault(Stream);
+import { FormData, formDataToBlob, fetch_blob_default } from './chunk-NKJM2XCL.mjs';
+export { fetch_blob_default as Blob, file_default as File, FormData, blobFrom, blobFromSync, fileFrom, fileFromSync } from './chunk-NKJM2XCL.mjs';
+import './chunk-J7LXIPZS.mjs';
+import http from 'http';
+import https from 'https';
+import zlib from 'zlib';
+import Stream, { pipeline as pipeline$1, PassThrough } from 'stream';
+import { Buffer as Buffer$1 } from 'buffer';
+import { promisify, deprecate, types } from 'util';
+import { format } from 'url';
+import { isIP } from 'net';
 
 // node_modules/data-uri-to-buffer/dist/index.js
 function dataUriToBuffer(uri) {
@@ -113,7 +103,7 @@ var isSameProtocol = (destination, original) => {
 };
 
 // node_modules/@polkadot/x-fetch/node_modules/node-fetch/src/body.js
-var pipeline = util.promisify(Stream__default.default.pipeline);
+var pipeline = promisify(Stream.pipeline);
 var INTERNALS = /* @__PURE__ */ Symbol("Body internals");
 var Body = class {
   constructor(body, {
@@ -123,22 +113,22 @@ var Body = class {
     if (body === null) {
       body = null;
     } else if (isURLSearchParameters(body)) {
-      body = buffer.Buffer.from(body.toString());
-    } else if (isBlob(body)) ; else if (buffer.Buffer.isBuffer(body)) ; else if (util.types.isAnyArrayBuffer(body)) {
-      body = buffer.Buffer.from(body);
+      body = Buffer$1.from(body.toString());
+    } else if (isBlob(body)) ; else if (Buffer$1.isBuffer(body)) ; else if (types.isAnyArrayBuffer(body)) {
+      body = Buffer$1.from(body);
     } else if (ArrayBuffer.isView(body)) {
-      body = buffer.Buffer.from(body.buffer, body.byteOffset, body.byteLength);
-    } else if (body instanceof Stream__default.default) ; else if (body instanceof chunkVND52AST_cjs.FormData) {
-      body = chunkVND52AST_cjs.formDataToBlob(body);
+      body = Buffer$1.from(body.buffer, body.byteOffset, body.byteLength);
+    } else if (body instanceof Stream) ; else if (body instanceof FormData) {
+      body = formDataToBlob(body);
       boundary = body.type.split("=")[1];
     } else {
-      body = buffer.Buffer.from(String(body));
+      body = Buffer$1.from(String(body));
     }
     let stream = body;
-    if (buffer.Buffer.isBuffer(body)) {
-      stream = Stream__default.default.Readable.from(body);
+    if (Buffer$1.isBuffer(body)) {
+      stream = Stream.Readable.from(body);
     } else if (isBlob(body)) {
-      stream = Stream__default.default.Readable.from(body.stream());
+      stream = Stream.Readable.from(body.stream());
     }
     this[INTERNALS] = {
       body,
@@ -148,7 +138,7 @@ var Body = class {
       error: null
     };
     this.size = size;
-    if (body instanceof Stream__default.default) {
+    if (body instanceof Stream) {
       body.on("error", (error_) => {
         const error = error_ instanceof FetchBaseError ? error_ : new FetchError(`Invalid response body while trying to fetch ${this.url}: ${error_.message}`, "system", error_);
         this[INTERNALS].error = error;
@@ -173,14 +163,14 @@ var Body = class {
   async formData() {
     const ct = this.headers.get("content-type");
     if (ct.startsWith("application/x-www-form-urlencoded")) {
-      const formData = new chunkVND52AST_cjs.FormData();
+      const formData = new FormData();
       const parameters = new URLSearchParams(await this.text());
       for (const [name, value] of parameters) {
         formData.append(name, value);
       }
       return formData;
     }
-    const { toFormData } = await import('./multipart-parser-SXDWJXMK.cjs');
+    const { toFormData } = await import('./multipart-parser-XYCJRNFG.mjs');
     return toFormData(this.body, ct);
   }
   /**
@@ -191,7 +181,7 @@ var Body = class {
   async blob() {
     const ct = this.headers && this.headers.get("content-type") || this[INTERNALS].body && this[INTERNALS].body.type || "";
     const buf = await this.arrayBuffer();
-    return new chunkVND52AST_cjs.fetch_blob_default([buf], {
+    return new fetch_blob_default([buf], {
       type: ct
     });
   }
@@ -222,7 +212,7 @@ var Body = class {
     return consumeBody(this);
   }
 };
-Body.prototype.buffer = util.deprecate(Body.prototype.buffer, "Please use 'response.arrayBuffer()' instead of 'response.buffer()'", "node-fetch#buffer");
+Body.prototype.buffer = deprecate(Body.prototype.buffer, "Please use 'response.arrayBuffer()' instead of 'response.buffer()'", "node-fetch#buffer");
 Object.defineProperties(Body.prototype, {
   body: { enumerable: true },
   bodyUsed: { enumerable: true },
@@ -230,7 +220,7 @@ Object.defineProperties(Body.prototype, {
   blob: { enumerable: true },
   json: { enumerable: true },
   text: { enumerable: true },
-  data: { get: util.deprecate(
+  data: { get: deprecate(
     () => {
     },
     "data doesn't exist, use json(), text(), arrayBuffer(), or body instead",
@@ -247,10 +237,10 @@ async function consumeBody(data) {
   }
   const { body } = data;
   if (body === null) {
-    return buffer.Buffer.alloc(0);
+    return Buffer$1.alloc(0);
   }
-  if (!(body instanceof Stream__default.default)) {
-    return buffer.Buffer.alloc(0);
+  if (!(body instanceof Stream)) {
+    return Buffer$1.alloc(0);
   }
   const accum = [];
   let accumBytes = 0;
@@ -271,9 +261,9 @@ async function consumeBody(data) {
   if (body.readableEnded === true || body._readableState.ended === true) {
     try {
       if (accum.every((c) => typeof c === "string")) {
-        return buffer.Buffer.from(accum.join(""));
+        return Buffer$1.from(accum.join(""));
       }
-      return buffer.Buffer.concat(accum, accumBytes);
+      return Buffer$1.concat(accum, accumBytes);
     } catch (error) {
       throw new FetchError(`Could not create Buffer from response body for ${data.url}: ${error.message}`, "system", error);
     }
@@ -288,9 +278,9 @@ var clone = (instance, highWaterMark) => {
   if (instance.bodyUsed) {
     throw new Error("cannot clone body after it is used");
   }
-  if (body instanceof Stream__default.default && typeof body.getBoundary !== "function") {
-    p1 = new Stream.PassThrough({ highWaterMark });
-    p2 = new Stream.PassThrough({ highWaterMark });
+  if (body instanceof Stream && typeof body.getBoundary !== "function") {
+    p1 = new PassThrough({ highWaterMark });
+    p2 = new PassThrough({ highWaterMark });
     body.pipe(p1);
     body.pipe(p2);
     instance[INTERNALS].stream = p1;
@@ -298,7 +288,7 @@ var clone = (instance, highWaterMark) => {
   }
   return body;
 };
-var getNonSpecFormDataBoundary = util.deprecate(
+var getNonSpecFormDataBoundary = deprecate(
   (body) => body.getBoundary(),
   "form-data doesn't follow the spec and requires special treatment. Use alternative package",
   "https://github.com/node-fetch/node-fetch/issues/1167"
@@ -316,16 +306,16 @@ var extractContentType = (body, request) => {
   if (isBlob(body)) {
     return body.type || null;
   }
-  if (buffer.Buffer.isBuffer(body) || util.types.isAnyArrayBuffer(body) || ArrayBuffer.isView(body)) {
+  if (Buffer$1.isBuffer(body) || types.isAnyArrayBuffer(body) || ArrayBuffer.isView(body)) {
     return null;
   }
-  if (body instanceof chunkVND52AST_cjs.FormData) {
+  if (body instanceof FormData) {
     return `multipart/form-data; boundary=${request[INTERNALS].boundary}`;
   }
   if (body && typeof body.getBoundary === "function") {
     return `multipart/form-data;boundary=${getNonSpecFormDataBoundary(body)}`;
   }
-  if (body instanceof Stream__default.default) {
+  if (body instanceof Stream) {
     return null;
   }
   return "text/plain;charset=UTF-8";
@@ -338,7 +328,7 @@ var getTotalBytes = (request) => {
   if (isBlob(body)) {
     return body.size;
   }
-  if (buffer.Buffer.isBuffer(body)) {
+  if (Buffer$1.isBuffer(body)) {
     return body.length;
   }
   if (body && typeof body.getLengthSync === "function") {
@@ -353,14 +343,14 @@ var writeToStream = async (dest, { body }) => {
     await pipeline(body, dest);
   }
 };
-var validateHeaderName = typeof http__default.default.validateHeaderName === "function" ? http__default.default.validateHeaderName : (name) => {
+var validateHeaderName = typeof http.validateHeaderName === "function" ? http.validateHeaderName : (name) => {
   if (!/^[\^`\-\w!#$%&'*+.|~]+$/.test(name)) {
     const error = new TypeError(`Header name must be a valid HTTP token [${name}]`);
     Object.defineProperty(error, "code", { value: "ERR_INVALID_HTTP_TOKEN" });
     throw error;
   }
 };
-var validateHeaderValue = typeof http__default.default.validateHeaderValue === "function" ? http__default.default.validateHeaderValue : (name, value) => {
+var validateHeaderValue = typeof http.validateHeaderValue === "function" ? http.validateHeaderValue : (name, value) => {
   if (/[^\t\u0020-\u007E\u0080-\u00FF]/.test(value)) {
     const error = new TypeError(`Invalid character in header content ["${name}"]`);
     Object.defineProperty(error, "code", { value: "ERR_INVALID_CHAR" });
@@ -381,7 +371,7 @@ var Headers = class _Headers extends URLSearchParams {
       for (const [name, values] of Object.entries(raw)) {
         result.push(...values.map((value) => [name, value]));
       }
-    } else if (init == null) ; else if (typeof init === "object" && !util.types.isBoxedPrimitive(init)) {
+    } else if (init == null) ; else if (typeof init === "object" && !types.isBoxedPrimitive(init)) {
       const method = init[Symbol.iterator];
       if (method == null) {
         result.push(...Object.entries(init));
@@ -390,7 +380,7 @@ var Headers = class _Headers extends URLSearchParams {
           throw new TypeError("Header pairs must be iterable");
         }
         result = [...init].map((pair) => {
-          if (typeof pair !== "object" || util.types.isBoxedPrimitive(pair)) {
+          if (typeof pair !== "object" || types.isBoxedPrimitive(pair)) {
             throw new TypeError("Each header pair must be an iterable object");
           }
           return [...pair];
@@ -708,7 +698,7 @@ function isOriginPotentiallyTrustworthy(url) {
     return true;
   }
   const hostIp = url.host.replace(/(^\[)|(]$)/g, "");
-  const hostIPVersion = net.isIP(hostIp);
+  const hostIPVersion = isIP(hostIp);
   if (hostIPVersion === 4 && /^127\./.test(hostIp)) {
     return true;
   }
@@ -811,7 +801,7 @@ var INTERNALS3 = /* @__PURE__ */ Symbol("Request internals");
 var isRequest = (object) => {
   return typeof object === "object" && typeof object[INTERNALS3] === "object";
 };
-var doBadDataWarn = util.deprecate(
+var doBadDataWarn = deprecate(
   () => {
   },
   ".data is not a valid RequestInit property, use .body instead",
@@ -888,7 +878,7 @@ var Request = class _Request extends Body {
   }
   /** @returns {string} */
   get url() {
-    return url.format(this[INTERNALS3].parsedURL);
+    return format(this[INTERNALS3].parsedURL);
   }
   /** @returns {Headers} */
   get headers() {
@@ -1021,13 +1011,13 @@ async function fetch(url, options_) {
       resolve(response2);
       return;
     }
-    const send = (parsedURL.protocol === "https:" ? https__default.default : http__default.default).request;
+    const send = (parsedURL.protocol === "https:" ? https : http).request;
     const { signal } = request;
     let response = null;
     const abort = () => {
       const error = new AbortError("The operation was aborted.");
       reject(error);
-      if (request.body && request.body instanceof Stream__default.default.Readable) {
+      if (request.body && request.body instanceof Stream.Readable) {
         request.body.destroy(error);
       }
       if (!response || !response.body) {
@@ -1126,7 +1116,7 @@ async function fetch(url, options_) {
                 requestOptions.headers.delete(name);
               }
             }
-            if (response_.statusCode !== 303 && request.body && options_.body instanceof Stream__default.default.Readable) {
+            if (response_.statusCode !== 303 && request.body && options_.body instanceof Stream.Readable) {
               reject(new FetchError("Cannot follow redirect with body being a readable stream", "unsupported-redirect"));
               finalize();
               return;
@@ -1153,7 +1143,7 @@ async function fetch(url, options_) {
           signal.removeEventListener("abort", abortAndFinalize);
         });
       }
-      let body = Stream.pipeline(response_, new Stream.PassThrough(), (error) => {
+      let body = pipeline$1(response_, new PassThrough(), (error) => {
         if (error) {
           reject(error);
         }
@@ -1177,11 +1167,11 @@ async function fetch(url, options_) {
         return;
       }
       const zlibOptions = {
-        flush: zlib__default.default.Z_SYNC_FLUSH,
-        finishFlush: zlib__default.default.Z_SYNC_FLUSH
+        flush: zlib.Z_SYNC_FLUSH,
+        finishFlush: zlib.Z_SYNC_FLUSH
       };
       if (codings === "gzip" || codings === "x-gzip") {
-        body = Stream.pipeline(body, zlib__default.default.createGunzip(zlibOptions), (error) => {
+        body = pipeline$1(body, zlib.createGunzip(zlibOptions), (error) => {
           if (error) {
             reject(error);
           }
@@ -1191,20 +1181,20 @@ async function fetch(url, options_) {
         return;
       }
       if (codings === "deflate" || codings === "x-deflate") {
-        const raw = Stream.pipeline(response_, new Stream.PassThrough(), (error) => {
+        const raw = pipeline$1(response_, new PassThrough(), (error) => {
           if (error) {
             reject(error);
           }
         });
         raw.once("data", (chunk) => {
           if ((chunk[0] & 15) === 8) {
-            body = Stream.pipeline(body, zlib__default.default.createInflate(), (error) => {
+            body = pipeline$1(body, zlib.createInflate(), (error) => {
               if (error) {
                 reject(error);
               }
             });
           } else {
-            body = Stream.pipeline(body, zlib__default.default.createInflateRaw(), (error) => {
+            body = pipeline$1(body, zlib.createInflateRaw(), (error) => {
               if (error) {
                 reject(error);
               }
@@ -1222,7 +1212,7 @@ async function fetch(url, options_) {
         return;
       }
       if (codings === "br") {
-        body = Stream.pipeline(body, zlib__default.default.createBrotliDecompress(), (error) => {
+        body = pipeline$1(body, zlib.createBrotliDecompress(), (error) => {
           if (error) {
             reject(error);
           }
@@ -1238,7 +1228,7 @@ async function fetch(url, options_) {
   });
 }
 function fixResponseChunkedTransferBadEnding(request, errorCallback) {
-  const LAST_CHUNK = buffer.Buffer.from("0\r\n\r\n");
+  const LAST_CHUNK = Buffer$1.from("0\r\n\r\n");
   let isChunkedTransfer = false;
   let properLastChunkReceived = false;
   let previousChunk;
@@ -1255,9 +1245,9 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
       }
     };
     const onData = (buf) => {
-      properLastChunkReceived = buffer.Buffer.compare(buf.slice(-5), LAST_CHUNK) === 0;
+      properLastChunkReceived = Buffer$1.compare(buf.slice(-5), LAST_CHUNK) === 0;
       if (!properLastChunkReceived && previousChunk) {
-        properLastChunkReceived = buffer.Buffer.compare(previousChunk.slice(-3), LAST_CHUNK.slice(0, 3)) === 0 && buffer.Buffer.compare(buf.slice(-2), LAST_CHUNK.slice(3)) === 0;
+        properLastChunkReceived = Buffer$1.compare(previousChunk.slice(-3), LAST_CHUNK.slice(0, 3)) === 0 && Buffer$1.compare(buf.slice(-2), LAST_CHUNK.slice(3)) === 0;
       }
       previousChunk = buf;
     };
@@ -1270,40 +1260,6 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
   });
 }
 
-Object.defineProperty(exports, "Blob", {
-  enumerable: true,
-  get: function () { return chunkVND52AST_cjs.fetch_blob_default; }
-});
-Object.defineProperty(exports, "File", {
-  enumerable: true,
-  get: function () { return chunkVND52AST_cjs.file_default; }
-});
-Object.defineProperty(exports, "FormData", {
-  enumerable: true,
-  get: function () { return chunkVND52AST_cjs.FormData; }
-});
-Object.defineProperty(exports, "blobFrom", {
-  enumerable: true,
-  get: function () { return chunkVND52AST_cjs.blobFrom; }
-});
-Object.defineProperty(exports, "blobFromSync", {
-  enumerable: true,
-  get: function () { return chunkVND52AST_cjs.blobFromSync; }
-});
-Object.defineProperty(exports, "fileFrom", {
-  enumerable: true,
-  get: function () { return chunkVND52AST_cjs.fileFrom; }
-});
-Object.defineProperty(exports, "fileFromSync", {
-  enumerable: true,
-  get: function () { return chunkVND52AST_cjs.fileFromSync; }
-});
-exports.AbortError = AbortError;
-exports.FetchError = FetchError;
-exports.Headers = Headers;
-exports.Request = Request;
-exports.Response = Response;
-exports.default = fetch;
-exports.isRedirect = isRedirect;
-//# sourceMappingURL=src-B5N4A6WG.cjs.map
-//# sourceMappingURL=src-B5N4A6WG.cjs.map
+export { AbortError, FetchError, Headers, Request, Response, fetch as default, isRedirect };
+//# sourceMappingURL=src-C6CK5OMD.mjs.map
+//# sourceMappingURL=src-C6CK5OMD.mjs.map

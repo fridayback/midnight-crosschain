@@ -1,9 +1,11 @@
-import { __commonJS, __require, __toESM, __privateAdd, __privateSet, __privateGet } from './chunk-CI3KPFIO.mjs';
-import { promises, statSync, createReadStream } from 'fs';
-import { basename } from 'path';
+'use strict';
+
+var chunkJBVKWKD4_cjs = require('./chunk-JBVKWKD4.cjs');
+var fs = require('fs');
+var path = require('path');
 
 // node_modules/web-streams-polyfill/dist/ponyfill.es2018.js
-var require_ponyfill_es2018 = __commonJS({
+var require_ponyfill_es2018 = chunkJBVKWKD4_cjs.__commonJS({
   "node_modules/web-streams-polyfill/dist/ponyfill.es2018.js"(exports$1, module) {
     (function(global2, factory) {
       typeof exports$1 === "object" && typeof module !== "undefined" ? factory(exports$1) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.WebStreamsPolyfill = {}));
@@ -21,7 +23,7 @@ var require_ponyfill_es2018 = __commonJS({
             value: name,
             configurable: true
           });
-        } catch (_a5) {
+        } catch (_a2) {
         }
       }
       const originalPromise = Promise;
@@ -553,7 +555,7 @@ var require_ponyfill_es2018 = __commonJS({
         }
         try {
           return x2._asyncIteratorImpl instanceof ReadableStreamAsyncIteratorImpl;
-        } catch (_a5) {
+        } catch (_a2) {
           return false;
         }
       }
@@ -563,7 +565,7 @@ var require_ponyfill_es2018 = __commonJS({
       const NumberIsNaN = Number.isNaN || function(x2) {
         return x2 !== x2;
       };
-      var _a4, _b, _c;
+      var _a, _b, _c;
       function CreateArrayFromList(elements) {
         return elements.slice();
       }
@@ -617,7 +619,7 @@ var require_ponyfill_es2018 = __commonJS({
         const nextMethod = asyncIterator.next;
         return { iterator: asyncIterator, nextMethod, done: false };
       }
-      const SymbolAsyncIterator = (_c = (_a4 = Symbol.asyncIterator) !== null && _a4 !== void 0 ? _a4 : (_b = Symbol.for) === null || _b === void 0 ? void 0 : _b.call(Symbol, "Symbol.asyncIterator")) !== null && _c !== void 0 ? _c : "@@asyncIterator";
+      const SymbolAsyncIterator = (_c = (_a = Symbol.asyncIterator) !== null && _a !== void 0 ? _a : (_b = Symbol.for) === null || _b === void 0 ? void 0 : _b.call(Symbol, "Symbol.asyncIterator")) !== null && _c !== void 0 ? _c : "@@asyncIterator";
       function GetIterator(obj, hint = "sync", method) {
         if (method === void 0) {
           if (hint === "async") {
@@ -1394,9 +1396,9 @@ var require_ponyfill_es2018 = __commonJS({
         return mode;
       }
       function convertByobReadOptions(options, context) {
-        var _a5;
+        var _a2;
         assertDictionary(options, context);
-        const min = (_a5 = options === null || options === void 0 ? void 0 : options.min) !== null && _a5 !== void 0 ? _a5 : 1;
+        const min = (_a2 = options === null || options === void 0 ? void 0 : options.min) !== null && _a2 !== void 0 ? _a2 : 1;
         return {
           min: convertUnsignedLongLongWithEnforceRange(min, `${context} has member 'min' that`)
         };
@@ -1653,7 +1655,7 @@ var require_ponyfill_es2018 = __commonJS({
         }
         try {
           return typeof value.aborted === "boolean";
-        } catch (_a5) {
+        } catch (_a2) {
           return false;
         }
       }
@@ -1797,12 +1799,12 @@ var require_ponyfill_es2018 = __commonJS({
         return true;
       }
       function WritableStreamAbort(stream, reason) {
-        var _a5;
+        var _a2;
         if (stream._state === "closed" || stream._state === "errored") {
           return promiseResolvedWith(void 0);
         }
         stream._writableStreamController._abortReason = reason;
-        (_a5 = stream._writableStreamController._abortController) === null || _a5 === void 0 ? void 0 : _a5.abort(reason);
+        (_a2 = stream._writableStreamController._abortController) === null || _a2 === void 0 ? void 0 : _a2.abort(reason);
         const state = stream._state;
         if (state === "closed" || state === "errored") {
           return promiseResolvedWith(void 0);
@@ -2565,7 +2567,7 @@ var require_ponyfill_es2018 = __commonJS({
         try {
           new ctor();
           return true;
-        } catch (_a5) {
+        } catch (_a2) {
           return false;
         }
       }
@@ -4277,17 +4279,17 @@ var require_ponyfill_es2018 = __commonJS({
 });
 
 // node_modules/fetch-blob/streams.cjs
-var require_streams = __commonJS({
+var require_streams = chunkJBVKWKD4_cjs.__commonJS({
   "node_modules/fetch-blob/streams.cjs"() {
     var POOL_SIZE2 = 65536;
     if (!globalThis.ReadableStream) {
       try {
-        const process = __require("process");
+        const process = chunkJBVKWKD4_cjs.__require("process");
         const { emitWarning } = process;
         try {
           process.emitWarning = () => {
           };
-          Object.assign(globalThis, __require("stream/web"));
+          Object.assign(globalThis, chunkJBVKWKD4_cjs.__require("stream/web"));
           process.emitWarning = emitWarning;
         } catch (error) {
           process.emitWarning = emitWarning;
@@ -4298,9 +4300,9 @@ var require_streams = __commonJS({
       }
     }
     try {
-      const { Blob: Blob2 } = __require("buffer");
-      if (Blob2 && !Blob2.prototype.stream) {
-        Blob2.prototype.stream = function name(params) {
+      const { Blob: Blob3 } = chunkJBVKWKD4_cjs.__require("buffer");
+      if (Blob3 && !Blob3.prototype.stream) {
+        Blob3.prototype.stream = function name(params) {
           let position = 0;
           const blob = this;
           return new ReadableStream({
@@ -4323,11 +4325,11 @@ var require_streams = __commonJS({
 });
 
 // node_modules/node-domexception/index.js
-var require_node_domexception = __commonJS({
+var require_node_domexception = chunkJBVKWKD4_cjs.__commonJS({
   "node_modules/node-domexception/index.js"(exports$1, module) {
     if (!globalThis.DOMException) {
       try {
-        const { MessageChannel } = __require("worker_threads"), port = new MessageChannel().port1, ab = new ArrayBuffer();
+        const { MessageChannel } = chunkJBVKWKD4_cjs.__require("worker_threads"), port = new MessageChannel().port1, ab = new ArrayBuffer();
         port.postMessage(ab, [ab, ab]);
       } catch (err) {
         err.constructor.name === "DOMException" && (globalThis.DOMException = err.constructor);
@@ -4338,7 +4340,7 @@ var require_node_domexception = __commonJS({
 });
 
 // node_modules/fetch-blob/index.js
-__toESM(require_streams(), 1);
+chunkJBVKWKD4_cjs.__toESM(require_streams(), 1);
 var POOL_SIZE = 65536;
 async function* toIterator(parts, clone = true) {
   for (const part of parts) {
@@ -4374,8 +4376,12 @@ async function* toIterator(parts, clone = true) {
     }
   }
 }
-var _parts, _type, _size, _endings, _a;
-var _Blob = (_a = class {
+var _Blob = class Blob {
+  /** @type {Array.<(Blob|Uint8Array)>} */
+  #parts = [];
+  #type = "";
+  #size = 0;
+  #endings = "transparent";
   /**
    * The Blob() constructor returns a new Blob object. The content
    * of the blob consists of the concatenation of the values given
@@ -4385,11 +4391,6 @@ var _Blob = (_a = class {
    * @param {{ type?: string, endings?: string }} [options]
    */
   constructor(blobParts = [], options = {}) {
-    /** @type {Array.<(Blob|Uint8Array)>} */
-    __privateAdd(this, _parts, []);
-    __privateAdd(this, _type, "");
-    __privateAdd(this, _size, 0);
-    __privateAdd(this, _endings, "transparent");
     if (typeof blobParts !== "object" || blobParts === null) {
       throw new TypeError("Failed to construct 'Blob': The provided value cannot be converted to a sequence.");
     }
@@ -4407,30 +4408,30 @@ var _Blob = (_a = class {
         part = new Uint8Array(element.buffer.slice(element.byteOffset, element.byteOffset + element.byteLength));
       } else if (element instanceof ArrayBuffer) {
         part = new Uint8Array(element.slice(0));
-      } else if (element instanceof _a) {
+      } else if (element instanceof Blob) {
         part = element;
       } else {
         part = encoder.encode(`${element}`);
       }
-      __privateSet(this, _size, __privateGet(this, _size) + (ArrayBuffer.isView(part) ? part.byteLength : part.size));
-      __privateGet(this, _parts).push(part);
+      this.#size += ArrayBuffer.isView(part) ? part.byteLength : part.size;
+      this.#parts.push(part);
     }
-    __privateSet(this, _endings, `${options.endings === void 0 ? "transparent" : options.endings}`);
+    this.#endings = `${options.endings === void 0 ? "transparent" : options.endings}`;
     const type = options.type === void 0 ? "" : String(options.type);
-    __privateSet(this, _type, /^[\x20-\x7E]*$/.test(type) ? type : "");
+    this.#type = /^[\x20-\x7E]*$/.test(type) ? type : "";
   }
   /**
    * The Blob interface's size property returns the
    * size of the Blob in bytes.
    */
   get size() {
-    return __privateGet(this, _size);
+    return this.#size;
   }
   /**
    * The type property of a Blob object returns the MIME type of the file.
    */
   get type() {
-    return __privateGet(this, _type);
+    return this.#type;
   }
   /**
    * The text() method in the Blob interface returns a Promise
@@ -4442,7 +4443,7 @@ var _Blob = (_a = class {
   async text() {
     const decoder = new TextDecoder();
     let str = "";
-    for await (const part of toIterator(__privateGet(this, _parts), false)) {
+    for await (const part of toIterator(this.#parts, false)) {
       str += decoder.decode(part, { stream: true });
     }
     str += decoder.decode();
@@ -4458,14 +4459,14 @@ var _Blob = (_a = class {
   async arrayBuffer() {
     const data = new Uint8Array(this.size);
     let offset = 0;
-    for await (const chunk of toIterator(__privateGet(this, _parts), false)) {
+    for await (const chunk of toIterator(this.#parts, false)) {
       data.set(chunk, offset);
       offset += chunk.length;
     }
     return data.buffer;
   }
   stream() {
-    const it = toIterator(__privateGet(this, _parts), true);
+    const it = toIterator(this.#parts, true);
     return new globalThis.ReadableStream({
       // @ts-ignore
       type: "bytes",
@@ -4492,7 +4493,7 @@ var _Blob = (_a = class {
     let relativeStart = start < 0 ? Math.max(size + start, 0) : Math.min(start, size);
     let relativeEnd = end < 0 ? Math.max(size + end, 0) : Math.min(end, size);
     const span = Math.max(relativeEnd - relativeStart, 0);
-    const parts = __privateGet(this, _parts);
+    const parts = this.#parts;
     const blobParts = [];
     let added = 0;
     for (const part of parts) {
@@ -4517,9 +4518,9 @@ var _Blob = (_a = class {
         relativeStart = 0;
       }
     }
-    const blob = new _a([], { type: String(type).toLowerCase() });
-    __privateSet(blob, _size, span);
-    __privateSet(blob, _parts, blobParts);
+    const blob = new Blob([], { type: String(type).toLowerCase() });
+    blob.#size = span;
+    blob.#parts = blobParts;
     return blob;
   }
   get [Symbol.toStringTag]() {
@@ -4528,18 +4529,19 @@ var _Blob = (_a = class {
   static [Symbol.hasInstance](object) {
     return object && typeof object === "object" && typeof object.constructor === "function" && (typeof object.stream === "function" || typeof object.arrayBuffer === "function") && /^(Blob|File)$/.test(object[Symbol.toStringTag]);
   }
-}, _parts = new WeakMap(), _type = new WeakMap(), _size = new WeakMap(), _endings = new WeakMap(), _a);
+};
 Object.defineProperties(_Blob.prototype, {
   size: { enumerable: true },
   type: { enumerable: true },
   slice: { enumerable: true }
 });
-var Blob = _Blob;
-var fetch_blob_default = Blob;
+var Blob2 = _Blob;
+var fetch_blob_default = Blob2;
 
 // node_modules/fetch-blob/file.js
-var _lastModified, _name, _a2;
-var _File = (_a2 = class extends fetch_blob_default {
+var _File = class File extends fetch_blob_default {
+  #lastModified = 0;
+  #name = "";
   /**
    * @param {*[]} fileBits
    * @param {string} fileName
@@ -4551,20 +4553,18 @@ var _File = (_a2 = class extends fetch_blob_default {
       throw new TypeError(`Failed to construct 'File': 2 arguments required, but only ${arguments.length} present.`);
     }
     super(fileBits, options);
-    __privateAdd(this, _lastModified, 0);
-    __privateAdd(this, _name, "");
     if (options === null) options = {};
     const lastModified = options.lastModified === void 0 ? Date.now() : Number(options.lastModified);
     if (!Number.isNaN(lastModified)) {
-      __privateSet(this, _lastModified, lastModified);
+      this.#lastModified = lastModified;
     }
-    __privateSet(this, _name, String(fileName));
+    this.#name = String(fileName);
   }
   get name() {
-    return __privateGet(this, _name);
+    return this.#name;
   }
   get lastModified() {
-    return __privateGet(this, _lastModified);
+    return this.#lastModified;
   }
   get [Symbol.toStringTag]() {
     return "File";
@@ -4572,9 +4572,9 @@ var _File = (_a2 = class extends fetch_blob_default {
   static [Symbol.hasInstance](object) {
     return !!object && object instanceof fetch_blob_default && /^(File)$/.test(object[Symbol.toStringTag]);
   }
-}, _lastModified = new WeakMap(), _name = new WeakMap(), _a2);
-var File = _File;
-var file_default = File;
+};
+var File2 = _File;
+var file_default = File2;
 
 // node_modules/formdata-polyfill/esm.min.js
 var { toStringTag: t, iterator: i, hasInstance: h } = Symbol;
@@ -4587,10 +4587,9 @@ var x = (n, a, e2) => {
     throw new TypeError(`Failed to execute '${n}' on 'FormData': ${e2} arguments required, but only ${a.length} present.`);
   }
 };
-var _d, _a3;
-var FormData = (_a3 = class {
+var FormData = class FormData2 {
+  #d = [];
   constructor(...a) {
-    __privateAdd(this, _d, []);
     if (a.length) throw new TypeError(`Failed to construct 'FormData': parameter 1 is not of type 'HTMLFormElement'.`);
   }
   get [t]() {
@@ -4604,30 +4603,30 @@ var FormData = (_a3 = class {
   }
   append(...a) {
     x("append", arguments, 2);
-    __privateGet(this, _d).push(f(...a));
+    this.#d.push(f(...a));
   }
   delete(a) {
     x("delete", arguments, 1);
     a += "";
-    __privateSet(this, _d, __privateGet(this, _d).filter(([b]) => b !== a));
+    this.#d = this.#d.filter(([b]) => b !== a);
   }
   get(a) {
     x("get", arguments, 1);
     a += "";
-    for (var b = __privateGet(this, _d), l = b.length, c = 0; c < l; c++) if (b[c][0] === a) return b[c][1];
+    for (var b = this.#d, l = b.length, c = 0; c < l; c++) if (b[c][0] === a) return b[c][1];
     return null;
   }
   getAll(a, b) {
     x("getAll", arguments, 1);
     b = [];
     a += "";
-    __privateGet(this, _d).forEach((c) => c[0] === a && b.push(c[1]));
+    this.#d.forEach((c) => c[0] === a && b.push(c[1]));
     return b;
   }
   has(a) {
     x("has", arguments, 1);
     a += "";
-    return __privateGet(this, _d).some((b) => b[0] === a);
+    return this.#d.some((b) => b[0] === a);
   }
   forEach(a, b) {
     x("forEach", arguments, 1);
@@ -4637,14 +4636,14 @@ var FormData = (_a3 = class {
     x("set", arguments, 2);
     var b = [], c = true;
     a = f(...a);
-    __privateGet(this, _d).forEach((d) => {
+    this.#d.forEach((d) => {
       d[0] === a[0] ? c && (c = !b.push(a)) : b.push(d);
     });
     c && b.push(a);
-    __privateSet(this, _d, b);
+    this.#d = b;
   }
   *entries() {
-    yield* __privateGet(this, _d);
+    yield* this.#d;
   }
   *keys() {
     for (var [a] of this) yield a;
@@ -4652,7 +4651,7 @@ var FormData = (_a3 = class {
   *values() {
     for (var [, a] of this) yield a;
   }
-}, _d = new WeakMap(), _a3);
+};
 function formDataToBlob(F, B = fetch_blob_default) {
   var b = `${r()}${r()}`.replace(/\./g, "").slice(-28).padStart(32, "-"), c = [], p = `--${b}\r
 Content-Disposition: form-data; name="`;
@@ -4668,31 +4667,30 @@ Content-Type: ${v.type || "application/octet-stream"}\r
 }
 
 // node_modules/fetch-blob/from.js
-var import_node_domexception = __toESM(require_node_domexception(), 1);
-var { stat } = promises;
-var blobFromSync = (path, type) => fromBlob(statSync(path), path, type);
+var import_node_domexception = chunkJBVKWKD4_cjs.__toESM(require_node_domexception(), 1);
+var { stat } = fs.promises;
+var blobFromSync = (path, type) => fromBlob(fs.statSync(path), path, type);
 var blobFrom = (path, type) => stat(path).then((stat2) => fromBlob(stat2, path, type));
 var fileFrom = (path, type) => stat(path).then((stat2) => fromFile(stat2, path, type));
-var fileFromSync = (path, type) => fromFile(statSync(path), path, type);
+var fileFromSync = (path, type) => fromFile(fs.statSync(path), path, type);
 var fromBlob = (stat2, path, type = "") => new fetch_blob_default([new BlobDataItem({
   path,
   size: stat2.size,
   lastModified: stat2.mtimeMs,
   start: 0
 })], { type });
-var fromFile = (stat2, path, type = "") => new file_default([new BlobDataItem({
-  path,
+var fromFile = (stat2, path$1, type = "") => new file_default([new BlobDataItem({
+  path: path$1,
   size: stat2.size,
   lastModified: stat2.mtimeMs,
   start: 0
-})], basename(path), { type, lastModified: stat2.mtimeMs });
-var _path, _start;
-var _BlobDataItem = class _BlobDataItem {
+})], path.basename(path$1), { type, lastModified: stat2.mtimeMs });
+var BlobDataItem = class _BlobDataItem {
+  #path;
+  #start;
   constructor(options) {
-    __privateAdd(this, _path);
-    __privateAdd(this, _start);
-    __privateSet(this, _path, options.path);
-    __privateSet(this, _start, options.start);
+    this.#path = options.path;
+    this.#start = options.start;
     this.size = options.size;
     this.lastModified = options.lastModified;
   }
@@ -4702,29 +4700,26 @@ var _BlobDataItem = class _BlobDataItem {
    */
   slice(start, end) {
     return new _BlobDataItem({
-      path: __privateGet(this, _path),
+      path: this.#path,
       lastModified: this.lastModified,
       size: end - start,
-      start: __privateGet(this, _start) + start
+      start: this.#start + start
     });
   }
   async *stream() {
-    const { mtimeMs } = await stat(__privateGet(this, _path));
+    const { mtimeMs } = await stat(this.#path);
     if (mtimeMs > this.lastModified) {
       throw new import_node_domexception.default("The requested file could not be read, typically due to permission problems that have occurred after a reference to a file was acquired.", "NotReadableError");
     }
-    yield* createReadStream(__privateGet(this, _path), {
-      start: __privateGet(this, _start),
-      end: __privateGet(this, _start) + this.size - 1
+    yield* fs.createReadStream(this.#path, {
+      start: this.#start,
+      end: this.#start + this.size - 1
     });
   }
   get [Symbol.toStringTag]() {
     return "Blob";
   }
 };
-_path = new WeakMap();
-_start = new WeakMap();
-var BlobDataItem = _BlobDataItem;
 /*! Bundled license information:
 
 web-streams-polyfill/dist/ponyfill.es2018.js:
@@ -4746,6 +4741,13 @@ formdata-polyfill/esm.min.js:
   (*! formdata-polyfill. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> *)
 */
 
-export { FormData, blobFrom, blobFromSync, fetch_blob_default, fileFrom, fileFromSync, file_default, formDataToBlob };
-//# sourceMappingURL=chunk-PMBGWWC4.mjs.map
-//# sourceMappingURL=chunk-PMBGWWC4.mjs.map
+exports.FormData = FormData;
+exports.blobFrom = blobFrom;
+exports.blobFromSync = blobFromSync;
+exports.fetch_blob_default = fetch_blob_default;
+exports.fileFrom = fileFrom;
+exports.fileFromSync = fileFromSync;
+exports.file_default = file_default;
+exports.formDataToBlob = formDataToBlob;
+//# sourceMappingURL=chunk-2URFYEPQ.cjs.map
+//# sourceMappingURL=chunk-2URFYEPQ.cjs.map

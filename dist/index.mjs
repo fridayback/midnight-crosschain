@@ -1,4 +1,4 @@
-import { __commonJS, __esm, __export, __require, __toCommonJS, __toESM, __publicField, __privateAdd, __privateSet, __privateGet, __privateMethod, __privateWrapper } from './chunk-CI3KPFIO.mjs';
+import { __commonJS, __esm, __export, __require, __toCommonJS, __toESM } from './chunk-J7LXIPZS.mjs';
 import Stream2 from 'stream';
 import http from 'http';
 import Url, { fileURLToPath, pathToFileURL, URL as URL$2 } from 'url';
@@ -130,7 +130,7 @@ var require_Subscription = __commonJS({
         this._finalizers = null;
       }
       Subscription4.prototype.unsubscribe = function() {
-        var e_1, _a91, e_2, _b37;
+        var e_1, _a3, e_2, _b;
         var errors2;
         if (!this.closed) {
           this.closed = true;
@@ -147,7 +147,7 @@ var require_Subscription = __commonJS({
                 e_1 = { error: e_1_1 };
               } finally {
                 try {
-                  if (_parentage_1_1 && !_parentage_1_1.done && (_a91 = _parentage_1.return)) _a91.call(_parentage_1);
+                  if (_parentage_1_1 && !_parentage_1_1.done && (_a3 = _parentage_1.return)) _a3.call(_parentage_1);
                 } finally {
                   if (e_1) throw e_1.error;
                 }
@@ -185,7 +185,7 @@ var require_Subscription = __commonJS({
               e_2 = { error: e_2_1 };
             } finally {
               try {
-                if (_finalizers_1_1 && !_finalizers_1_1.done && (_b37 = _finalizers_1.return)) _b37.call(_finalizers_1);
+                if (_finalizers_1_1 && !_finalizers_1_1.done && (_b = _finalizers_1.return)) _b.call(_finalizers_1);
               } finally {
                 if (e_2) throw e_2.error;
               }
@@ -197,7 +197,7 @@ var require_Subscription = __commonJS({
         }
       };
       Subscription4.prototype.add = function(teardown) {
-        var _a91;
+        var _a3;
         if (teardown && teardown !== this) {
           if (this.closed) {
             execFinalizer(teardown);
@@ -208,7 +208,7 @@ var require_Subscription = __commonJS({
               }
               teardown._addParent(this);
             }
-            (this._finalizers = (_a91 = this._finalizers) !== null && _a91 !== void 0 ? _a91 : []).push(teardown);
+            (this._finalizers = (_a3 = this._finalizers) !== null && _a3 !== void 0 ? _a3 : []).push(teardown);
           }
         }
       };
@@ -395,7 +395,7 @@ var require_errorContext = __commonJS({
         }
         cb();
         if (isRoot) {
-          var _a91 = context10, errorThrown = _a91.errorThrown, error4 = _a91.error;
+          var _a3 = context10, errorThrown = _a3.errorThrown, error4 = _a3.error;
           context10 = null;
           if (errorThrown) {
             throw error4;
@@ -698,7 +698,7 @@ var require_Observable = __commonJS({
         var _this = this;
         var subscriber = isSubscriber(observerOrNext) ? observerOrNext : new Subscriber_1.SafeSubscriber(observerOrNext, error4, complete4);
         errorContext_1.errorContext(function() {
-          var _a91 = _this, operator = _a91.operator, source = _a91.source;
+          var _a3 = _this, operator = _a3.operator, source = _a3.source;
           subscriber.add(operator ? operator.call(subscriber, source) : source ? _this._subscribe(subscriber) : _this._trySubscribe(subscriber));
         });
         return subscriber;
@@ -730,8 +730,8 @@ var require_Observable = __commonJS({
         });
       };
       Observable8.prototype._subscribe = function(subscriber) {
-        var _a91;
-        return (_a91 = this.source) === null || _a91 === void 0 ? void 0 : _a91.subscribe(subscriber);
+        var _a3;
+        return (_a3 = this.source) === null || _a3 === void 0 ? void 0 : _a3.subscribe(subscriber);
       };
       Observable8.prototype[observable_1.observable] = function() {
         return this;
@@ -764,8 +764,8 @@ var require_Observable = __commonJS({
     })();
     exports$1.Observable = Observable7;
     function getPromiseCtor(promiseCtor) {
-      var _a91;
-      return (_a91 = promiseCtor !== null && promiseCtor !== void 0 ? promiseCtor : config_1.config.Promise) !== null && _a91 !== void 0 ? _a91 : Promise;
+      var _a3;
+      return (_a3 = promiseCtor !== null && promiseCtor !== void 0 ? promiseCtor : config_1.config.Promise) !== null && _a3 !== void 0 ? _a3 : Promise;
     }
     function isObserver(value3) {
       return value3 && isFunction_1.isFunction(value3.next) && isFunction_1.isFunction(value3.error) && isFunction_1.isFunction(value3.complete);
@@ -867,11 +867,11 @@ var require_OperatorSubscriber = __commonJS({
         return _this;
       }
       OperatorSubscriber2.prototype.unsubscribe = function() {
-        var _a91;
+        var _a3;
         if (!this.shouldUnsubscribe || this.shouldUnsubscribe()) {
           var closed_1 = this.closed;
           _super.prototype.unsubscribe.call(this);
-          !closed_1 && ((_a91 = this.onFinalize) === null || _a91 === void 0 ? void 0 : _a91.call(this));
+          !closed_1 && ((_a3 = this.onFinalize) === null || _a3 === void 0 ? void 0 : _a3.call(this));
         }
       };
       return OperatorSubscriber2;
@@ -1207,22 +1207,22 @@ var require_Subject = __commonJS({
       Subject2.prototype.next = function(value3) {
         var _this = this;
         errorContext_1.errorContext(function() {
-          var e_1, _a91;
+          var e_1, _a3;
           _this._throwIfClosed();
           if (!_this.isStopped) {
             if (!_this.currentObservers) {
               _this.currentObservers = Array.from(_this.observers);
             }
             try {
-              for (var _b37 = __values2(_this.currentObservers), _c8 = _b37.next(); !_c8.done; _c8 = _b37.next()) {
-                var observer = _c8.value;
+              for (var _b = __values2(_this.currentObservers), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var observer = _c.value;
                 observer.next(value3);
               }
             } catch (e_1_1) {
               e_1 = { error: e_1_1 };
             } finally {
               try {
-                if (_c8 && !_c8.done && (_a91 = _b37.return)) _a91.call(_b37);
+                if (_c && !_c.done && (_a3 = _b.return)) _a3.call(_b);
               } finally {
                 if (e_1) throw e_1.error;
               }
@@ -1263,8 +1263,8 @@ var require_Subject = __commonJS({
       };
       Object.defineProperty(Subject2.prototype, "observed", {
         get: function() {
-          var _a91;
-          return ((_a91 = this.observers) === null || _a91 === void 0 ? void 0 : _a91.length) > 0;
+          var _a3;
+          return ((_a3 = this.observers) === null || _a3 === void 0 ? void 0 : _a3.length) > 0;
         },
         enumerable: false,
         configurable: true
@@ -1280,7 +1280,7 @@ var require_Subject = __commonJS({
       };
       Subject2.prototype._innerSubscribe = function(subscriber) {
         var _this = this;
-        var _a91 = this, hasError = _a91.hasError, isStopped = _a91.isStopped, observers = _a91.observers;
+        var _a3 = this, hasError = _a3.hasError, isStopped = _a3.isStopped, observers = _a3.observers;
         if (hasError || isStopped) {
           return Subscription_1.EMPTY_SUBSCRIPTION;
         }
@@ -1292,7 +1292,7 @@ var require_Subject = __commonJS({
         });
       };
       Subject2.prototype._checkFinalizedStatuses = function(subscriber) {
-        var _a91 = this, hasError = _a91.hasError, thrownError = _a91.thrownError, isStopped = _a91.isStopped;
+        var _a3 = this, hasError = _a3.hasError, thrownError = _a3.thrownError, isStopped = _a3.isStopped;
         if (hasError) {
           subscriber.error(thrownError);
         } else if (isStopped) {
@@ -1319,20 +1319,20 @@ var require_Subject = __commonJS({
         return _this;
       }
       AnonymousSubject2.prototype.next = function(value3) {
-        var _a91, _b37;
-        (_b37 = (_a91 = this.destination) === null || _a91 === void 0 ? void 0 : _a91.next) === null || _b37 === void 0 ? void 0 : _b37.call(_a91, value3);
+        var _a3, _b;
+        (_b = (_a3 = this.destination) === null || _a3 === void 0 ? void 0 : _a3.next) === null || _b === void 0 ? void 0 : _b.call(_a3, value3);
       };
       AnonymousSubject2.prototype.error = function(err) {
-        var _a91, _b37;
-        (_b37 = (_a91 = this.destination) === null || _a91 === void 0 ? void 0 : _a91.error) === null || _b37 === void 0 ? void 0 : _b37.call(_a91, err);
+        var _a3, _b;
+        (_b = (_a3 = this.destination) === null || _a3 === void 0 ? void 0 : _a3.error) === null || _b === void 0 ? void 0 : _b.call(_a3, err);
       };
       AnonymousSubject2.prototype.complete = function() {
-        var _a91, _b37;
-        (_b37 = (_a91 = this.destination) === null || _a91 === void 0 ? void 0 : _a91.complete) === null || _b37 === void 0 ? void 0 : _b37.call(_a91);
+        var _a3, _b;
+        (_b = (_a3 = this.destination) === null || _a3 === void 0 ? void 0 : _a3.complete) === null || _b === void 0 ? void 0 : _b.call(_a3);
       };
       AnonymousSubject2.prototype._subscribe = function(subscriber) {
-        var _a91, _b37;
-        return (_b37 = (_a91 = this.source) === null || _a91 === void 0 ? void 0 : _a91.subscribe(subscriber)) !== null && _b37 !== void 0 ? _b37 : Subscription_1.EMPTY_SUBSCRIPTION;
+        var _a3, _b;
+        return (_b = (_a3 = this.source) === null || _a3 === void 0 ? void 0 : _a3.subscribe(subscriber)) !== null && _b !== void 0 ? _b : Subscription_1.EMPTY_SUBSCRIPTION;
       };
       return AnonymousSubject2;
     })(Subject);
@@ -1367,9 +1367,9 @@ var require_BehaviorSubject = __commonJS({
     var Subject_1 = require_Subject();
     var BehaviorSubject5 = (function(_super) {
       __extends2(BehaviorSubject6, _super);
-      function BehaviorSubject6(_value2) {
+      function BehaviorSubject6(_value) {
         var _this = _super.call(this) || this;
-        _this._value = _value2;
+        _this._value = _value;
         return _this;
       }
       Object.defineProperty(BehaviorSubject6.prototype, "value", {
@@ -1385,12 +1385,12 @@ var require_BehaviorSubject = __commonJS({
         return subscription;
       };
       BehaviorSubject6.prototype.getValue = function() {
-        var _a91 = this, hasError = _a91.hasError, thrownError = _a91.thrownError, _value2 = _a91._value;
+        var _a3 = this, hasError = _a3.hasError, thrownError = _a3.thrownError, _value = _a3._value;
         if (hasError) {
           throw thrownError;
         }
         this._throwIfClosed();
-        return _value2;
+        return _value;
       };
       BehaviorSubject6.prototype.next = function(value3) {
         _super.prototype.next.call(this, this._value = value3);
@@ -1465,7 +1465,7 @@ var require_ReplaySubject = __commonJS({
         return _this;
       }
       ReplaySubject2.prototype.next = function(value3) {
-        var _a91 = this, isStopped = _a91.isStopped, _buffer = _a91._buffer, _infiniteTimeWindow = _a91._infiniteTimeWindow, _timestampProvider = _a91._timestampProvider, _windowTime = _a91._windowTime;
+        var _a3 = this, isStopped = _a3.isStopped, _buffer = _a3._buffer, _infiniteTimeWindow = _a3._infiniteTimeWindow, _timestampProvider = _a3._timestampProvider, _windowTime = _a3._windowTime;
         if (!isStopped) {
           _buffer.push(value3);
           !_infiniteTimeWindow && _buffer.push(_timestampProvider.now() + _windowTime);
@@ -1477,7 +1477,7 @@ var require_ReplaySubject = __commonJS({
         this._throwIfClosed();
         this._trimBuffer();
         var subscription = this._innerSubscribe(subscriber);
-        var _a91 = this, _infiniteTimeWindow = _a91._infiniteTimeWindow, _buffer = _a91._buffer;
+        var _a3 = this, _infiniteTimeWindow = _a3._infiniteTimeWindow, _buffer = _a3._buffer;
         var copy5 = _buffer.slice();
         for (var i = 0; i < copy5.length && !subscriber.closed; i += _infiniteTimeWindow ? 1 : 2) {
           subscriber.next(copy5[i]);
@@ -1486,7 +1486,7 @@ var require_ReplaySubject = __commonJS({
         return subscription;
       };
       ReplaySubject2.prototype._trimBuffer = function() {
-        var _a91 = this, _bufferSize = _a91._bufferSize, _timestampProvider = _a91._timestampProvider, _buffer = _a91._buffer, _infiniteTimeWindow = _a91._infiniteTimeWindow;
+        var _a3 = this, _bufferSize = _a3._bufferSize, _timestampProvider = _a3._timestampProvider, _buffer = _a3._buffer, _infiniteTimeWindow = _a3._infiniteTimeWindow;
         var adjustedBufferSize = (_infiniteTimeWindow ? 1 : 2) * _bufferSize;
         _bufferSize < Infinity && adjustedBufferSize < _buffer.length && _buffer.splice(0, _buffer.length - adjustedBufferSize);
         if (!_infiniteTimeWindow) {
@@ -1539,11 +1539,11 @@ var require_AsyncSubject = __commonJS({
         return _this;
       }
       AsyncSubject2.prototype._checkFinalizedStatuses = function(subscriber) {
-        var _a91 = this, hasError = _a91.hasError, _hasValue = _a91._hasValue, _value2 = _a91._value, thrownError = _a91.thrownError, isStopped = _a91.isStopped, _isComplete = _a91._isComplete;
+        var _a3 = this, hasError = _a3.hasError, _hasValue = _a3._hasValue, _value = _a3._value, thrownError = _a3.thrownError, isStopped = _a3.isStopped, _isComplete = _a3._isComplete;
         if (hasError) {
           subscriber.error(thrownError);
         } else if (isStopped || _isComplete) {
-          _hasValue && subscriber.next(_value2);
+          _hasValue && subscriber.next(_value);
           subscriber.complete();
         }
       };
@@ -1554,10 +1554,10 @@ var require_AsyncSubject = __commonJS({
         }
       };
       AsyncSubject2.prototype.complete = function() {
-        var _a91 = this, _hasValue = _a91._hasValue, _value2 = _a91._value, _isComplete = _a91._isComplete;
+        var _a3 = this, _hasValue = _a3._hasValue, _value = _a3._value, _isComplete = _a3._isComplete;
         if (!_isComplete) {
           this._isComplete = true;
-          _hasValue && _super.prototype.next.call(this, _value2);
+          _hasValue && _super.prototype.next.call(this, _value);
           _super.prototype.complete.call(this);
         }
       };
@@ -1691,7 +1691,7 @@ var require_AsyncAction = __commonJS({
         return _this;
       }
       AsyncAction2.prototype.schedule = function(state, delay3) {
-        var _a91;
+        var _a3;
         if (delay3 === void 0) {
           delay3 = 0;
         }
@@ -1706,10 +1706,10 @@ var require_AsyncAction = __commonJS({
         }
         this.pending = true;
         this.delay = delay3;
-        this.id = (_a91 = this.id) !== null && _a91 !== void 0 ? _a91 : this.requestAsyncId(scheduler2, this.id, delay3);
+        this.id = (_a3 = this.id) !== null && _a3 !== void 0 ? _a3 : this.requestAsyncId(scheduler2, this.id, delay3);
         return this;
       };
-      AsyncAction2.prototype.requestAsyncId = function(scheduler2, _id2, delay3) {
+      AsyncAction2.prototype.requestAsyncId = function(scheduler2, _id, delay3) {
         if (delay3 === void 0) {
           delay3 = 0;
         }
@@ -1755,7 +1755,7 @@ var require_AsyncAction = __commonJS({
       };
       AsyncAction2.prototype.unsubscribe = function() {
         if (!this.closed) {
-          var _a91 = this, id3 = _a91.id, scheduler2 = _a91.scheduler;
+          var _a3 = this, id3 = _a3.id, scheduler2 = _a3.scheduler;
           var actions = scheduler2.actions;
           this.work = this.state = this.scheduler = null;
           this.pending = false;
@@ -1905,7 +1905,7 @@ var require_AsapAction = __commonJS({
         return scheduler2._scheduled || (scheduler2._scheduled = immediateProvider_1.immediateProvider.setImmediate(scheduler2.flush.bind(scheduler2, void 0)));
       };
       AsapAction2.prototype.recycleAsyncId = function(scheduler2, id3, delay3) {
-        var _a91;
+        var _a3;
         if (delay3 === void 0) {
           delay3 = 0;
         }
@@ -1913,7 +1913,7 @@ var require_AsapAction = __commonJS({
           return _super.prototype.recycleAsyncId.call(this, scheduler2, id3, delay3);
         }
         var actions = scheduler2.actions;
-        if (id3 != null && ((_a91 = actions[actions.length - 1]) === null || _a91 === void 0 ? void 0 : _a91.id) !== id3) {
+        if (id3 != null && ((_a3 = actions[actions.length - 1]) === null || _a3 === void 0 ? void 0 : _a3.id) !== id3) {
           immediateProvider_1.immediateProvider.clearImmediate(id3);
           if (scheduler2._scheduled === id3) {
             scheduler2._scheduled = void 0;
@@ -2256,7 +2256,7 @@ var require_AnimationFrameAction = __commonJS({
         }));
       };
       AnimationFrameAction2.prototype.recycleAsyncId = function(scheduler2, id3, delay3) {
-        var _a91;
+        var _a3;
         if (delay3 === void 0) {
           delay3 = 0;
         }
@@ -2264,7 +2264,7 @@ var require_AnimationFrameAction = __commonJS({
           return _super.prototype.recycleAsyncId.call(this, scheduler2, id3, delay3);
         }
         var actions = scheduler2.actions;
-        if (id3 != null && id3 === scheduler2._scheduled && ((_a91 = actions[actions.length - 1]) === null || _a91 === void 0 ? void 0 : _a91.id) !== id3) {
+        if (id3 != null && id3 === scheduler2._scheduled && ((_a3 = actions[actions.length - 1]) === null || _a3 === void 0 ? void 0 : _a3.id) !== id3) {
           animationFrameProvider_1.animationFrameProvider.cancelAnimationFrame(id3);
           scheduler2._scheduled = void 0;
         }
@@ -2394,7 +2394,7 @@ var require_VirtualTimeScheduler = __commonJS({
         return _this;
       }
       VirtualTimeScheduler2.prototype.flush = function() {
-        var _a91 = this, actions = _a91.actions, maxFrames = _a91.maxFrames;
+        var _a3 = this, actions = _a3.actions, maxFrames = _a3.maxFrames;
         var error4;
         var action;
         while ((action = actions[0]) && action.delay <= maxFrames) {
@@ -2751,29 +2751,29 @@ var require_isReadableStreamLike = __commonJS({
     var isFunction_1 = require_isFunction();
     function readableStreamLikeToAsyncGenerator(readableStream) {
       return __asyncGenerator2(this, arguments, function readableStreamLikeToAsyncGenerator_1() {
-        var reader, _a91, value3, done12;
-        return __generator2(this, function(_b37) {
-          switch (_b37.label) {
+        var reader, _a3, value3, done12;
+        return __generator2(this, function(_b) {
+          switch (_b.label) {
             case 0:
               reader = readableStream.getReader();
-              _b37.label = 1;
+              _b.label = 1;
             case 1:
-              _b37.trys.push([1, , 9, 10]);
-              _b37.label = 2;
+              _b.trys.push([1, , 9, 10]);
+              _b.label = 2;
             case 2:
               return [4, __await2(reader.read())];
             case 3:
-              _a91 = _b37.sent(), value3 = _a91.value, done12 = _a91.done;
+              _a3 = _b.sent(), value3 = _a3.value, done12 = _a3.done;
               if (!done12) return [3, 5];
               return [4, __await2(void 0)];
             case 4:
-              return [2, _b37.sent()];
+              return [2, _b.sent()];
             case 5:
               return [4, __await2(value3)];
             case 6:
-              return [4, _b37.sent()];
+              return [4, _b.sent()];
             case 7:
-              _b37.sent();
+              _b.sent();
               return [3, 2];
             case 8:
               return [3, 10];
@@ -2997,7 +2997,7 @@ var require_innerFrom = __commonJS({
     exports$1.fromPromise = fromPromise2;
     function fromIterable17(iterable) {
       return new Observable_1.Observable(function(subscriber) {
-        var e_1, _a91;
+        var e_1, _a3;
         try {
           for (var iterable_1 = __values2(iterable), iterable_1_1 = iterable_1.next(); !iterable_1_1.done; iterable_1_1 = iterable_1.next()) {
             var value3 = iterable_1_1.value;
@@ -3010,7 +3010,7 @@ var require_innerFrom = __commonJS({
           e_1 = { error: e_1_1 };
         } finally {
           try {
-            if (iterable_1_1 && !iterable_1_1.done && (_a91 = iterable_1.return)) _a91.call(iterable_1);
+            if (iterable_1_1 && !iterable_1_1.done && (_a3 = iterable_1.return)) _a3.call(iterable_1);
           } finally {
             if (e_1) throw e_1.error;
           }
@@ -3033,40 +3033,40 @@ var require_innerFrom = __commonJS({
     exports$1.fromReadableStreamLike = fromReadableStreamLike;
     function process2(asyncIterable, subscriber) {
       var asyncIterable_1, asyncIterable_1_1;
-      var e_2, _a91;
+      var e_2, _a3;
       return __awaiter2(this, void 0, void 0, function() {
         var value3, e_2_1;
-        return __generator2(this, function(_b37) {
-          switch (_b37.label) {
+        return __generator2(this, function(_b) {
+          switch (_b.label) {
             case 0:
-              _b37.trys.push([0, 5, 6, 11]);
+              _b.trys.push([0, 5, 6, 11]);
               asyncIterable_1 = __asyncValues2(asyncIterable);
-              _b37.label = 1;
+              _b.label = 1;
             case 1:
               return [4, asyncIterable_1.next()];
             case 2:
-              if (!(asyncIterable_1_1 = _b37.sent(), !asyncIterable_1_1.done)) return [3, 4];
+              if (!(asyncIterable_1_1 = _b.sent(), !asyncIterable_1_1.done)) return [3, 4];
               value3 = asyncIterable_1_1.value;
               subscriber.next(value3);
               if (subscriber.closed) {
                 return [2];
               }
-              _b37.label = 3;
+              _b.label = 3;
             case 3:
               return [3, 1];
             case 4:
               return [3, 11];
             case 5:
-              e_2_1 = _b37.sent();
+              e_2_1 = _b.sent();
               e_2 = { error: e_2_1 };
               return [3, 11];
             case 6:
-              _b37.trys.push([6, , 9, 10]);
-              if (!(asyncIterable_1_1 && !asyncIterable_1_1.done && (_a91 = asyncIterable_1.return))) return [3, 8];
-              return [4, _a91.call(asyncIterable_1)];
+              _b.trys.push([6, , 9, 10]);
+              if (!(asyncIterable_1_1 && !asyncIterable_1_1.done && (_a3 = asyncIterable_1.return))) return [3, 8];
+              return [4, _a3.call(asyncIterable_1)];
             case 7:
-              _b37.sent();
-              _b37.label = 8;
+              _b.sent();
+              _b.label = 8;
             case 8:
               return [3, 10];
             case 9:
@@ -3235,11 +3235,11 @@ var require_scheduleIterable = __commonJS({
         executeSchedule_1.executeSchedule(subscriber, scheduler2, function() {
           iterator = input[iterator_1.iterator]();
           executeSchedule_1.executeSchedule(subscriber, scheduler2, function() {
-            var _a91;
+            var _a3;
             var value3;
             var done12;
             try {
-              _a91 = iterator.next(), value3 = _a91.value, done12 = _a91.done;
+              _a3 = iterator.next(), value3 = _a3.value, done12 = _a3.done;
             } catch (err) {
               subscriber.error(err);
               return;
@@ -3429,15 +3429,15 @@ var require_Notification = __commonJS({
         return observeNotification(this, observer);
       };
       Notification2.prototype.do = function(nextHandler, errorHandler, completeHandler) {
-        var _a91 = this, kind = _a91.kind, value3 = _a91.value, error4 = _a91.error;
+        var _a3 = this, kind = _a3.kind, value3 = _a3.value, error4 = _a3.error;
         return kind === "N" ? nextHandler === null || nextHandler === void 0 ? void 0 : nextHandler(value3) : kind === "E" ? errorHandler === null || errorHandler === void 0 ? void 0 : errorHandler(error4) : completeHandler === null || completeHandler === void 0 ? void 0 : completeHandler();
       };
       Notification2.prototype.accept = function(nextOrObserver, error4, complete4) {
-        var _a91;
-        return isFunction_1.isFunction((_a91 = nextOrObserver) === null || _a91 === void 0 ? void 0 : _a91.next) ? this.observe(nextOrObserver) : this.do(nextOrObserver, error4, complete4);
+        var _a3;
+        return isFunction_1.isFunction((_a3 = nextOrObserver) === null || _a3 === void 0 ? void 0 : _a3.next) ? this.observe(nextOrObserver) : this.do(nextOrObserver, error4, complete4);
       };
       Notification2.prototype.toObservable = function() {
-        var _a91 = this, kind = _a91.kind, value3 = _a91.value, error4 = _a91.error;
+        var _a3 = this, kind = _a3.kind, value3 = _a3.value, error4 = _a3.error;
         var result2 = kind === "N" ? of_1.of(value3) : kind === "E" ? throwError_1.throwError(function() {
           return error4;
         }) : kind === "C" ? empty_1.EMPTY : 0;
@@ -3460,12 +3460,12 @@ var require_Notification = __commonJS({
     })();
     exports$1.Notification = Notification;
     function observeNotification(notification, observer) {
-      var _a91, _b37, _c8;
-      var _d4 = notification, kind = _d4.kind, value3 = _d4.value, error4 = _d4.error;
+      var _a3, _b, _c;
+      var _d = notification, kind = _d.kind, value3 = _d.value, error4 = _d.error;
       if (typeof kind !== "string") {
         throw new TypeError('Invalid notification, missing "kind"');
       }
-      kind === "N" ? (_a91 = observer.next) === null || _a91 === void 0 ? void 0 : _a91.call(observer, value3) : kind === "E" ? (_b37 = observer.error) === null || _b37 === void 0 ? void 0 : _b37.call(observer, error4) : (_c8 = observer.complete) === null || _c8 === void 0 ? void 0 : _c8.call(observer);
+      kind === "N" ? (_a3 = observer.next) === null || _a3 === void 0 ? void 0 : _a3.call(observer, value3) : kind === "E" ? (_b = observer.error) === null || _b === void 0 ? void 0 : _b.call(observer, error4) : (_c = observer.complete) === null || _c === void 0 ? void 0 : _c.call(observer);
     }
     exports$1.observeNotification = observeNotification;
   }
@@ -3511,16 +3511,16 @@ var require_lastValueFrom = __commonJS({
       var hasConfig = typeof config3 === "object";
       return new Promise(function(resolve, reject) {
         var _hasValue = false;
-        var _value2;
+        var _value;
         source.subscribe({
           next: function(value3) {
-            _value2 = value3;
+            _value = value3;
             _hasValue = true;
           },
           error: reject,
           complete: function() {
             if (_hasValue) {
-              resolve(_value2);
+              resolve(_value);
             } else if (hasConfig) {
               resolve(config3.defaultValue);
             } else {
@@ -3649,7 +3649,7 @@ var require_timeout = __commonJS({
       };
     });
     function timeout5(config3, schedulerArg) {
-      var _a91 = isDate_1.isValidDate(config3) ? { first: config3 } : typeof config3 === "number" ? { each: config3 } : config3, first3 = _a91.first, each = _a91.each, _b37 = _a91.with, _with = _b37 === void 0 ? timeoutErrorFactory : _b37, _c8 = _a91.scheduler, scheduler2 = _c8 === void 0 ? schedulerArg !== null && schedulerArg !== void 0 ? schedulerArg : async_1.asyncScheduler : _c8, _d4 = _a91.meta, meta = _d4 === void 0 ? null : _d4;
+      var _a3 = isDate_1.isValidDate(config3) ? { first: config3 } : typeof config3 === "number" ? { each: config3 } : config3, first3 = _a3.first, each = _a3.each, _b = _a3.with, _with = _b === void 0 ? timeoutErrorFactory : _b, _c = _a3.scheduler, scheduler2 = _c === void 0 ? schedulerArg !== null && schedulerArg !== void 0 ? schedulerArg : async_1.asyncScheduler : _c, _d = _a3.meta, meta = _d === void 0 ? null : _d;
       if (first3 == null && each == null) {
         throw new TypeError("No timeout provided.");
       }
@@ -3951,7 +3951,7 @@ var require_combineLatest = __commonJS({
       }
       var scheduler2 = args_1.popScheduler(args2);
       var resultSelector = args_1.popResultSelector(args2);
-      var _a91 = argsArgArrayOrObject_1.argsArgArrayOrObject(args2), observables = _a91.args, keys7 = _a91.keys;
+      var _a3 = argsArgArrayOrObject_1.argsArgArrayOrObject(args2), observables = _a3.args, keys7 = _a3.keys;
       if (observables.length === 0) {
         return from_1.from([], scheduler2);
       }
@@ -4193,7 +4193,7 @@ var require_connectable = __commonJS({
         config3 = DEFAULT_CONFIG3;
       }
       var connection = null;
-      var connector = config3.connector, _a91 = config3.resetOnDisconnect, resetOnDisconnect = _a91 === void 0 ? true : _a91;
+      var connector = config3.connector, _a3 = config3.resetOnDisconnect, resetOnDisconnect = _a3 === void 0 ? true : _a3;
       var subject = connector();
       var result2 = new Observable_1.Observable(function(subscriber) {
         return subject.subscribe(subscriber);
@@ -4235,7 +4235,7 @@ var require_forkJoin = __commonJS({
         args2[_i] = arguments[_i];
       }
       var resultSelector = args_1.popResultSelector(args2);
-      var _a91 = argsArgArrayOrObject_1.argsArgArrayOrObject(args2), sources = _a91.args, keys7 = _a91.keys;
+      var _a3 = argsArgArrayOrObject_1.argsArgArrayOrObject(args2), sources = _a3.args, keys7 = _a3.keys;
       var result2 = new Observable_1.Observable(function(subscriber) {
         var length5 = sources.length;
         if (!length5) {
@@ -4313,11 +4313,11 @@ var require_fromEvent = __commonJS({
       if (resultSelector) {
         return fromEvent(target, eventName, options5).pipe(mapOneOrManyArgs_1.mapOneOrManyArgs(resultSelector));
       }
-      var _a91 = __read3(isEventTarget(target) ? eventTargetMethods.map(function(methodName) {
+      var _a3 = __read3(isEventTarget(target) ? eventTargetMethods.map(function(methodName) {
         return function(handler) {
           return target[methodName](eventName, handler, options5);
         };
-      }) : isNodeStyleEventEmitter(target) ? nodeEventEmitterMethods.map(toCommonHandlerRegistry(target, eventName)) : isJQueryStyleEventEmitter(target) ? jqueryMethods.map(toCommonHandlerRegistry(target, eventName)) : [], 2), add10 = _a91[0], remove12 = _a91[1];
+      }) : isNodeStyleEventEmitter(target) ? nodeEventEmitterMethods.map(toCommonHandlerRegistry(target, eventName)) : isJQueryStyleEventEmitter(target) ? jqueryMethods.map(toCommonHandlerRegistry(target, eventName)) : [], 2), add10 = _a3[0], remove12 = _a3[1];
       if (!add10) {
         if (isArrayLike_1.isArrayLike(target)) {
           return mergeMap_1.mergeMap(function(subTarget) {
@@ -4471,11 +4471,11 @@ var require_generate = __commonJS({
     var defer_1 = require_defer();
     var scheduleIterable_1 = require_scheduleIterable();
     function generate(initialStateOrOptions, condition, iterate5, resultSelectorOrScheduler, scheduler2) {
-      var _a91, _b37;
+      var _a3, _b;
       var resultSelector;
       var initialState;
       if (arguments.length === 1) {
-        _a91 = initialStateOrOptions, initialState = _a91.initialState, condition = _a91.condition, iterate5 = _a91.iterate, _b37 = _a91.resultSelector, resultSelector = _b37 === void 0 ? identity_1.identity : _b37, scheduler2 = _a91.scheduler;
+        _a3 = initialStateOrOptions, initialState = _a3.initialState, condition = _a3.condition, iterate5 = _a3.iterate, _b = _a3.resultSelector, resultSelector = _b === void 0 ? identity_1.identity : _b, scheduler2 = _a3.scheduler;
       } else {
         initialState = initialStateOrOptions;
         if (!resultSelectorOrScheduler || isScheduler_1.isScheduler(resultSelectorOrScheduler)) {
@@ -4487,17 +4487,17 @@ var require_generate = __commonJS({
       }
       function gen7() {
         var state;
-        return __generator2(this, function(_a92) {
-          switch (_a92.label) {
+        return __generator2(this, function(_a4) {
+          switch (_a4.label) {
             case 0:
               state = initialState;
-              _a92.label = 1;
+              _a4.label = 1;
             case 1:
               if (!(!condition || condition(state))) return [3, 4];
               return [4, resultSelector(state)];
             case 2:
-              _a92.sent();
-              _a92.label = 3;
+              _a4.sent();
+              _a4.label = 3;
             case 3:
               state = iterate5(state);
               return [3, 1];
@@ -5071,7 +5071,7 @@ var require_bufferCount = __commonJS({
         var buffers = [];
         var count7 = 0;
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value3) {
-          var e_1, _a91, e_2, _b37;
+          var e_1, _a3, e_2, _b;
           var toEmit = null;
           if (count7++ % startBufferEvery === 0) {
             buffers.push([]);
@@ -5089,7 +5089,7 @@ var require_bufferCount = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (buffers_1_1 && !buffers_1_1.done && (_a91 = buffers_1.return)) _a91.call(buffers_1);
+              if (buffers_1_1 && !buffers_1_1.done && (_a3 = buffers_1.return)) _a3.call(buffers_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -5105,14 +5105,14 @@ var require_bufferCount = __commonJS({
               e_2 = { error: e_2_1 };
             } finally {
               try {
-                if (toEmit_1_1 && !toEmit_1_1.done && (_b37 = toEmit_1.return)) _b37.call(toEmit_1);
+                if (toEmit_1_1 && !toEmit_1_1.done && (_b = toEmit_1.return)) _b.call(toEmit_1);
               } finally {
                 if (e_2) throw e_2.error;
               }
             }
           }
         }, function() {
-          var e_3, _a91;
+          var e_3, _a3;
           try {
             for (var buffers_2 = __values2(buffers), buffers_2_1 = buffers_2.next(); !buffers_2_1.done; buffers_2_1 = buffers_2.next()) {
               var buffer4 = buffers_2_1.value;
@@ -5122,7 +5122,7 @@ var require_bufferCount = __commonJS({
             e_3 = { error: e_3_1 };
           } finally {
             try {
-              if (buffers_2_1 && !buffers_2_1.done && (_a91 = buffers_2.return)) _a91.call(buffers_2);
+              if (buffers_2_1 && !buffers_2_1.done && (_a3 = buffers_2.return)) _a3.call(buffers_2);
             } finally {
               if (e_3) throw e_3.error;
             }
@@ -5161,13 +5161,13 @@ var require_bufferTime = __commonJS({
     var args_1 = require_args();
     var executeSchedule_1 = require_executeSchedule();
     function bufferTime(bufferTimeSpan) {
-      var _a91, _b37;
+      var _a3, _b;
       var otherArgs = [];
       for (var _i = 1; _i < arguments.length; _i++) {
         otherArgs[_i - 1] = arguments[_i];
       }
-      var scheduler2 = (_a91 = args_1.popScheduler(otherArgs)) !== null && _a91 !== void 0 ? _a91 : async_1.asyncScheduler;
-      var bufferCreationInterval = (_b37 = otherArgs[0]) !== null && _b37 !== void 0 ? _b37 : null;
+      var scheduler2 = (_a3 = args_1.popScheduler(otherArgs)) !== null && _a3 !== void 0 ? _a3 : async_1.asyncScheduler;
+      var bufferCreationInterval = (_b = otherArgs[0]) !== null && _b !== void 0 ? _b : null;
       var maxBufferSize = otherArgs[1] || Infinity;
       return lift_1.operate(function(source, subscriber) {
         var bufferRecords = [];
@@ -5201,7 +5201,7 @@ var require_bufferTime = __commonJS({
         }
         startBuffer();
         var bufferTimeSubscriber = OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value3) {
-          var e_1, _a92;
+          var e_1, _a4;
           var recordsCopy = bufferRecords.slice();
           try {
             for (var recordsCopy_1 = __values2(recordsCopy), recordsCopy_1_1 = recordsCopy_1.next(); !recordsCopy_1_1.done; recordsCopy_1_1 = recordsCopy_1.next()) {
@@ -5214,7 +5214,7 @@ var require_bufferTime = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (recordsCopy_1_1 && !recordsCopy_1_1.done && (_a92 = recordsCopy_1.return)) _a92.call(recordsCopy_1);
+              if (recordsCopy_1_1 && !recordsCopy_1_1.done && (_a4 = recordsCopy_1.return)) _a4.call(recordsCopy_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -5273,7 +5273,7 @@ var require_bufferToggle = __commonJS({
           closingSubscription.add(innerFrom_1.innerFrom(closingSelector(openValue)).subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, emitBuffer, noop_1.noop)));
         }, noop_1.noop));
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value3) {
-          var e_1, _a91;
+          var e_1, _a3;
           try {
             for (var buffers_1 = __values2(buffers), buffers_1_1 = buffers_1.next(); !buffers_1_1.done; buffers_1_1 = buffers_1.next()) {
               var buffer4 = buffers_1_1.value;
@@ -5283,7 +5283,7 @@ var require_bufferToggle = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (buffers_1_1 && !buffers_1_1.done && (_a91 = buffers_1.return)) _a91.call(buffers_1);
+              if (buffers_1_1 && !buffers_1_1.done && (_a3 = buffers_1.return)) _a3.call(buffers_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -6480,7 +6480,7 @@ var require_takeLast = __commonJS({
           buffer4.push(value3);
           count7 < buffer4.length && buffer4.shift();
         }, function() {
-          var e_1, _a91;
+          var e_1, _a3;
           try {
             for (var buffer_1 = __values2(buffer4), buffer_1_1 = buffer_1.next(); !buffer_1_1.done; buffer_1_1 = buffer_1.next()) {
               var value3 = buffer_1_1.value;
@@ -6490,7 +6490,7 @@ var require_takeLast = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (buffer_1_1 && !buffer_1_1.done && (_a91 = buffer_1.return)) _a91.call(buffer_1);
+              if (buffer_1_1 && !buffer_1_1.done && (_a3 = buffer_1.return)) _a3.call(buffer_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -6995,12 +6995,12 @@ var require_repeat = __commonJS({
     var innerFrom_1 = require_innerFrom();
     var timer_1 = require_timer();
     function repeat5(countOrConfig) {
-      var _a91;
+      var _a3;
       var count7 = Infinity;
       var delay3;
       if (countOrConfig != null) {
         if (typeof countOrConfig === "object") {
-          _a91 = countOrConfig.count, count7 = _a91 === void 0 ? Infinity : _a91, delay3 = countOrConfig.delay;
+          _a3 = countOrConfig.count, count7 = _a3 === void 0 ? Infinity : _a3, delay3 = countOrConfig.delay;
         } else {
           count7 = countOrConfig;
         }
@@ -7125,7 +7125,7 @@ var require_retry = __commonJS({
           count: configOrCount
         };
       }
-      var _a91 = config3.count, count7 = _a91 === void 0 ? Infinity : _a91, delay3 = config3.delay, _b37 = config3.resetOnSuccess, resetOnSuccess = _b37 === void 0 ? false : _b37;
+      var _a3 = config3.count, count7 = _a3 === void 0 ? Infinity : _a3, delay3 = config3.delay, _b = config3.resetOnSuccess, resetOnSuccess = _b === void 0 ? false : _b;
       return count7 <= 0 ? identity_1.identity : lift_1.operate(function(source, subscriber) {
         var soFar = 0;
         var innerSub;
@@ -7365,9 +7365,9 @@ var require_share = __commonJS({
       if (options5 === void 0) {
         options5 = {};
       }
-      var _a91 = options5.connector, connector = _a91 === void 0 ? function() {
+      var _a3 = options5.connector, connector = _a3 === void 0 ? function() {
         return new Subject_1.Subject();
-      } : _a91, _b37 = options5.resetOnError, resetOnError = _b37 === void 0 ? true : _b37, _c8 = options5.resetOnComplete, resetOnComplete = _c8 === void 0 ? true : _c8, _d4 = options5.resetOnRefCountZero, resetOnRefCountZero = _d4 === void 0 ? true : _d4;
+      } : _a3, _b = options5.resetOnError, resetOnError = _b === void 0 ? true : _b, _c = options5.resetOnComplete, resetOnComplete = _c === void 0 ? true : _c, _d = options5.resetOnRefCountZero, resetOnRefCountZero = _d === void 0 ? true : _d;
       return function(wrapperSource) {
         var connection;
         var resetConnection;
@@ -7457,11 +7457,11 @@ var require_shareReplay = __commonJS({
     var ReplaySubject_1 = require_ReplaySubject();
     var share_1 = require_share();
     function shareReplay5(configOrBufferSize, windowTime, scheduler2) {
-      var _a91, _b37, _c8;
+      var _a3, _b, _c;
       var bufferSize;
       var refCount3 = false;
       if (configOrBufferSize && typeof configOrBufferSize === "object") {
-        _a91 = configOrBufferSize.bufferSize, bufferSize = _a91 === void 0 ? Infinity : _a91, _b37 = configOrBufferSize.windowTime, windowTime = _b37 === void 0 ? Infinity : _b37, _c8 = configOrBufferSize.refCount, refCount3 = _c8 === void 0 ? false : _c8, scheduler2 = configOrBufferSize.scheduler;
+        _a3 = configOrBufferSize.bufferSize, bufferSize = _a3 === void 0 ? Infinity : _a3, _b = configOrBufferSize.windowTime, windowTime = _b === void 0 ? Infinity : _b, _c = configOrBufferSize.refCount, refCount3 = _c === void 0 ? false : _c, scheduler2 = configOrBufferSize.scheduler;
       } else {
         bufferSize = configOrBufferSize !== null && configOrBufferSize !== void 0 ? configOrBufferSize : Infinity;
       }
@@ -7779,29 +7779,29 @@ var require_tap = __commonJS({
     function tap18(observerOrNext, error4, complete4) {
       var tapObserver = isFunction_1.isFunction(observerOrNext) || error4 || complete4 ? { next: observerOrNext, error: error4, complete: complete4 } : observerOrNext;
       return tapObserver ? lift_1.operate(function(source, subscriber) {
-        var _a91;
-        (_a91 = tapObserver.subscribe) === null || _a91 === void 0 ? void 0 : _a91.call(tapObserver);
+        var _a3;
+        (_a3 = tapObserver.subscribe) === null || _a3 === void 0 ? void 0 : _a3.call(tapObserver);
         var isUnsub = true;
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value3) {
-          var _a92;
-          (_a92 = tapObserver.next) === null || _a92 === void 0 ? void 0 : _a92.call(tapObserver, value3);
+          var _a4;
+          (_a4 = tapObserver.next) === null || _a4 === void 0 ? void 0 : _a4.call(tapObserver, value3);
           subscriber.next(value3);
         }, function() {
-          var _a92;
+          var _a4;
           isUnsub = false;
-          (_a92 = tapObserver.complete) === null || _a92 === void 0 ? void 0 : _a92.call(tapObserver);
+          (_a4 = tapObserver.complete) === null || _a4 === void 0 ? void 0 : _a4.call(tapObserver);
           subscriber.complete();
         }, function(err) {
-          var _a92;
+          var _a4;
           isUnsub = false;
-          (_a92 = tapObserver.error) === null || _a92 === void 0 ? void 0 : _a92.call(tapObserver, err);
+          (_a4 = tapObserver.error) === null || _a4 === void 0 ? void 0 : _a4.call(tapObserver, err);
           subscriber.error(err);
         }, function() {
-          var _a92, _b37;
+          var _a4, _b;
           if (isUnsub) {
-            (_a92 = tapObserver.unsubscribe) === null || _a92 === void 0 ? void 0 : _a92.call(tapObserver);
+            (_a4 = tapObserver.unsubscribe) === null || _a4 === void 0 ? void 0 : _a4.call(tapObserver);
           }
-          (_b37 = tapObserver.finalize) === null || _b37 === void 0 ? void 0 : _b37.call(tapObserver);
+          (_b = tapObserver.finalize) === null || _b === void 0 ? void 0 : _b.call(tapObserver);
         }));
       }) : identity_1.identity;
     }
@@ -7819,7 +7819,7 @@ var require_throttle = __commonJS({
     var innerFrom_1 = require_innerFrom();
     function throttle3(durationSelector, config3) {
       return lift_1.operate(function(source, subscriber) {
-        var _a91 = config3 !== null && config3 !== void 0 ? config3 : {}, _b37 = _a91.leading, leading = _b37 === void 0 ? true : _b37, _c8 = _a91.trailing, trailing = _c8 === void 0 ? false : _c8;
+        var _a3 = config3 !== null && config3 !== void 0 ? config3 : {}, _b = _a3.leading, leading = _b === void 0 ? true : _b, _c = _a3.trailing, trailing = _c === void 0 ? false : _c;
         var hasValue = false;
         var sendValue = null;
         var throttled = null;
@@ -8042,7 +8042,7 @@ var require_windowCount = __commonJS({
         var count7 = 0;
         subscriber.next(windows[0].asObservable());
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value3) {
-          var e_1, _a91;
+          var e_1, _a3;
           try {
             for (var windows_1 = __values2(windows), windows_1_1 = windows_1.next(); !windows_1_1.done; windows_1_1 = windows_1.next()) {
               var window_1 = windows_1_1.value;
@@ -8052,7 +8052,7 @@ var require_windowCount = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (windows_1_1 && !windows_1_1.done && (_a91 = windows_1.return)) _a91.call(windows_1);
+              if (windows_1_1 && !windows_1_1.done && (_a3 = windows_1.return)) _a3.call(windows_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -8099,13 +8099,13 @@ var require_windowTime = __commonJS({
     var args_1 = require_args();
     var executeSchedule_1 = require_executeSchedule();
     function windowTime(windowTimeSpan) {
-      var _a91, _b37;
+      var _a3, _b;
       var otherArgs = [];
       for (var _i = 1; _i < arguments.length; _i++) {
         otherArgs[_i - 1] = arguments[_i];
       }
-      var scheduler2 = (_a91 = args_1.popScheduler(otherArgs)) !== null && _a91 !== void 0 ? _a91 : async_1.asyncScheduler;
-      var windowCreationInterval = (_b37 = otherArgs[0]) !== null && _b37 !== void 0 ? _b37 : null;
+      var scheduler2 = (_a3 = args_1.popScheduler(otherArgs)) !== null && _a3 !== void 0 ? _a3 : async_1.asyncScheduler;
+      var windowCreationInterval = (_b = otherArgs[0]) !== null && _b !== void 0 ? _b : null;
       var maxWindowSize = otherArgs[1] || Infinity;
       return lift_1.operate(function(source, subscriber) {
         var windowRecords = [];
@@ -8144,8 +8144,8 @@ var require_windowTime = __commonJS({
           return windowRecords.slice().forEach(cb);
         };
         var terminate = function(cb) {
-          loop3(function(_a92) {
-            var window3 = _a92.window;
+          loop3(function(_a4) {
+            var window3 = _a4.window;
             return cb(window3);
           });
           cb(subscriber);
@@ -8226,7 +8226,7 @@ var require_windowToggle = __commonJS({
           closingSubscription.add(closingNotifier.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, closeWindow, noop_1.noop, handleError4)));
         }, noop_1.noop));
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value3) {
-          var e_1, _a91;
+          var e_1, _a3;
           var windowsCopy = windows.slice();
           try {
             for (var windowsCopy_1 = __values2(windowsCopy), windowsCopy_1_1 = windowsCopy_1.next(); !windowsCopy_1_1.done; windowsCopy_1_1 = windowsCopy_1.next()) {
@@ -8237,7 +8237,7 @@ var require_windowToggle = __commonJS({
             e_1 = { error: e_1_1 };
           } finally {
             try {
-              if (windowsCopy_1_1 && !windowsCopy_1_1.done && (_a91 = windowsCopy_1.return)) _a91.call(windowsCopy_1);
+              if (windowsCopy_1_1 && !windowsCopy_1_1.done && (_a3 = windowsCopy_1.return)) _a3.call(windowsCopy_1);
             } finally {
               if (e_1) throw e_1.error;
             }
@@ -10511,23 +10511,23 @@ var init_schemaCoordinateLexer = __esm({
     init_lexer();
     init_tokenKind();
     SchemaCoordinateLexer = class {
+      /**
+       * The previously focused non-ignored token.
+       */
+      /**
+       * The currently focused non-ignored token.
+       */
+      /**
+       * The (1-indexed) line containing the current token.
+       * Since a schema coordinate may not contain newline, this value is always 1.
+       */
+      line = 1;
+      /**
+       * The character offset at which the current line begins.
+       * Since a schema coordinate may not contain newline, this value is always 0.
+       */
+      lineStart = 0;
       constructor(source) {
-        /**
-         * The previously focused non-ignored token.
-         */
-        /**
-         * The currently focused non-ignored token.
-         */
-        /**
-         * The (1-indexed) line containing the current token.
-         * Since a schema coordinate may not contain newline, this value is always 1.
-         */
-        __publicField(this, "line", 1);
-        /**
-         * The character offset at which the current line begins.
-         * Since a schema coordinate may not contain newline, this value is always 0.
-         */
-        __publicField(this, "lineStart", 0);
         const startOfFileToken = new Token(TokenKind.SOF, 0, 0, 0, 0);
         this.source = source;
         this.lastToken = startOfFileToken;
@@ -14603,7 +14603,7 @@ var init_introspection = __esm({
         },
         possibleTypes: {
           type: new GraphQLList(new GraphQLNonNull(__Type)),
-          resolve(type, _args2, _context4, { schema }) {
+          resolve(type, _args, _context, { schema }) {
             if (isAbstractType(type)) {
               return schema.getPossibleTypes(type);
             }
@@ -14803,7 +14803,7 @@ var init_introspection = __esm({
       type: new GraphQLNonNull(__Schema),
       description: "Access the current type schema of this server.",
       args: [],
-      resolve: (_source, _args2, _context4, { schema }) => schema,
+      resolve: (_source, _args, _context, { schema }) => schema,
       deprecationReason: void 0,
       extensions: /* @__PURE__ */ Object.create(null),
       astNode: void 0
@@ -14823,7 +14823,7 @@ var init_introspection = __esm({
           astNode: void 0
         }
       ],
-      resolve: (_source, { name }, _context4, { schema }) => schema.getType(name),
+      resolve: (_source, { name }, _context, { schema }) => schema.getType(name),
       deprecationReason: void 0,
       extensions: /* @__PURE__ */ Object.create(null),
       astNode: void 0
@@ -14833,7 +14833,7 @@ var init_introspection = __esm({
       type: new GraphQLNonNull(GraphQLString),
       description: "The name of the current Object type at runtime.",
       args: [],
-      resolve: (_source, _args2, _context4, { parentType }) => parentType.name,
+      resolve: (_source, _args, _context, { parentType }) => parentType.name,
       deprecationReason: void 0,
       extensions: /* @__PURE__ */ Object.create(null),
       astNode: void 0
@@ -20161,7 +20161,7 @@ function mapAsyncIterator(iterable, callback) {
       if (typeof iterator.return === "function") {
         try {
           await iterator.return();
-        } catch (_e2) {
+        } catch (_e) {
         }
       }
       throw error4;
@@ -31749,18 +31749,16 @@ var require_abstract_iterator = __commonJS({
     var kDecodeMany = /* @__PURE__ */ Symbol("decodeMany");
     var kKeyEncoding = /* @__PURE__ */ Symbol("keyEncoding");
     var kValueEncoding = /* @__PURE__ */ Symbol("valueEncoding");
-    var _working, _pendingClose, _closingPromise, _count, _signal, _limit, _ended, _snapshot, _CommonIterator_instances, startWork_fn, endWork_fn, privateClose_fn, destroy_fn;
     var CommonIterator = class {
+      #working = false;
+      #pendingClose = null;
+      #closingPromise = null;
+      #count = 0;
+      #signal;
+      #limit;
+      #ended;
+      #snapshot;
       constructor(db, options5) {
-        __privateAdd(this, _CommonIterator_instances);
-        __privateAdd(this, _working, false);
-        __privateAdd(this, _pendingClose, null);
-        __privateAdd(this, _closingPromise, null);
-        __privateAdd(this, _count, 0);
-        __privateAdd(this, _signal);
-        __privateAdd(this, _limit);
-        __privateAdd(this, _ended);
-        __privateAdd(this, _snapshot);
         if (typeof db !== "object" || db === null) {
           const hint = db === null ? "null" : typeof db;
           throw new TypeError(`The first argument must be an abstract-level database, received ${hint}`);
@@ -31770,29 +31768,29 @@ var require_abstract_iterator = __commonJS({
         }
         this[kKeyEncoding] = options5[kKeyEncoding];
         this[kValueEncoding] = options5[kValueEncoding];
-        __privateSet(this, _limit, Number.isInteger(options5.limit) && options5.limit >= 0 ? options5.limit : Infinity);
-        __privateSet(this, _signal, options5.signal != null ? options5.signal : null);
-        __privateSet(this, _snapshot, options5.snapshot != null ? options5.snapshot : null);
-        __privateSet(this, _ended, false);
+        this.#limit = Number.isInteger(options5.limit) && options5.limit >= 0 ? options5.limit : Infinity;
+        this.#signal = options5.signal != null ? options5.signal : null;
+        this.#snapshot = options5.snapshot != null ? options5.snapshot : null;
+        this.#ended = false;
         this.db = db;
         this.db.attachResource(this);
       }
       get count() {
-        return __privateGet(this, _count);
+        return this.#count;
       }
       get limit() {
-        return __privateGet(this, _limit);
+        return this.#limit;
       }
       async next() {
-        __privateMethod(this, _CommonIterator_instances, startWork_fn).call(this);
+        this.#startWork();
         try {
-          if (__privateGet(this, _ended) || __privateGet(this, _count) >= __privateGet(this, _limit)) {
-            __privateSet(this, _ended, true);
+          if (this.#ended || this.#count >= this.#limit) {
+            this.#ended = true;
             return void 0;
           }
           let item = await this._next();
           if (item === void 0) {
-            __privateSet(this, _ended, true);
+            this.#ended = true;
             return void 0;
           }
           try {
@@ -31800,10 +31798,10 @@ var require_abstract_iterator = __commonJS({
           } catch (err) {
             throw new IteratorDecodeError(err);
           }
-          __privateWrapper(this, _count)._++;
+          this.#count++;
           return item;
         } finally {
-          __privateMethod(this, _CommonIterator_instances, endWork_fn).call(this);
+          this.#endWork();
         }
       }
       async _next() {
@@ -31814,16 +31812,16 @@ var require_abstract_iterator = __commonJS({
         }
         options5 = getOptions(options5, emptyOptions);
         if (size20 < 1) size20 = 1;
-        if (__privateGet(this, _limit) < Infinity) size20 = Math.min(size20, __privateGet(this, _limit) - __privateGet(this, _count));
-        __privateMethod(this, _CommonIterator_instances, startWork_fn).call(this);
+        if (this.#limit < Infinity) size20 = Math.min(size20, this.#limit - this.#count);
+        this.#startWork();
         try {
-          if (__privateGet(this, _ended) || size20 <= 0) {
-            __privateSet(this, _ended, true);
+          if (this.#ended || size20 <= 0) {
+            this.#ended = true;
             return [];
           }
           const items = await this._nextv(size20, options5);
           if (items.length === 0) {
-            __privateSet(this, _ended, true);
+            this.#ended = true;
             return items;
           }
           try {
@@ -31831,10 +31829,10 @@ var require_abstract_iterator = __commonJS({
           } catch (err) {
             throw new IteratorDecodeError(err);
           }
-          __privateSet(this, _count, __privateGet(this, _count) + items.length);
+          this.#count += items.length;
           return items;
         } finally {
-          __privateMethod(this, _CommonIterator_instances, endWork_fn).call(this);
+          this.#endWork();
         }
       }
       async _nextv(size20, options5) {
@@ -31844,7 +31842,7 @@ var require_abstract_iterator = __commonJS({
           if (item !== void 0) {
             acc.push(item);
           } else {
-            __privateSet(this, _ended, true);
+            this.#ended = true;
             break;
           }
         }
@@ -31852,9 +31850,9 @@ var require_abstract_iterator = __commonJS({
       }
       async all(options5) {
         options5 = getOptions(options5, emptyOptions);
-        __privateMethod(this, _CommonIterator_instances, startWork_fn).call(this);
+        this.#startWork();
         try {
-          if (__privateGet(this, _ended) || __privateGet(this, _count) >= __privateGet(this, _limit)) {
+          if (this.#ended || this.#count >= this.#limit) {
             return [];
           }
           const items = await this._all(options5);
@@ -31863,24 +31861,24 @@ var require_abstract_iterator = __commonJS({
           } catch (err) {
             throw new IteratorDecodeError(err);
           }
-          __privateSet(this, _count, __privateGet(this, _count) + items.length);
+          this.#count += items.length;
           return items;
         } catch (err) {
-          __privateMethod(this, _CommonIterator_instances, endWork_fn).call(this);
-          await __privateMethod(this, _CommonIterator_instances, destroy_fn).call(this, err);
+          this.#endWork();
+          await this.#destroy(err);
         } finally {
-          __privateSet(this, _ended, true);
-          if (__privateGet(this, _working)) {
-            __privateMethod(this, _CommonIterator_instances, endWork_fn).call(this);
+          this.#ended = true;
+          if (this.#working) {
+            this.#endWork();
             await this.close();
           }
         }
       }
       async _all(options5) {
-        let count7 = __privateGet(this, _count);
+        let count7 = this.#count;
         const acc = [];
         while (true) {
-          const size20 = __privateGet(this, _limit) < Infinity ? Math.min(1e3, __privateGet(this, _limit) - count7) : 1e3;
+          const size20 = this.#limit < Infinity ? Math.min(1e3, this.#limit - count7) : 1e3;
           if (size20 <= 0) {
             return acc;
           }
@@ -31894,7 +31892,7 @@ var require_abstract_iterator = __commonJS({
       }
       seek(target, options5) {
         options5 = getOptions(options5, emptyOptions);
-        if (__privateGet(this, _closingPromise) !== null) ; else if (__privateGet(this, _working)) {
+        if (this.#closingPromise !== null) ; else if (this.#working) {
           throw new ModuleError("Iterator is busy: cannot call seek() until next() has completed", {
             code: "LEVEL_ITERATOR_BUSY"
           });
@@ -31906,7 +31904,7 @@ var require_abstract_iterator = __commonJS({
           }
           const mapped = this.db.prefixKey(keyEncoding.encode(target), keyFormat, false);
           this._seek(mapped, options5);
-          __privateSet(this, _ended, false);
+          this.#ended = false;
         }
       }
       _seek(target, options5) {
@@ -31915,19 +31913,19 @@ var require_abstract_iterator = __commonJS({
         });
       }
       async close() {
-        if (__privateGet(this, _closingPromise) !== null) {
-          return __privateGet(this, _closingPromise).catch(noop3);
+        if (this.#closingPromise !== null) {
+          return this.#closingPromise.catch(noop3);
         }
-        __privateSet(this, _closingPromise, new Promise((resolve, reject) => {
-          __privateSet(this, _pendingClose, () => {
-            __privateSet(this, _pendingClose, null);
-            __privateMethod(this, _CommonIterator_instances, privateClose_fn).call(this).then(resolve, reject);
-          });
-        }));
-        if (!__privateGet(this, _working)) {
-          __privateGet(this, _pendingClose).call(this);
+        this.#closingPromise = new Promise((resolve, reject) => {
+          this.#pendingClose = () => {
+            this.#pendingClose = null;
+            this.#privateClose().then(resolve, reject);
+          };
+        });
+        if (!this.#working) {
+          this.#pendingClose();
         }
-        return __privateGet(this, _closingPromise);
+        return this.#closingPromise;
       }
       async _close() {
       }
@@ -31938,76 +31936,65 @@ var require_abstract_iterator = __commonJS({
             yield item;
           }
         } catch (err) {
-          await __privateMethod(this, _CommonIterator_instances, destroy_fn).call(this, err);
+          await this.#destroy(err);
         } finally {
           await this.close();
         }
       }
-    };
-    _working = new WeakMap();
-    _pendingClose = new WeakMap();
-    _closingPromise = new WeakMap();
-    _count = new WeakMap();
-    _signal = new WeakMap();
-    _limit = new WeakMap();
-    _ended = new WeakMap();
-    _snapshot = new WeakMap();
-    _CommonIterator_instances = new WeakSet();
-    startWork_fn = function() {
-      if (__privateGet(this, _closingPromise) !== null) {
-        throw new ModuleError("Iterator is not open: cannot read after close()", {
-          code: "LEVEL_ITERATOR_NOT_OPEN"
-        });
-      } else if (__privateGet(this, _working)) {
-        throw new ModuleError("Iterator is busy: cannot read until previous read has completed", {
-          code: "LEVEL_ITERATOR_BUSY"
-        });
-      } else if (__privateGet(this, _signal)?.aborted) {
-        throw new AbortError2();
+      #startWork() {
+        if (this.#closingPromise !== null) {
+          throw new ModuleError("Iterator is not open: cannot read after close()", {
+            code: "LEVEL_ITERATOR_NOT_OPEN"
+          });
+        } else if (this.#working) {
+          throw new ModuleError("Iterator is busy: cannot read until previous read has completed", {
+            code: "LEVEL_ITERATOR_BUSY"
+          });
+        } else if (this.#signal?.aborted) {
+          throw new AbortError2();
+        }
+        this.#snapshot?.ref();
+        this.#working = true;
       }
-      __privateGet(this, _snapshot)?.ref();
-      __privateSet(this, _working, true);
-    };
-    endWork_fn = function() {
-      var _a91;
-      __privateSet(this, _working, false);
-      (_a91 = __privateGet(this, _pendingClose)) == null ? void 0 : _a91.call(this);
-      __privateGet(this, _snapshot)?.unref();
-    };
-    privateClose_fn = async function() {
-      await this._close();
-      this.db.detachResource(this);
-    };
-    destroy_fn = async function(err) {
-      try {
-        await this.close();
-      } catch (closeErr) {
-        throw combineErrors([err, closeErr]);
+      #endWork() {
+        this.#working = false;
+        this.#pendingClose?.();
+        this.#snapshot?.unref();
       }
-      throw err;
+      async #privateClose() {
+        await this._close();
+        this.db.detachResource(this);
+      }
+      async #destroy(err) {
+        try {
+          await this.close();
+        } catch (closeErr) {
+          throw combineErrors([err, closeErr]);
+        }
+        throw err;
+      }
     };
     if (typeof Symbol.asyncDispose === "symbol") {
       CommonIterator.prototype[Symbol.asyncDispose] = async function() {
         return this.close();
       };
     }
-    var _keys, _values;
     var AbstractIterator = class extends CommonIterator {
+      #keys;
+      #values;
       constructor(db, options5) {
         super(db, options5);
-        __privateAdd(this, _keys);
-        __privateAdd(this, _values);
-        __privateSet(this, _keys, options5.keys !== false);
-        __privateSet(this, _values, options5.values !== false);
+        this.#keys = options5.keys !== false;
+        this.#values = options5.values !== false;
       }
       [kDecodeOne](entry) {
         const key = entry[0];
         const value3 = entry[1];
         if (key !== void 0) {
-          entry[0] = __privateGet(this, _keys) ? this[kKeyEncoding].decode(key) : void 0;
+          entry[0] = this.#keys ? this[kKeyEncoding].decode(key) : void 0;
         }
         if (value3 !== void 0) {
-          entry[1] = __privateGet(this, _values) ? this[kValueEncoding].decode(value3) : void 0;
+          entry[1] = this.#values ? this[kValueEncoding].decode(value3) : void 0;
         }
         return entry;
       }
@@ -32017,13 +32004,11 @@ var require_abstract_iterator = __commonJS({
         for (const entry of entries3) {
           const key = entry[0];
           const value3 = entry[1];
-          if (key !== void 0) entry[0] = __privateGet(this, _keys) ? keyEncoding.decode(key) : void 0;
-          if (value3 !== void 0) entry[1] = __privateGet(this, _values) ? valueEncoding.decode(value3) : void 0;
+          if (key !== void 0) entry[0] = this.#keys ? keyEncoding.decode(key) : void 0;
+          if (value3 !== void 0) entry[1] = this.#values ? valueEncoding.decode(value3) : void 0;
         }
       }
     };
-    _keys = new WeakMap();
-    _values = new WeakMap();
     var AbstractKeyIterator = class extends CommonIterator {
       [kDecodeOne](key) {
         return this[kKeyEncoding].decode(key);
@@ -32246,20 +32231,19 @@ var require_prefixes = __commonJS({
 var require_prewrite_batch = __commonJS({
   "node_modules/abstract-level/lib/prewrite-batch.js"(exports$1) {
     var { prefixDescendantKey, isDescendant } = require_prefixes();
-    var _db, _privateOperations, _publicOperations;
     var PrewriteBatch = class {
+      #db;
+      #privateOperations;
+      #publicOperations;
       constructor(db, privateOperations, publicOperations) {
-        __privateAdd(this, _db);
-        __privateAdd(this, _privateOperations);
-        __privateAdd(this, _publicOperations);
-        __privateSet(this, _db, db);
-        __privateSet(this, _privateOperations, privateOperations);
-        __privateSet(this, _publicOperations, publicOperations);
+        this.#db = db;
+        this.#privateOperations = privateOperations;
+        this.#publicOperations = publicOperations;
       }
       add(op) {
         const isPut = op.type === "put";
         const delegated = op.sublevel != null;
-        const db = delegated ? op.sublevel : __privateGet(this, _db);
+        const db = delegated ? op.sublevel : this.#db;
         db._assertValidKey(op.key);
         op.keyEncoding = db.keyEncoding(op.keyEncoding);
         if (isPut) {
@@ -32271,22 +32255,22 @@ var require_prewrite_batch = __commonJS({
         const keyEncoding = op.keyEncoding;
         const preencodedKey = keyEncoding.encode(op.key);
         const keyFormat = keyEncoding.format;
-        const siblings = delegated && !isDescendant(op.sublevel, __privateGet(this, _db)) && op.sublevel !== __privateGet(this, _db);
-        const encodedKey = delegated && !siblings ? prefixDescendantKey(preencodedKey, keyFormat, db, __privateGet(this, _db)) : preencodedKey;
+        const siblings = delegated && !isDescendant(op.sublevel, this.#db) && op.sublevel !== this.#db;
+        const encodedKey = delegated && !siblings ? prefixDescendantKey(preencodedKey, keyFormat, db, this.#db) : preencodedKey;
         if (delegated && !siblings) {
           op.sublevel = null;
         }
         let publicOperation = null;
-        if (__privateGet(this, _publicOperations) !== null && !siblings) {
+        if (this.#publicOperations !== null && !siblings) {
           publicOperation = { ...op };
           publicOperation.encodedKey = encodedKey;
           if (delegated) {
             publicOperation.key = encodedKey;
-            publicOperation.keyEncoding = __privateGet(this, _db).keyEncoding(keyFormat);
+            publicOperation.keyEncoding = this.#db.keyEncoding(keyFormat);
           }
-          __privateGet(this, _publicOperations).push(publicOperation);
+          this.#publicOperations.push(publicOperation);
         }
-        op.key = siblings ? encodedKey : __privateGet(this, _db).prefixKey(encodedKey, keyFormat, true);
+        op.key = siblings ? encodedKey : this.#db.prefixKey(encodedKey, keyFormat, true);
         op.keyEncoding = keyFormat;
         if (isPut) {
           const valueEncoding = op.valueEncoding;
@@ -32298,17 +32282,14 @@ var require_prewrite_batch = __commonJS({
             publicOperation.encodedValue = encodedValue;
             if (delegated) {
               publicOperation.value = encodedValue;
-              publicOperation.valueEncoding = __privateGet(this, _db).valueEncoding(valueFormat);
+              publicOperation.valueEncoding = this.#db.valueEncoding(valueFormat);
             }
           }
         }
-        __privateGet(this, _privateOperations).push(op);
+        this.#privateOperations.push(op);
         return this;
       }
     };
-    _db = new WeakMap();
-    _privateOperations = new WeakMap();
-    _publicOperations = new WeakMap();
     exports$1.PrewriteBatch = PrewriteBatch;
   }
 });
@@ -32323,48 +32304,46 @@ var require_abstract_chained_batch = __commonJS({
     var { PrewriteBatch } = require_prewrite_batch();
     var kPublicOperations = /* @__PURE__ */ Symbol("publicOperations");
     var kPrivateOperations = /* @__PURE__ */ Symbol("privateOperations");
-    var _status, _length2, _closePromise, _publicOperations, _prewriteRun, _prewriteBatch, _prewriteData, _addMode, _AbstractChainedBatch_instances, assertStatus_fn, prepareClose_fn, privateClose_fn;
     var AbstractChainedBatch = class {
+      #status = "open";
+      #length = 0;
+      #closePromise = null;
+      #publicOperations;
+      #prewriteRun;
+      #prewriteBatch;
+      #prewriteData;
+      #addMode;
       constructor(db, options5) {
-        __privateAdd(this, _AbstractChainedBatch_instances);
-        __privateAdd(this, _status, "open");
-        __privateAdd(this, _length2, 0);
-        __privateAdd(this, _closePromise, null);
-        __privateAdd(this, _publicOperations);
-        __privateAdd(this, _prewriteRun);
-        __privateAdd(this, _prewriteBatch);
-        __privateAdd(this, _prewriteData);
-        __privateAdd(this, _addMode);
         if (typeof db !== "object" || db === null) {
           const hint = db === null ? "null" : typeof db;
           throw new TypeError(`The first argument must be an abstract-level database, received ${hint}`);
         }
         const enableWriteEvent = db.listenerCount("write") > 0;
         const enablePrewriteHook = !db.hooks.prewrite.noop;
-        __privateSet(this, _publicOperations, enableWriteEvent ? [] : null);
-        __privateSet(this, _addMode, getOptions(options5, emptyOptions).add === true);
+        this.#publicOperations = enableWriteEvent ? [] : null;
+        this.#addMode = getOptions(options5, emptyOptions).add === true;
         if (enablePrewriteHook) {
           const data = new PrewriteData([], enableWriteEvent ? [] : null);
-          __privateSet(this, _prewriteData, data);
-          __privateSet(this, _prewriteBatch, new PrewriteBatch(db, data[kPrivateOperations], data[kPublicOperations]));
-          __privateSet(this, _prewriteRun, db.hooks.prewrite.run);
+          this.#prewriteData = data;
+          this.#prewriteBatch = new PrewriteBatch(db, data[kPrivateOperations], data[kPublicOperations]);
+          this.#prewriteRun = db.hooks.prewrite.run;
         } else {
-          __privateSet(this, _prewriteData, null);
-          __privateSet(this, _prewriteBatch, null);
-          __privateSet(this, _prewriteRun, null);
+          this.#prewriteData = null;
+          this.#prewriteBatch = null;
+          this.#prewriteRun = null;
         }
         this.db = db;
         this.db.attachResource(this);
       }
       get length() {
-        if (__privateGet(this, _prewriteData) !== null) {
-          return __privateGet(this, _length2) + __privateGet(this, _prewriteData).length;
+        if (this.#prewriteData !== null) {
+          return this.#length + this.#prewriteData.length;
         } else {
-          return __privateGet(this, _length2);
+          return this.#length;
         }
       }
       put(key, value3, options5) {
-        __privateMethod(this, _AbstractChainedBatch_instances, assertStatus_fn).call(this);
+        this.#assertStatus();
         options5 = getOptions(options5, emptyOptions);
         const delegated = options5.sublevel != null;
         const db = delegated ? options5.sublevel : this.db;
@@ -32378,9 +32357,9 @@ var require_abstract_chained_batch = __commonJS({
           keyEncoding: db.keyEncoding(options5.keyEncoding),
           valueEncoding: db.valueEncoding(options5.valueEncoding)
         };
-        if (__privateGet(this, _prewriteRun) !== null) {
+        if (this.#prewriteRun !== null) {
           try {
-            __privateGet(this, _prewriteRun).call(this, op, __privateGet(this, _prewriteBatch));
+            this.#prewriteRun(op, this.#prewriteBatch);
             op.keyEncoding = db.keyEncoding(op.keyEncoding);
             op.valueEncoding = db.valueEncoding(op.valueEncoding);
           } catch (err) {
@@ -32401,7 +32380,7 @@ var require_abstract_chained_batch = __commonJS({
         if (delegated && !siblings) {
           op.sublevel = null;
         }
-        if (__privateGet(this, _publicOperations) !== null && !siblings) {
+        if (this.#publicOperations !== null && !siblings) {
           const publicOperation = { ...op };
           publicOperation.encodedKey = encodedKey;
           publicOperation.encodedValue = encodedValue;
@@ -32411,24 +32390,24 @@ var require_abstract_chained_batch = __commonJS({
             publicOperation.keyEncoding = this.db.keyEncoding(keyFormat);
             publicOperation.valueEncoding = this.db.valueEncoding(valueFormat);
           }
-          __privateGet(this, _publicOperations).push(publicOperation);
+          this.#publicOperations.push(publicOperation);
         }
         op.key = siblings ? encodedKey : this.db.prefixKey(encodedKey, keyFormat, true);
         op.value = encodedValue;
         op.keyEncoding = keyFormat;
         op.valueEncoding = valueFormat;
-        if (__privateGet(this, _addMode)) {
+        if (this.#addMode) {
           this._add(op);
         } else {
           this._put(op.key, encodedValue, op);
         }
-        __privateWrapper(this, _length2)._++;
+        this.#length++;
         return this;
       }
       _put(key, value3, options5) {
       }
       del(key, options5) {
-        __privateMethod(this, _AbstractChainedBatch_instances, assertStatus_fn).call(this);
+        this.#assertStatus();
         options5 = getOptions(options5, emptyOptions);
         const delegated = options5.sublevel != null;
         const db = delegated ? options5.sublevel : this.db;
@@ -32439,9 +32418,9 @@ var require_abstract_chained_batch = __commonJS({
           key,
           keyEncoding: db.keyEncoding(options5.keyEncoding)
         };
-        if (__privateGet(this, _prewriteRun) !== null) {
+        if (this.#prewriteRun !== null) {
           try {
-            __privateGet(this, _prewriteRun).call(this, op, __privateGet(this, _prewriteBatch));
+            this.#prewriteRun(op, this.#prewriteBatch);
             op.keyEncoding = db.keyEncoding(op.keyEncoding);
           } catch (err) {
             throw new ModuleError("The prewrite hook failed on batch.del()", {
@@ -32455,23 +32434,23 @@ var require_abstract_chained_batch = __commonJS({
         const keyFormat = keyEncoding.format;
         const encodedKey = delegated ? prefixDescendantKey(preencodedKey, keyFormat, db, this.db) : preencodedKey;
         if (delegated) op.sublevel = null;
-        if (__privateGet(this, _publicOperations) !== null) {
+        if (this.#publicOperations !== null) {
           const publicOperation = { ...op };
           publicOperation.encodedKey = encodedKey;
           if (delegated) {
             publicOperation.key = encodedKey;
             publicOperation.keyEncoding = this.db.keyEncoding(keyFormat);
           }
-          __privateGet(this, _publicOperations).push(publicOperation);
+          this.#publicOperations.push(publicOperation);
         }
         op.key = this.db.prefixKey(encodedKey, keyFormat, true);
         op.keyEncoding = keyFormat;
-        if (__privateGet(this, _addMode)) {
+        if (this.#addMode) {
           this._add(op);
         } else {
           this._del(op.key, op);
         }
-        __privateWrapper(this, _length2)._++;
+        this.#length++;
         return this;
       }
       _del(key, options5) {
@@ -32479,31 +32458,31 @@ var require_abstract_chained_batch = __commonJS({
       _add(op) {
       }
       clear() {
-        __privateMethod(this, _AbstractChainedBatch_instances, assertStatus_fn).call(this);
+        this.#assertStatus();
         this._clear();
-        if (__privateGet(this, _publicOperations) !== null) __privateSet(this, _publicOperations, []);
-        if (__privateGet(this, _prewriteData) !== null) __privateGet(this, _prewriteData).clear();
-        __privateSet(this, _length2, 0);
+        if (this.#publicOperations !== null) this.#publicOperations = [];
+        if (this.#prewriteData !== null) this.#prewriteData.clear();
+        this.#length = 0;
         return this;
       }
       _clear() {
       }
       async write(options5) {
-        __privateMethod(this, _AbstractChainedBatch_instances, assertStatus_fn).call(this);
+        this.#assertStatus();
         options5 = getOptions(options5);
-        if (__privateGet(this, _length2) === 0) {
+        if (this.#length === 0) {
           return this.close();
         } else {
-          __privateSet(this, _status, "writing");
-          const close2 = __privateMethod(this, _AbstractChainedBatch_instances, prepareClose_fn).call(this);
+          this.#status = "writing";
+          const close2 = this.#prepareClose();
           try {
-            if (__privateGet(this, _prewriteData) !== null) {
-              const publicOperations = __privateGet(this, _prewriteData)[kPublicOperations];
-              const privateOperations = __privateGet(this, _prewriteData)[kPrivateOperations];
-              const length5 = __privateGet(this, _prewriteData).length;
+            if (this.#prewriteData !== null) {
+              const publicOperations = this.#prewriteData[kPublicOperations];
+              const privateOperations = this.#prewriteData[kPrivateOperations];
+              const length5 = this.#prewriteData.length;
               for (let i = 0; i < length5; i++) {
                 const op = privateOperations[i];
-                if (__privateGet(this, _addMode)) {
+                if (this.#addMode) {
                   this._add(op);
                 } else if (op.type === "put") {
                   this._put(op.key, op.value, op);
@@ -32512,73 +32491,64 @@ var require_abstract_chained_batch = __commonJS({
                 }
               }
               if (publicOperations !== null && length5 !== 0) {
-                __privateSet(this, _publicOperations, __privateGet(this, _publicOperations).concat(publicOperations));
+                this.#publicOperations = this.#publicOperations.concat(publicOperations);
               }
             }
             await this._write(options5);
           } catch (err) {
             close2();
             try {
-              await __privateGet(this, _closePromise);
+              await this.#closePromise;
             } catch (closeErr) {
               err = combineErrors([err, closeErr]);
             }
             throw err;
           }
           close2();
-          if (__privateGet(this, _publicOperations) !== null) {
-            this.db.emit("write", __privateGet(this, _publicOperations));
+          if (this.#publicOperations !== null) {
+            this.db.emit("write", this.#publicOperations);
           }
-          return __privateGet(this, _closePromise);
+          return this.#closePromise;
         }
       }
       async _write(options5) {
       }
       async close() {
-        if (__privateGet(this, _closePromise) !== null) {
-          return __privateGet(this, _closePromise).catch(noop3);
+        if (this.#closePromise !== null) {
+          return this.#closePromise.catch(noop3);
         } else {
-          __privateMethod(this, _AbstractChainedBatch_instances, prepareClose_fn).call(this)();
-          return __privateGet(this, _closePromise);
+          this.#prepareClose()();
+          return this.#closePromise;
         }
       }
       async _close() {
       }
-    };
-    _status = new WeakMap();
-    _length2 = new WeakMap();
-    _closePromise = new WeakMap();
-    _publicOperations = new WeakMap();
-    _prewriteRun = new WeakMap();
-    _prewriteBatch = new WeakMap();
-    _prewriteData = new WeakMap();
-    _addMode = new WeakMap();
-    _AbstractChainedBatch_instances = new WeakSet();
-    assertStatus_fn = function() {
-      if (__privateGet(this, _status) !== "open") {
-        throw new ModuleError("Batch is not open: cannot change operations after write() or close()", {
-          code: "LEVEL_BATCH_NOT_OPEN"
-        });
+      #assertStatus() {
+        if (this.#status !== "open") {
+          throw new ModuleError("Batch is not open: cannot change operations after write() or close()", {
+            code: "LEVEL_BATCH_NOT_OPEN"
+          });
+        }
+        if (this.db.status !== "open") {
+          throw new ModuleError("Database is not open", {
+            code: "LEVEL_DATABASE_NOT_OPEN"
+          });
+        }
       }
-      if (this.db.status !== "open") {
-        throw new ModuleError("Database is not open", {
-          code: "LEVEL_DATABASE_NOT_OPEN"
+      #prepareClose() {
+        let close2;
+        this.#closePromise = new Promise((resolve, reject) => {
+          close2 = () => {
+            this.#privateClose().then(resolve, reject);
+          };
         });
+        return close2;
       }
-    };
-    prepareClose_fn = function() {
-      let close2;
-      __privateSet(this, _closePromise, new Promise((resolve, reject) => {
-        close2 = () => {
-          __privateMethod(this, _AbstractChainedBatch_instances, privateClose_fn).call(this).then(resolve, reject);
-        };
-      }));
-      return close2;
-    };
-    privateClose_fn = async function() {
-      __privateSet(this, _status, "closing");
-      await this._close();
-      this.db.detachResource(this);
+      async #privateClose() {
+        this.#status = "closing";
+        await this._close();
+        this.db.detachResource(this);
+      }
     };
     if (typeof Symbol.asyncDispose === "symbol") {
       AbstractChainedBatch.prototype[Symbol.asyncDispose] = async function() {
@@ -32610,23 +32580,21 @@ var require_abstract_chained_batch = __commonJS({
 var require_default_chained_batch = __commonJS({
   "node_modules/abstract-level/lib/default-chained-batch.js"(exports$1) {
     var { AbstractChainedBatch } = require_abstract_chained_batch();
-    var _encoded;
     var DefaultChainedBatch = class extends AbstractChainedBatch {
+      #encoded = [];
       constructor(db) {
         super(db, { add: true });
-        __privateAdd(this, _encoded, []);
       }
       _add(op) {
-        __privateGet(this, _encoded).push(op);
+        this.#encoded.push(op);
       }
       _clear() {
-        __privateSet(this, _encoded, []);
+        this.#encoded = [];
       }
       async _write(options5) {
-        return this.db._batch(__privateGet(this, _encoded), options5);
+        return this.db._batch(this.#encoded, options5);
       }
     };
-    _encoded = new WeakMap();
     exports$1.DefaultChainedBatch = DefaultChainedBatch;
   }
 });
@@ -32642,52 +32610,47 @@ var require_hooks = __commonJS({
         this.newsub = new Hook({ async: false });
       }
     };
-    var _functions, _isAsync, _Hook_instances, runner_fn;
     var Hook = class {
+      #functions = /* @__PURE__ */ new Set();
+      #isAsync;
       constructor(options5) {
-        __privateAdd(this, _Hook_instances);
-        __privateAdd(this, _functions, /* @__PURE__ */ new Set());
-        __privateAdd(this, _isAsync);
-        __privateSet(this, _isAsync, options5.async);
+        this.#isAsync = options5.async;
         this.noop = true;
-        this.run = __privateMethod(this, _Hook_instances, runner_fn).call(this);
+        this.run = this.#runner();
       }
       add(fn2) {
         assertFunction(fn2);
-        __privateGet(this, _functions).add(fn2);
+        this.#functions.add(fn2);
         this.noop = false;
-        this.run = __privateMethod(this, _Hook_instances, runner_fn).call(this);
+        this.run = this.#runner();
       }
       delete(fn2) {
         assertFunction(fn2);
-        __privateGet(this, _functions).delete(fn2);
-        this.noop = __privateGet(this, _functions).size === 0;
-        this.run = __privateMethod(this, _Hook_instances, runner_fn).call(this);
+        this.#functions.delete(fn2);
+        this.noop = this.#functions.size === 0;
+        this.run = this.#runner();
       }
-    };
-    _functions = new WeakMap();
-    _isAsync = new WeakMap();
-    _Hook_instances = new WeakSet();
-    runner_fn = function() {
-      if (this.noop) {
-        return noop3;
-      } else if (__privateGet(this, _functions).size === 1) {
-        const [fn2] = __privateGet(this, _functions);
-        return fn2;
-      } else if (__privateGet(this, _isAsync)) {
-        const run6 = async function(functions, ...args2) {
-          for (const fn2 of functions) {
-            await fn2(...args2);
-          }
-        };
-        return run6.bind(null, Array.from(__privateGet(this, _functions)));
-      } else {
-        const run6 = function(functions, ...args2) {
-          for (const fn2 of functions) {
-            fn2(...args2);
-          }
-        };
-        return run6.bind(null, Array.from(__privateGet(this, _functions)));
+      #runner() {
+        if (this.noop) {
+          return noop3;
+        } else if (this.#functions.size === 1) {
+          const [fn2] = this.#functions;
+          return fn2;
+        } else if (this.#isAsync) {
+          const run6 = async function(functions, ...args2) {
+            for (const fn2 of functions) {
+              await fn2(...args2);
+            }
+          };
+          return run6.bind(null, Array.from(this.#functions));
+        } else {
+          const run6 = function(functions, ...args2) {
+            for (const fn2 of functions) {
+              fn2(...args2);
+            }
+          };
+          return run6.bind(null, Array.from(this.#functions));
+        }
       }
     };
     var assertFunction = function(fn2) {
@@ -32738,64 +32701,60 @@ var require_deferred_queue = __commonJS({
         this.signal = signal;
       }
     };
-    var _operations, _signals, _handleAbort;
     var DeferredQueue = class {
+      #operations;
+      #signals;
       constructor() {
-        __privateAdd(this, _operations);
-        __privateAdd(this, _signals);
-        __privateAdd(this, _handleAbort, (ev) => {
-          const signal = ev.target;
-          const err = new AbortError2();
-          const aborted = [];
-          __privateSet(this, _operations, __privateGet(this, _operations).filter(function(operation) {
-            if (operation.signal !== null && operation.signal === signal) {
-              aborted.push(operation);
-              return false;
-            } else {
-              return true;
-            }
-          }));
-          __privateGet(this, _signals).delete(signal);
-          for (const operation of aborted) {
-            operation.fn.call(null, err);
-          }
-        });
-        __privateSet(this, _operations, []);
-        __privateSet(this, _signals, /* @__PURE__ */ new Set());
+        this.#operations = [];
+        this.#signals = /* @__PURE__ */ new Set();
       }
       add(fn2, options5) {
         options5 = getOptions(options5, emptyOptions);
         const signal = options5.signal;
         if (signal == null) {
-          __privateGet(this, _operations).push(new DeferredOperation(fn2, null));
+          this.#operations.push(new DeferredOperation(fn2, null));
           return;
         }
         if (signal.aborted) {
           fn2(new AbortError2());
           return;
         }
-        if (!__privateGet(this, _signals).has(signal)) {
-          __privateGet(this, _signals).add(signal);
-          signal.addEventListener("abort", __privateGet(this, _handleAbort), { once: true });
+        if (!this.#signals.has(signal)) {
+          this.#signals.add(signal);
+          signal.addEventListener("abort", this.#handleAbort, { once: true });
         }
-        __privateGet(this, _operations).push(new DeferredOperation(fn2, signal));
+        this.#operations.push(new DeferredOperation(fn2, signal));
       }
       drain() {
-        const operations = __privateGet(this, _operations);
-        const signals = __privateGet(this, _signals);
-        __privateSet(this, _operations, []);
-        __privateSet(this, _signals, /* @__PURE__ */ new Set());
+        const operations = this.#operations;
+        const signals = this.#signals;
+        this.#operations = [];
+        this.#signals = /* @__PURE__ */ new Set();
         for (const signal of signals) {
-          signal.removeEventListener("abort", __privateGet(this, _handleAbort));
+          signal.removeEventListener("abort", this.#handleAbort);
         }
         for (const operation of operations) {
           operation.fn.call(null);
         }
       }
+      #handleAbort = (ev) => {
+        const signal = ev.target;
+        const err = new AbortError2();
+        const aborted = [];
+        this.#operations = this.#operations.filter(function(operation) {
+          if (operation.signal !== null && operation.signal === signal) {
+            aborted.push(operation);
+            return false;
+          } else {
+            return true;
+          }
+        });
+        this.#signals.delete(signal);
+        for (const operation of aborted) {
+          operation.fn.call(null, err);
+        }
+      };
     };
-    _operations = new WeakMap();
-    _signals = new WeakMap();
-    _handleAbort = new WeakMap();
     exports$1.DeferredQueue = DeferredQueue;
   }
 });
@@ -32827,26 +32786,25 @@ var require_range_options = __commonJS({
 var require_abstract_sublevel_iterator = __commonJS({
   "node_modules/abstract-level/lib/abstract-sublevel-iterator.js"(exports$1) {
     var { AbstractIterator, AbstractKeyIterator, AbstractValueIterator } = require_abstract_iterator();
-    var _iterator, _unfix;
     var AbstractSublevelIterator = class extends AbstractIterator {
+      #iterator;
+      #unfix;
       constructor(db, options5, iterator, unfix) {
         super(db, options5);
-        __privateAdd(this, _iterator);
-        __privateAdd(this, _unfix);
-        __privateSet(this, _iterator, iterator);
-        __privateSet(this, _unfix, unfix);
+        this.#iterator = iterator;
+        this.#unfix = unfix;
       }
       async _next() {
-        const entry = await __privateGet(this, _iterator).next();
+        const entry = await this.#iterator.next();
         if (entry !== void 0) {
           const key = entry[0];
-          if (key !== void 0) entry[0] = __privateGet(this, _unfix).call(this, key);
+          if (key !== void 0) entry[0] = this.#unfix(key);
         }
         return entry;
       }
       async _nextv(size20, options5) {
-        const entries3 = await __privateGet(this, _iterator).nextv(size20, options5);
-        const unfix = __privateGet(this, _unfix);
+        const entries3 = await this.#iterator.nextv(size20, options5);
+        const unfix = this.#unfix;
         for (const entry of entries3) {
           const key = entry[0];
           if (key !== void 0) entry[0] = unfix(key);
@@ -32854,8 +32812,8 @@ var require_abstract_sublevel_iterator = __commonJS({
         return entries3;
       }
       async _all(options5) {
-        const entries3 = await __privateGet(this, _iterator).all(options5);
-        const unfix = __privateGet(this, _unfix);
+        const entries3 = await this.#iterator.all(options5);
+        const unfix = this.#unfix;
         for (const entry of entries3) {
           const key = entry[0];
           if (key !== void 0) entry[0] = unfix(key);
@@ -32863,30 +32821,27 @@ var require_abstract_sublevel_iterator = __commonJS({
         return entries3;
       }
       _seek(target, options5) {
-        __privateGet(this, _iterator).seek(target, options5);
+        this.#iterator.seek(target, options5);
       }
       async _close() {
-        return __privateGet(this, _iterator).close();
+        return this.#iterator.close();
       }
     };
-    _iterator = new WeakMap();
-    _unfix = new WeakMap();
-    var _iterator2, _unfix2;
     var AbstractSublevelKeyIterator = class extends AbstractKeyIterator {
+      #iterator;
+      #unfix;
       constructor(db, options5, iterator, unfix) {
         super(db, options5);
-        __privateAdd(this, _iterator2);
-        __privateAdd(this, _unfix2);
-        __privateSet(this, _iterator2, iterator);
-        __privateSet(this, _unfix2, unfix);
+        this.#iterator = iterator;
+        this.#unfix = unfix;
       }
       async _next() {
-        const key = await __privateGet(this, _iterator2).next();
-        return key === void 0 ? key : __privateGet(this, _unfix2).call(this, key);
+        const key = await this.#iterator.next();
+        return key === void 0 ? key : this.#unfix(key);
       }
       async _nextv(size20, options5) {
-        const keys7 = await __privateGet(this, _iterator2).nextv(size20, options5);
-        const unfix = __privateGet(this, _unfix2);
+        const keys7 = await this.#iterator.nextv(size20, options5);
+        const unfix = this.#unfix;
         for (let i = 0; i < keys7.length; i++) {
           const key = keys7[i];
           if (key !== void 0) keys7[i] = unfix(key);
@@ -32894,8 +32849,8 @@ var require_abstract_sublevel_iterator = __commonJS({
         return keys7;
       }
       async _all(options5) {
-        const keys7 = await __privateGet(this, _iterator2).all(options5);
-        const unfix = __privateGet(this, _unfix2);
+        const keys7 = await this.#iterator.all(options5);
+        const unfix = this.#unfix;
         for (let i = 0; i < keys7.length; i++) {
           const key = keys7[i];
           if (key !== void 0) keys7[i] = unfix(key);
@@ -32903,38 +32858,34 @@ var require_abstract_sublevel_iterator = __commonJS({
         return keys7;
       }
       _seek(target, options5) {
-        __privateGet(this, _iterator2).seek(target, options5);
+        this.#iterator.seek(target, options5);
       }
       async _close() {
-        return __privateGet(this, _iterator2).close();
+        return this.#iterator.close();
       }
     };
-    _iterator2 = new WeakMap();
-    _unfix2 = new WeakMap();
-    var _iterator3;
     var AbstractSublevelValueIterator = class extends AbstractValueIterator {
+      #iterator;
       constructor(db, options5, iterator) {
         super(db, options5);
-        __privateAdd(this, _iterator3);
-        __privateSet(this, _iterator3, iterator);
+        this.#iterator = iterator;
       }
       async _next() {
-        return __privateGet(this, _iterator3).next();
+        return this.#iterator.next();
       }
       async _nextv(size20, options5) {
-        return __privateGet(this, _iterator3).nextv(size20, options5);
+        return this.#iterator.nextv(size20, options5);
       }
       async _all(options5) {
-        return __privateGet(this, _iterator3).all(options5);
+        return this.#iterator.all(options5);
       }
       _seek(target, options5) {
-        __privateGet(this, _iterator3).seek(target, options5);
+        this.#iterator.seek(target, options5);
       }
       async _close() {
-        return __privateGet(this, _iterator3).close();
+        return this.#iterator.close();
       }
     };
-    _iterator3 = new WeakMap();
     exports$1.AbstractSublevelIterator = AbstractSublevelIterator;
     exports$1.AbstractSublevelKeyIterator = AbstractSublevelKeyIterator;
     exports$1.AbstractSublevelValueIterator = AbstractSublevelValueIterator;
@@ -32955,39 +32906,14 @@ var require_abstract_sublevel = __commonJS({
     var textEncoder = new TextEncoder();
     var defaults2 = { separator: "!" };
     module2.exports = function({ AbstractLevel }) {
-      var _globalPrefix, _localPrefix, _localPath, _globalPath, _globalUpperBound, _parent, _unfix, _AbstractSublevel_instances, prefixRange_fn;
-      const _AbstractSublevel = class _AbstractSublevel extends AbstractLevel {
-        constructor(db, name, options5) {
-          const { separator, manifest, ...forward } = _AbstractSublevel.defaults(options5);
-          const names = [].concat(name).map((name2) => trim2(name2, separator));
-          const reserved = separator.charCodeAt(0) + 1;
-          const root2 = db[kRoot] || db;
-          if (!names.every((name2) => textEncoder.encode(name2).every((x) => x > reserved && x < 127))) {
-            throw new ModuleError(`Sublevel name must use bytes > ${reserved} < ${127}`, {
-              code: "LEVEL_INVALID_PREFIX"
-            });
-          }
-          super(mergeManifests(db, manifest), forward);
-          __privateAdd(this, _AbstractSublevel_instances);
-          __privateAdd(this, _globalPrefix);
-          __privateAdd(this, _localPrefix);
-          __privateAdd(this, _localPath);
-          __privateAdd(this, _globalPath);
-          __privateAdd(this, _globalUpperBound);
-          __privateAdd(this, _parent);
-          __privateAdd(this, _unfix);
-          const localPrefix = names.map((name2) => separator + name2 + separator).join("");
-          const globalPrefix = (db.prefix || "") + localPrefix;
-          const globalUpperBound = globalPrefix.slice(0, -1) + String.fromCharCode(reserved);
-          this[kRoot] = root2;
-          __privateSet(this, _parent, db);
-          __privateSet(this, _localPath, names);
-          __privateSet(this, _globalPath, db.prefix ? db.path().concat(names) : names);
-          __privateSet(this, _globalPrefix, new MultiFormat(globalPrefix));
-          __privateSet(this, _globalUpperBound, new MultiFormat(globalUpperBound));
-          __privateSet(this, _localPrefix, new MultiFormat(localPrefix));
-          __privateSet(this, _unfix, new Unfixer());
-        }
+      class AbstractSublevel extends AbstractLevel {
+        #globalPrefix;
+        #localPrefix;
+        #localPath;
+        #globalPath;
+        #globalUpperBound;
+        #parent;
+        #unfix;
         static defaults(options5) {
           if (options5 == null) {
             return defaults2;
@@ -32997,8 +32923,31 @@ var require_abstract_sublevel = __commonJS({
             return options5;
           }
         }
+        constructor(db, name, options5) {
+          const { separator, manifest, ...forward } = AbstractSublevel.defaults(options5);
+          const names = [].concat(name).map((name2) => trim2(name2, separator));
+          const reserved = separator.charCodeAt(0) + 1;
+          const root2 = db[kRoot] || db;
+          if (!names.every((name2) => textEncoder.encode(name2).every((x) => x > reserved && x < 127))) {
+            throw new ModuleError(`Sublevel name must use bytes > ${reserved} < ${127}`, {
+              code: "LEVEL_INVALID_PREFIX"
+            });
+          }
+          super(mergeManifests(db, manifest), forward);
+          const localPrefix = names.map((name2) => separator + name2 + separator).join("");
+          const globalPrefix = (db.prefix || "") + localPrefix;
+          const globalUpperBound = globalPrefix.slice(0, -1) + String.fromCharCode(reserved);
+          this[kRoot] = root2;
+          this.#parent = db;
+          this.#localPath = names;
+          this.#globalPath = db.prefix ? db.path().concat(names) : names;
+          this.#globalPrefix = new MultiFormat(globalPrefix);
+          this.#globalUpperBound = new MultiFormat(globalUpperBound);
+          this.#localPrefix = new MultiFormat(localPrefix);
+          this.#unfix = new Unfixer();
+        }
         prefixKey(key, keyFormat, local) {
-          const prefix2 = local ? __privateGet(this, _localPrefix) : __privateGet(this, _globalPrefix);
+          const prefix2 = local ? this.#localPrefix : this.#globalPrefix;
           if (keyFormat === "utf8") {
             return prefix2.utf8 + key;
           } else if (key.byteLength === 0) {
@@ -33014,102 +32963,93 @@ var require_abstract_sublevel = __commonJS({
             return Buffer6.concat([buffer4, key], buffer4.byteLength + key.byteLength);
           }
         }
+        // Not exposed for now.
+        #prefixRange(range6, keyFormat) {
+          if (range6.gte !== void 0) {
+            range6.gte = this.prefixKey(range6.gte, keyFormat, false);
+          } else if (range6.gt !== void 0) {
+            range6.gt = this.prefixKey(range6.gt, keyFormat, false);
+          } else {
+            range6.gte = this.#globalPrefix[keyFormat];
+          }
+          if (range6.lte !== void 0) {
+            range6.lte = this.prefixKey(range6.lte, keyFormat, false);
+          } else if (range6.lt !== void 0) {
+            range6.lt = this.prefixKey(range6.lt, keyFormat, false);
+          } else {
+            range6.lte = this.#globalUpperBound[keyFormat];
+          }
+        }
         get prefix() {
-          return __privateGet(this, _globalPrefix).utf8;
+          return this.#globalPrefix.utf8;
         }
         get db() {
           return this[kRoot];
         }
         get parent() {
-          return __privateGet(this, _parent);
+          return this.#parent;
         }
         path(local = false) {
-          return local ? __privateGet(this, _localPath) : __privateGet(this, _globalPath);
+          return local ? this.#localPath : this.#globalPath;
         }
         async _open(options5) {
-          await __privateGet(this, _parent).open({ passive: true });
-          __privateGet(this, _parent).attachResource(this);
+          await this.#parent.open({ passive: true });
+          this.#parent.attachResource(this);
         }
         async _close() {
-          __privateGet(this, _parent).detachResource(this);
+          this.#parent.detachResource(this);
         }
         async _put(key, value3, options5) {
-          return __privateGet(this, _parent).put(key, value3, options5);
+          return this.#parent.put(key, value3, options5);
         }
         async _get(key, options5) {
-          return __privateGet(this, _parent).get(key, options5);
+          return this.#parent.get(key, options5);
         }
         _getSync(key, options5) {
-          return __privateGet(this, _parent).getSync(key, options5);
+          return this.#parent.getSync(key, options5);
         }
         async _getMany(keys7, options5) {
-          return __privateGet(this, _parent).getMany(keys7, options5);
+          return this.#parent.getMany(keys7, options5);
         }
         async _has(key, options5) {
-          return __privateGet(this, _parent).has(key, options5);
+          return this.#parent.has(key, options5);
         }
         async _hasMany(keys7, options5) {
-          return __privateGet(this, _parent).hasMany(keys7, options5);
+          return this.#parent.hasMany(keys7, options5);
         }
         async _del(key, options5) {
-          return __privateGet(this, _parent).del(key, options5);
+          return this.#parent.del(key, options5);
         }
         async _batch(operations, options5) {
-          return __privateGet(this, _parent).batch(operations, options5);
+          return this.#parent.batch(operations, options5);
         }
         // TODO: call parent instead of root
         async _clear(options5) {
-          __privateMethod(this, _AbstractSublevel_instances, prefixRange_fn).call(this, options5, options5.keyEncoding);
+          this.#prefixRange(options5, options5.keyEncoding);
           return this[kRoot].clear(options5);
         }
         // TODO: call parent instead of root
         _iterator(options5) {
-          __privateMethod(this, _AbstractSublevel_instances, prefixRange_fn).call(this, options5, options5.keyEncoding);
+          this.#prefixRange(options5, options5.keyEncoding);
           const iterator = this[kRoot].iterator(options5);
-          const unfix = __privateGet(this, _unfix).get(__privateGet(this, _globalPrefix).utf8.length, options5.keyEncoding);
+          const unfix = this.#unfix.get(this.#globalPrefix.utf8.length, options5.keyEncoding);
           return new AbstractSublevelIterator(this, options5, iterator, unfix);
         }
         _keys(options5) {
-          __privateMethod(this, _AbstractSublevel_instances, prefixRange_fn).call(this, options5, options5.keyEncoding);
+          this.#prefixRange(options5, options5.keyEncoding);
           const iterator = this[kRoot].keys(options5);
-          const unfix = __privateGet(this, _unfix).get(__privateGet(this, _globalPrefix).utf8.length, options5.keyEncoding);
+          const unfix = this.#unfix.get(this.#globalPrefix.utf8.length, options5.keyEncoding);
           return new AbstractSublevelKeyIterator(this, options5, iterator, unfix);
         }
         _values(options5) {
-          __privateMethod(this, _AbstractSublevel_instances, prefixRange_fn).call(this, options5, options5.keyEncoding);
+          this.#prefixRange(options5, options5.keyEncoding);
           const iterator = this[kRoot].values(options5);
           return new AbstractSublevelValueIterator(this, options5, iterator);
         }
         _snapshot(options5) {
           return this[kRoot].snapshot(options5);
         }
-      };
-      _globalPrefix = new WeakMap();
-      _localPrefix = new WeakMap();
-      _localPath = new WeakMap();
-      _globalPath = new WeakMap();
-      _globalUpperBound = new WeakMap();
-      _parent = new WeakMap();
-      _unfix = new WeakMap();
-      _AbstractSublevel_instances = new WeakSet();
-      // Not exposed for now.
-      prefixRange_fn = function(range6, keyFormat) {
-        if (range6.gte !== void 0) {
-          range6.gte = this.prefixKey(range6.gte, keyFormat, false);
-        } else if (range6.gt !== void 0) {
-          range6.gt = this.prefixKey(range6.gt, keyFormat, false);
-        } else {
-          range6.gte = __privateGet(this, _globalPrefix)[keyFormat];
-        }
-        if (range6.lte !== void 0) {
-          range6.lte = this.prefixKey(range6.lte, keyFormat, false);
-        } else if (range6.lt !== void 0) {
-          range6.lt = this.prefixKey(range6.lt, keyFormat, false);
-        } else {
-          range6.lte = __privateGet(this, _globalUpperBound)[keyFormat];
-        }
-      };
-      let AbstractSublevel = _AbstractSublevel;
+      }
       return { AbstractSublevel };
     };
     var mergeManifests = function(parent, manifest) {
@@ -33194,31 +33134,29 @@ var require_abstract_level = __commonJS({
     var { prefixDescendantKey, isDescendant } = require_prefixes();
     var { DeferredQueue } = require_deferred_queue();
     var rangeOptions = require_range_options();
-    var _status, _deferOpen, _statusChange, _statusLocked, _resources, _queue, _options, _defaultOptions, _transcoder, _keyEncoding, _valueEncoding, _eventMonitor, _AbstractLevel_instances, closeResources_fn, arrayBatch_fn, assertOpen_fn, assertUnlocked_fn;
     var AbstractLevel = class extends EventEmitter2 {
+      #status = "opening";
+      #deferOpen = true;
+      #statusChange = null;
+      #statusLocked = false;
+      #resources;
+      #queue;
+      #options;
+      #defaultOptions;
+      #transcoder;
+      #keyEncoding;
+      #valueEncoding;
+      #eventMonitor;
       constructor(manifest, options5) {
         super();
-        __privateAdd(this, _AbstractLevel_instances);
-        __privateAdd(this, _status, "opening");
-        __privateAdd(this, _deferOpen, true);
-        __privateAdd(this, _statusChange, null);
-        __privateAdd(this, _statusLocked, false);
-        __privateAdd(this, _resources);
-        __privateAdd(this, _queue);
-        __privateAdd(this, _options);
-        __privateAdd(this, _defaultOptions);
-        __privateAdd(this, _transcoder);
-        __privateAdd(this, _keyEncoding);
-        __privateAdd(this, _valueEncoding);
-        __privateAdd(this, _eventMonitor);
         if (typeof manifest !== "object" || manifest === null) {
           throw new TypeError("The first argument 'manifest' must be an object");
         }
         options5 = getOptions(options5);
         const { keyEncoding, valueEncoding, passive, ...forward } = options5;
-        __privateSet(this, _resources, /* @__PURE__ */ new Set());
-        __privateSet(this, _queue, new DeferredQueue());
-        __privateSet(this, _options, forward);
+        this.#resources = /* @__PURE__ */ new Set();
+        this.#queue = new DeferredQueue();
+        this.#options = forward;
         const implicitSnapshots = manifest.snapshots !== false && manifest.implicitSnapshots !== false;
         this.hooks = new DatabaseHooks();
         this.supports = supports(manifest, {
@@ -33237,176 +33175,195 @@ var require_abstract_level = __commonJS({
             clear: true
           }
         });
-        __privateSet(this, _eventMonitor, new EventMonitor(this));
-        __privateSet(this, _transcoder, new Transcoder(formats(this)));
-        __privateSet(this, _keyEncoding, __privateGet(this, _transcoder).encoding(keyEncoding || "utf8"));
-        __privateSet(this, _valueEncoding, __privateGet(this, _transcoder).encoding(valueEncoding || "utf8"));
-        for (const encoding of __privateGet(this, _transcoder).encodings()) {
+        this.#eventMonitor = new EventMonitor(this);
+        this.#transcoder = new Transcoder(formats(this));
+        this.#keyEncoding = this.#transcoder.encoding(keyEncoding || "utf8");
+        this.#valueEncoding = this.#transcoder.encoding(valueEncoding || "utf8");
+        for (const encoding of this.#transcoder.encodings()) {
           if (!this.supports.encodings[encoding.commonName]) {
             this.supports.encodings[encoding.commonName] = true;
           }
         }
-        __privateSet(this, _defaultOptions, {
+        this.#defaultOptions = {
           empty: emptyOptions,
           entry: Object.freeze({
-            keyEncoding: __privateGet(this, _keyEncoding).commonName,
-            valueEncoding: __privateGet(this, _valueEncoding).commonName
+            keyEncoding: this.#keyEncoding.commonName,
+            valueEncoding: this.#valueEncoding.commonName
           }),
           entryFormat: Object.freeze({
-            keyEncoding: __privateGet(this, _keyEncoding).format,
-            valueEncoding: __privateGet(this, _valueEncoding).format
+            keyEncoding: this.#keyEncoding.format,
+            valueEncoding: this.#valueEncoding.format
           }),
           key: Object.freeze({
-            keyEncoding: __privateGet(this, _keyEncoding).commonName
+            keyEncoding: this.#keyEncoding.commonName
           }),
           keyFormat: Object.freeze({
-            keyEncoding: __privateGet(this, _keyEncoding).format
+            keyEncoding: this.#keyEncoding.format
           }),
           owner: Object.freeze({
             owner: this
           })
-        });
+        };
         queueMicrotask(() => {
-          if (__privateGet(this, _deferOpen)) {
+          if (this.#deferOpen) {
             this.open({ passive: false }).catch(noop3);
           }
         });
       }
       get status() {
-        return __privateGet(this, _status);
+        return this.#status;
       }
       get parent() {
         return null;
       }
       keyEncoding(encoding) {
-        return __privateGet(this, _transcoder).encoding(encoding ?? __privateGet(this, _keyEncoding));
+        return this.#transcoder.encoding(encoding ?? this.#keyEncoding);
       }
       valueEncoding(encoding) {
-        return __privateGet(this, _transcoder).encoding(encoding ?? __privateGet(this, _valueEncoding));
+        return this.#transcoder.encoding(encoding ?? this.#valueEncoding);
       }
       async open(options5) {
-        options5 = { ...__privateGet(this, _options), ...getOptions(options5) };
+        options5 = { ...this.#options, ...getOptions(options5) };
         options5.createIfMissing = options5.createIfMissing !== false;
         options5.errorIfExists = !!options5.errorIfExists;
         const postopen = this.hooks.postopen.noop ? null : this.hooks.postopen.run;
         const passive = options5.passive;
-        if (passive && __privateGet(this, _deferOpen)) {
+        if (passive && this.#deferOpen) {
           await void 0;
         }
-        __privateMethod(this, _AbstractLevel_instances, assertUnlocked_fn).call(this);
-        while (__privateGet(this, _statusChange) !== null) await __privateGet(this, _statusChange).catch(noop3);
-        __privateMethod(this, _AbstractLevel_instances, assertUnlocked_fn).call(this);
+        this.#assertUnlocked();
+        while (this.#statusChange !== null) await this.#statusChange.catch(noop3);
+        this.#assertUnlocked();
         if (passive) {
-          if (__privateGet(this, _status) !== "open") throw new NotOpenError();
-        } else if (__privateGet(this, _status) === "closed" || __privateGet(this, _deferOpen)) {
-          __privateSet(this, _deferOpen, false);
-          __privateSet(this, _statusChange, resolvedPromise);
-          __privateSet(this, _statusChange, (async () => {
-            __privateSet(this, _status, "opening");
+          if (this.#status !== "open") throw new NotOpenError();
+        } else if (this.#status === "closed" || this.#deferOpen) {
+          this.#deferOpen = false;
+          this.#statusChange = resolvedPromise;
+          this.#statusChange = (async () => {
+            this.#status = "opening";
             try {
               this.emit("opening");
               await this._open(options5);
             } catch (err) {
-              __privateSet(this, _status, "closed");
-              __privateGet(this, _queue).drain();
+              this.#status = "closed";
+              this.#queue.drain();
               try {
-                await __privateMethod(this, _AbstractLevel_instances, closeResources_fn).call(this);
+                await this.#closeResources();
               } catch (resourceErr) {
                 err = combineErrors([err, resourceErr]);
               }
               throw new NotOpenError(err);
             }
-            __privateSet(this, _status, "open");
+            this.#status = "open";
             if (postopen !== null) {
               let hookErr;
               try {
-                __privateSet(this, _statusLocked, true);
+                this.#statusLocked = true;
                 await postopen(options5);
               } catch (err) {
                 hookErr = convertRejection(err);
               } finally {
-                __privateSet(this, _statusLocked, false);
+                this.#statusLocked = false;
               }
               if (hookErr) {
-                __privateSet(this, _status, "closing");
-                __privateGet(this, _queue).drain();
+                this.#status = "closing";
+                this.#queue.drain();
                 try {
-                  await __privateMethod(this, _AbstractLevel_instances, closeResources_fn).call(this);
+                  await this.#closeResources();
                   await this._close();
                 } catch (closeErr) {
-                  __privateSet(this, _statusLocked, true);
+                  this.#statusLocked = true;
                   hookErr = combineErrors([hookErr, closeErr]);
                 }
-                __privateSet(this, _status, "closed");
+                this.#status = "closed";
                 throw new ModuleError("The postopen hook failed on open()", {
                   code: "LEVEL_HOOK_ERROR",
                   cause: hookErr
                 });
               }
             }
-            __privateGet(this, _queue).drain();
+            this.#queue.drain();
             this.emit("open");
-          })());
+          })();
           try {
-            await __privateGet(this, _statusChange);
+            await this.#statusChange;
           } finally {
-            __privateSet(this, _statusChange, null);
+            this.#statusChange = null;
           }
-        } else if (__privateGet(this, _status) !== "open") {
+        } else if (this.#status !== "open") {
           throw new NotOpenError();
         }
       }
       async _open(options5) {
       }
       async close() {
-        __privateMethod(this, _AbstractLevel_instances, assertUnlocked_fn).call(this);
-        while (__privateGet(this, _statusChange) !== null) await __privateGet(this, _statusChange).catch(noop3);
-        __privateMethod(this, _AbstractLevel_instances, assertUnlocked_fn).call(this);
-        if (__privateGet(this, _status) === "open" || __privateGet(this, _deferOpen)) {
-          const fromInitial = __privateGet(this, _deferOpen);
-          __privateSet(this, _deferOpen, false);
-          __privateSet(this, _statusChange, resolvedPromise);
-          __privateSet(this, _statusChange, (async () => {
-            __privateSet(this, _status, "closing");
-            __privateGet(this, _queue).drain();
+        this.#assertUnlocked();
+        while (this.#statusChange !== null) await this.#statusChange.catch(noop3);
+        this.#assertUnlocked();
+        if (this.#status === "open" || this.#deferOpen) {
+          const fromInitial = this.#deferOpen;
+          this.#deferOpen = false;
+          this.#statusChange = resolvedPromise;
+          this.#statusChange = (async () => {
+            this.#status = "closing";
+            this.#queue.drain();
             try {
               this.emit("closing");
-              await __privateMethod(this, _AbstractLevel_instances, closeResources_fn).call(this);
+              await this.#closeResources();
               if (!fromInitial) await this._close();
             } catch (err) {
-              __privateSet(this, _status, "open");
-              __privateGet(this, _queue).drain();
+              this.#status = "open";
+              this.#queue.drain();
               throw new NotClosedError(err);
             }
-            __privateSet(this, _status, "closed");
-            __privateGet(this, _queue).drain();
+            this.#status = "closed";
+            this.#queue.drain();
             this.emit("closed");
-          })());
+          })();
           try {
-            await __privateGet(this, _statusChange);
+            await this.#statusChange;
           } finally {
-            __privateSet(this, _statusChange, null);
+            this.#statusChange = null;
           }
-        } else if (__privateGet(this, _status) !== "closed") {
+        } else if (this.#status !== "closed") {
           throw new NotClosedError();
+        }
+      }
+      async #closeResources() {
+        if (this.#resources.size === 0) {
+          return;
+        }
+        const resources = Array.from(this.#resources);
+        const promises = resources.map(closeResource);
+        const results = await Promise.allSettled(promises);
+        const errors2 = [];
+        for (let i = 0; i < results.length; i++) {
+          if (results[i].status === "fulfilled") {
+            this.#resources.delete(resources[i]);
+          } else {
+            errors2.push(convertRejection(results[i].reason));
+          }
+        }
+        if (errors2.length > 0) {
+          throw combineErrors(errors2);
         }
       }
       async _close() {
       }
       async get(key, options5) {
-        options5 = getOptions(options5, __privateGet(this, _defaultOptions).entry);
-        if (__privateGet(this, _status) === "opening") {
+        options5 = getOptions(options5, this.#defaultOptions.entry);
+        if (this.#status === "opening") {
           return this.deferAsync(() => this.get(key, options5));
         }
-        __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+        this.#assertOpen();
         this._assertValidKey(key);
         const snapshot = options5.snapshot;
         const keyEncoding = this.keyEncoding(options5.keyEncoding);
         const valueEncoding = this.valueEncoding(options5.valueEncoding);
         const keyFormat = keyEncoding.format;
         const valueFormat = valueEncoding.format;
-        if (options5 === __privateGet(this, _defaultOptions).entry) {
-          options5 = __privateGet(this, _defaultOptions).entryFormat;
+        if (options5 === this.#defaultOptions.entry) {
+          options5 = this.#defaultOptions.entryFormat;
         } else if (options5.keyEncoding !== keyFormat || options5.valueEncoding !== valueFormat) {
           options5 = { ...options5, keyEncoding: keyFormat, valueEncoding: valueFormat };
         }
@@ -33439,11 +33396,11 @@ var require_abstract_level = __commonJS({
         }
         this._assertValidKey(key);
         if (options5 == null) {
-          const encodedKey2 = __privateGet(this, _keyEncoding).encode(key);
-          const mappedKey2 = this.prefixKey(encodedKey2, __privateGet(this, _keyEncoding).format, true);
-          const value4 = this._getSync(mappedKey2, __privateGet(this, _defaultOptions).entryFormat);
+          const encodedKey2 = this.#keyEncoding.encode(key);
+          const mappedKey2 = this.prefixKey(encodedKey2, this.#keyEncoding.format, true);
+          const value4 = this._getSync(mappedKey2, this.#defaultOptions.entryFormat);
           try {
-            return value4 !== void 0 ? __privateGet(this, _valueEncoding).decode(value4) : void 0;
+            return value4 !== void 0 ? this.#valueEncoding.decode(value4) : void 0;
           } catch (err) {
             throw new ModuleError("Could not decode value", {
               code: "LEVEL_DECODE_ERROR",
@@ -33483,11 +33440,11 @@ var require_abstract_level = __commonJS({
         });
       }
       async getMany(keys7, options5) {
-        options5 = getOptions(options5, __privateGet(this, _defaultOptions).entry);
-        if (__privateGet(this, _status) === "opening") {
+        options5 = getOptions(options5, this.#defaultOptions.entry);
+        if (this.#status === "opening") {
           return this.deferAsync(() => this.getMany(keys7, options5));
         }
-        __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+        this.#assertOpen();
         if (!Array.isArray(keys7)) {
           throw new TypeError("The first argument 'keys' must be an array");
         }
@@ -33499,8 +33456,8 @@ var require_abstract_level = __commonJS({
         const valueEncoding = this.valueEncoding(options5.valueEncoding);
         const keyFormat = keyEncoding.format;
         const valueFormat = valueEncoding.format;
-        if (options5 === __privateGet(this, _defaultOptions).entry) {
-          options5 = __privateGet(this, _defaultOptions).entryFormat;
+        if (options5 === this.#defaultOptions.entry) {
+          options5 = this.#defaultOptions.entryFormat;
         } else if (options5.keyEncoding !== keyFormat || options5.valueEncoding !== valueFormat) {
           options5 = { ...options5, keyEncoding: keyFormat, valueEncoding: valueFormat };
         }
@@ -33535,17 +33492,17 @@ var require_abstract_level = __commonJS({
         return new Array(keys7.length).fill(void 0);
       }
       async has(key, options5) {
-        options5 = getOptions(options5, __privateGet(this, _defaultOptions).key);
-        if (__privateGet(this, _status) === "opening") {
+        options5 = getOptions(options5, this.#defaultOptions.key);
+        if (this.#status === "opening") {
           return this.deferAsync(() => this.has(key, options5));
         }
-        __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+        this.#assertOpen();
         this._assertValidKey(key);
         const snapshot = options5.snapshot;
         const keyEncoding = this.keyEncoding(options5.keyEncoding);
         const keyFormat = keyEncoding.format;
-        if (options5 === __privateGet(this, _defaultOptions).key) {
-          options5 = __privateGet(this, _defaultOptions).keyFormat;
+        if (options5 === this.#defaultOptions.key) {
+          options5 = this.#defaultOptions.keyFormat;
         } else if (options5.keyEncoding !== keyFormat) {
           options5 = { ...options5, keyEncoding: keyFormat };
         }
@@ -33564,11 +33521,11 @@ var require_abstract_level = __commonJS({
         });
       }
       async hasMany(keys7, options5) {
-        options5 = getOptions(options5, __privateGet(this, _defaultOptions).key);
-        if (__privateGet(this, _status) === "opening") {
+        options5 = getOptions(options5, this.#defaultOptions.key);
+        if (this.#status === "opening") {
           return this.deferAsync(() => this.hasMany(keys7, options5));
         }
-        __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+        this.#assertOpen();
         if (!Array.isArray(keys7)) {
           throw new TypeError("The first argument 'keys' must be an array");
         }
@@ -33578,8 +33535,8 @@ var require_abstract_level = __commonJS({
         const snapshot = options5.snapshot;
         const keyEncoding = this.keyEncoding(options5.keyEncoding);
         const keyFormat = keyEncoding.format;
-        if (options5 === __privateGet(this, _defaultOptions).key) {
-          options5 = __privateGet(this, _defaultOptions).keyFormat;
+        if (options5 === this.#defaultOptions.key) {
+          options5 = this.#defaultOptions.keyFormat;
         } else if (options5.keyEncoding !== keyFormat) {
           options5 = { ...options5, keyEncoding: keyFormat };
         }
@@ -33605,21 +33562,21 @@ var require_abstract_level = __commonJS({
         if (!this.hooks.prewrite.noop) {
           return this.batch([{ type: "put", key, value: value3 }], options5);
         }
-        options5 = getOptions(options5, __privateGet(this, _defaultOptions).entry);
-        if (__privateGet(this, _status) === "opening") {
+        options5 = getOptions(options5, this.#defaultOptions.entry);
+        if (this.#status === "opening") {
           return this.deferAsync(() => this.put(key, value3, options5));
         }
-        __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+        this.#assertOpen();
         this._assertValidKey(key);
         this._assertValidValue(value3);
         const keyEncoding = this.keyEncoding(options5.keyEncoding);
         const valueEncoding = this.valueEncoding(options5.valueEncoding);
         const keyFormat = keyEncoding.format;
         const valueFormat = valueEncoding.format;
-        const enableWriteEvent = __privateGet(this, _eventMonitor).write;
+        const enableWriteEvent = this.#eventMonitor.write;
         const original = options5;
-        if (options5 === __privateGet(this, _defaultOptions).entry) {
-          options5 = __privateGet(this, _defaultOptions).entryFormat;
+        if (options5 === this.#defaultOptions.entry) {
+          options5 = this.#defaultOptions.entryFormat;
         } else if (options5.keyEncoding !== keyFormat || options5.valueEncoding !== valueFormat) {
           options5 = { ...options5, keyEncoding: keyFormat, valueEncoding: valueFormat };
         }
@@ -33647,18 +33604,18 @@ var require_abstract_level = __commonJS({
         if (!this.hooks.prewrite.noop) {
           return this.batch([{ type: "del", key }], options5);
         }
-        options5 = getOptions(options5, __privateGet(this, _defaultOptions).key);
-        if (__privateGet(this, _status) === "opening") {
+        options5 = getOptions(options5, this.#defaultOptions.key);
+        if (this.#status === "opening") {
           return this.deferAsync(() => this.del(key, options5));
         }
-        __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+        this.#assertOpen();
         this._assertValidKey(key);
         const keyEncoding = this.keyEncoding(options5.keyEncoding);
         const keyFormat = keyEncoding.format;
-        const enableWriteEvent = __privateGet(this, _eventMonitor).write;
+        const enableWriteEvent = this.#eventMonitor.write;
         const original = options5;
-        if (options5 === __privateGet(this, _defaultOptions).key) {
-          options5 = __privateGet(this, _defaultOptions).keyFormat;
+        if (options5 === this.#defaultOptions.key) {
+          options5 = this.#defaultOptions.keyFormat;
         } else if (options5.keyEncoding !== keyFormat) {
           options5 = { ...options5, keyEncoding: keyFormat };
         }
@@ -33683,11 +33640,95 @@ var require_abstract_level = __commonJS({
       // of classic-level, that should not be copied to individual operations.
       batch(operations, options5) {
         if (!arguments.length) {
-          __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+          this.#assertOpen();
           return this._chainedBatch();
         }
-        options5 = getOptions(options5, __privateGet(this, _defaultOptions).empty);
-        return __privateMethod(this, _AbstractLevel_instances, arrayBatch_fn).call(this, operations, options5);
+        options5 = getOptions(options5, this.#defaultOptions.empty);
+        return this.#arrayBatch(operations, options5);
+      }
+      // Wrapped for async error handling
+      async #arrayBatch(operations, options5) {
+        if (this.#status === "opening") {
+          return this.deferAsync(() => this.#arrayBatch(operations, options5));
+        }
+        this.#assertOpen();
+        if (!Array.isArray(operations)) {
+          throw new TypeError("The first argument 'operations' must be an array");
+        }
+        if (operations.length === 0) {
+          return;
+        }
+        const length5 = operations.length;
+        const enablePrewriteHook = !this.hooks.prewrite.noop;
+        const enableWriteEvent = this.#eventMonitor.write;
+        const publicOperations = enableWriteEvent ? new Array(length5) : null;
+        const privateOperations = new Array(length5);
+        const prewriteBatch = enablePrewriteHook ? new PrewriteBatch(this, privateOperations, publicOperations) : null;
+        for (let i = 0; i < length5; i++) {
+          const op = { ...options5, ...operations[i] };
+          const isPut = op.type === "put";
+          const delegated = op.sublevel != null;
+          const db = delegated ? op.sublevel : this;
+          db._assertValidKey(op.key);
+          op.keyEncoding = db.keyEncoding(op.keyEncoding);
+          if (isPut) {
+            db._assertValidValue(op.value);
+            op.valueEncoding = db.valueEncoding(op.valueEncoding);
+          } else if (op.type !== "del") {
+            throw new TypeError("A batch operation must have a type property that is 'put' or 'del'");
+          }
+          if (enablePrewriteHook) {
+            try {
+              this.hooks.prewrite.run(op, prewriteBatch);
+              op.keyEncoding = db.keyEncoding(op.keyEncoding);
+              if (isPut) op.valueEncoding = db.valueEncoding(op.valueEncoding);
+            } catch (err) {
+              throw new ModuleError("The prewrite hook failed on batch()", {
+                code: "LEVEL_HOOK_ERROR",
+                cause: err
+              });
+            }
+          }
+          const keyEncoding = op.keyEncoding;
+          const preencodedKey = keyEncoding.encode(op.key);
+          const keyFormat = keyEncoding.format;
+          const siblings = delegated && !isDescendant(op.sublevel, this) && op.sublevel !== this;
+          const encodedKey = delegated && !siblings ? prefixDescendantKey(preencodedKey, keyFormat, db, this) : preencodedKey;
+          if (delegated && !siblings) {
+            op.sublevel = null;
+          }
+          let publicOperation = null;
+          if (enableWriteEvent && !siblings) {
+            publicOperation = { ...op };
+            publicOperation.encodedKey = encodedKey;
+            if (delegated) {
+              publicOperation.key = encodedKey;
+              publicOperation.keyEncoding = this.keyEncoding(keyFormat);
+            }
+            publicOperations[i] = publicOperation;
+          }
+          op.key = siblings ? encodedKey : this.prefixKey(encodedKey, keyFormat, true);
+          op.keyEncoding = keyFormat;
+          if (isPut) {
+            const valueEncoding = op.valueEncoding;
+            const encodedValue = valueEncoding.encode(op.value);
+            const valueFormat = valueEncoding.format;
+            op.value = encodedValue;
+            op.valueEncoding = valueFormat;
+            if (enableWriteEvent && !siblings) {
+              publicOperation.encodedValue = encodedValue;
+              if (delegated) {
+                publicOperation.value = encodedValue;
+                publicOperation.valueEncoding = this.valueEncoding(valueFormat);
+              }
+            }
+          }
+          privateOperations[i] = op;
+        }
+        await this._batch(privateOperations, options5);
+        if (enableWriteEvent) {
+          this.emit("write", publicOperations);
+        }
       }
       async _batch(operations, options5) {
       }
@@ -33713,11 +33754,11 @@ var require_abstract_level = __commonJS({
         return key;
       }
       async clear(options5) {
-        options5 = getOptions(options5, __privateGet(this, _defaultOptions).empty);
-        if (__privateGet(this, _status) === "opening") {
+        options5 = getOptions(options5, this.#defaultOptions.empty);
+        if (this.#status === "opening") {
           return this.deferAsync(() => this.clear(options5));
         }
-        __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+        this.#assertOpen();
         const original = options5;
         const keyEncoding = this.keyEncoding(options5.keyEncoding);
         const snapshot = options5.snapshot;
@@ -33745,10 +33786,10 @@ var require_abstract_level = __commonJS({
         options5[AbstractIterator.valueEncoding] = valueEncoding;
         options5.keyEncoding = keyEncoding.format;
         options5.valueEncoding = valueEncoding.format;
-        if (__privateGet(this, _status) === "opening") {
+        if (this.#status === "opening") {
           return new DeferredIterator(this, options5);
         }
-        __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+        this.#assertOpen();
         return this._iterator(options5);
       }
       _iterator(options5) {
@@ -33762,10 +33803,10 @@ var require_abstract_level = __commonJS({
         options5[AbstractIterator.valueEncoding] = valueEncoding;
         options5.keyEncoding = keyEncoding.format;
         options5.valueEncoding = valueEncoding.format;
-        if (__privateGet(this, _status) === "opening") {
+        if (this.#status === "opening") {
           return new DeferredKeyIterator(this, options5);
         }
-        __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+        this.#assertOpen();
         return this._keys(options5);
       }
       _keys(options5) {
@@ -33779,19 +33820,19 @@ var require_abstract_level = __commonJS({
         options5[AbstractIterator.valueEncoding] = valueEncoding;
         options5.keyEncoding = keyEncoding.format;
         options5.valueEncoding = valueEncoding.format;
-        if (__privateGet(this, _status) === "opening") {
+        if (this.#status === "opening") {
           return new DeferredValueIterator(this, options5);
         }
-        __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+        this.#assertOpen();
         return this._values(options5);
       }
       _values(options5) {
         return new DefaultValueIterator(this, options5);
       }
       snapshot(options5) {
-        __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
+        this.#assertOpen();
         if (typeof options5 !== "object" || options5 === null) {
-          options5 = __privateGet(this, _defaultOptions).owner;
+          options5 = this.#defaultOptions.owner;
         } else if (options5.owner == null) {
           options5 = { ...options5, owner: this };
         }
@@ -33806,7 +33847,7 @@ var require_abstract_level = __commonJS({
         if (typeof fn2 !== "function") {
           throw new TypeError("The first argument must be a function");
         }
-        __privateGet(this, _queue).add(function(abortError) {
+        this.#queue.add(function(abortError) {
           if (!abortError) fn2();
         }, options5);
       }
@@ -33815,7 +33856,7 @@ var require_abstract_level = __commonJS({
           throw new TypeError("The first argument must be a function");
         }
         return new Promise((resolve, reject) => {
-          __privateGet(this, _queue).add(function(abortError) {
+          this.#queue.add(function(abortError) {
             if (abortError) reject(abortError);
             else fn2().then(resolve, reject);
           }, options5);
@@ -33825,10 +33866,10 @@ var require_abstract_level = __commonJS({
         if (typeof resource !== "object" || resource === null || typeof resource.close !== "function") {
           throw new TypeError("The first argument must be a resource object");
         }
-        __privateGet(this, _resources).add(resource);
+        this.#resources.add(resource);
       }
       detachResource(resource) {
-        __privateGet(this, _resources).delete(resource);
+        this.#resources.delete(resource);
       }
       _chainedBatch() {
         return new DefaultChainedBatch(this);
@@ -33847,134 +33888,19 @@ var require_abstract_level = __commonJS({
           });
         }
       }
-    };
-    _status = new WeakMap();
-    _deferOpen = new WeakMap();
-    _statusChange = new WeakMap();
-    _statusLocked = new WeakMap();
-    _resources = new WeakMap();
-    _queue = new WeakMap();
-    _options = new WeakMap();
-    _defaultOptions = new WeakMap();
-    _transcoder = new WeakMap();
-    _keyEncoding = new WeakMap();
-    _valueEncoding = new WeakMap();
-    _eventMonitor = new WeakMap();
-    _AbstractLevel_instances = new WeakSet();
-    closeResources_fn = async function() {
-      if (__privateGet(this, _resources).size === 0) {
-        return;
-      }
-      const resources = Array.from(__privateGet(this, _resources));
-      const promises = resources.map(closeResource);
-      const results = await Promise.allSettled(promises);
-      const errors2 = [];
-      for (let i = 0; i < results.length; i++) {
-        if (results[i].status === "fulfilled") {
-          __privateGet(this, _resources).delete(resources[i]);
-        } else {
-          errors2.push(convertRejection(results[i].reason));
+      #assertOpen() {
+        if (this.#status !== "open") {
+          throw new ModuleError("Database is not open", {
+            code: "LEVEL_DATABASE_NOT_OPEN"
+          });
         }
       }
-      if (errors2.length > 0) {
-        throw combineErrors(errors2);
-      }
-    };
-    arrayBatch_fn = async function(operations, options5) {
-      if (__privateGet(this, _status) === "opening") {
-        return this.deferAsync(() => __privateMethod(this, _AbstractLevel_instances, arrayBatch_fn).call(this, operations, options5));
-      }
-      __privateMethod(this, _AbstractLevel_instances, assertOpen_fn).call(this);
-      if (!Array.isArray(operations)) {
-        throw new TypeError("The first argument 'operations' must be an array");
-      }
-      if (operations.length === 0) {
-        return;
-      }
-      const length5 = operations.length;
-      const enablePrewriteHook = !this.hooks.prewrite.noop;
-      const enableWriteEvent = __privateGet(this, _eventMonitor).write;
-      const publicOperations = enableWriteEvent ? new Array(length5) : null;
-      const privateOperations = new Array(length5);
-      const prewriteBatch = enablePrewriteHook ? new PrewriteBatch(this, privateOperations, publicOperations) : null;
-      for (let i = 0; i < length5; i++) {
-        const op = { ...options5, ...operations[i] };
-        const isPut = op.type === "put";
-        const delegated = op.sublevel != null;
-        const db = delegated ? op.sublevel : this;
-        db._assertValidKey(op.key);
-        op.keyEncoding = db.keyEncoding(op.keyEncoding);
-        if (isPut) {
-          db._assertValidValue(op.value);
-          op.valueEncoding = db.valueEncoding(op.valueEncoding);
-        } else if (op.type !== "del") {
-          throw new TypeError("A batch operation must have a type property that is 'put' or 'del'");
+      #assertUnlocked() {
+        if (this.#statusLocked) {
+          throw new ModuleError("Database status is locked", {
+            code: "LEVEL_STATUS_LOCKED"
+          });
         }
-        if (enablePrewriteHook) {
-          try {
-            this.hooks.prewrite.run(op, prewriteBatch);
-            op.keyEncoding = db.keyEncoding(op.keyEncoding);
-            if (isPut) op.valueEncoding = db.valueEncoding(op.valueEncoding);
-          } catch (err) {
-            throw new ModuleError("The prewrite hook failed on batch()", {
-              code: "LEVEL_HOOK_ERROR",
-              cause: err
-            });
-          }
-        }
-        const keyEncoding = op.keyEncoding;
-        const preencodedKey = keyEncoding.encode(op.key);
-        const keyFormat = keyEncoding.format;
-        const siblings = delegated && !isDescendant(op.sublevel, this) && op.sublevel !== this;
-        const encodedKey = delegated && !siblings ? prefixDescendantKey(preencodedKey, keyFormat, db, this) : preencodedKey;
-        if (delegated && !siblings) {
-          op.sublevel = null;
-        }
-        let publicOperation = null;
-        if (enableWriteEvent && !siblings) {
-          publicOperation = { ...op };
-          publicOperation.encodedKey = encodedKey;
-          if (delegated) {
-            publicOperation.key = encodedKey;
-            publicOperation.keyEncoding = this.keyEncoding(keyFormat);
-          }
-          publicOperations[i] = publicOperation;
-        }
-        op.key = siblings ? encodedKey : this.prefixKey(encodedKey, keyFormat, true);
-        op.keyEncoding = keyFormat;
-        if (isPut) {
-          const valueEncoding = op.valueEncoding;
-          const encodedValue = valueEncoding.encode(op.value);
-          const valueFormat = valueEncoding.format;
-          op.value = encodedValue;
-          op.valueEncoding = valueFormat;
-          if (enableWriteEvent && !siblings) {
-            publicOperation.encodedValue = encodedValue;
-            if (delegated) {
-              publicOperation.value = encodedValue;
-              publicOperation.valueEncoding = this.valueEncoding(valueFormat);
-            }
-          }
-        }
-        privateOperations[i] = op;
-      }
-      await this._batch(privateOperations, options5);
-      if (enableWriteEvent) {
-        this.emit("write", publicOperations);
-      }
-    };
-    assertOpen_fn = function() {
-      if (__privateGet(this, _status) !== "open") {
-        throw new ModuleError("Database is not open", {
-          code: "LEVEL_DATABASE_NOT_OPEN"
-        });
-      }
-    };
-    assertUnlocked_fn = function() {
-      if (__privateGet(this, _statusLocked)) {
-        throw new ModuleError("Database status is locked", {
-          code: "LEVEL_STATUS_LOCKED"
-        });
       }
     };
     var { AbstractSublevel } = require_abstract_sublevel()({ AbstractLevel });
@@ -34026,60 +33952,53 @@ var require_abstract_snapshot = __commonJS({
   "node_modules/abstract-level/abstract-snapshot.js"(exports$1) {
     var ModuleError = require_module_error();
     var { noop: noop3 } = require_common();
-    var _open, _referenceCount, _pendingClose, _closePromise, _owner;
     var AbstractSnapshot = class {
+      #open = true;
+      #referenceCount = 0;
+      #pendingClose = null;
+      #closePromise = null;
+      #owner;
       constructor(options5) {
-        __privateAdd(this, _open, true);
-        __privateAdd(this, _referenceCount, 0);
-        __privateAdd(this, _pendingClose, null);
-        __privateAdd(this, _closePromise, null);
-        __privateAdd(this, _owner);
         const owner = options5.owner;
         if (typeof owner !== "object" || owner === null) {
           const hint = owner === null ? "null" : typeof owner;
           throw new TypeError(`Owner must be an abstract-level database, received ${hint}`);
         }
-        __privateSet(this, _owner, owner);
-        __privateGet(this, _owner).attachResource(this);
+        this.#owner = owner;
+        this.#owner.attachResource(this);
       }
       ref() {
-        if (!__privateGet(this, _open)) {
+        if (!this.#open) {
           throw new ModuleError("Snapshot is not open: cannot use snapshot after close()", {
             code: "LEVEL_SNAPSHOT_NOT_OPEN"
           });
         }
-        __privateWrapper(this, _referenceCount)._++;
+        this.#referenceCount++;
       }
       unref() {
-        var _a91;
-        if (--__privateWrapper(this, _referenceCount)._ === 0) {
-          (_a91 = __privateGet(this, _pendingClose)) == null ? void 0 : _a91.call(this);
+        if (--this.#referenceCount === 0) {
+          this.#pendingClose?.();
         }
       }
       async close() {
-        if (__privateGet(this, _closePromise) !== null) {
-          return __privateGet(this, _closePromise).catch(noop3);
+        if (this.#closePromise !== null) {
+          return this.#closePromise.catch(noop3);
         }
-        __privateSet(this, _open, false);
-        __privateSet(this, _closePromise, new Promise((resolve, reject) => {
-          __privateSet(this, _pendingClose, () => {
-            __privateSet(this, _pendingClose, null);
-            privateClose(this, __privateGet(this, _owner)).then(resolve, reject);
-          });
-        }));
-        if (__privateGet(this, _referenceCount) === 0) {
-          __privateGet(this, _pendingClose).call(this);
+        this.#open = false;
+        this.#closePromise = new Promise((resolve, reject) => {
+          this.#pendingClose = () => {
+            this.#pendingClose = null;
+            privateClose(this, this.#owner).then(resolve, reject);
+          };
+        });
+        if (this.#referenceCount === 0) {
+          this.#pendingClose();
         }
-        return __privateGet(this, _closePromise);
+        return this.#closePromise;
       }
       async _close() {
       }
     };
-    _open = new WeakMap();
-    _referenceCount = new WeakMap();
-    _pendingClose = new WeakMap();
-    _closePromise = new WeakMap();
-    _owner = new WeakMap();
     if (typeof Symbol.asyncDispose === "symbol") {
       AbstractSnapshot.prototype[Symbol.asyncDispose] = async function() {
         return this.close();
@@ -34425,8 +34344,8 @@ var require_classic_level = __commonJS({
     var { Iterator: Iterator2 } = require_iterator2();
     var kContext = /* @__PURE__ */ Symbol("context");
     var kLocation = /* @__PURE__ */ Symbol("location");
-    var _sharedBuffer, _ClassicLevel_instances, createSharedBuffer_fn;
     var ClassicLevel = class extends AbstractLevel {
+      #sharedBuffer = null;
       constructor(location3, options5) {
         if (typeof location3 !== "string" || location3 === "") {
           throw new TypeError("The first argument 'location' must be a non-empty string");
@@ -34450,8 +34369,6 @@ var require_classic_level = __commonJS({
             iterators: true
           }
         }, options5);
-        __privateAdd(this, _ClassicLevel_instances);
-        __privateAdd(this, _sharedBuffer, null);
         this[kLocation] = location3;
         this[kContext] = binding.db_init();
       }
@@ -34500,12 +34417,12 @@ var require_classic_level = __commonJS({
           );
         } else {
           let keySize;
-          if (__privateGet(this, _sharedBuffer) === null) {
-            keySize = __privateMethod(this, _ClassicLevel_instances, createSharedBuffer_fn).call(this, key);
+          if (this.#sharedBuffer === null) {
+            keySize = this.#createSharedBuffer(key);
           } else {
-            keySize = __privateGet(this, _sharedBuffer).write(key);
-            if (keySize === __privateGet(this, _sharedBuffer).byteLength) {
-              keySize = __privateMethod(this, _ClassicLevel_instances, createSharedBuffer_fn).call(this, key);
+            keySize = this.#sharedBuffer.write(key);
+            if (keySize === this.#sharedBuffer.byteLength) {
+              keySize = this.#createSharedBuffer(key);
             }
           }
           return binding.db_get_sync(
@@ -34515,6 +34432,11 @@ var require_classic_level = __commonJS({
             options5.snapshot?.[kContext]
           );
         }
+      }
+      #createSharedBuffer(str) {
+        this.#sharedBuffer = Buffer.allocUnsafe(Buffer.byteLength(str) + 64);
+        binding.db_set_shared_buffer(this[kContext], this.#sharedBuffer);
+        return this.#sharedBuffer.write(str);
       }
       async _getMany(keys7, options5) {
         return binding.db_get_many(
@@ -34637,13 +34559,6 @@ var require_classic_level = __commonJS({
         }
         return binding.repair_db(location3);
       }
-    };
-    _sharedBuffer = new WeakMap();
-    _ClassicLevel_instances = new WeakSet();
-    createSharedBuffer_fn = function(str) {
-      __privateSet(this, _sharedBuffer, Buffer.allocUnsafe(Buffer.byteLength(str) + 64));
-      binding.db_set_shared_buffer(this[kContext], __privateGet(this, _sharedBuffer));
-      return __privateGet(this, _sharedBuffer).write(str);
     };
     var Snapshot = class extends AbstractSnapshot {
       constructor(context10, options5) {
@@ -35220,16 +35135,16 @@ function setVerbosity(level) {
   verbosityLevel = Math.max(0, verbosityLevels.indexOf(level));
   return old;
 }
-var genericMessage, _a89, setPrototypeOf, InvariantError, verbosityLevels, verbosityLevel, invariant_default;
+var genericMessage, _a, setPrototypeOf, InvariantError, verbosityLevels, verbosityLevel, invariant_default;
 var init_invariant2 = __esm({
   "node_modules/ts-invariant/lib/invariant.js"() {
     init_tslib_es6();
     genericMessage = "Invariant Violation";
-    _a89 = Object.setPrototypeOf;
-    setPrototypeOf = _a89 === void 0 ? function(obj, proto14) {
+    _a = Object.setPrototypeOf;
+    setPrototypeOf = _a === void 0 ? function(obj, proto14) {
       obj.__proto__ = proto14;
       return obj;
-    } : _a89;
+    } : _a;
     InvariantError = /** @class */
     (function(_super) {
       __extends(InvariantError2, _super);
@@ -35269,7 +35184,7 @@ var init_version2 = __esm({
 function maybe(thunk) {
   try {
     return thunk();
-  } catch (_a91) {
+  } catch (_a3) {
   }
 }
 var init_maybe = __esm({
@@ -35362,7 +35277,7 @@ function stringify4(arg) {
   }
   try {
     return stringifyForDisplay(arg, 2).slice(0, 1e3);
-  } catch (_a91) {
+  } catch (_a3) {
     return "<non-serializable>";
   }
 }
@@ -35433,13 +35348,13 @@ var init_globals = __esm({
 });
 
 // node_modules/@apollo/client/utilities/graphql/directives.js
-function shouldInclude(_a91, variables) {
-  var directives = _a91.directives;
+function shouldInclude(_a3, variables) {
+  var directives = _a3.directives;
   if (!directives || !directives.length) {
     return true;
   }
-  return getInclusionDirectives(directives).every(function(_a92) {
-    var directive = _a92.directive, ifArgument = _a92.ifArgument;
+  return getInclusionDirectives(directives).every(function(_a4) {
+    var directive = _a4.directive, ifArgument = _a4.ifArgument;
     var evaledValue = false;
     if (ifArgument.value.kind === "Variable") {
       evaledValue = variables && variables[ifArgument.value.name.value];
@@ -35474,8 +35389,8 @@ function hasDirectives(names, root2, all15) {
 function hasClientExports(document) {
   return document && hasDirectives(["client", "export"], document, true);
 }
-function isInclusionDirective(_a91) {
-  var value3 = _a91.name.value;
+function isInclusionDirective(_a3) {
+  var value3 = _a3.name.value;
   return value3 === "skip" || value3 === "include";
 }
 function getInclusionDirectives(directives) {
@@ -35497,16 +35412,16 @@ function getInclusionDirectives(directives) {
   return result2;
 }
 function getFragmentMaskMode(fragment) {
-  var _a91, _b37;
-  var directive = (_a91 = fragment.directives) === null || _a91 === void 0 ? void 0 : _a91.find(function(_a92) {
-    var name = _a92.name;
+  var _a3, _b;
+  var directive = (_a3 = fragment.directives) === null || _a3 === void 0 ? void 0 : _a3.find(function(_a4) {
+    var name = _a4.name;
     return name.value === "unmask";
   });
   if (!directive) {
     return "mask";
   }
-  var modeArg = (_b37 = directive.arguments) === null || _b37 === void 0 ? void 0 : _b37.find(function(_a92) {
-    var name = _a92.name;
+  var modeArg = (_b = directive.arguments) === null || _b === void 0 ? void 0 : _b.find(function(_a4) {
+    var name = _a4.name;
     return name.value === "mode";
   });
   if (globalThis.__DEV__ !== false) {
@@ -36238,8 +36153,8 @@ function storeKeyNameFromField(field, variables) {
     field.directives.forEach(function(directive) {
       directivesObj[directive.name.value] = {};
       if (directive.arguments) {
-        directive.arguments.forEach(function(_a91) {
-          var name = _a91.name, value3 = _a91.value;
+        directive.arguments.forEach(function(_a3) {
+          var name = _a3.name, value3 = _a3.value;
           return valueToObjectRepresentation(directivesObj[directive.name.value], name, value3, variables);
         });
       }
@@ -36248,8 +36163,8 @@ function storeKeyNameFromField(field, variables) {
   var argObj = null;
   if (field.arguments && field.arguments.length) {
     argObj = {};
-    field.arguments.forEach(function(_a91) {
-      var name = _a91.name, value3 = _a91.value;
+    field.arguments.forEach(function(_a3) {
+      var name = _a3.name, value3 = _a3.value;
       return valueToObjectRepresentation(argObj, name, value3, variables);
     });
   }
@@ -36258,8 +36173,8 @@ function storeKeyNameFromField(field, variables) {
 function argumentsObjectFromField(field, variables) {
   if (field.arguments && field.arguments.length) {
     var argObj_1 = {};
-    field.arguments.forEach(function(_a91) {
-      var name = _a91.name, value3 = _a91.value;
+    field.arguments.forEach(function(_a3) {
+      var name = _a3.name, value3 = _a3.value;
       return valueToObjectRepresentation(argObj_1, name, value3, variables);
     });
     return argObj_1;
@@ -36271,8 +36186,8 @@ function resultKeyNameFromField(field) {
 }
 function getTypenameFromResult(result2, selectionSet, fragmentMap) {
   var fragments;
-  for (var _i = 0, _a91 = selectionSet.selections; _i < _a91.length; _i++) {
-    var selection = _a91[_i];
+  for (var _i = 0, _a3 = selectionSet.selections; _i < _a3.length; _i++) {
+    var selection = _a3[_i];
     if (isField2(selection)) {
       if (selection.name.value === "__typename") {
         return result2[resultKeyNameFromField(selection)];
@@ -36287,8 +36202,8 @@ function getTypenameFromResult(result2, selectionSet, fragmentMap) {
     return result2.__typename;
   }
   if (fragments) {
-    for (var _b37 = 0, fragments_1 = fragments; _b37 < fragments_1.length; _b37++) {
-      var selection = fragments_1[_b37];
+    for (var _b = 0, fragments_1 = fragments; _b < fragments_1.length; _b++) {
+      var selection = fragments_1[_b];
       var typename = getTypenameFromResult(result2, getFragmentFromSelection(selection, fragmentMap).selectionSet, fragmentMap);
       if (typeof typename === "string") {
         return typename;
@@ -36407,8 +36322,8 @@ function getFragmentDefinition(doc) {
 function getMainDefinition(queryDoc) {
   checkDocument(queryDoc);
   var fragmentDefinition;
-  for (var _i = 0, _a91 = queryDoc.definitions; _i < _a91.length; _i++) {
-    var definition = _a91[_i];
+  for (var _i = 0, _a3 = queryDoc.definitions; _i < _a3.length; _i++) {
+    var definition = _a3[_i];
     if (definition.kind === "OperationDefinition") {
       var operation = definition.operation;
       if (operation === "query" || operation === "mutation" || operation === "subscription") {
@@ -36700,7 +36615,7 @@ function recomputeNewValue(entry, args2) {
     if (normalizeResult && oldValueCopy && !valueIs(oldValueCopy, entry.value)) {
       try {
         entry.value[0] = normalizeResult(entry.value[0], oldValueCopy[0]);
-      } catch (_a91) {
+      } catch (_a3) {
       }
     }
   } catch (e) {
@@ -36776,7 +36691,7 @@ function removeDirtyChild(parent, child) {
 }
 function forgetChildren(parent) {
   if (parent.childValues.size > 0) {
-    parent.childValues.forEach((_value2, child) => {
+    parent.childValues.forEach((_value, child) => {
       forgetChild(parent, child);
     });
   }
@@ -37476,8 +37391,8 @@ function addNonReactiveToNamedFragments(document) {
   checkDocument(document);
   return visit(document, {
     FragmentSpread: function(node) {
-      var _a91;
-      if ((_a91 = node.directives) === null || _a91 === void 0 ? void 0 : _a91.some(function(directive) {
+      var _a3;
+      if ((_a3 = node.directives) === null || _a3 === void 0 ? void 0 : _a3.some(function(directive) {
         return directive.name.value === "unmask";
       })) {
         return;
@@ -37558,8 +37473,8 @@ var init_transform = __esm({
 
 // node_modules/@apollo/client/utilities/graphql/operations.js
 function isOperation(document, operation) {
-  var _a91;
-  return ((_a91 = getOperationDefinition(document)) === null || _a91 === void 0 ? void 0 : _a91.operation) === operation;
+  var _a3;
+  return ((_a3 = getOperationDefinition(document)) === null || _a3 === void 0 ? void 0 : _a3.operation) === operation;
 }
 function isMutationOperation(document) {
   return isOperation(document, "mutation");
@@ -37680,12 +37595,12 @@ function offsetLimitPagination(keyArgs) {
   }
   return {
     keyArgs,
-    merge: function(existing, incoming, _a91) {
-      var args2 = _a91.args;
+    merge: function(existing, incoming, _a3) {
+      var args2 = _a3.args;
       var merged = existing ? existing.slice(0) : [];
       if (incoming) {
         if (args2) {
-          var _b37 = args2.offset, offset = _b37 === void 0 ? 0 : _b37;
+          var _b = args2.offset, offset = _b === void 0 ? 0 : _b;
           for (var i = 0; i < incoming.length; ++i) {
             merged[offset + i] = incoming[i];
           }
@@ -37703,8 +37618,8 @@ function relayStylePagination(keyArgs) {
   }
   return {
     keyArgs,
-    read: function(existing, _a91) {
-      var canRead = _a91.canRead, readField = _a91.readField;
+    read: function(existing, _a3) {
+      var canRead = _a3.canRead, readField = _a3.readField;
       if (!existing)
         return existing;
       var edges = [];
@@ -37722,7 +37637,7 @@ function relayStylePagination(keyArgs) {
       if (edges.length > 1 && firstEdgeCursor === lastEdgeCursor) {
         firstEdgeCursor = "";
       }
-      var _b37 = existing.pageInfo || {}, startCursor = _b37.startCursor, endCursor = _b37.endCursor;
+      var _b = existing.pageInfo || {}, startCursor = _b.startCursor, endCursor = _b.endCursor;
       return __assign(__assign({}, getExtras(existing)), { edges, pageInfo: __assign(__assign({}, existing.pageInfo), {
         // If existing.pageInfo.{start,end}Cursor are undefined or "", default
         // to firstEdgeCursor and/or lastEdgeCursor.
@@ -37730,8 +37645,8 @@ function relayStylePagination(keyArgs) {
         endCursor: endCursor || lastEdgeCursor
       }) });
     },
-    merge: function(existing, incoming, _a91) {
-      var args2 = _a91.args, isReference4 = _a91.isReference, readField = _a91.readField;
+    merge: function(existing, incoming, _a3) {
+      var args2 = _a3.args, isReference4 = _a3.isReference, readField = _a3.readField;
       if (!existing) {
         existing = makeEmptyData();
       }
@@ -37793,7 +37708,7 @@ function relayStylePagination(keyArgs) {
       var edges = __spreadArray2(__spreadArray2(__spreadArray2([], prefix2, true), incomingEdges, true), suffix, true);
       var pageInfo = __assign(__assign({}, incoming.pageInfo), existing.pageInfo);
       if (incoming.pageInfo) {
-        var _b37 = incoming.pageInfo, hasPreviousPage = _b37.hasPreviousPage, hasNextPage = _b37.hasNextPage, startCursor = _b37.startCursor, endCursor = _b37.endCursor, extras2 = __rest(_b37, ["hasPreviousPage", "hasNextPage", "startCursor", "endCursor"]);
+        var _b = incoming.pageInfo, hasPreviousPage = _b.hasPreviousPage, hasNextPage = _b.hasNextPage, startCursor = _b.startCursor, endCursor = _b.endCursor, extras2 = __rest(_b, ["hasPreviousPage", "hasNextPage", "startCursor", "endCursor"]);
         Object.assign(pageInfo, extras2);
         if (!prefix2.length) {
           if (void 0 !== hasPreviousPage)
@@ -38696,7 +38611,7 @@ var init_Concast = __esm({
             }
           },
           complete: function() {
-            var _a91 = _this, sub = _a91.sub, _b37 = _a91.sources, sources2 = _b37 === void 0 ? [] : _b37;
+            var _a3 = _this, sub = _a3.sub, _b = _a3.sources, sources2 = _b === void 0 ? [] : _b;
             if (sub !== null) {
               var value3 = sources2.shift();
               if (!value3) {
@@ -38812,8 +38727,8 @@ function mergeIncrementalData(prevResult, result2) {
   var mergedData = prevResult;
   var merger = new DeepMerger();
   if (isExecutionPatchIncrementalResult(result2) && isNonEmptyArray3(result2.incremental)) {
-    result2.incremental.forEach(function(_a91) {
-      var data = _a91.data, path4 = _a91.path;
+    result2.incremental.forEach(function(_a3) {
+      var data = _a3.data, path4 = _a3.path;
       for (var i = path4.length - 1; i >= 0; --i) {
         var key = path4[i];
         var isNumericKey = !isNaN(+key);
@@ -38977,7 +38892,7 @@ function warnDeprecated(name, cb) {
     cb();
   }
 }
-var _a90, muteAllDeprecations, deprecationsSlot, global2, slot;
+var _a2, muteAllDeprecations, deprecationsSlot, global2, slot;
 var init_deprecation = __esm({
   "node_modules/@apollo/client/utilities/deprecation/index.js"() {
     init_tslib_es6();
@@ -38986,7 +38901,7 @@ var init_deprecation = __esm({
     muteAllDeprecations = /* @__PURE__ */ Symbol.for("apollo.deprecations");
     deprecationsSlot = /* @__PURE__ */ Symbol.for("apollo.deprecations.slot");
     global2 = global_default;
-    slot = (_a90 = global2[deprecationsSlot]) !== null && _a90 !== void 0 ? _a90 : global2[deprecationsSlot] = new Slot();
+    slot = (_a2 = global2[deprecationsSlot]) !== null && _a2 !== void 0 ? _a2 : global2[deprecationsSlot] = new Slot();
   }
 });
 
@@ -39201,8 +39116,8 @@ function validateOperation(operation) {
     "extensions",
     "context"
   ];
-  for (var _i = 0, _a91 = Object.keys(operation); _i < _a91.length; _i++) {
-    var key = _a91[_i];
+  for (var _i = 0, _a3 = Object.keys(operation); _i < _a3.length; _i++) {
+    var key = _a3[_i];
     if (OPERATION_FIELDS.indexOf(key) < 0) {
       throw newInvariantError(58, key);
     }
@@ -39490,15 +39405,15 @@ var init_core = __esm({
 
 // node_modules/@apollo/client/link/http/iterators/async.js
 function asyncIterator(source) {
-  var _a91;
+  var _a3;
   var iterator = source[Symbol.asyncIterator]();
-  return _a91 = {
+  return _a3 = {
     next: function() {
       return iterator.next();
     }
-  }, _a91[Symbol.asyncIterator] = function() {
+  }, _a3[Symbol.asyncIterator] = function() {
     return this;
-  }, _a91;
+  }, _a3;
 }
 var init_async = __esm({
   "node_modules/@apollo/client/link/http/iterators/async.js"() {
@@ -39713,8 +39628,8 @@ var init_errors = __esm({
     ApolloError = /** @class */
     (function(_super) {
       __extends(ApolloError2, _super);
-      function ApolloError2(_a91) {
-        var graphQLErrors = _a91.graphQLErrors, protocolErrors = _a91.protocolErrors, clientErrors = _a91.clientErrors, networkError = _a91.networkError, errorMessage = _a91.errorMessage, extraInfo = _a91.extraInfo;
+      function ApolloError2(_a3) {
+        var graphQLErrors = _a3.graphQLErrors, protocolErrors = _a3.protocolErrors, clientErrors = _a3.clientErrors, networkError = _a3.networkError, errorMessage = _a3.errorMessage, extraInfo = _a3.extraInfo;
         var _this = _super.call(this, errorMessage) || this;
         _this.name = "ApolloError";
         _this.graphQLErrors = graphQLErrors || [];
@@ -39739,29 +39654,29 @@ var init_errors = __esm({
 // node_modules/@apollo/client/link/http/parseAndCheckHttpResponse.js
 function readMultipartBody(response, nextValue) {
   return __awaiter(this, void 0, void 0, function() {
-    var decoder3, contentType, delimiter, boundaryVal, boundary, buffer4, iterator, running4, _a91, value3, done12, chunk4, searchFrom, bi, message, i, headers, contentType_1, body, result2, next4;
-    var _b37, _c8;
-    var _d4;
-    return __generator(this, function(_e2) {
-      switch (_e2.label) {
+    var decoder3, contentType, delimiter, boundaryVal, boundary, buffer4, iterator, running4, _a3, value3, done12, chunk4, searchFrom, bi, message, i, headers, contentType_1, body, result2, next4;
+    var _b, _c;
+    var _d;
+    return __generator(this, function(_e) {
+      switch (_e.label) {
         case 0:
           if (TextDecoder === void 0) {
             throw new Error("TextDecoder must be defined in the environment: please import a polyfill.");
           }
           decoder3 = new TextDecoder("utf-8");
-          contentType = (_d4 = response.headers) === null || _d4 === void 0 ? void 0 : _d4.get("content-type");
+          contentType = (_d = response.headers) === null || _d === void 0 ? void 0 : _d.get("content-type");
           delimiter = "boundary=";
           boundaryVal = (contentType === null || contentType === void 0 ? void 0 : contentType.includes(delimiter)) ? contentType === null || contentType === void 0 ? void 0 : contentType.substring((contentType === null || contentType === void 0 ? void 0 : contentType.indexOf(delimiter)) + delimiter.length).replace(/['"]/g, "").replace(/\;(.*)/gm, "").trim() : "-";
           boundary = "\r\n--".concat(boundaryVal);
           buffer4 = "";
           iterator = responseIterator(response);
           running4 = true;
-          _e2.label = 1;
+          _e.label = 1;
         case 1:
           if (!running4) return [3, 3];
           return [4, iterator.next()];
         case 2:
-          _a91 = _e2.sent(), value3 = _a91.value, done12 = _a91.done;
+          _a3 = _e.sent(), value3 = _a3.value, done12 = _a3.done;
           chunk4 = typeof value3 === "string" ? value3 : decoder3.decode(value3);
           searchFrom = buffer4.length - boundary.length + 1;
           running4 = !done12;
@@ -39769,10 +39684,10 @@ function readMultipartBody(response, nextValue) {
           bi = buffer4.indexOf(boundary, searchFrom);
           while (bi > -1) {
             message = void 0;
-            _b37 = [
+            _b = [
               buffer4.slice(0, bi),
               buffer4.slice(bi + boundary.length)
-            ], message = _b37[0], buffer4 = _b37[1];
+            ], message = _b[0], buffer4 = _b[1];
             i = message.indexOf("\r\n\r\n");
             headers = parseHeaders(message.slice(0, i));
             contentType_1 = headers["content-type"];
@@ -39795,7 +39710,7 @@ function readMultipartBody(response, nextValue) {
                     next4 = __assign({}, result2.payload);
                   }
                   if ("errors" in result2) {
-                    next4 = __assign(__assign({}, next4), { extensions: __assign(__assign({}, "extensions" in next4 ? next4.extensions : null), (_c8 = {}, _c8[PROTOCOL_ERRORS_SYMBOL] = result2.errors, _c8)) });
+                    next4 = __assign(__assign({}, next4), { extensions: __assign(__assign({}, "extensions" in next4 ? next4.extensions : null), (_c = {}, _c[PROTOCOL_ERRORS_SYMBOL] = result2.errors, _c)) });
                   }
                   nextValue(next4);
                 } else {
@@ -40125,7 +40040,7 @@ var init_createHttpLink = __esm({
       if (linkOptions === void 0) {
         linkOptions = {};
       }
-      var _a91 = linkOptions.uri, uri = _a91 === void 0 ? "/graphql" : _a91, preferredFetch = linkOptions.fetch, _b37 = linkOptions.print, print3 = _b37 === void 0 ? defaultPrinter : _b37, includeExtensions = linkOptions.includeExtensions, preserveHeaderCase = linkOptions.preserveHeaderCase, useGETForQueries = linkOptions.useGETForQueries, _c8 = linkOptions.includeUnusedVariables, includeUnusedVariables = _c8 === void 0 ? false : _c8, requestOptions = __rest(linkOptions, ["uri", "fetch", "print", "includeExtensions", "preserveHeaderCase", "useGETForQueries", "includeUnusedVariables"]);
+      var _a3 = linkOptions.uri, uri = _a3 === void 0 ? "/graphql" : _a3, preferredFetch = linkOptions.fetch, _b = linkOptions.print, print3 = _b === void 0 ? defaultPrinter : _b, includeExtensions = linkOptions.includeExtensions, preserveHeaderCase = linkOptions.preserveHeaderCase, useGETForQueries = linkOptions.useGETForQueries, _c = linkOptions.includeUnusedVariables, includeUnusedVariables = _c === void 0 ? false : _c, requestOptions = __rest(linkOptions, ["uri", "fetch", "print", "includeExtensions", "preserveHeaderCase", "useGETForQueries", "includeUnusedVariables"]);
       if (globalThis.__DEV__ !== false) {
         checkFetcher(preferredFetch || backupFetch);
       }
@@ -40140,7 +40055,7 @@ var init_createHttpLink = __esm({
         var context10 = operation.getContext();
         var clientAwarenessHeaders = {};
         if (context10.clientAwareness) {
-          var _a92 = context10.clientAwareness, name_1 = _a92.name, version3 = _a92.version;
+          var _a4 = context10.clientAwareness, name_1 = _a4.name, version3 = _a4.version;
           if (name_1) {
             clientAwarenessHeaders["apollographql-client-name"] = name_1;
           }
@@ -40165,7 +40080,7 @@ var init_createHttpLink = __esm({
           }
           operation.query = transformedQuery;
         }
-        var _b38 = selectHttpOptionsAndBodyInternal(operation, print3, fallbackHttpConfig, linkConfig, contextConfig), options5 = _b38.options, body = _b38.body;
+        var _b2 = selectHttpOptionsAndBodyInternal(operation, print3, fallbackHttpConfig, linkConfig, contextConfig), options5 = _b2.options, body = _b2.body;
         if (body.variables && !includeUnusedVariables) {
           body.variables = filterOperationVariables(body.variables, operation.query);
         }
@@ -40199,7 +40114,7 @@ var init_createHttpLink = __esm({
           options5.headers.accept = acceptHeader;
         }
         if (options5.method === "GET") {
-          var _c9 = rewriteURIForGET(chosenURI, body), newURI = _c9.newURI, parseError2 = _c9.parseError;
+          var _c2 = rewriteURIForGET(chosenURI, body), newURI = _c2.newURI, parseError2 = _c2.parseError;
           if (parseError2) {
             return fromError(parseError2);
           }
@@ -40217,9 +40132,9 @@ var init_createHttpLink = __esm({
           }) || backupFetch;
           var observerNext = observer.next.bind(observer);
           currentFetch(chosenURI, options5).then(function(response) {
-            var _a93;
+            var _a5;
             operation.setContext({ response });
-            var ctype = (_a93 = response.headers) === null || _a93 === void 0 ? void 0 : _a93.get("content-type");
+            var ctype = (_a5 = response.headers) === null || _a5 === void 0 ? void 0 : _a5.get("content-type");
             if (ctype !== null && /^multipart\/mixed/i.test(ctype)) {
               return readMultipartBody(response, observerNext);
             } else {
@@ -40443,9 +40358,9 @@ var init_lib5 = __esm({
 });
 
 // node_modules/@apollo/client/core/equalByQuery.js
-function equalByQuery(query2, _a91, _b37, variables) {
-  var aData = _a91.data, aRest = __rest(_a91, ["data"]);
-  var bData = _b37.data, bRest = __rest(_b37, ["data"]);
+function equalByQuery(query2, _a3, _b, variables) {
+  var aData = _a3.data, aRest = __rest(_a3, ["data"]);
+  var bData = _b.data, bRest = __rest(_b, ["data"]);
   return lib_default(aRest, bRest) && equalBySelectionSet(getMainDefinition(query2).selectionSet, aData, bData, {
     fragmentMap: createFragmentMap(getFragmentDefinitions(query2)),
     variables
@@ -40561,12 +40476,12 @@ function getMutableTarget(data, mutableTargets) {
   return mutableTarget;
 }
 function maskSelectionSet(data, selectionSet, context10, migration, path4) {
-  var _a91;
+  var _a3;
   var knownChanged = context10.knownChanged;
   var memo3 = getMutableTarget(data, context10.mutableTargets);
   if (Array.isArray(data)) {
-    for (var _i = 0, _b37 = Array.from(data.entries()); _i < _b37.length; _i++) {
-      var _c8 = _b37[_i], index = _c8[0], item = _c8[1];
+    for (var _i = 0, _b = Array.from(data.entries()); _i < _b.length; _i++) {
+      var _c = _b[_i], index = _c[0], item = _c[1];
       if (item === null) {
         memo3[index] = null;
         continue;
@@ -40579,8 +40494,8 @@ function maskSelectionSet(data, selectionSet, context10, migration, path4) {
     }
     return knownChanged.has(memo3) ? memo3 : data;
   }
-  for (var _d4 = 0, _e2 = selectionSet.selections; _d4 < _e2.length; _d4++) {
-    var selection = _e2[_d4];
+  for (var _d = 0, _e = selectionSet.selections; _d < _e.length; _d++) {
+    var selection = _e[_d];
     var value3 = void 0;
     if (migration) {
       knownChanged.add(memo3);
@@ -40606,7 +40521,7 @@ function maskSelectionSet(data, selectionSet, context10, migration, path4) {
         // or it has a `get` descriptor, not a `value` descriptor
         // => it is a warning accessor and we can overwrite it
         // with another accessor
-        !((_a91 = Object.getOwnPropertyDescriptor(memo3, keyName2)) === null || _a91 === void 0 ? void 0 : _a91.value)) {
+        !((_a3 = Object.getOwnPropertyDescriptor(memo3, keyName2)) === null || _a3 === void 0 ? void 0 : _a3.value)) {
           Object.defineProperty(memo3, keyName2, getAccessorWarningDescriptor(keyName2, value3, path4 || "", context10.operationName, context10.operationType));
         } else {
           delete memo3[keyName2];
@@ -40718,7 +40633,7 @@ var init_maskFragment = __esm({
 
 // node_modules/@apollo/client/masking/maskOperation.js
 function maskOperation(data, document, cache) {
-  var _a91;
+  var _a3;
   if (!cache.fragmentMatches) {
     if (globalThis.__DEV__ !== false) {
       warnOnImproperCacheImplementation();
@@ -40732,7 +40647,7 @@ function maskOperation(data, document, cache) {
   }
   return maskDefinition(data, definition.selectionSet, {
     operationType: definition.operation,
-    operationName: (_a91 = definition.name) === null || _a91 === void 0 ? void 0 : _a91.value,
+    operationName: (_a3 = definition.name) === null || _a3 === void 0 ? void 0 : _a3.value,
     fragmentMap: createFragmentMap(getFragmentDefinitions(document)),
     cache,
     mutableTargets: new MapImpl(),
@@ -40829,7 +40744,7 @@ var init_cache = __esm({
       };
       ApolloCache2.prototype.watchFragment = function(options5) {
         var _this = this;
-        var fragment = options5.fragment, fragmentName = options5.fragmentName, from8 = options5.from, _a91 = options5.optimistic, optimistic = _a91 === void 0 ? true : _a91, otherOptions = __rest(options5, ["fragment", "fragmentName", "from", "optimistic"]);
+        var fragment = options5.fragment, fragmentName = options5.fragmentName, from8 = options5.from, _a3 = options5.optimistic, optimistic = _a3 === void 0 ? true : _a3, otherOptions = __rest(options5, ["fragment", "fragmentName", "from", "optimistic"]);
         var query2 = this.getFragmentDoc(fragment, fragmentName);
         var id3 = typeof from8 === "undefined" || typeof from8 === "string" ? from8 : this.identify(from8);
         var dataMasking = !!options5[/* @__PURE__ */ Symbol.for("apollo.dataMasking")];
@@ -40883,15 +40798,15 @@ var init_cache = __esm({
           return _this.read(__assign(__assign({}, options5), { query: _this.getFragmentDoc(options5.fragment, options5.fragmentName), rootId: options5.id, optimistic }));
         });
       };
-      ApolloCache2.prototype.writeQuery = function(_a91) {
-        var id3 = _a91.id, data = _a91.data, options5 = __rest(_a91, ["id", "data"]);
+      ApolloCache2.prototype.writeQuery = function(_a3) {
+        var id3 = _a3.id, data = _a3.data, options5 = __rest(_a3, ["id", "data"]);
         return this.write(Object.assign(options5, {
           dataId: id3 || "ROOT_QUERY",
           result: data
         }));
       };
-      ApolloCache2.prototype.writeFragment = function(_a91) {
-        var id3 = _a91.id, data = _a91.data, fragment = _a91.fragment, fragmentName = _a91.fragmentName, options5 = __rest(_a91, ["id", "data", "fragment", "fragmentName"]);
+      ApolloCache2.prototype.writeFragment = function(_a3) {
+        var id3 = _a3.id, data = _a3.data, fragment = _a3.fragment, fragmentName = _a3.fragmentName, options5 = __rest(_a3, ["id", "data", "fragment", "fragmentName"]);
         return this.write(Object.assign(options5, {
           query: this.getFragmentDoc(fragment, fragmentName),
           dataId: id3,
@@ -40958,7 +40873,7 @@ var init_common = __esm({
     (function(_super) {
       __extends(MissingFieldError2, _super);
       function MissingFieldError2(message, path4, query2, variables) {
-        var _a91;
+        var _a3;
         var _this = _super.call(this, message) || this;
         _this.message = message;
         _this.path = path4;
@@ -40967,7 +40882,7 @@ var init_common = __esm({
         if (Array.isArray(_this.path)) {
           _this.missing = _this.message;
           for (var i = _this.path.length - 1; i >= 0; --i) {
-            _this.missing = (_a91 = {}, _a91[_this.path[i]] = _this.missing, _a91);
+            _this.missing = (_a3 = {}, _a3[_this.path[i]] = _this.missing, _a3);
           }
         } else {
           _this.missing = _this.path;
@@ -40984,14 +40899,14 @@ var init_common = __esm({
 function isNullish(value3) {
   return value3 === null || value3 === void 0;
 }
-function defaultDataIdFromObject(_a91, context10) {
-  var __typename = _a91.__typename, id3 = _a91.id, _id2 = _a91._id;
+function defaultDataIdFromObject(_a3, context10) {
+  var __typename = _a3.__typename, id3 = _a3.id, _id = _a3._id;
   if (typeof __typename === "string") {
     if (context10) {
-      context10.keyObject = !isNullish(id3) ? { id: id3 } : !isNullish(_id2) ? { _id: _id2 } : void 0;
+      context10.keyObject = !isNullish(id3) ? { id: id3 } : !isNullish(_id) ? { _id } : void 0;
     }
-    if (isNullish(id3) && !isNullish(_id2)) {
-      id3 = _id2;
+    if (isNullish(id3) && !isNullish(_id)) {
+      id3 = _id;
     }
     if (!isNullish(id3)) {
       return "".concat(__typename, ":").concat(typeof id3 === "number" || typeof id3 === "string" ? id3 : JSON.stringify(id3));
@@ -41298,12 +41213,12 @@ var init_entityStore = __esm({
         return false;
       };
       EntityStore2.prototype.delete = function(dataId, fieldName, args2) {
-        var _a91;
+        var _a3;
         var storeObject = this.lookup(dataId);
         if (storeObject) {
           var typename = this.getFieldValue(storeObject, "__typename");
           var storeFieldName = fieldName && args2 ? this.policies.getStoreFieldName({ typename, fieldName, args: args2 }) : fieldName;
-          return this.modify(dataId, storeFieldName ? (_a91 = {}, _a91[storeFieldName] = delModifier, _a91) : delModifier);
+          return this.modify(dataId, storeFieldName ? (_a3 = {}, _a3[storeFieldName] = delModifier, _a3) : delModifier);
         }
         return false;
       };
@@ -41478,8 +41393,8 @@ var init_entityStore = __esm({
         /** @class */
         (function(_super) {
           __extends(Root2, _super);
-          function Root2(_a91) {
-            var policies = _a91.policies, _b37 = _a91.resultCaching, resultCaching = _b37 === void 0 ? true : _b37, seed = _a91.seed;
+          function Root2(_a3) {
+            var policies = _a3.policies, _b = _a3.resultCaching, resultCaching = _b === void 0 ? true : _b, seed = _a3.seed;
             var _this = _super.call(this, policies, new CacheGroup(resultCaching)) || this;
             _this.stump = new Stump(_this);
             _this.storageTrie = new Trie(canUseWeakMap);
@@ -41745,11 +41660,11 @@ var init_readFromStore = __esm({
         });
         this.canon = config3.canon || new ObjectCanon();
         this.executeSelectionSet = wrap3(function(options5) {
-          var _a91;
+          var _a3;
           var canonizeResults = options5.context.canonizeResults;
           var peekArgs = execSelectionSetKeyArgs(options5);
           peekArgs[3] = !canonizeResults;
-          var other = (_a91 = _this.executeSelectionSet).peek.apply(_a91, peekArgs);
+          var other = (_a3 = _this.executeSelectionSet).peek.apply(_a3, peekArgs);
           if (other) {
             if (canonizeResults) {
               return __assign(__assign({}, other), {
@@ -41778,8 +41693,8 @@ var init_readFromStore = __esm({
           return _this.execSubSelectedArrayImpl(options5);
         }, {
           max: this.config.resultCacheMaxSize || cacheSizes["inMemoryCache.executeSubSelectedArray"] || 1e4,
-          makeCacheKey: function(_a91) {
-            var field = _a91.field, array7 = _a91.array, context10 = _a91.context;
+          makeCacheKey: function(_a3) {
+            var field = _a3.field, array7 = _a3.array, context10 = _a3.context;
             if (supportsResultCaching(context10.store)) {
               return context10.store.makeCacheKey(field, array7, context10.varString);
             }
@@ -41789,8 +41704,8 @@ var init_readFromStore = __esm({
       StoreReader2.prototype.resetCanon = function() {
         this.canon = new ObjectCanon();
       };
-      StoreReader2.prototype.diffQueryAgainstStore = function(_a91) {
-        var store = _a91.store, query2 = _a91.query, _b37 = _a91.rootId, rootId = _b37 === void 0 ? "ROOT_QUERY" : _b37, variables = _a91.variables, _c8 = _a91.returnPartialData, returnPartialData = _c8 === void 0 ? true : _c8, _d4 = _a91.canonizeResults, canonizeResults = _d4 === void 0 ? this.config.canonizeResults : _d4;
+      StoreReader2.prototype.diffQueryAgainstStore = function(_a3) {
+        var store = _a3.store, query2 = _a3.query, _b = _a3.rootId, rootId = _b === void 0 ? "ROOT_QUERY" : _b, variables = _a3.variables, _c = _a3.returnPartialData, returnPartialData = _c === void 0 ? true : _c, _d = _a3.canonizeResults, canonizeResults = _d === void 0 ? this.config.canonizeResults : _d;
         var policies = this.config.cache.policies;
         variables = __assign(__assign({}, getDefaultValues(getQueryDefinition(query2))), variables);
         var rootRef = makeReference(rootId);
@@ -41832,9 +41747,9 @@ var init_readFromStore = __esm({
         }
         return false;
       };
-      StoreReader2.prototype.execSelectionSetImpl = function(_a91) {
+      StoreReader2.prototype.execSelectionSetImpl = function(_a3) {
         var _this = this;
-        var selectionSet = _a91.selectionSet, objectOrReference = _a91.objectOrReference, enclosingRef = _a91.enclosingRef, context10 = _a91.context;
+        var selectionSet = _a3.selectionSet, objectOrReference = _a3.objectOrReference, enclosingRef = _a3.enclosingRef, context10 = _a3.context;
         if (isReference3(objectOrReference) && !context10.policies.rootTypenamesById[objectOrReference.__ref] && !context10.store.has(objectOrReference.__ref)) {
           return {
             result: this.canon.empty,
@@ -41850,15 +41765,15 @@ var init_readFromStore = __esm({
           objectsToMerge.push({ __typename: typename });
         }
         function handleMissing(result3, resultName) {
-          var _a92;
+          var _a4;
           if (result3.missing) {
-            missing = missingMerger.merge(missing, (_a92 = {}, _a92[resultName] = result3.missing, _a92));
+            missing = missingMerger.merge(missing, (_a4 = {}, _a4[resultName] = result3.missing, _a4));
           }
           return result3.result;
         }
         var workSet = new Set(selectionSet.selections);
         workSet.forEach(function(selection) {
-          var _a92, _b37;
+          var _a4, _b;
           if (!shouldInclude(selection, variables))
             return;
           if (isField2(selection)) {
@@ -41871,7 +41786,7 @@ var init_readFromStore = __esm({
             var resultName = resultKeyNameFromField(selection);
             if (fieldValue === void 0) {
               if (!addTypenameToDocument.added(selection)) {
-                missing = missingMerger.merge(missing, (_a92 = {}, _a92[resultName] = "Can't find field '".concat(selection.name.value, "' on ").concat(isReference3(objectOrReference) ? objectOrReference.__ref + " object" : "object " + JSON.stringify(objectOrReference, null, 2)), _a92));
+                missing = missingMerger.merge(missing, (_a4 = {}, _a4[resultName] = "Can't find field '".concat(selection.name.value, "' on ").concat(isReference3(objectOrReference) ? objectOrReference.__ref + " object" : "object " + JSON.stringify(objectOrReference, null, 2)), _a4));
               }
             } else if (isArray4(fieldValue)) {
               if (fieldValue.length > 0) {
@@ -41895,7 +41810,7 @@ var init_readFromStore = __esm({
               }), resultName);
             }
             if (fieldValue !== void 0) {
-              objectsToMerge.push((_b37 = {}, _b37[resultName] = fieldValue, _b37));
+              objectsToMerge.push((_b = {}, _b[resultName] = fieldValue, _b));
             }
           } else {
             var fragment = getFragmentFromSelection(selection, context10.lookupFragment);
@@ -41915,15 +41830,15 @@ var init_readFromStore = __esm({
         }
         return frozen;
       };
-      StoreReader2.prototype.execSubSelectedArrayImpl = function(_a91) {
+      StoreReader2.prototype.execSubSelectedArrayImpl = function(_a3) {
         var _this = this;
-        var field = _a91.field, array7 = _a91.array, enclosingRef = _a91.enclosingRef, context10 = _a91.context;
+        var field = _a3.field, array7 = _a3.array, enclosingRef = _a3.enclosingRef, context10 = _a3.context;
         var missing;
         var missingMerger = new DeepMerger();
         function handleMissing(childResult, i) {
-          var _a92;
+          var _a4;
           if (childResult.missing) {
-            missing = missingMerger.merge(missing, (_a92 = {}, _a92[i] = childResult.missing, _a92));
+            missing = missingMerger.merge(missing, (_a4 = {}, _a4[i] = childResult.missing, _a4));
           }
           return childResult.result;
         }
@@ -42073,8 +41988,8 @@ function keyFieldsFnFromSpecifier(specifier) {
 }
 function keyArgsFnFromSpecifier(specifier) {
   var info8 = lookupSpecifierInfo(specifier);
-  return info8.keyArgsFn || (info8.keyArgsFn = function(args2, _a91) {
-    var field = _a91.field, variables = _a91.variables, fieldName = _a91.fieldName;
+  return info8.keyArgsFn || (info8.keyArgsFn = function(args2, _a3) {
+    var field = _a3.field, variables = _a3.variables, fieldName = _a3.fieldName;
     var collected = collectSpecifierPaths(specifier, function(keyPath) {
       var firstKey = keyPath[0];
       var firstChar = firstKey.charAt(0);
@@ -42118,11 +42033,11 @@ function keyArgsFnFromSpecifier(specifier) {
 function collectSpecifierPaths(specifier, extractor) {
   var merger = new DeepMerger();
   return getSpecifierPaths(specifier).reduce(function(collected, path4) {
-    var _a91;
+    var _a3;
     var toMerge = extractor(path4);
     if (toMerge !== void 0) {
       for (var i = path4.length - 1; i >= 0; --i) {
-        toMerge = (_a91 = {}, _a91[path4[i]] = toMerge, _a91);
+        toMerge = (_a3 = {}, _a3[path4[i]] = toMerge, _a3);
       }
       collected = merger.merge(collected, toMerge);
     }
@@ -42191,7 +42106,7 @@ function makeFieldFunctionOptions(policies, objectOrReference, fieldSpec, contex
   var storeFieldName = policies.getStoreFieldName(fieldSpec);
   var fieldName = fieldNameFromStoreName(storeFieldName);
   var variables = fieldSpec.variables || context10.variables;
-  var _a91 = context10.store, toReference = _a91.toReference, canRead = _a91.canRead;
+  var _a3 = context10.store, toReference = _a3.toReference, canRead = _a3.canRead;
   return {
     args: argsFromFieldSpecifier(fieldSpec),
     field: fieldSpec.field || null,
@@ -42274,11 +42189,11 @@ var init_policies = __esm({
     nullKeyFieldsFn = function() {
       return void 0;
     };
-    simpleKeyArgsFn = function(_args2, context10) {
+    simpleKeyArgsFn = function(_args, context10) {
       return context10.fieldName;
     };
-    mergeTrueFn = function(existing, incoming, _a91) {
-      var mergeObjects = _a91.mergeObjects;
+    mergeTrueFn = function(existing, incoming, _a3) {
+      var mergeObjects = _a3.mergeObjects;
       return mergeObjects(existing, incoming);
     };
     mergeFalseFn = function(_, incoming) {
@@ -42308,9 +42223,9 @@ var init_policies = __esm({
         }
       }
       Policies2.prototype.identify = function(object2, partialContext) {
-        var _a91;
+        var _a3;
         var policies = this;
-        var typename = partialContext && (partialContext.typename || ((_a91 = partialContext.storeObject) === null || _a91 === void 0 ? void 0 : _a91.__typename)) || object2.__typename;
+        var typename = partialContext && (partialContext.typename || ((_a3 = partialContext.storeObject) === null || _a3 === void 0 ? void 0 : _a3.__typename)) || object2.__typename;
         if (typename === this.rootTypenamesById.ROOT_QUERY) {
           return ["ROOT_QUERY"];
         }
@@ -42342,7 +42257,7 @@ var init_policies = __esm({
       Policies2.prototype.addTypePolicies = function(typePolicies) {
         var _this = this;
         Object.keys(typePolicies).forEach(function(typename) {
-          var _a91 = typePolicies[typename], queryType = _a91.queryType, mutationType = _a91.mutationType, subscriptionType = _a91.subscriptionType, incoming = __rest(_a91, ["queryType", "mutationType", "subscriptionType"]);
+          var _a3 = typePolicies[typename], queryType = _a3.queryType, mutationType = _a3.mutationType, subscriptionType = _a3.subscriptionType, incoming = __rest(_a3, ["queryType", "mutationType", "subscriptionType"]);
           if (queryType)
             _this.setRootTypename("Query", typename);
           if (mutationType)
@@ -42439,7 +42354,7 @@ var init_policies = __esm({
           }
           if (supertypes_1 && supertypes_1.size) {
             supertypes_1.forEach(function(supertype) {
-              var _a91 = _this.getTypePolicy(supertype), fields = _a91.fields, rest = __rest(_a91, ["fields"]);
+              var _a3 = _this.getTypePolicy(supertype), fields = _a3.fields, rest = __rest(_a3, ["fields"]);
               Object.assign(policy_1, rest);
               Object.assign(policy_1.fields, fields);
             });
@@ -42591,8 +42506,8 @@ var init_policies = __esm({
         }
         return merge14;
       };
-      Policies2.prototype.runMergeFunction = function(existing, incoming, _a91, context10, storage) {
-        var field = _a91.field, typename = _a91.typename, merge14 = _a91.merge;
+      Policies2.prototype.runMergeFunction = function(existing, incoming, _a3, context10, storage) {
+        var field = _a3.field, typename = _a3.typename, merge14 = _a3.merge;
         if (merge14 === mergeTrueFn) {
           return makeMergeObjectsFunction(context10.store)(existing, incoming);
         }
@@ -42640,8 +42555,8 @@ function getContextFlavor(context10, clientOnly, deferred) {
   }
   return flavored;
 }
-function getChildMergeTree(_a91, name) {
-  var map116 = _a91.map;
+function getChildMergeTree(_a3, name) {
+  var map116 = _a3.map;
   if (!map116.has(name)) {
     map116.set(name, emptyMergeTreePool.pop() || { map: /* @__PURE__ */ new Map() });
   }
@@ -42671,8 +42586,8 @@ function mergeMergeTrees(left3, right3) {
 function mergeTreeIsEmpty(tree) {
   return !tree || !(tree.info || tree.map.size);
 }
-function maybeRecycleChildMergeTree(_a91, name) {
-  var map116 = _a91.map;
+function maybeRecycleChildMergeTree(_a3, name) {
+  var map116 = _a3.map;
   var childTree = map116.get(name);
   if (childTree && mergeTreeIsEmpty(childTree)) {
     emptyMergeTreePool.push(childTree);
@@ -42734,9 +42649,9 @@ var init_writeToStore = __esm({
         this.reader = reader;
         this.fragments = fragments;
       }
-      StoreWriter2.prototype.writeToStore = function(store, _a91) {
+      StoreWriter2.prototype.writeToStore = function(store, _a3) {
         var _this = this;
-        var query2 = _a91.query, result2 = _a91.result, dataId = _a91.dataId, variables = _a91.variables, overwrite = _a91.overwrite;
+        var query2 = _a3.query, result2 = _a3.result, dataId = _a3.dataId, variables = _a3.variables, overwrite = _a3.overwrite;
         var operationDefinition = getOperationDefinition(query2);
         var merger = makeProcessedFieldsMerger();
         variables = __assign(__assign({}, getDefaultValues(operationDefinition)), variables);
@@ -42753,8 +42668,8 @@ var init_writeToStore = __esm({
         if (!isReference3(ref)) {
           throw newInvariantError(12, result2);
         }
-        context10.incomingById.forEach(function(_a92, dataId2) {
-          var storeObject = _a92.storeObject, mergeTree = _a92.mergeTree, fieldNodeSet = _a92.fieldNodeSet;
+        context10.incomingById.forEach(function(_a4, dataId2) {
+          var storeObject = _a4.storeObject, mergeTree = _a4.mergeTree, fieldNodeSet = _a4.fieldNodeSet;
           var entityRef = makeReference(dataId2);
           if (mergeTree && mergeTree.map.size) {
             var applied = _this.applyMerges(mergeTree, entityRef, storeObject, context10);
@@ -42788,9 +42703,9 @@ var init_writeToStore = __esm({
         store.retain(ref.__ref);
         return ref;
       };
-      StoreWriter2.prototype.processSelectionSet = function(_a91) {
+      StoreWriter2.prototype.processSelectionSet = function(_a3) {
         var _this = this;
-        var dataId = _a91.dataId, result2 = _a91.result, selectionSet = _a91.selectionSet, context10 = _a91.context, mergeTree = _a91.mergeTree;
+        var dataId = _a3.dataId, result2 = _a3.result, selectionSet = _a3.selectionSet, context10 = _a3.context, mergeTree = _a3.mergeTree;
         var policies = this.cache.policies;
         var incoming = /* @__PURE__ */ Object.create(null);
         var typename = dataId && policies.rootTypenamesById[dataId] || getTypenameFromResult(result2, selectionSet, context10.fragmentMap) || dataId && context10.store.get(dataId, "__typename");
@@ -42820,7 +42735,7 @@ var init_writeToStore = __esm({
           context10,
           typename
         ).forEach(function(context11, field) {
-          var _a92;
+          var _a4;
           var resultFieldKey = resultKeyNameFromField(field);
           var value3 = result2[resultFieldKey];
           fieldNodeSet.add(field);
@@ -42855,7 +42770,7 @@ var init_writeToStore = __esm({
             } else {
               maybeRecycleChildMergeTree(mergeTree, storeFieldName);
             }
-            incoming = context11.merge(incoming, (_a92 = {}, _a92[storeFieldName] = incomingValue, _a92));
+            incoming = context11.merge(incoming, (_a4 = {}, _a4[storeFieldName] = incomingValue, _a4));
           } else if (globalThis.__DEV__ !== false && !context11.clientOnly && !context11.deferred && !addTypenameToDocument.added(field) && // If the field has a read function, it may be a synthetic field or
           // provide a default value, so its absence from the written data should
           // not be cause for alarm.
@@ -42864,13 +42779,13 @@ var init_writeToStore = __esm({
           }
         });
         try {
-          var _b37 = policies.identify(result2, {
+          var _b = policies.identify(result2, {
             typename,
             selectionSet,
             fragmentMap: context10.fragmentMap,
             storeObject: incoming,
             readField
-          }), id3 = _b37[0], keyObject = _b37[1];
+          }), id3 = _b[0], keyObject = _b[1];
           dataId = dataId || id3;
           if (keyObject) {
             incoming = context10.merge(incoming, keyObject);
@@ -42991,7 +42906,7 @@ var init_writeToStore = __esm({
         return fieldMap;
       };
       StoreWriter2.prototype.applyMerges = function(mergeTree, existing, incoming, context10, getStorageArgs) {
-        var _a91;
+        var _a3;
         var _this = this;
         if (mergeTree.map.size && !isReference3(incoming)) {
           var e_1 = (
@@ -43036,7 +42951,7 @@ var init_writeToStore = __esm({
           }
         }
         if (mergeTree.info) {
-          return this.cache.policies.runMergeFunction(existing, incoming, mergeTree.info, context10, getStorageArgs && (_a91 = context10.store).getStorage.apply(_a91, getStorageArgs));
+          return this.cache.policies.runMergeFunction(existing, incoming, mergeTree.info, context10, getStorageArgs && (_a3 = context10.store).getStorage.apply(_a3, getStorageArgs));
         }
         return incoming;
       };
@@ -43158,7 +43073,7 @@ var init_inMemoryCache = __esm({
         if (globalThis.__DEV__ !== false) {
           warnRemovedOption(options5, "canonizeResults", "cache.read");
         }
-        var _a91 = options5.returnPartialData, returnPartialData = _a91 === void 0 ? false : _a91;
+        var _a3 = options5.returnPartialData, returnPartialData = _a3 === void 0 ? false : _a3;
         try {
           return this.storeReader.diffQueryAgainstStore(__assign(__assign({}, options5), { store: options5.optimistic ? this.optimisticData : this.data, config: this.config, returnPartialData })).result || null;
         } catch (e) {
@@ -43285,10 +43200,10 @@ var init_inMemoryCache = __esm({
       };
       InMemoryCache3.prototype.batch = function(options5) {
         var _this = this;
-        var update7 = options5.update, _a91 = options5.optimistic, optimistic = _a91 === void 0 ? true : _a91, removeOptimistic = options5.removeOptimistic, onWatchUpdated = options5.onWatchUpdated;
+        var update7 = options5.update, _a3 = options5.optimistic, optimistic = _a3 === void 0 ? true : _a3, removeOptimistic = options5.removeOptimistic, onWatchUpdated = options5.onWatchUpdated;
         var updateResult;
         var perform = function(layer7) {
-          var _a92 = _this, data = _a92.data, optimisticData = _a92.optimisticData;
+          var _a4 = _this, data = _a4.data, optimisticData = _a4.optimisticData;
           ++_this.txCount;
           if (layer7) {
             _this.data = _this.optimisticData = layer7;
@@ -43349,8 +43264,8 @@ var init_inMemoryCache = __esm({
         return this.policies.fragmentMatches(fragment, typename);
       };
       InMemoryCache3.prototype.lookupFragment = function(fragmentName) {
-        var _a91;
-        return ((_a91 = this.config.fragments) === null || _a91 === void 0 ? void 0 : _a91.lookup(fragmentName)) || null;
+        var _a3;
+        return ((_a3 = this.config.fragments) === null || _a3 === void 0 ? void 0 : _a3.lookup(fragmentName)) || null;
       };
       InMemoryCache3.prototype.broadcastWatches = function(options5) {
         var _this = this;
@@ -43785,8 +43700,8 @@ var require_core = __commonJS({
       var mergedData = prevResult;
       var merger = new DeepMerger2();
       if (isExecutionPatchIncrementalResult2(result2) && isNonEmptyArray4(result2.incremental)) {
-        result2.incremental.forEach(function(_a91) {
-          var data = _a91.data, path4 = _a91.path;
+        result2.incremental.forEach(function(_a3) {
+          var data = _a3.data, path4 = _a3.path;
           for (var i = path4.length - 1; i >= 0; --i) {
             var key = path4[i];
             var isNumericKey = !isNaN(+key);
@@ -43815,9 +43730,9 @@ var require_core = __commonJS({
     function isNetworkRequestSettled(networkStatus) {
       return networkStatus === 7 || networkStatus === 8;
     }
-    function equalByQuery2(query2, _a91, _b37, variables) {
-      var aData = _a91.data, aRest = tslib.__rest(_a91, ["data"]);
-      var bData = _b37.data, bRest = tslib.__rest(_b37, ["data"]);
+    function equalByQuery2(query2, _a3, _b, variables) {
+      var aData = _a3.data, aRest = tslib.__rest(_a3, ["data"]);
+      var bData = _b.data, bRest = tslib.__rest(_b, ["data"]);
       return equal__default(aRest, bRest) && equalBySelectionSet2(utilities.getMainDefinition(query2).selectionSet, aData, bData, {
         fragmentMap: utilities.createFragmentMap(utilities.getFragmentDefinitions(query2)),
         variables
@@ -43886,8 +43801,8 @@ var require_core = __commonJS({
     var hasOwnProperty$1 = Object.hasOwnProperty;
     var ObservableQuery = (function(_super) {
       tslib.__extends(ObservableQuery2, _super);
-      function ObservableQuery2(_a91) {
-        var queryManager = _a91.queryManager, queryInfo = _a91.queryInfo, options5 = _a91.options;
+      function ObservableQuery2(_a3) {
+        var queryManager = _a3.queryManager, queryInfo = _a3.queryInfo, options5 = _a3.options;
         var _this = this;
         var startedInactive = ObservableQuery2.inactiveOnCreation.getValue();
         _this = _super.call(this, function(observer) {
@@ -43897,7 +43812,7 @@ var require_core = __commonJS({
             if (subObserver && !subObserver.error) {
               subObserver.error = defaultSubscriptionObserverErrorCallback;
             }
-          } catch (_a92) {
+          } catch (_a4) {
           }
           var first3 = !_this.observers.size;
           _this.observers.add(observer);
@@ -43933,8 +43848,8 @@ var require_core = __commonJS({
         _this.isTornDown = false;
         _this.subscribeToMore = _this.subscribeToMore.bind(_this);
         _this.maskResult = _this.maskResult.bind(_this);
-        var _b37 = queryManager.defaultOptions.watchQuery, _c8 = _b37 === void 0 ? {} : _b37, _d4 = _c8.fetchPolicy, defaultFetchPolicy = _d4 === void 0 ? "cache-first" : _d4;
-        var _e2 = options5.fetchPolicy, fetchPolicy = _e2 === void 0 ? defaultFetchPolicy : _e2, _f2 = options5.initialFetchPolicy, initialFetchPolicy = _f2 === void 0 ? fetchPolicy === "standby" ? defaultFetchPolicy : fetchPolicy : _f2;
+        var _b = queryManager.defaultOptions.watchQuery, _c = _b === void 0 ? {} : _b, _d = _c.fetchPolicy, defaultFetchPolicy = _d === void 0 ? "cache-first" : _d;
+        var _e = options5.fetchPolicy, fetchPolicy = _e === void 0 ? defaultFetchPolicy : _e, _f = options5.initialFetchPolicy, initialFetchPolicy = _f === void 0 ? fetchPolicy === "standby" ? defaultFetchPolicy : fetchPolicy : _f;
         _this.options = tslib.__assign(tslib.__assign({}, options5), {
           initialFetchPolicy,
           fetchPolicy
@@ -43995,7 +43910,7 @@ var require_core = __commonJS({
         });
         var networkStatus = this.queryInfo.networkStatus || lastResult && lastResult.networkStatus || exports$1.NetworkStatus.ready;
         var result2 = tslib.__assign(tslib.__assign({}, lastResult), { loading: isNetworkRequestInFlight(networkStatus), networkStatus });
-        var _a91 = this.options.fetchPolicy, fetchPolicy = _a91 === void 0 ? "cache-first" : _a91;
+        var _a3 = this.options.fetchPolicy, fetchPolicy = _a3 === void 0 ? "cache-first" : _a3;
         if (skipCacheDataFor(fetchPolicy) || this.queryManager.getDocumentInfo(this.query).hasForcedResolvers) ;
         else if (this.waitForOwnResult) {
           this.queryInfo["updateWatch"]();
@@ -44082,7 +43997,7 @@ var require_core = __commonJS({
         this.queryManager.resetErrors(this.queryId);
       };
       ObservableQuery2.prototype.refetch = function(variables) {
-        var _a91;
+        var _a3;
         var reobserveOptions = {
           pollInterval: 0
         };
@@ -44101,7 +44016,7 @@ var require_core = __commonJS({
             globalThis.__DEV__ !== false && globals.invariant.warn(
               28,
               variables,
-              ((_a91 = queryDef.name) === null || _a91 === void 0 ? void 0 : _a91.value) || queryDef
+              ((_a3 = queryDef.name) === null || _a3 === void 0 ? void 0 : _a3.value) || queryDef
             );
           }
         }
@@ -44240,12 +44155,12 @@ var require_core = __commonJS({
       };
       ObservableQuery2.prototype.updateQuery = function(mapFn) {
         var queryManager = this.queryManager;
-        var _a91 = queryManager.cache.diff({
+        var _a3 = queryManager.cache.diff({
           query: this.options.query,
           variables: this.variables,
           returnPartialData: true,
           optimistic: false
-        }), result2 = _a91.result, complete4 = _a91.complete;
+        }), result2 = _a3.result, complete4 = _a3.complete;
         var newResult = mapFn(result2, {
           variables: this.variables,
           complete: !!complete4,
@@ -44270,7 +44185,7 @@ var require_core = __commonJS({
       };
       ObservableQuery2.prototype.applyNextFetchPolicy = function(reason, options5) {
         if (options5.nextFetchPolicy) {
-          var _a91 = options5.fetchPolicy, fetchPolicy = _a91 === void 0 ? "cache-first" : _a91, _b37 = options5.initialFetchPolicy, initialFetchPolicy = _b37 === void 0 ? fetchPolicy : _b37;
+          var _a3 = options5.fetchPolicy, fetchPolicy = _a3 === void 0 ? "cache-first" : _a3, _b = options5.initialFetchPolicy, initialFetchPolicy = _b === void 0 ? fetchPolicy : _b;
           if (fetchPolicy === "standby") ;
           else if (typeof options5.nextFetchPolicy === "function") {
             options5.fetchPolicy = options5.nextFetchPolicy(fetchPolicy, {
@@ -44297,7 +44212,7 @@ var require_core = __commonJS({
         if (this.queryManager.ssrMode) {
           return;
         }
-        var _a91 = this, pollingInfo = _a91.pollingInfo, pollInterval = _a91.options.pollInterval;
+        var _a3 = this, pollingInfo = _a3.pollingInfo, pollInterval = _a3.options.pollInterval;
         if (!pollInterval || !this.hasObservers()) {
           if (pollingInfo) {
             clearTimeout(pollingInfo.timeout);
@@ -44312,9 +44227,9 @@ var require_core = __commonJS({
         var info8 = pollingInfo || (this.pollingInfo = {});
         info8.interval = pollInterval;
         var maybeFetch = function() {
-          var _a92, _b37;
+          var _a4, _b;
           if (_this.pollingInfo) {
-            if (!isNetworkRequestInFlight(_this.queryInfo.networkStatus) && !((_b37 = (_a92 = _this.options).skipPollAttempt) === null || _b37 === void 0 ? void 0 : _b37.call(_a92))) {
+            if (!isNetworkRequestInFlight(_this.queryInfo.networkStatus) && !((_b = (_a4 = _this.options).skipPollAttempt) === null || _b === void 0 ? void 0 : _b.call(_a4))) {
               _this.reobserve({
                 fetchPolicy: _this.options.initialFetchPolicy === "no-cache" ? "no-cache" : "network-only"
               }, exports$1.NetworkStatus.poll).then(poll8, poll8);
@@ -44371,7 +44286,7 @@ var require_core = __commonJS({
           }
         };
         var variables = options5.variables && tslib.__assign({}, options5.variables);
-        var _a91 = this.fetch(options5, newNetworkStatus, query2), concast = _a91.concast, fromLink = _a91.fromLink;
+        var _a3 = this.fetch(options5, newNetworkStatus, query2), concast = _a3.concast, fromLink = _a3.fromLink;
         var observer = {
           next: function(result2) {
             if (equal2.equal(_this.variables, variables)) {
@@ -44510,7 +44425,7 @@ var require_core = __commonJS({
         this.dirty = false;
       };
       ObservableQuery2.prototype.reobserveCacheFirst = function() {
-        var _a91 = this.options, fetchPolicy = _a91.fetchPolicy, nextFetchPolicy = _a91.nextFetchPolicy;
+        var _a3 = this.options, fetchPolicy = _a3.fetchPolicy, nextFetchPolicy = _a3.nextFetchPolicy;
         if (fetchPolicy === "cache-and-network" || fetchPolicy === "network-only") {
           return this.reobserve({
             fetchPolicy: "cache-first",
@@ -44622,7 +44537,7 @@ var require_core = __commonJS({
         } : void 0;
       };
       QueryInfo2.prototype.getDiffOptions = function(variables) {
-        var _a91;
+        var _a3;
         if (variables === void 0) {
           variables = this.variables;
         }
@@ -44631,22 +44546,22 @@ var require_core = __commonJS({
           variables,
           returnPartialData: true,
           optimistic: true,
-          canonizeResults: (_a91 = this.observableQuery) === null || _a91 === void 0 ? void 0 : _a91.options.canonizeResults
+          canonizeResults: (_a3 = this.observableQuery) === null || _a3 === void 0 ? void 0 : _a3.options.canonizeResults
         };
       };
       QueryInfo2.prototype.setDiff = function(diff9) {
         var _this = this;
-        var _a91;
+        var _a3;
         var oldDiff = this.lastDiff && this.lastDiff.diff;
         if (diff9 && !diff9.complete && utilities.muteDeprecations("getLastError", function() {
-          var _a92;
-          return (_a92 = _this.observableQuery) === null || _a92 === void 0 ? void 0 : _a92.getLastError();
+          var _a4;
+          return (_a4 = _this.observableQuery) === null || _a4 === void 0 ? void 0 : _a4.getLastError();
         })) {
           return;
         }
         this.updateLastDiff(diff9);
         if (!equal2.equal(oldDiff && oldDiff.result, diff9 && diff9.result)) {
-          (_a91 = this.observableQuery) === null || _a91 === void 0 ? void 0 : _a91["scheduleNotify"]();
+          (_a3 = this.observableQuery) === null || _a3 === void 0 ? void 0 : _a3["scheduleNotify"]();
         }
       };
       QueryInfo2.prototype.setObservableQuery = function(oq) {
@@ -44658,10 +44573,10 @@ var require_core = __commonJS({
         }
       };
       QueryInfo2.prototype.stop = function() {
-        var _a91;
+        var _a3;
         if (!this.stopped) {
           this.stopped = true;
-          (_a91 = this.observableQuery) === null || _a91 === void 0 ? void 0 : _a91["resetNotifications"]();
+          (_a3 = this.observableQuery) === null || _a3 === void 0 ? void 0 : _a3["resetNotifications"]();
           this.cancel();
           var oq = this.observableQuery;
           if (oq)
@@ -44669,8 +44584,8 @@ var require_core = __commonJS({
         }
       };
       QueryInfo2.prototype.cancel = function() {
-        var _a91;
-        (_a91 = this.cancelWatch) === null || _a91 === void 0 ? void 0 : _a91.call(this);
+        var _a3;
+        (_a3 = this.cancelWatch) === null || _a3 === void 0 ? void 0 : _a3.call(this);
         this.cancelWatch = void 0;
       };
       QueryInfo2.prototype.updateWatch = function(variables) {
@@ -44699,10 +44614,10 @@ var require_core = __commonJS({
       };
       QueryInfo2.prototype.markResult = function(result2, document, options5, cacheWriteBehavior) {
         var _this = this;
-        var _a91;
+        var _a3;
         var merger = new utilities.DeepMerger();
         var graphQLErrors = utilities.isNonEmptyArray(result2.errors) ? result2.errors.slice(0) : [];
-        (_a91 = this.observableQuery) === null || _a91 === void 0 ? void 0 : _a91["resetNotifications"]();
+        (_a3 = this.observableQuery) === null || _a3 === void 0 ? void 0 : _a3["resetNotifications"]();
         if ("incremental" in result2 && utilities.isNonEmptyArray(result2.incremental)) {
           var mergedData = utilities.mergeIncrementalData(this.getDiff().result, result2);
           result2.data = mergedData;
@@ -44756,10 +44671,10 @@ var require_core = __commonJS({
         return this.networkStatus = exports$1.NetworkStatus.ready;
       };
       QueryInfo2.prototype.markError = function(error4) {
-        var _a91;
+        var _a3;
         this.networkStatus = exports$1.NetworkStatus.error;
         this.lastWrite = void 0;
-        (_a91 = this.observableQuery) === null || _a91 === void 0 ? void 0 : _a91["resetNotifications"]();
+        (_a3 = this.observableQuery) === null || _a3 === void 0 ? void 0 : _a3["resetNotifications"]();
         if (error4.graphQLErrors) {
           this.graphQLErrors = error4.graphQLErrors;
         }
@@ -44830,11 +44745,11 @@ var require_core = __commonJS({
         });
         this.fetchCancelFns.clear();
       };
-      QueryManager2.prototype.mutate = function(_a91) {
-        return tslib.__awaiter(this, arguments, void 0, function(_b37) {
+      QueryManager2.prototype.mutate = function(_a3) {
+        return tslib.__awaiter(this, arguments, void 0, function(_b) {
           var mutationId, hasClientExports2, mutationStoreValue, isOptimistic, self2;
-          var _c8, _d4;
-          var mutation = _b37.mutation, variables = _b37.variables, optimisticResponse = _b37.optimisticResponse, updateQueries = _b37.updateQueries, _e2 = _b37.refetchQueries, refetchQueries = _e2 === void 0 ? [] : _e2, _f2 = _b37.awaitRefetchQueries, awaitRefetchQueries = _f2 === void 0 ? false : _f2, updateWithProxyFn = _b37.update, onQueryUpdated = _b37.onQueryUpdated, _g = _b37.fetchPolicy, fetchPolicy = _g === void 0 ? ((_c8 = this.defaultOptions.mutate) === null || _c8 === void 0 ? void 0 : _c8.fetchPolicy) || "network-only" : _g, _h = _b37.errorPolicy, errorPolicy = _h === void 0 ? ((_d4 = this.defaultOptions.mutate) === null || _d4 === void 0 ? void 0 : _d4.errorPolicy) || "none" : _h, keepRootFields = _b37.keepRootFields, context10 = _b37.context;
+          var _c, _d;
+          var mutation = _b.mutation, variables = _b.variables, optimisticResponse = _b.optimisticResponse, updateQueries = _b.updateQueries, _e = _b.refetchQueries, refetchQueries = _e === void 0 ? [] : _e, _f = _b.awaitRefetchQueries, awaitRefetchQueries = _f === void 0 ? false : _f, updateWithProxyFn = _b.update, onQueryUpdated = _b.onQueryUpdated, _g = _b.fetchPolicy, fetchPolicy = _g === void 0 ? ((_c = this.defaultOptions.mutate) === null || _c === void 0 ? void 0 : _c.fetchPolicy) || "network-only" : _g, _h = _b.errorPolicy, errorPolicy = _h === void 0 ? ((_d = this.defaultOptions.mutate) === null || _d === void 0 ? void 0 : _d.errorPolicy) || "none" : _h, keepRootFields = _b.keepRootFields, context10 = _b.context;
           return tslib.__generator(this, function(_j) {
             switch (_j.label) {
               case 0:
@@ -44975,20 +44890,20 @@ var require_core = __commonJS({
           }
           var updateQueries_1 = mutation.updateQueries;
           if (updateQueries_1) {
-            this.queries.forEach(function(_a91, queryId) {
-              var observableQuery = _a91.observableQuery;
+            this.queries.forEach(function(_a3, queryId) {
+              var observableQuery = _a3.observableQuery;
               var queryName = observableQuery && observableQuery.queryName;
               if (!queryName || !hasOwnProperty7.call(updateQueries_1, queryName)) {
                 return;
               }
               var updater = updateQueries_1[queryName];
-              var _b37 = _this.queries.get(queryId), document = _b37.document, variables = _b37.variables;
-              var _c8 = cache2.diff({
+              var _b = _this.queries.get(queryId), document = _b.document, variables = _b.variables;
+              var _c = cache2.diff({
                 query: document,
                 variables,
                 returnPartialData: true,
                 optimistic: false
-              }), currentQueryResult = _c8.result, complete4 = _c8.complete;
+              }), currentQueryResult = _c.result, complete4 = _c.complete;
               if (complete4 && currentQueryResult) {
                 var nextQueryResult = updater(currentQueryResult, {
                   mutationResult: result2,
@@ -45047,8 +44962,8 @@ var require_core = __commonJS({
               if (!skipCache && !mutation.keepRootFields && isFinalResult) {
                 cache3.modify({
                   id: "ROOT_MUTATION",
-                  fields: function(value3, _a91) {
-                    var fieldName = _a91.fieldName, DELETE2 = _a91.DELETE;
+                  fields: function(value3, _a3) {
+                    var fieldName = _a3.fieldName, DELETE2 = _a3.DELETE;
                     return fieldName === "__typename" ? value3 : DELETE2;
                   }
                 });
@@ -45243,8 +45158,8 @@ var require_core = __commonJS({
             }
           });
         }
-        this.queries.forEach(function(_a91, queryId) {
-          var oq = _a91.observableQuery, document = _a91.document;
+        this.queries.forEach(function(_a3, queryId) {
+          var oq = _a3.observableQuery, document = _a3.document;
           if (oq) {
             if (include === "all") {
               queries.set(queryId, oq);
@@ -45316,7 +45231,7 @@ var require_core = __commonJS({
       QueryManager2.prototype.startGraphQLSubscription = function(options5) {
         var _this = this;
         var query2 = options5.query, variables = options5.variables;
-        var fetchPolicy = options5.fetchPolicy, _a91 = options5.errorPolicy, errorPolicy = _a91 === void 0 ? "none" : _a91, _b37 = options5.context, context10 = _b37 === void 0 ? {} : _b37, _c8 = options5.extensions, extensions = _c8 === void 0 ? {} : _c8;
+        var fetchPolicy = options5.fetchPolicy, _a3 = options5.errorPolicy, errorPolicy = _a3 === void 0 ? "none" : _a3, _b = options5.context, context10 = _b === void 0 ? {} : _b, _c = options5.extensions, extensions = _c === void 0 ? {} : _c;
         query2 = this.transform(query2);
         variables = this.getVariables(query2, variables);
         var makeObservable = function(variables2) {
@@ -45375,10 +45290,10 @@ var require_core = __commonJS({
         this.removeQuery(queryId);
       };
       QueryManager2.prototype.removeQuery = function(queryId) {
-        var _a91;
+        var _a3;
         this.fetchCancelFns.delete(queryId);
         if (this.queries.has(queryId)) {
-          (_a91 = this.queries.get(queryId)) === null || _a91 === void 0 ? void 0 : _a91.stop();
+          (_a3 = this.queries.get(queryId)) === null || _a3 === void 0 ? void 0 : _a3.stop();
           this.queries.delete(queryId);
         }
       };
@@ -45386,8 +45301,8 @@ var require_core = __commonJS({
         if (this.onBroadcast)
           this.onBroadcast();
         this.queries.forEach(function(info8) {
-          var _a91;
-          return (_a91 = info8.observableQuery) === null || _a91 === void 0 ? void 0 : _a91["notify"]();
+          var _a3;
+          return (_a3 = info8.observableQuery) === null || _a3 === void 0 ? void 0 : _a3["notify"]();
         });
       };
       QueryManager2.prototype.getLocalState = function() {
@@ -45395,14 +45310,14 @@ var require_core = __commonJS({
       };
       QueryManager2.prototype.getObservableFromLink = function(query2, context10, variables, extensions, deduplication) {
         var _this = this;
-        var _a91;
+        var _a3;
         if (deduplication === void 0) {
-          deduplication = (_a91 = context10 === null || context10 === void 0 ? void 0 : context10.queryDeduplication) !== null && _a91 !== void 0 ? _a91 : this.queryDeduplication;
+          deduplication = (_a3 = context10 === null || context10 === void 0 ? void 0 : context10.queryDeduplication) !== null && _a3 !== void 0 ? _a3 : this.queryDeduplication;
         }
         var observable;
-        var _b37 = this.getDocumentInfo(query2), serverQuery = _b37.serverQuery, clientQuery = _b37.clientQuery;
+        var _b = this.getDocumentInfo(query2), serverQuery = _b.serverQuery, clientQuery = _b.clientQuery;
         if (serverQuery) {
-          var _c8 = this, inFlightLinkObservables_1 = _c8.inFlightLinkObservables, link = _c8.link;
+          var _c = this, inFlightLinkObservables_1 = _c.inFlightLinkObservables, link = _c.link;
           var operation = {
             query: serverQuery,
             variables,
@@ -45497,7 +45412,7 @@ var require_core = __commonJS({
         }
         var variables = this.getVariables(query2, options5.variables);
         var defaults2 = this.defaultOptions.watchQuery;
-        var _a91 = options5.fetchPolicy, fetchPolicy = _a91 === void 0 ? defaults2 && defaults2.fetchPolicy || "cache-first" : _a91, _b37 = options5.errorPolicy, errorPolicy = _b37 === void 0 ? defaults2 && defaults2.errorPolicy || "none" : _b37, _c8 = options5.returnPartialData, returnPartialData = _c8 === void 0 ? false : _c8, _d4 = options5.notifyOnNetworkStatusChange, notifyOnNetworkStatusChange = _d4 === void 0 ? false : _d4, _e2 = options5.context, context10 = _e2 === void 0 ? {} : _e2;
+        var _a3 = options5.fetchPolicy, fetchPolicy = _a3 === void 0 ? defaults2 && defaults2.fetchPolicy || "cache-first" : _a3, _b = options5.errorPolicy, errorPolicy = _b === void 0 ? defaults2 && defaults2.errorPolicy || "none" : _b, _c = options5.returnPartialData, returnPartialData = _c === void 0 ? false : _c, _d = options5.notifyOnNetworkStatusChange, notifyOnNetworkStatusChange = _d === void 0 ? false : _d, _e = options5.context, context10 = _e === void 0 ? {} : _e;
         var normalized = Object.assign({}, options5, {
           query: query2,
           variables,
@@ -45541,9 +45456,9 @@ var require_core = __commonJS({
           fromLink: containsDataFromLink
         };
       };
-      QueryManager2.prototype.refetchQueries = function(_a91) {
+      QueryManager2.prototype.refetchQueries = function(_a3) {
         var _this = this;
-        var updateCache = _a91.updateCache, include = _a91.include, _b37 = _a91.optimistic, optimistic = _b37 === void 0 ? false : _b37, _c8 = _a91.removeOptimistic, removeOptimistic = _c8 === void 0 ? optimistic ? utilities.makeUniqueId("refetchQueries") : void 0 : _c8, onQueryUpdated = _a91.onQueryUpdated;
+        var updateCache = _a3.updateCache, include = _a3.include, _b = _a3.optimistic, optimistic = _b === void 0 ? false : _b, _c = _a3.removeOptimistic, removeOptimistic = _c === void 0 ? optimistic ? utilities.makeUniqueId("refetchQueries") : void 0 : _c, onQueryUpdated = _a3.onQueryUpdated;
         var includedQueriesById = /* @__PURE__ */ new Map();
         if (include) {
           this.getObservableQueries(include).forEach(function(oq, queryId) {
@@ -45581,8 +45496,8 @@ var require_core = __commonJS({
           });
         }
         if (includedQueriesById.size) {
-          includedQueriesById.forEach(function(_a92, queryId) {
-            var oq = _a92.oq, lastDiff = _a92.lastDiff, diff9 = _a92.diff;
+          includedQueriesById.forEach(function(_a4, queryId) {
+            var oq = _a4.oq, lastDiff = _a4.lastDiff, diff9 = _a4.diff;
             var result2;
             if (onQueryUpdated) {
               if (!diff9) {
@@ -45609,17 +45524,17 @@ var require_core = __commonJS({
         return results;
       };
       QueryManager2.prototype.maskOperation = function(options5) {
-        var _a91, _b37, _c8;
+        var _a3, _b, _c;
         var document = options5.document, data = options5.data;
         if (globalThis.__DEV__ !== false) {
           var fetchPolicy = options5.fetchPolicy, id3 = options5.id;
-          var operationType = (_a91 = utilities.getOperationDefinition(document)) === null || _a91 === void 0 ? void 0 : _a91.operation;
-          var operationId = ((_b37 = operationType === null || operationType === void 0 ? void 0 : operationType[0]) !== null && _b37 !== void 0 ? _b37 : "o") + id3;
+          var operationType = (_a3 = utilities.getOperationDefinition(document)) === null || _a3 === void 0 ? void 0 : _a3.operation;
+          var operationId = ((_b = operationType === null || operationType === void 0 ? void 0 : operationType[0]) !== null && _b !== void 0 ? _b : "o") + id3;
           if (this.dataMasking && fetchPolicy === "no-cache" && !utilities.isFullyUnmaskedOperation(document) && !this.noCacheWarningsByQueryId.has(operationId)) {
             this.noCacheWarningsByQueryId.add(operationId);
             globalThis.__DEV__ !== false && globals.invariant.warn(
               45,
-              (_c8 = utilities.getOperationName(document)) !== null && _c8 !== void 0 ? _c8 : "Unnamed ".concat(operationType !== null && operationType !== void 0 ? operationType : "operation")
+              (_c = utilities.getOperationName(document)) !== null && _c !== void 0 ? _c : "Unnamed ".concat(operationType !== null && operationType !== void 0 ? operationType : "operation")
             );
           }
         }
@@ -45629,9 +45544,9 @@ var require_core = __commonJS({
         var data = options5.data, fragment = options5.fragment, fragmentName = options5.fragmentName;
         return this.dataMasking ? masking.maskFragment(data, fragment, this.cache, fragmentName) : data;
       };
-      QueryManager2.prototype.fetchQueryByPolicy = function(queryInfo, _a91, networkStatus) {
+      QueryManager2.prototype.fetchQueryByPolicy = function(queryInfo, _a3, networkStatus) {
         var _this = this;
-        var query2 = _a91.query, variables = _a91.variables, fetchPolicy = _a91.fetchPolicy, refetchWritePolicy = _a91.refetchWritePolicy, errorPolicy = _a91.errorPolicy, returnPartialData = _a91.returnPartialData, context10 = _a91.context, notifyOnNetworkStatusChange = _a91.notifyOnNetworkStatusChange;
+        var query2 = _a3.query, variables = _a3.variables, fetchPolicy = _a3.fetchPolicy, refetchWritePolicy = _a3.refetchWritePolicy, errorPolicy = _a3.errorPolicy, returnPartialData = _a3.returnPartialData, context10 = _a3.context, notifyOnNetworkStatusChange = _a3.notifyOnNetworkStatusChange;
         var oldNetworkStatus = queryInfo.networkStatus;
         queryInfo.init({
           document: query2,
@@ -45748,8 +45663,8 @@ var require_core = __commonJS({
       return QueryManager2;
     })();
     var LocalState = (function() {
-      function LocalState2(_a91) {
-        var cache2 = _a91.cache, client = _a91.client, resolvers = _a91.resolvers, fragmentMatcher = _a91.fragmentMatcher;
+      function LocalState2(_a3) {
+        var cache2 = _a3.cache, client = _a3.client, resolvers = _a3.resolvers, fragmentMatcher = _a3.fragmentMatcher;
         this.selectionsToResolveCache = /* @__PURE__ */ new WeakMap();
         this.cache = cache2;
         if (client) {
@@ -45780,10 +45695,10 @@ var require_core = __commonJS({
       LocalState2.prototype.getResolvers = function() {
         return this.resolvers || {};
       };
-      LocalState2.prototype.runResolvers = function(_a91) {
-        return tslib.__awaiter(this, arguments, void 0, function(_b37) {
-          var document = _b37.document, remoteResult = _b37.remoteResult, context10 = _b37.context, variables = _b37.variables, _c8 = _b37.onlyRunForcedResolvers, onlyRunForcedResolvers = _c8 === void 0 ? false : _c8;
-          return tslib.__generator(this, function(_d4) {
+      LocalState2.prototype.runResolvers = function(_a3) {
+        return tslib.__awaiter(this, arguments, void 0, function(_b) {
+          var document = _b.document, remoteResult = _b.remoteResult, context10 = _b.context, variables = _b.variables, _c = _b.onlyRunForcedResolvers, onlyRunForcedResolvers = _c === void 0 ? false : _c;
+          return tslib.__generator(this, function(_d) {
             if (document) {
               return [2, this.resolveDocument(document, remoteResult.data, context10, variables, this.fragmentMatcher, onlyRunForcedResolvers).then(function(localResult) {
                 return tslib.__assign(tslib.__assign({}, remoteResult), { data: localResult.result });
@@ -45827,7 +45742,7 @@ var require_core = __commonJS({
           if (context10 === void 0) {
             context10 = {};
           }
-          return tslib.__generator(this, function(_a91) {
+          return tslib.__generator(this, function(_a3) {
             if (document) {
               return [2, this.resolveDocument(document, this.buildRootValueFromCache(document, variables) || {}, this.prepareContext(context10), variables).then(function(data) {
                 return tslib.__assign(tslib.__assign({}, variables), data.exportedVariables);
@@ -45865,7 +45780,7 @@ var require_core = __commonJS({
       };
       LocalState2.prototype.resolveDocument = function(document_1, rootValue_1) {
         return tslib.__awaiter(this, arguments, void 0, function(document, rootValue, context10, variables, fragmentMatcher, onlyRunForcedResolvers) {
-          var mainDefinition, fragments, fragmentMap, selectionsToResolve, definitionOperation, defaultOperationType, _a91, cache2, client, execContext, isClientFieldDescendant;
+          var mainDefinition, fragments, fragmentMap, selectionsToResolve, definitionOperation, defaultOperationType, _a3, cache2, client, execContext, isClientFieldDescendant;
           if (context10 === void 0) {
             context10 = {};
           }
@@ -45880,14 +45795,14 @@ var require_core = __commonJS({
           if (onlyRunForcedResolvers === void 0) {
             onlyRunForcedResolvers = false;
           }
-          return tslib.__generator(this, function(_b37) {
+          return tslib.__generator(this, function(_b) {
             mainDefinition = utilities.getMainDefinition(document);
             fragments = utilities.getFragmentDefinitions(document);
             fragmentMap = utilities.createFragmentMap(fragments);
             selectionsToResolve = this.collectSelectionsToResolve(mainDefinition, fragmentMap);
             definitionOperation = mainDefinition.operation;
             defaultOperationType = definitionOperation ? definitionOperation.charAt(0).toUpperCase() + definitionOperation.slice(1) : "Query";
-            _a91 = this, cache2 = _a91.cache, client = _a91.client;
+            _a3 = this, cache2 = _a3.cache, client = _a3.client;
             execContext = {
               fragmentMap,
               context: tslib.__assign(tslib.__assign({}, context10), { cache: cache2, client }),
@@ -45912,13 +45827,13 @@ var require_core = __commonJS({
         return tslib.__awaiter(this, void 0, void 0, function() {
           var fragmentMap, context10, variables, resultsToMerge, execute7;
           var _this = this;
-          return tslib.__generator(this, function(_a91) {
+          return tslib.__generator(this, function(_a3) {
             fragmentMap = execContext.fragmentMap, context10 = execContext.context, variables = execContext.variables;
             resultsToMerge = [rootValue];
             execute7 = function(selection) {
               return tslib.__awaiter(_this, void 0, void 0, function() {
                 var fragment, typeCondition;
-                return tslib.__generator(this, function(_a92) {
+                return tslib.__generator(this, function(_a4) {
                   if (!isClientFieldDescendant && !execContext.selectionsToResolve.has(selection)) {
                     return [2];
                   }
@@ -45927,9 +45842,9 @@ var require_core = __commonJS({
                   }
                   if (utilities.isField(selection)) {
                     return [2, this.resolveField(selection, isClientFieldDescendant, rootValue, execContext).then(function(fieldResult) {
-                      var _a93;
+                      var _a5;
                       if (typeof fieldResult !== "undefined") {
-                        resultsToMerge.push((_a93 = {}, _a93[utilities.resultKeyNameFromField(selection)] = fieldResult, _a93));
+                        resultsToMerge.push((_a5 = {}, _a5[utilities.resultKeyNameFromField(selection)] = fieldResult, _a5));
                       }
                     })];
                   }
@@ -45961,7 +45876,7 @@ var require_core = __commonJS({
         return tslib.__awaiter(this, void 0, void 0, function() {
           var variables, fieldName, aliasedFieldName, aliasUsed, defaultResult, resultPromise, resolverType, resolverMap, resolve;
           var _this = this;
-          return tslib.__generator(this, function(_a91) {
+          return tslib.__generator(this, function(_a3) {
             if (!rootValue) {
               return [2, null];
             }
@@ -45989,7 +45904,7 @@ var require_core = __commonJS({
               }
             }
             return [2, resultPromise.then(function(result2) {
-              var _a92, _b37;
+              var _a4, _b;
               if (result2 === void 0) {
                 result2 = defaultResult;
               }
@@ -46010,9 +45925,9 @@ var require_core = __commonJS({
               if (result2 == null) {
                 return result2;
               }
-              var isClientField = (_b37 = (_a92 = field.directives) === null || _a92 === void 0 ? void 0 : _a92.some(function(d) {
+              var isClientField = (_b = (_a4 = field.directives) === null || _a4 === void 0 ? void 0 : _a4.some(function(d) {
                 return d.name.value === "client";
-              })) !== null && _b37 !== void 0 ? _b37 : false;
+              })) !== null && _b !== void 0 ? _b : false;
               if (Array.isArray(result2)) {
                 return _this.resolveSubSelectedArray(field, isClientFieldDescendant || isClientField, result2, execContext);
               }
@@ -46101,8 +46016,8 @@ var require_core = __commonJS({
         "inMemoryCache.executeSelectionSet": 5e4,
         "inMemoryCache.executeSubSelectedArray": 1e4
       };
-      return Object.fromEntries(Object.entries(defaults2).map(function(_a91) {
-        var k2 = _a91[0], v = _a91[1];
+      return Object.fromEntries(Object.entries(defaults2).map(function(_a3) {
+        var k2 = _a3[0], v = _a3[1];
         return [
           k2,
           cacheSizes2[k2] || v
@@ -46110,15 +46025,15 @@ var require_core = __commonJS({
       }));
     }
     function _getApolloClientMemoryInternals2() {
-      var _a91, _b37, _c8, _d4, _e2;
+      var _a3, _b, _c, _d, _e;
       if (!(globalThis.__DEV__ !== false))
         throw new Error("only supported in development mode");
       return {
         limits: getCurrentCacheSizes2(),
-        sizes: tslib.__assign({ print: (_a91 = globalCaches2.print) === null || _a91 === void 0 ? void 0 : _a91.call(globalCaches2), parser: (_b37 = globalCaches2.parser) === null || _b37 === void 0 ? void 0 : _b37.call(globalCaches2), canonicalStringify: (_c8 = globalCaches2.canonicalStringify) === null || _c8 === void 0 ? void 0 : _c8.call(globalCaches2), links: linkInfo2(this.link), queryManager: {
+        sizes: tslib.__assign({ print: (_a3 = globalCaches2.print) === null || _a3 === void 0 ? void 0 : _a3.call(globalCaches2), parser: (_b = globalCaches2.parser) === null || _b === void 0 ? void 0 : _b.call(globalCaches2), canonicalStringify: (_c = globalCaches2.canonicalStringify) === null || _c === void 0 ? void 0 : _c.call(globalCaches2), links: linkInfo2(this.link), queryManager: {
           getDocumentInfo: this["queryManager"]["transformCache"].size,
           documentTransforms: transformInfo2(this["queryManager"].documentTransform)
-        } }, (_e2 = (_d4 = this.cache).getMemoryInternals) === null || _e2 === void 0 ? void 0 : _e2.call(_d4))
+        } }, (_e = (_d = this.cache).getMemoryInternals) === null || _e === void 0 ? void 0 : _e.call(_d))
       };
     }
     function isWrapper2(f) {
@@ -46141,22 +46056,22 @@ var require_core = __commonJS({
       ], recurseTransformInfo2(transform5 === null || transform5 === void 0 ? void 0 : transform5["left"]), true), recurseTransformInfo2(transform5 === null || transform5 === void 0 ? void 0 : transform5["right"]), true).filter(isDefined2) : [];
     }
     function linkInfo2(link) {
-      var _a91;
+      var _a3;
       return link ? tslib.__spreadArray(tslib.__spreadArray([
-        (_a91 = link === null || link === void 0 ? void 0 : link.getMemoryInternals) === null || _a91 === void 0 ? void 0 : _a91.call(link)
+        (_a3 = link === null || link === void 0 ? void 0 : link.getMemoryInternals) === null || _a3 === void 0 ? void 0 : _a3.call(link)
       ], linkInfo2(link === null || link === void 0 ? void 0 : link.left), true), linkInfo2(link === null || link === void 0 ? void 0 : link.right), true).filter(isDefined2) : [];
     }
     var hasSuggestedDevtools = false;
     var ApolloClient2 = (function() {
       function ApolloClient3(options5) {
         var _this = this;
-        var _a91, _b37, _c8;
+        var _a3, _b, _c;
         this.resetStoreCallbacks = [];
         this.clearStoreCallbacks = [];
         if (!options5.cache) {
           throw globals.newInvariantError(16);
         }
-        var uri = options5.uri, credentials = options5.credentials, headers = options5.headers, cache2 = options5.cache, documentTransform = options5.documentTransform, _d4 = options5.ssrMode, ssrMode = _d4 === void 0 ? false : _d4, _e2 = options5.ssrForceFetchDelay, ssrForceFetchDelay = _e2 === void 0 ? 0 : _e2, connectToDevTools = options5.connectToDevTools, _f2 = options5.queryDeduplication, queryDeduplication = _f2 === void 0 ? true : _f2, defaultOptions2 = options5.defaultOptions, defaultContext = options5.defaultContext, _g = options5.assumeImmutableResults, assumeImmutableResults = _g === void 0 ? cache2.assumeImmutableResults : _g, resolvers = options5.resolvers, typeDefs = options5.typeDefs, fragmentMatcher = options5.fragmentMatcher, clientAwareness = options5.clientAwareness, clientAwarenessName = options5.name, clientAwarenessVersion = options5.version, devtools = options5.devtools, dataMasking = options5.dataMasking;
+        var uri = options5.uri, credentials = options5.credentials, headers = options5.headers, cache2 = options5.cache, documentTransform = options5.documentTransform, _d = options5.ssrMode, ssrMode = _d === void 0 ? false : _d, _e = options5.ssrForceFetchDelay, ssrForceFetchDelay = _e === void 0 ? 0 : _e, connectToDevTools = options5.connectToDevTools, _f = options5.queryDeduplication, queryDeduplication = _f === void 0 ? true : _f, defaultOptions2 = options5.defaultOptions, defaultContext = options5.defaultContext, _g = options5.assumeImmutableResults, assumeImmutableResults = _g === void 0 ? cache2.assumeImmutableResults : _g, resolvers = options5.resolvers, typeDefs = options5.typeDefs, fragmentMatcher = options5.fragmentMatcher, clientAwareness = options5.clientAwareness, clientAwarenessName = options5.name, clientAwarenessVersion = options5.version, devtools = options5.devtools, dataMasking = options5.dataMasking;
         if (globalThis.__DEV__ !== false) {
           utilities.warnRemovedOption(options5, "connectToDevTools", "ApolloClient", "Please use `devtools.enabled` instead.");
           utilities.warnRemovedOption(options5, "uri", "ApolloClient", "Please initialize an instance of `HttpLink` with `uri` instead.");
@@ -46179,7 +46094,7 @@ var require_core = __commonJS({
         this.queryDeduplication = queryDeduplication;
         this.defaultOptions = defaultOptions2 || /* @__PURE__ */ Object.create(null);
         this.typeDefs = typeDefs;
-        this.devtoolsConfig = tslib.__assign(tslib.__assign({}, devtools), { enabled: (_a91 = devtools === null || devtools === void 0 ? void 0 : devtools.enabled) !== null && _a91 !== void 0 ? _a91 : connectToDevTools });
+        this.devtoolsConfig = tslib.__assign(tslib.__assign({}, devtools), { enabled: (_a3 = devtools === null || devtools === void 0 ? void 0 : devtools.enabled) !== null && _a3 !== void 0 ? _a3 : connectToDevTools });
         if (this.devtoolsConfig.enabled === void 0) {
           this.devtoolsConfig.enabled = globalThis.__DEV__ !== false;
         }
@@ -46211,8 +46126,8 @@ var require_core = __commonJS({
           ssrMode,
           dataMasking: !!dataMasking,
           clientAwareness: {
-            name: (_b37 = clientAwareness === null || clientAwareness === void 0 ? void 0 : clientAwareness.name) !== null && _b37 !== void 0 ? _b37 : clientAwarenessName,
-            version: (_c8 = clientAwareness === null || clientAwareness === void 0 ? void 0 : clientAwareness.version) !== null && _c8 !== void 0 ? _c8 : clientAwarenessVersion
+            name: (_b = clientAwareness === null || clientAwareness === void 0 ? void 0 : clientAwareness.name) !== null && _b !== void 0 ? _b : clientAwarenessName,
+            version: (_c = clientAwareness === null || clientAwareness === void 0 ? void 0 : clientAwareness.version) !== null && _c !== void 0 ? _c : clientAwarenessVersion
           },
           localState: this.localState,
           assumeImmutableResults,
@@ -46338,8 +46253,8 @@ var require_core = __commonJS({
         return this.cache.readQuery(options5, optimistic);
       };
       ApolloClient3.prototype.watchFragment = function(options5) {
-        var _a91;
-        return this.cache.watchFragment(tslib.__assign(tslib.__assign({}, options5), (_a91 = {}, _a91[/* @__PURE__ */ Symbol.for("apollo.dataMasking")] = this.queryManager.dataMasking, _a91)));
+        var _a3;
+        return this.cache.watchFragment(tslib.__assign(tslib.__assign({}, options5), (_a3 = {}, _a3[/* @__PURE__ */ Symbol.for("apollo.dataMasking")] = this.queryManager.dataMasking, _a3)));
       };
       ApolloClient3.prototype.readFragment = function(options5, optimistic) {
         if (optimistic === void 0) {
@@ -46636,15 +46551,15 @@ var require_http = __commonJS({
     var errors2 = (init_errors(), __toCommonJS(errors_exports2));
     var core = (init_core(), __toCommonJS(core_exports3));
     function asyncIterator2(source) {
-      var _a91;
+      var _a3;
       var iterator = source[Symbol.asyncIterator]();
-      return _a91 = {
+      return _a3 = {
         next: function() {
           return iterator.next();
         }
-      }, _a91[Symbol.asyncIterator] = function() {
+      }, _a3[Symbol.asyncIterator] = function() {
         return this;
-      }, _a91;
+      }, _a3;
     }
     function nodeStreamIterator2(stream3) {
       var cleanup = null;
@@ -46796,29 +46711,29 @@ var require_http = __commonJS({
     var hasOwnProperty7 = Object.prototype.hasOwnProperty;
     function readMultipartBody2(response, nextValue) {
       return tslib.__awaiter(this, void 0, void 0, function() {
-        var decoder3, contentType, delimiter, boundaryVal, boundary, buffer4, iterator, running4, _a91, value3, done12, chunk4, searchFrom, bi, message, i, headers, contentType_1, body, result2, next4;
-        var _b37, _c8;
-        var _d4;
-        return tslib.__generator(this, function(_e2) {
-          switch (_e2.label) {
+        var decoder3, contentType, delimiter, boundaryVal, boundary, buffer4, iterator, running4, _a3, value3, done12, chunk4, searchFrom, bi, message, i, headers, contentType_1, body, result2, next4;
+        var _b, _c;
+        var _d;
+        return tslib.__generator(this, function(_e) {
+          switch (_e.label) {
             case 0:
               if (TextDecoder === void 0) {
                 throw new Error("TextDecoder must be defined in the environment: please import a polyfill.");
               }
               decoder3 = new TextDecoder("utf-8");
-              contentType = (_d4 = response.headers) === null || _d4 === void 0 ? void 0 : _d4.get("content-type");
+              contentType = (_d = response.headers) === null || _d === void 0 ? void 0 : _d.get("content-type");
               delimiter = "boundary=";
               boundaryVal = (contentType === null || contentType === void 0 ? void 0 : contentType.includes(delimiter)) ? contentType === null || contentType === void 0 ? void 0 : contentType.substring((contentType === null || contentType === void 0 ? void 0 : contentType.indexOf(delimiter)) + delimiter.length).replace(/['"]/g, "").replace(/\;(.*)/gm, "").trim() : "-";
               boundary = "\r\n--".concat(boundaryVal);
               buffer4 = "";
               iterator = responseIterator2(response);
               running4 = true;
-              _e2.label = 1;
+              _e.label = 1;
             case 1:
               if (!running4) return [3, 3];
               return [4, iterator.next()];
             case 2:
-              _a91 = _e2.sent(), value3 = _a91.value, done12 = _a91.done;
+              _a3 = _e.sent(), value3 = _a3.value, done12 = _a3.done;
               chunk4 = typeof value3 === "string" ? value3 : decoder3.decode(value3);
               searchFrom = buffer4.length - boundary.length + 1;
               running4 = !done12;
@@ -46826,10 +46741,10 @@ var require_http = __commonJS({
               bi = buffer4.indexOf(boundary, searchFrom);
               while (bi > -1) {
                 message = void 0;
-                _b37 = [
+                _b = [
                   buffer4.slice(0, bi),
                   buffer4.slice(bi + boundary.length)
-                ], message = _b37[0], buffer4 = _b37[1];
+                ], message = _b[0], buffer4 = _b[1];
                 i = message.indexOf("\r\n\r\n");
                 headers = parseHeaders2(message.slice(0, i));
                 contentType_1 = headers["content-type"];
@@ -46849,7 +46764,7 @@ var require_http = __commonJS({
                         next4 = tslib.__assign({}, result2.payload);
                       }
                       if ("errors" in result2) {
-                        next4 = tslib.__assign(tslib.__assign({}, next4), { extensions: tslib.__assign(tslib.__assign({}, "extensions" in next4 ? next4.extensions : null), (_c8 = {}, _c8[errors2.PROTOCOL_ERRORS_SYMBOL] = result2.errors, _c8)) });
+                        next4 = tslib.__assign(tslib.__assign({}, next4), { extensions: tslib.__assign(tslib.__assign({}, "extensions" in next4 ? next4.extensions : null), (_c = {}, _c[errors2.PROTOCOL_ERRORS_SYMBOL] = result2.errors, _c)) });
                       }
                       nextValue(next4);
                     } else {
@@ -47082,7 +46997,7 @@ var require_http = __commonJS({
       if (linkOptions === void 0) {
         linkOptions = {};
       }
-      var _a91 = linkOptions.uri, uri = _a91 === void 0 ? "/graphql" : _a91, preferredFetch = linkOptions.fetch, _b37 = linkOptions.print, print3 = _b37 === void 0 ? defaultPrinter2 : _b37, includeExtensions = linkOptions.includeExtensions, preserveHeaderCase = linkOptions.preserveHeaderCase, useGETForQueries = linkOptions.useGETForQueries, _c8 = linkOptions.includeUnusedVariables, includeUnusedVariables = _c8 === void 0 ? false : _c8, requestOptions = tslib.__rest(linkOptions, ["uri", "fetch", "print", "includeExtensions", "preserveHeaderCase", "useGETForQueries", "includeUnusedVariables"]);
+      var _a3 = linkOptions.uri, uri = _a3 === void 0 ? "/graphql" : _a3, preferredFetch = linkOptions.fetch, _b = linkOptions.print, print3 = _b === void 0 ? defaultPrinter2 : _b, includeExtensions = linkOptions.includeExtensions, preserveHeaderCase = linkOptions.preserveHeaderCase, useGETForQueries = linkOptions.useGETForQueries, _c = linkOptions.includeUnusedVariables, includeUnusedVariables = _c === void 0 ? false : _c, requestOptions = tslib.__rest(linkOptions, ["uri", "fetch", "print", "includeExtensions", "preserveHeaderCase", "useGETForQueries", "includeUnusedVariables"]);
       if (globalThis.__DEV__ !== false) {
         checkFetcher2(preferredFetch || backupFetch2);
       }
@@ -47097,7 +47012,7 @@ var require_http = __commonJS({
         var context10 = operation.getContext();
         var clientAwarenessHeaders = {};
         if (context10.clientAwareness) {
-          var _a92 = context10.clientAwareness, name_1 = _a92.name, version3 = _a92.version;
+          var _a4 = context10.clientAwareness, name_1 = _a4.name, version3 = _a4.version;
           if (name_1) {
             clientAwarenessHeaders["apollographql-client-name"] = name_1;
           }
@@ -47122,7 +47037,7 @@ var require_http = __commonJS({
           }
           operation.query = transformedQuery;
         }
-        var _b38 = selectHttpOptionsAndBodyInternal2(operation, print3, fallbackHttpConfig2, linkConfig, contextConfig), options5 = _b38.options, body = _b38.body;
+        var _b2 = selectHttpOptionsAndBodyInternal2(operation, print3, fallbackHttpConfig2, linkConfig, contextConfig), options5 = _b2.options, body = _b2.body;
         if (body.variables && !includeUnusedVariables) {
           body.variables = utils.filterOperationVariables(body.variables, operation.query);
         }
@@ -47156,7 +47071,7 @@ var require_http = __commonJS({
           options5.headers.accept = acceptHeader;
         }
         if (options5.method === "GET") {
-          var _c9 = rewriteURIForGET2(chosenURI, body), newURI = _c9.newURI, parseError2 = _c9.parseError;
+          var _c2 = rewriteURIForGET2(chosenURI, body), newURI = _c2.newURI, parseError2 = _c2.parseError;
           if (parseError2) {
             return utils.fromError(parseError2);
           }
@@ -47174,9 +47089,9 @@ var require_http = __commonJS({
           }) || backupFetch2;
           var observerNext = observer.next.bind(observer);
           currentFetch(chosenURI, options5).then(function(response) {
-            var _a93;
+            var _a5;
             operation.setContext({ response });
-            var ctype = (_a93 = response.headers) === null || _a93 === void 0 ? void 0 : _a93.get("content-type");
+            var ctype = (_a5 = response.headers) === null || _a5 === void 0 ? void 0 : _a5.get("content-type");
             if (ctype !== null && /^multipart\/mixed/i.test(ctype)) {
               return readMultipartBody2(response, observerNext);
             } else {
@@ -47232,7 +47147,7 @@ var require_retry2 = __commonJS({
     var utilities = (init_utilities2(), __toCommonJS(utilities_exports));
     var errors2 = (init_errors(), __toCommonJS(errors_exports2));
     function buildDelayFunction(delayOptions) {
-      var _a91 = delayOptions || {}, _b37 = _a91.initial, initial = _b37 === void 0 ? 300 : _b37, _c8 = _a91.jitter, jitter = _c8 === void 0 ? true : _c8, _d4 = _a91.max, max11 = _d4 === void 0 ? Infinity : _d4;
+      var _a3 = delayOptions || {}, _b = _a3.initial, initial = _b === void 0 ? 300 : _b, _c = _a3.jitter, jitter = _c === void 0 ? true : _c, _d = _a3.max, max11 = _d === void 0 ? Infinity : _d;
       var baseDelay = jitter ? initial : initial / 2;
       return function delayFunction(count7) {
         var delay3 = Math.min(max11, baseDelay * Math.pow(2, count7));
@@ -47243,7 +47158,7 @@ var require_retry2 = __commonJS({
       };
     }
     function buildRetryFunction(retryOptions2) {
-      var _a91 = retryOptions2 || {}, retryIf = _a91.retryIf, _b37 = _a91.max, max11 = _b37 === void 0 ? 5 : _b37;
+      var _a3 = retryOptions2 || {}, retryIf = _a3.retryIf, _b = _a3.max, max11 = _b === void 0 ? 5 : _b;
       return function retryFunction(count7, operation, error4) {
         if (count7 >= max11)
           return false;
@@ -47263,13 +47178,13 @@ var require_retry2 = __commonJS({
         this.onError = function(error4) {
           return tslib.__awaiter(_this, void 0, void 0, function() {
             var shouldRetry;
-            return tslib.__generator(this, function(_a91) {
-              switch (_a91.label) {
+            return tslib.__generator(this, function(_a3) {
+              switch (_a3.label) {
                 case 0:
                   this.retryCount += 1;
                   return [4, this.retryIf(this.retryCount, this.operation, error4)];
                 case 1:
-                  shouldRetry = _a91.sent();
+                  shouldRetry = _a3.sent();
                   if (shouldRetry) {
                     this.scheduleRetry(this.delayFor(this.retryCount, this.operation, error4));
                     return [2];
@@ -47294,12 +47209,12 @@ var require_retry2 = __commonJS({
         var _this = this;
         this.currentSubscription = this.forward(this.operation).subscribe({
           next: function(result2) {
-            var _a91;
+            var _a3;
             if (errors2.graphQLResultHasProtocolErrors(result2)) {
               _this.onError(new errors2.ApolloError({
                 protocolErrors: result2.extensions[errors2.PROTOCOL_ERRORS_SYMBOL]
               }));
-              (_a91 = _this.currentSubscription) === null || _a91 === void 0 ? void 0 : _a91.unsubscribe();
+              (_a3 = _this.currentSubscription) === null || _a3 === void 0 ? void 0 : _a3.unsubscribe();
               return;
             }
             _this.observer.next(result2);
@@ -47324,7 +47239,7 @@ var require_retry2 = __commonJS({
       tslib.__extends(RetryLink3, _super);
       function RetryLink3(options5) {
         var _this = _super.call(this) || this;
-        var _a91 = options5 || {}, attempts = _a91.attempts, delay3 = _a91.delay;
+        var _a3 = options5 || {}, attempts = _a3.attempts, delay3 = _a3.delay;
         _this.delayFor = typeof delay3 === "function" ? delay3 : buildDelayFunction(delay3);
         _this.retryIf = typeof attempts === "function" ? attempts : buildRetryFunction(attempts);
         return _this;
@@ -47356,8 +47271,8 @@ var require_subscriptions = __commonJS({
       return utilities.isNonNullObject(val) && "code" in val && "reason" in val;
     }
     function isLikeErrorEvent(err) {
-      var _a91;
-      return utilities.isNonNullObject(err) && ((_a91 = err.target) === null || _a91 === void 0 ? void 0 : _a91.readyState) === WebSocket.CLOSED;
+      var _a3;
+      return utilities.isNonNullObject(err) && ((_a3 = err.target) === null || _a3 === void 0 ? void 0 : _a3.readyState) === WebSocket.CLOSED;
     }
     var GraphQLWsLink2 = (function(_super) {
       tslib.__extends(GraphQLWsLink3, _super);
@@ -47407,13 +47322,13 @@ var require_utilities = __commonJS({
     var optimism = (init_lib4(), __toCommonJS(lib_exports3));
     var zenObservableTs = (init_module(), __toCommonJS(module_exports));
     init_es();
-    function shouldInclude2(_a92, variables) {
-      var directives = _a92.directives;
+    function shouldInclude2(_a4, variables) {
+      var directives = _a4.directives;
       if (!directives || !directives.length) {
         return true;
       }
-      return getInclusionDirectives2(directives).every(function(_a93) {
-        var directive = _a93.directive, ifArgument = _a93.ifArgument;
+      return getInclusionDirectives2(directives).every(function(_a5) {
+        var directive = _a5.directive, ifArgument = _a5.ifArgument;
         var evaledValue = false;
         if (ifArgument.value.kind === "Variable") {
           evaledValue = variables && variables[ifArgument.value.name.value];
@@ -47454,8 +47369,8 @@ var require_utilities = __commonJS({
     function hasClientExports2(document) {
       return document && hasDirectives2(["client", "export"], document, true);
     }
-    function isInclusionDirective2(_a92) {
-      var value3 = _a92.name.value;
+    function isInclusionDirective2(_a4) {
+      var value3 = _a4.name.value;
       return value3 === "skip" || value3 === "include";
     }
     function getInclusionDirectives2(directives) {
@@ -47477,16 +47392,16 @@ var require_utilities = __commonJS({
       return result2;
     }
     function getFragmentMaskMode2(fragment) {
-      var _a92, _b37;
-      var directive = (_a92 = fragment.directives) === null || _a92 === void 0 ? void 0 : _a92.find(function(_a93) {
-        var name = _a93.name;
+      var _a4, _b;
+      var directive = (_a4 = fragment.directives) === null || _a4 === void 0 ? void 0 : _a4.find(function(_a5) {
+        var name = _a5.name;
         return name.value === "unmask";
       });
       if (!directive) {
         return "mask";
       }
-      var modeArg = (_b37 = directive.arguments) === null || _b37 === void 0 ? void 0 : _b37.find(function(_a93) {
-        var name = _a93.name;
+      var modeArg = (_b = directive.arguments) === null || _b === void 0 ? void 0 : _b.find(function(_a5) {
+        var name = _a5.name;
         return name.value === "mode";
       });
       if (globalThis.__DEV__ !== false) {
@@ -47755,8 +47670,8 @@ var require_utilities = __commonJS({
         field.directives.forEach(function(directive) {
           directivesObj[directive.name.value] = {};
           if (directive.arguments) {
-            directive.arguments.forEach(function(_a92) {
-              var name = _a92.name, value3 = _a92.value;
+            directive.arguments.forEach(function(_a4) {
+              var name = _a4.name, value3 = _a4.value;
               return valueToObjectRepresentation2(directivesObj[directive.name.value], name, value3, variables);
             });
           }
@@ -47765,8 +47680,8 @@ var require_utilities = __commonJS({
       var argObj = null;
       if (field.arguments && field.arguments.length) {
         argObj = {};
-        field.arguments.forEach(function(_a92) {
-          var name = _a92.name, value3 = _a92.value;
+        field.arguments.forEach(function(_a4) {
+          var name = _a4.name, value3 = _a4.value;
           return valueToObjectRepresentation2(argObj, name, value3, variables);
         });
       }
@@ -47823,8 +47738,8 @@ var require_utilities = __commonJS({
     function argumentsObjectFromField2(field, variables) {
       if (field.arguments && field.arguments.length) {
         var argObj_1 = {};
-        field.arguments.forEach(function(_a92) {
-          var name = _a92.name, value3 = _a92.value;
+        field.arguments.forEach(function(_a4) {
+          var name = _a4.name, value3 = _a4.value;
           return valueToObjectRepresentation2(argObj_1, name, value3, variables);
         });
         return argObj_1;
@@ -47836,8 +47751,8 @@ var require_utilities = __commonJS({
     }
     function getTypenameFromResult2(result2, selectionSet, fragmentMap) {
       var fragments;
-      for (var _i = 0, _a92 = selectionSet.selections; _i < _a92.length; _i++) {
-        var selection = _a92[_i];
+      for (var _i = 0, _a4 = selectionSet.selections; _i < _a4.length; _i++) {
+        var selection = _a4[_i];
         if (isField3(selection)) {
           if (selection.name.value === "__typename") {
             return result2[resultKeyNameFromField2(selection)];
@@ -47852,8 +47767,8 @@ var require_utilities = __commonJS({
         return result2.__typename;
       }
       if (fragments) {
-        for (var _b37 = 0, fragments_1 = fragments; _b37 < fragments_1.length; _b37++) {
-          var selection = fragments_1[_b37];
+        for (var _b = 0, fragments_1 = fragments; _b < fragments_1.length; _b++) {
+          var selection = fragments_1[_b];
           var typename = getTypenameFromResult2(result2, getFragmentFromSelection2(selection, fragmentMap).selectionSet, fragmentMap);
           if (typeof typename === "string") {
             return typename;
@@ -47913,8 +47828,8 @@ var require_utilities = __commonJS({
     function getMainDefinition3(queryDoc) {
       checkDocument2(queryDoc);
       var fragmentDefinition;
-      for (var _i = 0, _a92 = queryDoc.definitions; _i < _a92.length; _i++) {
-        var definition = _a92[_i];
+      for (var _i = 0, _a4 = queryDoc.definitions; _i < _a4.length; _i++) {
+        var definition = _a4[_i];
         if (definition.kind === "OperationDefinition") {
           var operation = definition.operation;
           if (operation === "query" || operation === "mutation" || operation === "subscription") {
@@ -48394,8 +48309,8 @@ var require_utilities = __commonJS({
       checkDocument2(document);
       return graphql2.visit(document, {
         FragmentSpread: function(node) {
-          var _a92;
-          if ((_a92 = node.directives) === null || _a92 === void 0 ? void 0 : _a92.some(function(directive) {
+          var _a4;
+          if ((_a4 = node.directives) === null || _a4 === void 0 ? void 0 : _a4.some(function(directive) {
             return directive.name.value === "unmask";
           })) {
             return;
@@ -48410,8 +48325,8 @@ var require_utilities = __commonJS({
       });
     }
     function isOperation2(document, operation) {
-      var _a92;
-      return ((_a92 = getOperationDefinition2(document)) === null || _a92 === void 0 ? void 0 : _a92.operation) === operation;
+      var _a4;
+      return ((_a4 = getOperationDefinition2(document)) === null || _a4 === void 0 ? void 0 : _a4.operation) === operation;
     }
     function isMutationOperation2(document) {
       return isOperation2(document, "mutation");
@@ -48515,12 +48430,12 @@ var require_utilities = __commonJS({
       }
       return {
         keyArgs,
-        merge: function(existing, incoming, _a92) {
-          var args2 = _a92.args;
+        merge: function(existing, incoming, _a4) {
+          var args2 = _a4.args;
           var merged = existing ? existing.slice(0) : [];
           if (incoming) {
             if (args2) {
-              var _b37 = args2.offset, offset = _b37 === void 0 ? 0 : _b37;
+              var _b = args2.offset, offset = _b === void 0 ? 0 : _b;
               for (var i = 0; i < incoming.length; ++i) {
                 merged[offset + i] = incoming[i];
               }
@@ -48538,8 +48453,8 @@ var require_utilities = __commonJS({
       }
       return {
         keyArgs,
-        read: function(existing, _a92) {
-          var canRead = _a92.canRead, readField = _a92.readField;
+        read: function(existing, _a4) {
+          var canRead = _a4.canRead, readField = _a4.readField;
           if (!existing)
             return existing;
           var edges = [];
@@ -48557,14 +48472,14 @@ var require_utilities = __commonJS({
           if (edges.length > 1 && firstEdgeCursor === lastEdgeCursor) {
             firstEdgeCursor = "";
           }
-          var _b37 = existing.pageInfo || {}, startCursor = _b37.startCursor, endCursor = _b37.endCursor;
+          var _b = existing.pageInfo || {}, startCursor = _b.startCursor, endCursor = _b.endCursor;
           return tslib.__assign(tslib.__assign({}, getExtras2(existing)), { edges, pageInfo: tslib.__assign(tslib.__assign({}, existing.pageInfo), {
             startCursor: startCursor || firstEdgeCursor,
             endCursor: endCursor || lastEdgeCursor
           }) });
         },
-        merge: function(existing, incoming, _a92) {
-          var args2 = _a92.args, isReference5 = _a92.isReference, readField = _a92.readField;
+        merge: function(existing, incoming, _a4) {
+          var args2 = _a4.args, isReference5 = _a4.isReference, readField = _a4.readField;
           if (!existing) {
             existing = makeEmptyData2();
           }
@@ -48626,7 +48541,7 @@ var require_utilities = __commonJS({
           var edges = tslib.__spreadArray(tslib.__spreadArray(tslib.__spreadArray([], prefix2, true), incomingEdges, true), suffix, true);
           var pageInfo = tslib.__assign(tslib.__assign({}, incoming.pageInfo), existing.pageInfo);
           if (incoming.pageInfo) {
-            var _b37 = incoming.pageInfo, hasPreviousPage = _b37.hasPreviousPage, hasNextPage = _b37.hasNextPage, startCursor = _b37.startCursor, endCursor = _b37.endCursor, extras2 = tslib.__rest(_b37, ["hasPreviousPage", "hasNextPage", "startCursor", "endCursor"]);
+            var _b = incoming.pageInfo, hasPreviousPage = _b.hasPreviousPage, hasNextPage = _b.hasNextPage, startCursor = _b.startCursor, endCursor = _b.endCursor, extras2 = tslib.__rest(_b, ["hasPreviousPage", "hasNextPage", "startCursor", "endCursor"]);
             Object.assign(pageInfo, extras2);
             if (!prefix2.length) {
               if (void 0 !== hasPreviousPage)
@@ -48864,7 +48779,7 @@ var require_utilities = __commonJS({
             }
           },
           complete: function() {
-            var _a92 = _this, sub = _a92.sub, _b37 = _a92.sources, sources2 = _b37 === void 0 ? [] : _b37;
+            var _a4 = _this, sub = _a4.sub, _b = _a4.sources, sources2 = _b === void 0 ? [] : _b;
             if (sub !== null) {
               var value3 = sources2.shift();
               if (!value3) {
@@ -48976,8 +48891,8 @@ var require_utilities = __commonJS({
       var mergedData = prevResult;
       var merger = new DeepMerger2();
       if (isExecutionPatchIncrementalResult2(result2) && isNonEmptyArray4(result2.incremental)) {
-        result2.incremental.forEach(function(_a92) {
-          var data = _a92.data, path4 = _a92.path;
+        result2.incremental.forEach(function(_a4) {
+          var data = _a4.data, path4 = _a4.path;
           for (var i = path4.length - 1; i >= 0; --i) {
             var key = path4[i];
             var isNumericKey = !isNaN(+key);
@@ -49086,11 +49001,11 @@ var require_utilities = __commonJS({
     function stripTypename2(value3) {
       return omitDeep2(value3, "__typename");
     }
-    var _a91;
+    var _a3;
     var muteAllDeprecations2 = /* @__PURE__ */ Symbol.for("apollo.deprecations");
     var deprecationsSlot2 = /* @__PURE__ */ Symbol.for("apollo.deprecations.slot");
     var global$1 = globals.global;
-    var slot2 = (_a91 = global$1[deprecationsSlot2]) !== null && _a91 !== void 0 ? _a91 : global$1[deprecationsSlot2] = new optimism.Slot();
+    var slot2 = (_a3 = global$1[deprecationsSlot2]) !== null && _a3 !== void 0 ? _a3 : global$1[deprecationsSlot2] = new optimism.Slot();
     function isMuted2(name) {
       return global$1[muteAllDeprecations2] || (slot2.getValue() || []).includes(name);
     }
@@ -60338,10 +60253,10 @@ var ZswapLocalState = class _ZswapLocalState {
    * @param {Date | null} [_ttl]
    * @returns {any}
    */
-  spendFromOutput(secret_keys, coin, segment, output, _ttl4) {
+  spendFromOutput(secret_keys, coin, segment, output, _ttl) {
     _assertClass(secret_keys, ZswapSecretKeys);
     _assertClass(output, ZswapOutput);
-    const ret = wasm.zswaplocalstate_spendFromOutput(this.__wbg_ptr, secret_keys.__wbg_ptr, coin, isLikeNone(segment) ? 16777215 : segment, output.__wbg_ptr, isLikeNone(_ttl4) ? 0 : addToExternrefTable0(_ttl4));
+    const ret = wasm.zswaplocalstate_spendFromOutput(this.__wbg_ptr, secret_keys.__wbg_ptr, coin, isLikeNone(segment) ? 16777215 : segment, output.__wbg_ptr, isLikeNone(_ttl) ? 0 : addToExternrefTable0(_ttl));
     if (ret[2]) {
       throw takeFromExternrefTable0(ret[1]);
     }
@@ -60420,9 +60335,9 @@ var ZswapLocalState = class _ZswapLocalState {
    * @param {Date | null} [_ttl]
    * @returns {any}
    */
-  spend(secret_keys, coin, segment, _ttl4) {
+  spend(secret_keys, coin, segment, _ttl) {
     _assertClass(secret_keys, ZswapSecretKeys);
-    const ret = wasm.zswaplocalstate_spend(this.__wbg_ptr, secret_keys.__wbg_ptr, coin, isLikeNone(segment) ? 16777215 : segment, isLikeNone(_ttl4) ? 0 : addToExternrefTable0(_ttl4));
+    const ret = wasm.zswaplocalstate_spend(this.__wbg_ptr, secret_keys.__wbg_ptr, coin, isLikeNone(segment) ? 16777215 : segment, isLikeNone(_ttl) ? 0 : addToExternrefTable0(_ttl));
     if (ret[2]) {
       throw takeFromExternrefTable0(ret[1]);
     }
@@ -60536,11 +60451,11 @@ var ZswapOffer = class _ZswapOffer {
    * @param {bigint | null} [_value]
    * @returns {ZswapOffer}
    */
-  static fromInput(input, _type3, _value2) {
+  static fromInput(input, _type, _value) {
     _assertClass(input, ZswapInput);
-    var ptr0 = isLikeNone(_type3) ? 0 : passStringToWasm0(_type3, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var ptr0 = isLikeNone(_type) ? 0 : passStringToWasm0(_type, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     var len0 = WASM_VECTOR_LEN;
-    const ret = wasm.zswapoffer_fromInput(input.__wbg_ptr, ptr0, len0, isLikeNone(_value2) ? 0 : addToExternrefTable0(_value2));
+    const ret = wasm.zswapoffer_fromInput(input.__wbg_ptr, ptr0, len0, isLikeNone(_value) ? 0 : addToExternrefTable0(_value));
     if (ret[2]) {
       throw takeFromExternrefTable0(ret[1]);
     }
@@ -60575,11 +60490,11 @@ var ZswapOffer = class _ZswapOffer {
    * @param {bigint | null} [_value]
    * @returns {ZswapOffer}
    */
-  static fromOutput(output, _type3, _value2) {
+  static fromOutput(output, _type, _value) {
     _assertClass(output, ZswapOutput);
-    var ptr0 = isLikeNone(_type3) ? 0 : passStringToWasm0(_type3, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var ptr0 = isLikeNone(_type) ? 0 : passStringToWasm0(_type, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     var len0 = WASM_VECTOR_LEN;
-    const ret = wasm.zswapoffer_fromOutput(output.__wbg_ptr, ptr0, len0, isLikeNone(_value2) ? 0 : addToExternrefTable0(_value2));
+    const ret = wasm.zswapoffer_fromOutput(output.__wbg_ptr, ptr0, len0, isLikeNone(_value) ? 0 : addToExternrefTable0(_value));
     if (ret[2]) {
       throw takeFromExternrefTable0(ret[1]);
     }
@@ -62533,7 +62448,7 @@ var globalStoreId = `effect/GlobalValue`;
 var globalStore;
 var globalValue = (id3, compute) => {
   if (!globalStore) {
-    globalThis[globalStoreId] ?? (globalThis[globalStoreId] = /* @__PURE__ */ new Map());
+    globalThis[globalStoreId] ??= /* @__PURE__ */ new Map();
     globalStore = globalThis[globalStoreId];
   }
   if (!globalStore.has(id3)) {
@@ -62575,14 +62490,9 @@ var getBugErrorMessage = (message) => `BUG: ${message} - please report an issue 
 // node_modules/effect/dist/esm/Utils.js
 var GenKindTypeId = /* @__PURE__ */ Symbol.for("effect/Gen/GenKind");
 var isGenKind = (u) => isObject(u) && GenKindTypeId in u;
-var _a;
 var GenKindImpl = class {
+  value;
   constructor(value3) {
-    __publicField(this, "value");
-    /**
-     * @since 2.0.0
-     */
-    __publicField(this, _a, GenKindTypeId);
     this.value = value3;
   }
   /**
@@ -62612,14 +62522,18 @@ var GenKindImpl = class {
   /**
    * @since 2.0.0
    */
-  [(_a = GenKindTypeId, Symbol.iterator)]() {
+  [GenKindTypeId] = GenKindTypeId;
+  /**
+   * @since 2.0.0
+   */
+  [Symbol.iterator]() {
     return new SingleShotGen(this);
   }
 };
 var SingleShotGen = class _SingleShotGen {
+  self;
+  called = false;
   constructor(self2) {
-    __publicField(this, "self");
-    __publicField(this, "called", false);
     this.self = self2;
   }
   /**
@@ -62670,8 +62584,8 @@ var MUL_LO = 1284865837 >>> 0;
 var BIT_53 = 9007199254740992;
 var BIT_27 = 134217728;
 var PCGRandom = class {
+  _state;
   constructor(seedHi, seedLo, incHi, incLo) {
-    __publicField(this, "_state");
     if (isNullable(seedLo) && isNullable(seedHi)) {
       seedLo = Math.random() * 4294967295 >>> 0;
       seedHi = 0;
@@ -62780,23 +62694,21 @@ function add64(out, aHi, aLo, bHi, bLo) {
   out[1] = lo;
 }
 var YieldWrapTypeId = /* @__PURE__ */ Symbol.for("effect/Utils/YieldWrap");
-var _value;
 var YieldWrap = class {
+  /**
+   * @since 3.0.6
+   */
+  #value;
   constructor(value3) {
-    /**
-     * @since 3.0.6
-     */
-    __privateAdd(this, _value);
-    __privateSet(this, _value, value3);
+    this.#value = value3;
   }
   /**
    * @since 3.0.6
    */
   [YieldWrapTypeId]() {
-    return __privateGet(this, _value);
+    return this.#value;
   }
 };
-_value = new WeakMap();
 function yieldWrapGet(self2) {
   if (typeof self2 === "object" && self2 !== null && YieldWrapTypeId in self2) {
     return self2[YieldWrapTypeId]();
@@ -65491,7 +65403,7 @@ var nominal = () => {
     [RefinedConstructorsTypeId]: RefinedConstructorsTypeId,
     option: (args2) => some2(args2),
     either: (args2) => right2(args2),
-    is: (_args2) => true
+    is: (_args) => true
   });
 };
 var all4 = (...brands) => {
@@ -67012,9 +66924,7 @@ function arraySpliceIn(mutate7, at, v, arr) {
 
 // node_modules/effect/dist/esm/internal/hashMap/node.js
 var EmptyNode = class _EmptyNode {
-  constructor() {
-    __publicField(this, "_tag", "EmptyNode");
-  }
+  _tag = "EmptyNode";
   modify(edit, _shift, f, hash3, key, size20) {
     const v = f(none2());
     if (isNone2(v)) return new _EmptyNode();
@@ -67032,12 +66942,12 @@ function canEditNode(node, edit) {
   return isEmptyNode(node) ? false : edit === node.edit;
 }
 var LeafNode = class _LeafNode {
+  edit;
+  hash;
+  key;
+  value;
+  _tag = "LeafNode";
   constructor(edit, hash3, key, value3) {
-    __publicField(this, "edit");
-    __publicField(this, "hash");
-    __publicField(this, "key");
-    __publicField(this, "value");
-    __publicField(this, "_tag", "LeafNode");
     this.edit = edit;
     this.hash = hash3;
     this.key = key;
@@ -67064,11 +66974,11 @@ var LeafNode = class _LeafNode {
   }
 };
 var CollisionNode = class _CollisionNode {
+  edit;
+  hash;
+  children;
+  _tag = "CollisionNode";
   constructor(edit, hash3, children3) {
-    __publicField(this, "edit");
-    __publicField(this, "hash");
-    __publicField(this, "children");
-    __publicField(this, "_tag", "CollisionNode");
     this.edit = edit;
     this.hash = hash3;
     this.children = children3;
@@ -67107,11 +67017,11 @@ var CollisionNode = class _CollisionNode {
   }
 };
 var IndexedNode = class _IndexedNode {
+  edit;
+  mask;
+  children;
+  _tag = "IndexedNode";
   constructor(edit, mask, children3) {
-    __publicField(this, "edit");
-    __publicField(this, "mask");
-    __publicField(this, "children");
-    __publicField(this, "_tag", "IndexedNode");
     this.edit = edit;
     this.mask = mask;
     this.children = children3;
@@ -67153,11 +67063,11 @@ var IndexedNode = class _IndexedNode {
   }
 };
 var ArrayNode = class _ArrayNode {
+  edit;
+  size;
+  children;
+  _tag = "ArrayNode";
   constructor(edit, size20, children3) {
-    __publicField(this, "edit");
-    __publicField(this, "size");
-    __publicField(this, "children");
-    __publicField(this, "_tag", "ArrayNode");
     this.edit = edit;
     this.size = size20;
     this.children = children3;
@@ -67306,10 +67216,10 @@ var makeImpl = (editable, edit, root2, size20) => {
   return map116;
 };
 var HashMapIterator = class _HashMapIterator {
+  map;
+  f;
+  v;
   constructor(map116, f) {
-    __publicField(this, "map");
-    __publicField(this, "f");
-    __publicField(this, "v");
     this.map = map116;
     this.f = f;
     this.v = visitLazy(this.map._root, this.f, void 0);
@@ -69182,15 +69092,12 @@ var OP_NONE = "None";
 var OP_RUNTIME = "Runtime";
 var OP_COMPOSITE = "Composite";
 var emptyHash = /* @__PURE__ */ string2(`${FiberIdSymbolKey}-${OP_NONE}`);
-var _a2;
 var None = class {
-  constructor() {
-    __publicField(this, _a2, FiberIdTypeId);
-    __publicField(this, "_tag", OP_NONE);
-    __publicField(this, "id", -1);
-    __publicField(this, "startTimeMillis", -1);
-  }
-  [(_a2 = FiberIdTypeId, symbol)]() {
+  [FiberIdTypeId] = FiberIdTypeId;
+  _tag = OP_NONE;
+  id = -1;
+  startTimeMillis = -1;
+  [symbol]() {
     return emptyHash;
   }
   [symbol2](that) {
@@ -69209,17 +69116,16 @@ var None = class {
     return this.toJSON();
   }
 };
-var _a3;
 var Runtime = class {
+  id;
+  startTimeMillis;
+  [FiberIdTypeId] = FiberIdTypeId;
+  _tag = OP_RUNTIME;
   constructor(id3, startTimeMillis) {
-    __publicField(this, "id");
-    __publicField(this, "startTimeMillis");
-    __publicField(this, _a3, FiberIdTypeId);
-    __publicField(this, "_tag", OP_RUNTIME);
     this.id = id3;
     this.startTimeMillis = startTimeMillis;
   }
-  [(_a3 = FiberIdTypeId, symbol)]() {
+  [symbol]() {
     return cached(this, string2(`${FiberIdSymbolKey}-${this._tag}-${this.id}-${this.startTimeMillis}`));
   }
   [symbol2](that) {
@@ -69240,18 +69146,17 @@ var Runtime = class {
     return this.toJSON();
   }
 };
-var _a4;
 var Composite = class {
+  left;
+  right;
+  [FiberIdTypeId] = FiberIdTypeId;
+  _tag = OP_COMPOSITE;
   constructor(left3, right3) {
-    __publicField(this, "left");
-    __publicField(this, "right");
-    __publicField(this, _a4, FiberIdTypeId);
-    __publicField(this, "_tag", OP_COMPOSITE);
-    __publicField(this, "_hash");
     this.left = left3;
     this.right = right3;
   }
-  [(_a4 = FiberIdTypeId, symbol)]() {
+  _hash;
+  [symbol]() {
     return pipe(string2(`${FiberIdSymbolKey}-${this._tag}`), combine(hash(this.left)), combine(hash(this.right)), cached(this));
   }
   [symbol2](that) {
@@ -70168,16 +70073,14 @@ var merge4 = (sequential5, parallel5) => {
   return cons(parallelCollectionToSequentialCollection(parallel5), sequential5);
 };
 var EntryTypeId = /* @__PURE__ */ Symbol.for("effect/RequestBlock/Entry");
-var _a5;
-_a5 = EntryTypeId;
 var EntryImpl = class {
+  request;
+  result;
+  listeners;
+  ownerId;
+  state;
+  [EntryTypeId] = blockedRequestVariance;
   constructor(request2, result2, listeners, ownerId, state) {
-    __publicField(this, "request");
-    __publicField(this, "result");
-    __publicField(this, "listeners");
-    __publicField(this, "ownerId");
-    __publicField(this, "state");
-    __publicField(this, _a5, blockedRequestVariance);
     this.request = request2;
     this.result = result2;
     this.listeners = listeners;
@@ -70195,12 +70098,10 @@ var parallelVariance = {
   /* c8 ignore next */
   _R: (_) => _
 };
-var _a6;
-_a6 = RequestBlockParallelTypeId;
 var ParallelImpl = class {
+  map;
+  [RequestBlockParallelTypeId] = parallelVariance;
   constructor(map116) {
-    __publicField(this, "map");
-    __publicField(this, _a6, parallelVariance);
     this.map = map116;
   }
 };
@@ -70218,12 +70119,10 @@ var sequentialVariance = {
   /* c8 ignore next */
   _R: (_) => _
 };
-var _a7;
-_a7 = SequentialCollectionTypeId;
 var SequentialImpl = class {
+  map;
+  [SequentialCollectionTypeId] = sequentialVariance;
   constructor(map116) {
-    __publicField(this, "map");
-    __publicField(this, _a7, sequentialVariance);
     this.map = map116;
   }
 };
@@ -70263,9 +70162,9 @@ var done = (effect4) => {
 
 // node_modules/effect/dist/esm/internal/singleShotGen.js
 var SingleShotGen2 = class _SingleShotGen {
+  self;
+  called = false;
   constructor(self2) {
-    __publicField(this, "self");
-    __publicField(this, "called", false);
     this.self = self2;
   }
   next(a) {
@@ -70305,26 +70204,25 @@ var runRequestBlock = (blockedRequests) => {
 };
 var EffectTypeId2 = /* @__PURE__ */ Symbol.for("effect/Effect");
 var RevertFlags = class {
+  patch;
+  op;
+  _op = OP_REVERT_FLAGS;
   constructor(patch13, op) {
-    __publicField(this, "patch");
-    __publicField(this, "op");
-    __publicField(this, "_op", OP_REVERT_FLAGS);
     this.patch = patch13;
     this.op = op;
   }
 };
-var _a8;
 var EffectPrimitive = class {
+  _op;
+  effect_instruction_i0 = void 0;
+  effect_instruction_i1 = void 0;
+  effect_instruction_i2 = void 0;
+  trace = void 0;
+  [EffectTypeId2] = effectVariance;
   constructor(_op) {
-    __publicField(this, "_op");
-    __publicField(this, "effect_instruction_i0");
-    __publicField(this, "effect_instruction_i1");
-    __publicField(this, "effect_instruction_i2");
-    __publicField(this, "trace");
-    __publicField(this, _a8, effectVariance);
     this._op = _op;
   }
-  [(_a8 = EffectTypeId2, symbol2)](that) {
+  [symbol2](that) {
     return this === that;
   }
   [symbol]() {
@@ -70352,19 +70250,18 @@ var EffectPrimitive = class {
     return new SingleShotGen2(new YieldWrap(this));
   }
 };
-var _a9;
 var EffectPrimitiveFailure = class {
+  _op;
+  effect_instruction_i0 = void 0;
+  effect_instruction_i1 = void 0;
+  effect_instruction_i2 = void 0;
+  trace = void 0;
+  [EffectTypeId2] = effectVariance;
   constructor(_op) {
-    __publicField(this, "_op");
-    __publicField(this, "effect_instruction_i0");
-    __publicField(this, "effect_instruction_i1");
-    __publicField(this, "effect_instruction_i2");
-    __publicField(this, "trace");
-    __publicField(this, _a9, effectVariance);
     this._op = _op;
     this._tag = _op;
   }
-  [(_a9 = EffectTypeId2, symbol2)](that) {
+  [symbol2](that) {
     return exitIsExit(that) && that._op === "Failure" && // @ts-expect-error
     equals(this.effect_instruction_i0, that.effect_instruction_i0);
   }
@@ -70400,19 +70297,18 @@ var EffectPrimitiveFailure = class {
     return new SingleShotGen2(new YieldWrap(this));
   }
 };
-var _a10;
 var EffectPrimitiveSuccess = class {
+  _op;
+  effect_instruction_i0 = void 0;
+  effect_instruction_i1 = void 0;
+  effect_instruction_i2 = void 0;
+  trace = void 0;
+  [EffectTypeId2] = effectVariance;
   constructor(_op) {
-    __publicField(this, "_op");
-    __publicField(this, "effect_instruction_i0");
-    __publicField(this, "effect_instruction_i1");
-    __publicField(this, "effect_instruction_i2");
-    __publicField(this, "trace");
-    __publicField(this, _a10, effectVariance);
     this._op = _op;
     this._tag = _op;
   }
-  [(_a10 = EffectTypeId2, symbol2)](that) {
+  [symbol2](that) {
     return exitIsExit(that) && that._op === "Success" && // @ts-expect-error
     equals(this.effect_instruction_i0, that.effect_instruction_i0);
   }
@@ -71089,10 +70985,7 @@ ${this.stack.split("\n").slice(1).join("\n")}` : this.toString();
 })();
 var makeException = (proto14, tag4) => {
   class Base3 extends YieldableError {
-    constructor() {
-      super(...arguments);
-      __publicField(this, "_tag", tag4);
-    }
+    _tag = tag4;
   }
   Object.assign(Base3.prototype, proto14);
   Base3.prototype.name = tag4;
@@ -71136,12 +71029,12 @@ var isTimeoutException = (u) => hasProperty(u, TimeoutExceptionTypeId);
 var UnknownExceptionTypeId = /* @__PURE__ */ Symbol.for("effect/Cause/errors/UnknownException");
 var UnknownException = /* @__PURE__ */ (function() {
   class UnknownException3 extends YieldableError {
+    _tag = "UnknownException";
+    error;
     constructor(cause3, message) {
       super(message ?? "An unknown error occurred", {
         cause: cause3
       });
-      __publicField(this, "_tag", "UnknownException");
-      __publicField(this, "error");
       this.error = cause3;
     }
   }
@@ -71842,20 +71735,16 @@ var processOrPerformanceNow = /* @__PURE__ */ (function() {
   const origin = /* @__PURE__ */ performanceNowNanos() - /* @__PURE__ */ processHrtime.bigint();
   return () => origin + processHrtime.bigint();
 })();
-var _a12;
-_a12 = ClockTypeId;
 var ClockImpl = class {
-  constructor() {
-    __publicField(this, _a12, ClockTypeId);
-    __publicField(this, "currentTimeMillis", /* @__PURE__ */ sync(() => this.unsafeCurrentTimeMillis()));
-    __publicField(this, "currentTimeNanos", /* @__PURE__ */ sync(() => this.unsafeCurrentTimeNanos()));
-  }
+  [ClockTypeId] = ClockTypeId;
   unsafeCurrentTimeMillis() {
     return Date.now();
   }
   unsafeCurrentTimeNanos() {
     return processOrPerformanceNow();
   }
+  currentTimeMillis = /* @__PURE__ */ sync(() => this.unsafeCurrentTimeMillis());
+  currentTimeNanos = /* @__PURE__ */ sync(() => this.unsafeCurrentTimeNanos());
   scheduler() {
     return succeed(globalClockScheduler);
   }
@@ -72484,13 +72373,11 @@ var defaultConsole = {
 var RandomSymbolKey = "effect/Random";
 var RandomTypeId = /* @__PURE__ */ Symbol.for(RandomSymbolKey);
 var randomTag = /* @__PURE__ */ GenericTag("effect/Random");
-var _a13;
-_a13 = RandomTypeId;
 var RandomImpl = class {
+  seed;
+  [RandomTypeId] = RandomTypeId;
+  PRNG;
   constructor(seed) {
-    __publicField(this, "seed");
-    __publicField(this, _a13, RandomTypeId);
-    __publicField(this, "PRNG");
     this.seed = seed;
     this.PRNG = new PCGRandom(seed);
   }
@@ -72529,13 +72416,11 @@ var swap = (buffer4, index1, index2) => {
   return buffer4;
 };
 var make22 = (seed) => new RandomImpl(hash(seed));
-var _a14;
-_a14 = RandomTypeId;
 var FixedRandomImpl = class {
+  values;
+  [RandomTypeId] = RandomTypeId;
+  index = 0;
   constructor(values7) {
-    __publicField(this, "values");
-    __publicField(this, _a14, RandomTypeId);
-    __publicField(this, "index", 0);
     this.values = values7;
     if (values7.length === 0) {
       throw new Error("Requires at least one value");
@@ -72612,20 +72497,20 @@ var randomHexString = /* @__PURE__ */ (function() {
   };
 })();
 var NativeSpan = class {
+  name;
+  parent;
+  context;
+  startTime;
+  kind;
+  _tag = "Span";
+  spanId;
+  traceId = "native";
+  sampled = true;
+  status;
+  attributes;
+  events = [];
+  links;
   constructor(name, parent, context10, links, startTime, kind) {
-    __publicField(this, "name");
-    __publicField(this, "parent");
-    __publicField(this, "context");
-    __publicField(this, "startTime");
-    __publicField(this, "kind");
-    __publicField(this, "_tag", "Span");
-    __publicField(this, "spanId");
-    __publicField(this, "traceId", "native");
-    __publicField(this, "sampled", true);
-    __publicField(this, "status");
-    __publicField(this, "attributes");
-    __publicField(this, "events", []);
-    __publicField(this, "links");
     this.name = name;
     this.parent = parent;
     this.context = context10;
@@ -72908,10 +72793,7 @@ var tagged = (tag4) => (args2) => {
 var Class2 = Structural;
 var TaggedClass = (tag4) => {
   class Base3 extends Class2 {
-    constructor() {
-      super(...arguments);
-      __publicField(this, "_tag", tag4);
-    }
+    _tag = tag4;
   }
   return Base3;
 };
@@ -72966,10 +72848,7 @@ var Error2 = /* @__PURE__ */ (function() {
 var TaggedError = (tag4) => {
   const O = {
     BaseEffectError: class extends Error2 {
-      constructor() {
-        super(...arguments);
-        __publicField(this, "_tag", tag4);
-      }
+      _tag = tag4;
     }
   };
   O.BaseEffectError.prototype.name = tag4;
@@ -73464,12 +73343,10 @@ function empty22() {
   return unsafeMake4(/* @__PURE__ */ new Map());
 }
 var FiberRefsSym = /* @__PURE__ */ Symbol.for("effect/FiberRefs");
-var _a15;
-_a15 = FiberRefsSym;
 var FiberRefsImpl = class {
+  locals;
+  [FiberRefsSym] = FiberRefsSym;
   constructor(locals) {
-    __publicField(this, "locals");
-    __publicField(this, _a15, FiberRefsSym);
     this.locals = locals;
   }
   pipe() {
@@ -73736,45 +73613,40 @@ var OP_DONE = "Done";
 var OP_RUNNING = "Running";
 var OP_SUSPENDED = "Suspended";
 var DoneHash = /* @__PURE__ */ string2(`${FiberStatusSymbolKey}-${OP_DONE}`);
-var _a16;
 var Done = class {
-  constructor() {
-    __publicField(this, _a16, FiberStatusTypeId);
-    __publicField(this, "_tag", OP_DONE);
-  }
-  [(_a16 = FiberStatusTypeId, symbol)]() {
+  [FiberStatusTypeId] = FiberStatusTypeId;
+  _tag = OP_DONE;
+  [symbol]() {
     return DoneHash;
   }
   [symbol2](that) {
     return isFiberStatus(that) && that._tag === OP_DONE;
   }
 };
-var _a17;
 var Running = class {
+  runtimeFlags;
+  [FiberStatusTypeId] = FiberStatusTypeId;
+  _tag = OP_RUNNING;
   constructor(runtimeFlags2) {
-    __publicField(this, "runtimeFlags");
-    __publicField(this, _a17, FiberStatusTypeId);
-    __publicField(this, "_tag", OP_RUNNING);
     this.runtimeFlags = runtimeFlags2;
   }
-  [(_a17 = FiberStatusTypeId, symbol)]() {
+  [symbol]() {
     return pipe(hash(FiberStatusSymbolKey), combine(hash(this._tag)), combine(hash(this.runtimeFlags)), cached(this));
   }
   [symbol2](that) {
     return isFiberStatus(that) && that._tag === OP_RUNNING && this.runtimeFlags === that.runtimeFlags;
   }
 };
-var _a18;
 var Suspended = class {
+  runtimeFlags;
+  blockingOn;
+  [FiberStatusTypeId] = FiberStatusTypeId;
+  _tag = OP_SUSPENDED;
   constructor(runtimeFlags2, blockingOn) {
-    __publicField(this, "runtimeFlags");
-    __publicField(this, "blockingOn");
-    __publicField(this, _a18, FiberStatusTypeId);
-    __publicField(this, "_tag", OP_SUSPENDED);
     this.runtimeFlags = runtimeFlags2;
     this.blockingOn = blockingOn;
   }
-  [(_a18 = FiberStatusTypeId, symbol)]() {
+  [symbol]() {
     return pipe(hash(FiberStatusSymbolKey), combine(hash(this._tag)), combine(hash(this.runtimeFlags)), combine(hash(this.blockingOn)), cached(this));
   }
   [symbol2](that) {
@@ -73836,8 +73708,10 @@ var MicroCauseTypeId = /* @__PURE__ */ Symbol.for("effect/Micro/MicroCause");
 var microCauseVariance = {
   _E: identity
 };
-var _a19;
 var MicroCauseImpl = class extends globalThis.Error {
+  _tag;
+  traces;
+  [MicroCauseTypeId];
   constructor(_tag, originalError2, traces) {
     const causeName = `MicroCause.${_tag}`;
     let name;
@@ -73858,9 +73732,6 @@ var MicroCauseImpl = class extends globalThis.Error {
     ${traces.join("\n    ")}`;
     }
     super(message);
-    __publicField(this, "_tag");
-    __publicField(this, "traces");
-    __publicField(this, _a19);
     this._tag = _tag;
     this.traces = traces;
     this[MicroCauseTypeId] = microCauseVariance;
@@ -73873,14 +73744,14 @@ var MicroCauseImpl = class extends globalThis.Error {
   toString() {
     return this.stack;
   }
-  [(_a19 = MicroCauseTypeId, NodeInspectSymbol)]() {
+  [NodeInspectSymbol]() {
     return this.stack;
   }
 };
 var Die = class extends MicroCauseImpl {
+  defect;
   constructor(defect, traces = []) {
     super("Die", defect, traces);
-    __publicField(this, "defect");
     this.defect = defect;
   }
 };
@@ -73897,21 +73768,16 @@ var fiberVariance = {
   _A: identity,
   _E: identity
 };
-var _a20;
-_a20 = MicroFiberTypeId;
 var MicroFiberImpl = class {
+  context;
+  interruptible;
+  [MicroFiberTypeId];
+  _stack = [];
+  _observers = [];
+  _exit;
+  _children;
+  currentOpCount = 0;
   constructor(context10, interruptible5 = true) {
-    __publicField(this, "context");
-    __publicField(this, "interruptible");
-    __publicField(this, _a20);
-    __publicField(this, "_stack", []);
-    __publicField(this, "_observers", []);
-    __publicField(this, "_exit");
-    __publicField(this, "_children");
-    __publicField(this, "currentOpCount", 0);
-    __publicField(this, "_interrupted", false);
-    // cancel the yielded operation, or for the yielded exit value
-    __publicField(this, "_yielded");
     this.context = context10;
     this.interruptible = interruptible5;
     this[MicroFiberTypeId] = fiberVariance;
@@ -73932,6 +73798,7 @@ var MicroFiberImpl = class {
       }
     };
   }
+  _interrupted = false;
   unsafeInterrupt() {
     if (this._exit) {
       return;
@@ -74006,12 +73873,14 @@ var MicroFiberImpl = class {
       if (op[symbol3]) return op;
     }
   }
+  // cancel the yielded operation, or for the yielded exit value
+  _yielded = void 0;
   yieldWith(value3) {
     this._yielded = value3;
     return Yield;
   }
   children() {
-    return this._children ?? (this._children = /* @__PURE__ */ new Set());
+    return this._children ??= /* @__PURE__ */ new Set();
   }
 };
 var fiberMiddleware = /* @__PURE__ */ globalValue("effect/Micro/fiberMiddleware", () => ({
@@ -74166,17 +74035,8 @@ var exitDie2 = (defect) => exitFailCause2(causeDie(defect));
 var exitVoid2 = /* @__PURE__ */ exitSucceed2(void 0);
 var setImmediate2 = "setImmediate" in globalThis ? globalThis.setImmediate : (f) => setTimeout(f, 0);
 var MicroSchedulerDefault = class {
-  constructor() {
-    __publicField(this, "tasks", []);
-    __publicField(this, "running", false);
-    /**
-     * @since 3.5.9
-     */
-    __publicField(this, "afterScheduled", () => {
-      this.running = false;
-      this.runTasks();
-    });
-  }
+  tasks = [];
+  running = false;
   /**
    * @since 3.5.9
    */
@@ -74187,6 +74047,13 @@ var MicroSchedulerDefault = class {
       setImmediate2(this.afterScheduled);
     }
   }
+  /**
+   * @since 3.5.9
+   */
+  afterScheduled = () => {
+    this.running = false;
+    this.runTasks();
+  };
   /**
    * @since 3.5.9
    */
@@ -74284,20 +74151,19 @@ var refVariance = {
   /* c8 ignore next */
   _A: (_) => _
 };
-var _a22, _b, _c;
-var RefImpl = class extends (_c = Class3, _b = RefTypeId, _a22 = TypeId13, _c) {
-  constructor(ref) {
-    super();
-    __publicField(this, "ref");
-    __publicField(this, _b, refVariance);
-    __publicField(this, _a22, TypeId13);
-    __publicField(this, "get");
-    this.ref = ref;
-    this.get = sync(() => get7(this.ref));
-  }
+var RefImpl = class extends Class3 {
+  ref;
   commit() {
     return this.get;
   }
+  [RefTypeId] = refVariance;
+  [TypeId13] = TypeId13;
+  constructor(ref) {
+    super();
+    this.ref = ref;
+    this.get = sync(() => get7(this.ref));
+  }
+  get;
   modify(f) {
     return sync(() => {
       const current2 = get7(this.ref);
@@ -74378,26 +74244,26 @@ var updateSomeAndGet2 = updateSomeAndGet;
 
 // node_modules/effect/dist/esm/Scheduler.js
 var SchedulerRunner = class _SchedulerRunner {
+  scheduleDrain;
+  running = false;
+  tasks = /* @__PURE__ */ new PriorityBuckets();
   constructor(scheduleDrain) {
-    __publicField(this, "scheduleDrain");
-    __publicField(this, "running", false);
-    __publicField(this, "tasks", /* @__PURE__ */ new PriorityBuckets());
-    __publicField(this, "starveInternal", (depth) => {
-      const tasks = this.tasks.buckets;
-      this.tasks.buckets = [];
-      for (const [_, toRun] of tasks) {
-        for (let i = 0; i < toRun.length; i++) {
-          toRun[i]();
-        }
-      }
-      if (this.tasks.buckets.length === 0) {
-        this.running = false;
-      } else {
-        this.starve(depth);
-      }
-    });
     this.scheduleDrain = scheduleDrain;
   }
+  starveInternal = (depth) => {
+    const tasks = this.tasks.buckets;
+    this.tasks.buckets = [];
+    for (const [_, toRun] of tasks) {
+      for (let i = 0; i < toRun.length; i++) {
+        toRun[i]();
+      }
+    }
+    if (this.tasks.buckets.length === 0) {
+      this.running = false;
+    } else {
+      this.starve(depth);
+    }
+  };
   starve(depth = 0) {
     this.scheduleDrain(depth, this.starveInternal);
   }
@@ -74429,12 +74295,10 @@ var SchedulerRunner = class _SchedulerRunner {
   }
 };
 var PriorityBuckets = class {
-  constructor() {
-    /**
-     * @since 2.0.0
-     */
-    __publicField(this, "buckets", []);
-  }
+  /**
+   * @since 2.0.0
+   */
+  buckets = [];
   /**
    * @since 2.0.0
    */
@@ -74459,15 +74323,15 @@ var PriorityBuckets = class {
   }
 };
 var MixedScheduler = class {
+  maxNextTickBeforeTimer;
+  getRunner = /* @__PURE__ */ SchedulerRunner.cached((depth, drain6) => {
+    if (depth >= this.maxNextTickBeforeTimer) {
+      setTimeout(() => drain6(0), 0);
+    } else {
+      Promise.resolve(void 0).then(() => drain6(depth + 1));
+    }
+  });
   constructor(maxNextTickBeforeTimer) {
-    __publicField(this, "maxNextTickBeforeTimer");
-    __publicField(this, "getRunner", /* @__PURE__ */ SchedulerRunner.cached((depth, drain6) => {
-      if (depth >= this.maxNextTickBeforeTimer) {
-        setTimeout(() => drain6(0), 0);
-      } else {
-        Promise.resolve(void 0).then(() => drain6(depth + 1));
-      }
-    }));
     this.maxNextTickBeforeTimer = maxNextTickBeforeTimer;
   }
   /**
@@ -74485,16 +74349,14 @@ var MixedScheduler = class {
 };
 var defaultScheduler = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/Scheduler/defaultScheduler"), () => new MixedScheduler(2048));
 var SyncScheduler = class {
-  constructor() {
-    /**
-     * @since 2.0.0
-     */
-    __publicField(this, "tasks", /* @__PURE__ */ new PriorityBuckets());
-    /**
-     * @since 2.0.0
-     */
-    __publicField(this, "deferred", false);
-  }
+  /**
+   * @since 2.0.0
+   */
+  tasks = /* @__PURE__ */ new PriorityBuckets();
+  /**
+   * @since 2.0.0
+   */
+  deferred = false;
   /**
    * @since 2.0.0
    */
@@ -74586,18 +74448,17 @@ var tracerWith2 = tracerWith;
 // node_modules/effect/dist/esm/internal/metric/label.js
 var MetricLabelSymbolKey = "effect/MetricLabel";
 var MetricLabelTypeId = /* @__PURE__ */ Symbol.for(MetricLabelSymbolKey);
-var _a23;
 var MetricLabelImpl = class {
+  key;
+  value;
+  [MetricLabelTypeId] = MetricLabelTypeId;
+  _hash;
   constructor(key, value3) {
-    __publicField(this, "key");
-    __publicField(this, "value");
-    __publicField(this, _a23, MetricLabelTypeId);
-    __publicField(this, "_hash");
     this.key = key;
     this.value = value3;
     this._hash = string2(MetricLabelSymbolKey + this.key + this.value);
   }
-  [(_a23 = MetricLabelTypeId, symbol)]() {
+  [symbol]() {
     return this._hash;
   }
   [symbol2](that) {
@@ -74699,7 +74560,7 @@ var catchTag = /* @__PURE__ */ dual((args2) => isEffect(args2[0]), (self2, ...ar
 var catchTags = /* @__PURE__ */ dual(2, (self2, cases) => {
   let keys7;
   return catchIf(self2, (e) => {
-    keys7 ?? (keys7 = Object.keys(cases));
+    keys7 ??= Object.keys(cases);
     return hasProperty(e, "_tag") && isString(e["_tag"]) && keys7.includes(e["_tag"]);
   }, (e) => cases[e["_tag"]](e));
 });
@@ -75353,14 +75214,10 @@ var yieldNow3 = () => ({
 // node_modules/effect/dist/esm/internal/fiberScope.js
 var FiberScopeSymbolKey = "effect/FiberScope";
 var FiberScopeTypeId = /* @__PURE__ */ Symbol.for(FiberScopeSymbolKey);
-var _a24;
-_a24 = FiberScopeTypeId;
 var Global = class {
-  constructor() {
-    __publicField(this, _a24, FiberScopeTypeId);
-    __publicField(this, "fiberId", none4);
-    __publicField(this, "roots", /* @__PURE__ */ new Set());
-  }
+  [FiberScopeTypeId] = FiberScopeTypeId;
+  fiberId = none4;
+  roots = /* @__PURE__ */ new Set();
   add(_runtimeFlags, child) {
     this.roots.add(child);
     child.addObserver(() => {
@@ -75368,13 +75225,11 @@ var Global = class {
     });
   }
 };
-var _a25;
-_a25 = FiberScopeTypeId;
 var Local = class {
+  fiberId;
+  parent;
+  [FiberScopeTypeId] = FiberScopeTypeId;
   constructor(fiberId3, parent) {
-    __publicField(this, "fiberId");
-    __publicField(this, "parent");
-    __publicField(this, _a25, FiberScopeTypeId);
     this.fiberId = fiberId3;
     this.parent = parent;
   }
@@ -75639,16 +75494,15 @@ hasProcessStdout && process.stdout.isTTY === true;
 // node_modules/effect/dist/esm/internal/metric/boundaries.js
 var MetricBoundariesSymbolKey = "effect/MetricBoundaries";
 var MetricBoundariesTypeId = /* @__PURE__ */ Symbol.for(MetricBoundariesSymbolKey);
-var _a26;
 var MetricBoundariesImpl = class {
+  values;
+  [MetricBoundariesTypeId] = MetricBoundariesTypeId;
   constructor(values7) {
-    __publicField(this, "values");
-    __publicField(this, _a26, MetricBoundariesTypeId);
-    __publicField(this, "_hash");
     this.values = values7;
     this._hash = pipe(string2(MetricBoundariesSymbolKey), combine(array2(this.values)));
   }
-  [(_a26 = MetricBoundariesTypeId, symbol)]() {
+  _hash;
+  [symbol]() {
     return this._hash;
   }
   [symbol2](u) {
@@ -75684,19 +75538,18 @@ var metricKeyTypeVariance = {
   /* c8 ignore next */
   _Out: (_) => _
 };
-var _a27, _b2;
 var CounterKeyType = class {
+  incremental;
+  bigint;
+  [MetricKeyTypeTypeId] = metricKeyTypeVariance;
+  [CounterKeyTypeTypeId] = CounterKeyTypeTypeId;
   constructor(incremental, bigint3) {
-    __publicField(this, "incremental");
-    __publicField(this, "bigint");
-    __publicField(this, _b2, metricKeyTypeVariance);
-    __publicField(this, _a27, CounterKeyTypeTypeId);
-    __publicField(this, "_hash");
     this.incremental = incremental;
     this.bigint = bigint3;
     this._hash = string2(CounterKeyTypeSymbolKey);
   }
-  [(_b2 = MetricKeyTypeTypeId, _a27 = CounterKeyTypeTypeId, symbol)]() {
+  _hash;
+  [symbol]() {
     return this._hash;
   }
   [symbol2](that) {
@@ -75706,17 +75559,16 @@ var CounterKeyType = class {
     return pipeArguments(this, arguments);
   }
 };
-var _a30, _b5;
 var HistogramKeyType = class {
+  boundaries;
+  [MetricKeyTypeTypeId] = metricKeyTypeVariance;
+  [HistogramKeyTypeTypeId] = HistogramKeyTypeTypeId;
   constructor(boundaries) {
-    __publicField(this, "boundaries");
-    __publicField(this, _b5, metricKeyTypeVariance);
-    __publicField(this, _a30, HistogramKeyTypeTypeId);
-    __publicField(this, "_hash");
     this.boundaries = boundaries;
     this._hash = pipe(string2(HistogramKeyTypeSymbolKey), combine(hash(this.boundaries)));
   }
-  [(_b5 = MetricKeyTypeTypeId, _a30 = HistogramKeyTypeTypeId, symbol)]() {
+  _hash;
+  [symbol]() {
     return this._hash;
   }
   [symbol2](that) {
@@ -75744,22 +75596,21 @@ var metricKeyVariance = {
   _Type: (_) => _
 };
 var arrayEquivilence = /* @__PURE__ */ getEquivalence4(equals);
-var _a32;
 var MetricKeyImpl = class {
+  name;
+  keyType;
+  description;
+  tags;
+  [MetricKeyTypeId] = metricKeyVariance;
   constructor(name, keyType, description, tags = []) {
-    __publicField(this, "name");
-    __publicField(this, "keyType");
-    __publicField(this, "description");
-    __publicField(this, "tags");
-    __publicField(this, _a32, metricKeyVariance);
-    __publicField(this, "_hash");
     this.name = name;
     this.keyType = keyType;
     this.description = description;
     this.tags = tags;
     this._hash = pipe(string2(this.name + this.description), combine(hash(this.keyType)), combine(array2(this.tags)));
   }
-  [(_a32 = MetricKeyTypeId, symbol)]() {
+  _hash;
+  [symbol]() {
     return this._hash;
   }
   [symbol2](u) {
@@ -75798,10 +75649,10 @@ var MutableHashMapProto = {
   }
 };
 var MutableHashMapIterator = class _MutableHashMapIterator {
+  self;
+  referentialIterator;
+  bucketIterator;
   constructor(self2) {
-    __publicField(this, "self");
-    __publicField(this, "referentialIterator");
-    __publicField(this, "bucketIterator");
     this.self = self2;
     this.referentialIterator = self2.referential[Symbol.iterator]();
   }
@@ -75821,11 +75672,11 @@ var MutableHashMapIterator = class _MutableHashMapIterator {
   }
 };
 var BucketIterator = class {
+  backing;
   constructor(backing) {
-    __publicField(this, "backing");
-    __publicField(this, "currentBucket");
     this.backing = backing;
   }
+  currentBucket;
   next() {
     if (this.currentBucket === void 0) {
       const result3 = this.backing.next();
@@ -75937,15 +75788,14 @@ var metricStateVariance = {
   /* c8 ignore next */
   _A: (_) => _
 };
-var _a33, _b7;
 var CounterState = class {
+  count;
+  [MetricStateTypeId] = metricStateVariance;
+  [CounterStateTypeId] = CounterStateTypeId;
   constructor(count7) {
-    __publicField(this, "count");
-    __publicField(this, _b7, metricStateVariance);
-    __publicField(this, _a33, CounterStateTypeId);
     this.count = count7;
   }
-  [(_b7 = MetricStateTypeId, _a33 = CounterStateTypeId, symbol)]() {
+  [symbol]() {
     return pipe(hash(CounterStateSymbolKey), combine(hash(this.count)), cached(this));
   }
   [symbol2](that) {
@@ -75956,16 +75806,15 @@ var CounterState = class {
   }
 };
 var arrayEquals = /* @__PURE__ */ getEquivalence4(equals);
-var _a34, _b8;
 var FrequencyState = class {
+  occurrences;
+  [MetricStateTypeId] = metricStateVariance;
+  [FrequencyStateTypeId] = FrequencyStateTypeId;
   constructor(occurrences) {
-    __publicField(this, "occurrences");
-    __publicField(this, _b8, metricStateVariance);
-    __publicField(this, _a34, FrequencyStateTypeId);
-    __publicField(this, "_hash");
     this.occurrences = occurrences;
   }
-  [(_b8 = MetricStateTypeId, _a34 = FrequencyStateTypeId, symbol)]() {
+  _hash;
+  [symbol]() {
     return pipe(string2(FrequencyStateSymbolKey), combine(array2(fromIterable2(this.occurrences.entries()))), cached(this));
   }
   [symbol2](that) {
@@ -75975,15 +75824,14 @@ var FrequencyState = class {
     return pipeArguments(this, arguments);
   }
 };
-var _a35, _b9;
 var GaugeState = class {
+  value;
+  [MetricStateTypeId] = metricStateVariance;
+  [GaugeStateTypeId] = GaugeStateTypeId;
   constructor(value3) {
-    __publicField(this, "value");
-    __publicField(this, _b9, metricStateVariance);
-    __publicField(this, _a35, GaugeStateTypeId);
     this.value = value3;
   }
-  [(_b9 = MetricStateTypeId, _a35 = GaugeStateTypeId, symbol)]() {
+  [symbol]() {
     return pipe(hash(GaugeStateSymbolKey), combine(hash(this.value)), cached(this));
   }
   [symbol2](u) {
@@ -75993,23 +75841,22 @@ var GaugeState = class {
     return pipeArguments(this, arguments);
   }
 };
-var _a36, _b10;
 var HistogramState = class {
+  buckets;
+  count;
+  min;
+  max;
+  sum;
+  [MetricStateTypeId] = metricStateVariance;
+  [HistogramStateTypeId] = HistogramStateTypeId;
   constructor(buckets, count7, min8, max11, sum5) {
-    __publicField(this, "buckets");
-    __publicField(this, "count");
-    __publicField(this, "min");
-    __publicField(this, "max");
-    __publicField(this, "sum");
-    __publicField(this, _b10, metricStateVariance);
-    __publicField(this, _a36, HistogramStateTypeId);
     this.buckets = buckets;
     this.count = count7;
     this.min = min8;
     this.max = max11;
     this.sum = sum5;
   }
-  [(_b10 = MetricStateTypeId, _a36 = HistogramStateTypeId, symbol)]() {
+  [symbol]() {
     return pipe(hash(HistogramStateSymbolKey), combine(hash(this.buckets)), combine(hash(this.count)), combine(hash(this.min)), combine(hash(this.max)), combine(hash(this.sum)), cached(this));
   }
   [symbol2](that) {
@@ -76019,17 +75866,16 @@ var HistogramState = class {
     return pipeArguments(this, arguments);
   }
 };
-var _a37, _b11;
 var SummaryState = class {
+  error;
+  quantiles;
+  count;
+  min;
+  max;
+  sum;
+  [MetricStateTypeId] = metricStateVariance;
+  [SummaryStateTypeId] = SummaryStateTypeId;
   constructor(error4, quantiles, count7, min8, max11, sum5) {
-    __publicField(this, "error");
-    __publicField(this, "quantiles");
-    __publicField(this, "count");
-    __publicField(this, "min");
-    __publicField(this, "max");
-    __publicField(this, "sum");
-    __publicField(this, _b11, metricStateVariance);
-    __publicField(this, _a37, SummaryStateTypeId);
     this.error = error4;
     this.quantiles = quantiles;
     this.count = count7;
@@ -76037,7 +75883,7 @@ var SummaryState = class {
     this.max = max11;
     this.sum = sum5;
   }
-  [(_b11 = MetricStateTypeId, _a37 = SummaryStateTypeId, symbol)]() {
+  [symbol]() {
     return pipe(hash(SummaryStateSymbolKey), combine(hash(this.error)), combine(hash(this.quantiles)), combine(hash(this.count)), combine(hash(this.min)), combine(hash(this.max)), combine(hash(this.sum)), cached(this));
   }
   [symbol2](that) {
@@ -76079,7 +75925,7 @@ var make30 = (options5) => ({
 var bigint05 = /* @__PURE__ */ BigInt(0);
 var counter4 = (key) => {
   let sum5 = key.keyType.bigint ? bigint05 : 0;
-  const canUpdate = key.keyType.incremental ? key.keyType.bigint ? (value3) => value3 >= bigint05 : (value3) => value3 >= 0 : (_value2) => true;
+  const canUpdate = key.keyType.incremental ? key.keyType.bigint ? (value3) => value3 >= bigint05 : (value3) => value3 >= 0 : (_value) => true;
   const update7 = (value3) => {
     if (canUpdate(value3)) {
       sum5 = sum5 + value3;
@@ -76376,13 +76222,9 @@ var unsafeMake7 = (metricKey, metricState) => {
 // node_modules/effect/dist/esm/internal/metric/registry.js
 var MetricRegistrySymbolKey = "effect/MetricRegistry";
 var MetricRegistryTypeId = /* @__PURE__ */ Symbol.for(MetricRegistrySymbolKey);
-var _a38;
-_a38 = MetricRegistryTypeId;
 var MetricRegistryImpl = class {
-  constructor() {
-    __publicField(this, _a38, MetricRegistryTypeId);
-    __publicField(this, "map", /* @__PURE__ */ empty25());
-  }
+  [MetricRegistryTypeId] = MetricRegistryTypeId;
+  map = /* @__PURE__ */ empty25();
   snapshot() {
     const result2 = [];
     for (const [key, hook] of this.map) {
@@ -76564,11 +76406,9 @@ var complete = /* @__PURE__ */ dual(2, (self2, result2) => fiberRefGetWith(curre
   }
 })));
 var Listeners = class {
-  constructor() {
-    __publicField(this, "count", 0);
-    __publicField(this, "observers", /* @__PURE__ */ new Set());
-    __publicField(this, "interrupted", false);
-  }
+  count = 0;
+  observers = /* @__PURE__ */ new Set();
+  interrupted = false;
   addObserver(f) {
     this.observers.add(f);
   }
@@ -76591,11 +76431,11 @@ var Direction = {
   Backward: 1 << 0
 };
 var RedBlackTreeIterator = class _RedBlackTreeIterator {
+  self;
+  stack;
+  direction;
+  count = 0;
   constructor(self2, stack, direction) {
-    __publicField(this, "self");
-    __publicField(this, "stack");
-    __publicField(this, "direction");
-    __publicField(this, "count", 0);
     this.self = self2;
     this.stack = stack;
     this.direction = direction;
@@ -77146,13 +76986,11 @@ var supervisorVariance = {
   /* c8 ignore next */
   _T: (_) => _
 };
-var _a39;
-_a39 = SupervisorTypeId;
-var _ProxySupervisor = class _ProxySupervisor {
+var ProxySupervisor = class _ProxySupervisor {
+  underlying;
+  value0;
+  [SupervisorTypeId] = supervisorVariance;
   constructor(underlying, value0) {
-    __publicField(this, "underlying");
-    __publicField(this, "value0");
-    __publicField(this, _a39, supervisorVariance);
     this.underlying = underlying;
     this.value0 = value0;
   }
@@ -77181,15 +77019,12 @@ var _ProxySupervisor = class _ProxySupervisor {
     return new Zip(this, right3);
   }
 };
-var ProxySupervisor = _ProxySupervisor;
-var _a40;
-_a40 = SupervisorTypeId;
-var _Zip = class _Zip {
+var Zip = class _Zip {
+  left;
+  right;
+  _tag = "Zip";
+  [SupervisorTypeId] = supervisorVariance;
   constructor(left3, right3) {
-    __publicField(this, "left");
-    __publicField(this, "right");
-    __publicField(this, "_tag", "Zip");
-    __publicField(this, _a40, supervisorVariance);
     this.left = left3;
     this.right = right3;
   }
@@ -77223,22 +77058,17 @@ var _Zip = class _Zip {
     return new _Zip(this, right3);
   }
 };
-var Zip = _Zip;
 var isZip = (self2) => hasProperty(self2, SupervisorTypeId) && isTagged(self2, "Zip");
-var _a41;
-_a41 = SupervisorTypeId;
 var Track = class {
-  constructor() {
-    __publicField(this, _a41, supervisorVariance);
-    __publicField(this, "fibers", /* @__PURE__ */ new Set());
-  }
+  [SupervisorTypeId] = supervisorVariance;
+  fibers = /* @__PURE__ */ new Set();
   get value() {
     return sync(() => Array.from(this.fibers));
   }
-  onStart(_context4, _effect, _parent, fiber) {
+  onStart(_context, _effect, _parent, fiber) {
     this.fibers.add(fiber);
   }
-  onEnd(_value2, fiber) {
+  onEnd(_value, fiber) {
     this.fibers.delete(fiber);
   }
   onEffect(_fiber, _effect) {
@@ -77257,20 +77087,18 @@ var Track = class {
     return execution();
   }
 };
-var _a42;
-_a42 = SupervisorTypeId;
 var Const = class {
+  effect;
+  [SupervisorTypeId] = supervisorVariance;
   constructor(effect4) {
-    __publicField(this, "effect");
-    __publicField(this, _a42, supervisorVariance);
     this.effect = effect4;
   }
   get value() {
     return this.effect;
   }
-  onStart(_context4, _effect, _parent, _fiber) {
+  onStart(_context, _effect, _parent, _fiber) {
   }
-  onEnd(_value2, _fiber) {
+  onEnd(_value, _fiber) {
   }
   onEffect(_fiber, _effect) {
   }
@@ -77498,35 +77326,31 @@ var runBlockedRequests = (self2) => forEachSequentialDiscard(flatten6(self2), (r
   })), currentRequestMap, map116);
 }, false, false));
 var _version = /* @__PURE__ */ getCurrentVersion();
-var _a44, _b12;
 var FiberRuntime = class extends Class3 {
+  [FiberTypeId] = fiberVariance2;
+  [RuntimeFiberTypeId] = runtimeFiberVariance;
+  _fiberRefs;
+  _fiberId;
+  _queue = /* @__PURE__ */ new Array();
+  _children = null;
+  _observers = /* @__PURE__ */ new Array();
+  _running = false;
+  _stack = [];
+  _asyncInterruptor = null;
+  _asyncBlockingOn = null;
+  _exitValue = null;
+  _steps = [];
+  _isYielding = false;
+  currentRuntimeFlags;
+  currentOpCount = 0;
+  currentSupervisor;
+  currentScheduler;
+  currentTracer;
+  currentSpan;
+  currentContext;
+  currentDefaultServices;
   constructor(fiberId3, fiberRefs0, runtimeFlags0) {
     super();
-    __publicField(this, _b12, fiberVariance2);
-    __publicField(this, _a44, runtimeFiberVariance);
-    __publicField(this, "_fiberRefs");
-    __publicField(this, "_fiberId");
-    __publicField(this, "_queue", /* @__PURE__ */ new Array());
-    __publicField(this, "_children", null);
-    __publicField(this, "_observers", /* @__PURE__ */ new Array());
-    __publicField(this, "_running", false);
-    __publicField(this, "_stack", []);
-    __publicField(this, "_asyncInterruptor", null);
-    __publicField(this, "_asyncBlockingOn", null);
-    __publicField(this, "_exitValue", null);
-    __publicField(this, "_steps", []);
-    __publicField(this, "_isYielding", false);
-    __publicField(this, "currentRuntimeFlags");
-    __publicField(this, "currentOpCount", 0);
-    __publicField(this, "currentSupervisor");
-    __publicField(this, "currentScheduler");
-    __publicField(this, "currentTracer");
-    __publicField(this, "currentSpan");
-    __publicField(this, "currentContext");
-    __publicField(this, "currentDefaultServices");
-    __publicField(this, "run", () => {
-      this.drainQueueOnCurrentThread();
-    });
     this.currentRuntimeFlags = runtimeFlags0;
     this._fiberId = fiberId3;
     this._fiberRefs = fiberRefs0;
@@ -78208,7 +78032,7 @@ var FiberRuntime = class extends Class3 {
       frame = this.popStack();
     }
   }
-  [(_b12 = FiberTypeId, _a44 = RuntimeFiberTypeId, OP_TAG)](op) {
+  [OP_TAG](op) {
     return sync(() => unsafeGet5(this.currentContext, op));
   }
   ["Left"](op) {
@@ -78463,6 +78287,9 @@ var FiberRuntime = class extends Class3 {
       }
     }
   }
+  run = () => {
+    this.drainQueueOnCurrentThread();
+  };
 };
 var currentMinimumLogLevel = /* @__PURE__ */ globalValue("effect/FiberRef/currentMinimumLogLevel", () => fiberRefUnsafeMake(fromLiteral("Info")));
 var loggerWithConsoleLog = (self2) => makeLogger((opts) => {
@@ -79477,54 +79304,37 @@ var make39 = scopeMake;
 
 // node_modules/effect/dist/esm/internal/effect/circular.js
 var Semaphore = class {
+  permits;
+  waiters = /* @__PURE__ */ new Set();
+  taken = 0;
   constructor(permits) {
-    __publicField(this, "permits");
-    __publicField(this, "waiters", /* @__PURE__ */ new Set());
-    __publicField(this, "taken", 0);
-    __publicField(this, "take", (n) => asyncInterrupt((resume2) => {
-      if (this.free < n) {
-        const observer = () => {
-          if (this.free < n) return;
-          this.waiters.delete(observer);
-          resume2(suspend(() => {
-            if (this.free < n) return this.take(n);
-            this.taken += n;
-            return succeed(n);
-          }));
-        };
-        this.waiters.add(observer);
-        return sync(() => {
-          this.waiters.delete(observer);
-        });
-      }
-      resume2(suspend(() => {
-        if (this.free < n) return this.take(n);
-        this.taken += n;
-        return succeed(n);
-      }));
-    }));
-    __publicField(this, "resize", (permits) => asVoid2(withFiberRuntime((fiber) => {
-      this.permits = permits;
-      if (this.free < 0) {
-        return void_3;
-      }
-      return this.updateTakenUnsafe(fiber, (taken) => taken);
-    })));
-    __publicField(this, "release", (n) => this.updateTaken((taken) => taken - n));
-    __publicField(this, "releaseAll", /* @__PURE__ */ this.updateTaken((_) => 0));
-    __publicField(this, "withPermits", (n) => (self2) => uninterruptibleMask((restore) => flatMap11(restore(this.take(n)), (permits) => ensuring(restore(self2), this.release(permits)))));
-    __publicField(this, "withPermitsIfAvailable", (n) => (self2) => uninterruptibleMask((restore) => suspend(() => {
-      if (this.free < n) {
-        return succeedNone;
-      }
-      this.taken += n;
-      return ensuring(restore(asSome(self2)), this.release(n));
-    })));
     this.permits = permits;
   }
   get free() {
     return this.permits - this.taken;
   }
+  take = (n) => asyncInterrupt((resume2) => {
+    if (this.free < n) {
+      const observer = () => {
+        if (this.free < n) return;
+        this.waiters.delete(observer);
+        resume2(suspend(() => {
+          if (this.free < n) return this.take(n);
+          this.taken += n;
+          return succeed(n);
+        }));
+      };
+      this.waiters.add(observer);
+      return sync(() => {
+        this.waiters.delete(observer);
+      });
+    }
+    resume2(suspend(() => {
+      if (this.free < n) return this.take(n);
+      this.taken += n;
+      return succeed(n);
+    }));
+  });
   updateTakenUnsafe(fiber, f) {
     this.taken = f(this.taken);
     if (this.waiters.size > 0) {
@@ -79542,54 +79352,32 @@ var Semaphore = class {
   updateTaken(f) {
     return withFiberRuntime((fiber) => this.updateTakenUnsafe(fiber, f));
   }
+  resize = (permits) => asVoid2(withFiberRuntime((fiber) => {
+    this.permits = permits;
+    if (this.free < 0) {
+      return void_3;
+    }
+    return this.updateTakenUnsafe(fiber, (taken) => taken);
+  }));
+  release = (n) => this.updateTaken((taken) => taken - n);
+  releaseAll = /* @__PURE__ */ this.updateTaken((_) => 0);
+  withPermits = (n) => (self2) => uninterruptibleMask((restore) => flatMap11(restore(this.take(n)), (permits) => ensuring(restore(self2), this.release(permits))));
+  withPermitsIfAvailable = (n) => (self2) => uninterruptibleMask((restore) => suspend(() => {
+    if (this.free < n) {
+      return succeedNone;
+    }
+    this.taken += n;
+    return ensuring(restore(asSome(self2)), this.release(n));
+  }));
 };
 var unsafeMakeSemaphore = (permits) => new Semaphore(permits);
 var makeSemaphore = (permits) => sync(() => unsafeMakeSemaphore(permits));
 var Latch = class extends Class3 {
+  isOpen;
+  waiters = [];
+  scheduled = false;
   constructor(isOpen) {
     super();
-    __publicField(this, "isOpen");
-    __publicField(this, "waiters", []);
-    __publicField(this, "scheduled", false);
-    __publicField(this, "flushWaiters", () => {
-      this.scheduled = false;
-      const waiters = this.waiters;
-      this.waiters = [];
-      for (let i = 0; i < waiters.length; i++) {
-        waiters[i](exitVoid);
-      }
-    });
-    __publicField(this, "open", /* @__PURE__ */ withFiberRuntime((fiber) => {
-      if (this.isOpen) {
-        return void_3;
-      }
-      this.isOpen = true;
-      return this.unsafeSchedule(fiber);
-    }));
-    __publicField(this, "release", /* @__PURE__ */ withFiberRuntime((fiber) => {
-      if (this.isOpen) {
-        return void_3;
-      }
-      return this.unsafeSchedule(fiber);
-    }));
-    __publicField(this, "await", /* @__PURE__ */ asyncInterrupt((resume2) => {
-      if (this.isOpen) {
-        return resume2(void_3);
-      }
-      this.waiters.push(resume2);
-      return sync(() => {
-        const index = this.waiters.indexOf(resume2);
-        if (index !== -1) {
-          this.waiters.splice(index, 1);
-        }
-      });
-    }));
-    __publicField(this, "close", /* @__PURE__ */ sync(() => {
-      this.isOpen = false;
-    }));
-    __publicField(this, "whenOpen", (self2) => {
-      return zipRight2(this.await, self2);
-    });
     this.isOpen = isOpen;
   }
   commit() {
@@ -79603,14 +79391,53 @@ var Latch = class extends Class3 {
     fiber.currentScheduler.scheduleTask(this.flushWaiters, fiber.getFiberRef(currentSchedulingPriority), fiber);
     return void_3;
   }
+  flushWaiters = () => {
+    this.scheduled = false;
+    const waiters = this.waiters;
+    this.waiters = [];
+    for (let i = 0; i < waiters.length; i++) {
+      waiters[i](exitVoid);
+    }
+  };
+  open = /* @__PURE__ */ withFiberRuntime((fiber) => {
+    if (this.isOpen) {
+      return void_3;
+    }
+    this.isOpen = true;
+    return this.unsafeSchedule(fiber);
+  });
   unsafeOpen() {
     if (this.isOpen) return;
     this.isOpen = true;
     this.flushWaiters();
   }
+  release = /* @__PURE__ */ withFiberRuntime((fiber) => {
+    if (this.isOpen) {
+      return void_3;
+    }
+    return this.unsafeSchedule(fiber);
+  });
+  await = /* @__PURE__ */ asyncInterrupt((resume2) => {
+    if (this.isOpen) {
+      return resume2(void_3);
+    }
+    this.waiters.push(resume2);
+    return sync(() => {
+      const index = this.waiters.indexOf(resume2);
+      if (index !== -1) {
+        this.waiters.splice(index, 1);
+      }
+    });
+  });
   unsafeClose() {
     this.isOpen = false;
   }
+  close = /* @__PURE__ */ sync(() => {
+    this.isOpen = false;
+  });
+  whenOpen = (self2) => {
+    return zipRight2(this.await, self2);
+  };
 };
 var unsafeMakeLatch = (open) => new Latch(open ?? false);
 var makeLatch = (open) => sync(() => unsafeMakeLatch(open));
@@ -79659,16 +79486,15 @@ var forkScoped = (self2) => scopeWith((scope5) => forkIn(self2, scope5));
 var fromFiber = (fiber) => join4(fiber);
 var fromFiberEffect = (fiber) => suspend(() => flatMap11(fiber, join4));
 var memoKeySymbol = /* @__PURE__ */ Symbol.for("effect/Effect/memoizeFunction.key");
-var _a45;
 var Key = class {
+  a;
+  eq;
+  [memoKeySymbol] = memoKeySymbol;
   constructor(a, eq) {
-    __publicField(this, "a");
-    __publicField(this, "eq");
-    __publicField(this, _a45, memoKeySymbol);
     this.a = a;
     this.eq = eq;
   }
-  [(_a45 = memoKeySymbol, symbol2)](that) {
+  [symbol2](that) {
     if (hasProperty(that, memoKeySymbol)) {
       if (this.eq) {
         return this.eq(this.a, that.a);
@@ -79748,20 +79574,19 @@ var synchronizedVariance = {
   /* c8 ignore next */
   _A: (_) => _
 };
-var _a46, _b13, _c2, _d;
-var SynchronizedImpl = class extends (_d = Class3, _c2 = SynchronizedTypeId, _b13 = RefTypeId, _a46 = TypeId13, _d) {
+var SynchronizedImpl = class extends Class3 {
+  ref;
+  withLock;
+  [SynchronizedTypeId] = synchronizedVariance;
+  [RefTypeId] = refVariance;
+  [TypeId13] = TypeId13;
   constructor(ref, withLock) {
     super();
-    __publicField(this, "ref");
-    __publicField(this, "withLock");
-    __publicField(this, _c2, synchronizedVariance);
-    __publicField(this, _b13, refVariance);
-    __publicField(this, _a46, TypeId13);
-    __publicField(this, "get");
     this.ref = ref;
     this.withLock = withLock;
     this.get = get11(this.ref);
   }
+  get;
   commit() {
     return this.get;
   }
@@ -79986,10 +79811,10 @@ var unsafeRunSync = /* @__PURE__ */ makeDual((runtime41, effect4) => {
   return result2.effect_instruction_i0;
 });
 var AsyncFiberExceptionImpl = class extends Error {
+  fiber;
+  _tag = "AsyncFiberException";
   constructor(fiber) {
     super(`Fiber #${fiber.id().id} cannot be resolved synchronously. This is caused by using runSync on an effect that performs async work`);
-    __publicField(this, "fiber");
-    __publicField(this, "_tag", "AsyncFiberException");
     this.fiber = fiber;
     this.name = this._tag;
     this.stack = this.message;
@@ -80004,13 +79829,12 @@ var asyncFiberException = (fiber) => {
 };
 var FiberFailureId = /* @__PURE__ */ Symbol.for("effect/Runtime/FiberFailure");
 var FiberFailureCauseId = /* @__PURE__ */ Symbol.for("effect/Runtime/FiberFailure/Cause");
-var _a47, _b14;
 var FiberFailureImpl = class extends Error {
+  [FiberFailureId];
+  [FiberFailureCauseId];
   constructor(cause3) {
     const head14 = prettyErrors(cause3)[0];
     super(head14?.message || "An error has occurred");
-    __publicField(this, _b14);
-    __publicField(this, _a47);
     this[FiberFailureId] = FiberFailureId;
     this[FiberFailureCauseId] = cause3;
     this.name = head14 ? `(FiberFailure) ${head14.name}` : "FiberFailure";
@@ -80029,7 +79853,7 @@ var FiberFailureImpl = class extends Error {
       renderErrorCause: true
     });
   }
-  [(_b14 = FiberFailureId, _a47 = FiberFailureCauseId, NodeInspectSymbol)]() {
+  [NodeInspectSymbol]() {
     return this.toString();
   }
 };
@@ -80109,10 +79933,10 @@ var unsafeRunPromiseExit = /* @__PURE__ */ makeDual((runtime41, effect4, options
   }
 }));
 var RuntimeImpl = class {
+  context;
+  runtimeFlags;
+  fiberRefs;
   constructor(context10, runtimeFlags2, fiberRefs3) {
-    __publicField(this, "context");
-    __publicField(this, "runtimeFlags");
-    __publicField(this, "fiberRefs");
     this.context = context10;
     this.runtimeFlags = runtimeFlags2;
     this.fiberRefs = fiberRefs3;
@@ -80202,12 +80026,10 @@ var isLayer = (u) => hasProperty(u, LayerTypeId);
 var isFresh = (self2) => {
   return self2._op_layer === OP_FRESH;
 };
-var _a48;
-_a48 = MemoMapTypeId;
 var MemoMapImpl = class {
+  ref;
+  [MemoMapTypeId];
   constructor(ref) {
-    __publicField(this, "ref");
-    __publicField(this, _a48);
     this.ref = ref;
     this[MemoMapTypeId] = MemoMapTypeId;
   }
@@ -81391,15 +81213,11 @@ var lookupTable = (values7, size20, dir3) => {
   return result2;
 };
 var ParseErrorTypeId = /* @__PURE__ */ Symbol.for("effect/Cron/errors/ParseError");
-var _a49, _b15;
-var ParseError = class extends (_b15 = /* @__PURE__ */ TaggedError("CronParseError"), _a49 = ParseErrorTypeId, _b15) {
-  constructor() {
-    super(...arguments);
-    /**
-     * @since 2.0.0
-     */
-    __publicField(this, _a49, ParseErrorTypeId);
-  }
+var ParseError = class extends (/* @__PURE__ */ TaggedError("CronParseError")) {
+  /**
+   * @since 2.0.0
+   */
+  [ParseErrorTypeId] = ParseErrorTypeId;
 };
 var parse2 = (cron3, tz) => {
   const segments = cron3.split(" ").filter(isNonEmpty5);
@@ -81773,13 +81591,11 @@ var scheduleDriverVariance = {
   /* c8 ignore next */
   _R: (_) => _
 };
-var _a50;
-_a50 = ScheduleTypeId;
 var ScheduleImpl = class {
+  initial;
+  step;
+  [ScheduleTypeId] = scheduleVariance;
   constructor(initial, step4) {
-    __publicField(this, "initial");
-    __publicField(this, "step");
-    __publicField(this, _a50, scheduleVariance);
     this.initial = initial;
     this.step = step4;
   }
@@ -81804,14 +81620,11 @@ var updateInfo = (iterationMetaRef, now3, input, output) => update2(iterationMet
   elapsedSincePrevious: millis(now3 - prev.now),
   start: prev.start
 });
-var _a51;
-_a51 = ScheduleDriverTypeId;
 var ScheduleDriverImpl = class {
+  schedule;
+  ref;
+  [ScheduleDriverTypeId] = scheduleDriverVariance;
   constructor(schedule5, ref) {
-    __publicField(this, "schedule");
-    __publicField(this, "ref");
-    __publicField(this, _a51, scheduleDriverVariance);
-    __publicField(this, "iterationMeta", /* @__PURE__ */ unsafeMake5(defaultIterationMetadata));
     this.schedule = schedule5;
     this.ref = ref;
   }
@@ -81830,6 +81643,7 @@ var ScheduleDriverImpl = class {
       }
     });
   }
+  iterationMeta = /* @__PURE__ */ unsafeMake5(defaultIterationMetadata);
   get reset() {
     return set5(this.ref, [none2(), this.schedule.initial]).pipe(zipLeft2(set5(this.iterationMeta, defaultIterationMetadata)));
   }
@@ -82289,12 +82103,10 @@ var findNextMonth = (now3, day, months) => {
   return findNextMonth(now3, day, months + 1);
 };
 var ScheduleDefectTypeId = /* @__PURE__ */ Symbol.for("effect/Schedule/ScheduleDefect");
-var _a52;
-_a52 = ScheduleDefectTypeId;
 var ScheduleDefect = class {
+  error;
+  [ScheduleDefectTypeId];
   constructor(error4) {
-    __publicField(this, "error");
-    __publicField(this, _a52);
     this.error = error4;
     this[ScheduleDefectTypeId] = ScheduleDefectTypeId;
   }
@@ -82695,16 +82507,15 @@ var refreshing = (deferred, complete4) => struct3({
   complete: complete4
 });
 var MapKeyTypeId = /* @__PURE__ */ Symbol.for("effect/Cache/MapKey");
-var _a53;
 var MapKeyImpl = class {
+  current;
+  [MapKeyTypeId] = MapKeyTypeId;
+  previous = void 0;
+  next = void 0;
   constructor(current2) {
-    __publicField(this, "current");
-    __publicField(this, _a53, MapKeyTypeId);
-    __publicField(this, "previous");
-    __publicField(this, "next");
     this.current = current2;
   }
-  [(_a53 = MapKeyTypeId, symbol)]() {
+  [symbol]() {
     return pipe(hash(this.current), combine(hash(this.previous)), combine(hash(this.next)), cached(this));
   }
   [symbol2](that) {
@@ -82717,10 +82528,8 @@ var MapKeyImpl = class {
 var makeMapKey = (current2) => new MapKeyImpl(current2);
 var isMapKey = (u) => hasProperty(u, MapKeyTypeId);
 var KeySetImpl = class {
-  constructor() {
-    __publicField(this, "head");
-    __publicField(this, "tail");
-  }
+  head = void 0;
+  tail = void 0;
   add(key) {
     if (key !== this.tail) {
       if (this.tail === void 0) {
@@ -82795,18 +82604,16 @@ var makeCacheStats = (options5) => options5;
 var makeEntryStats = (loadedMillis) => ({
   loadedMillis
 });
-var _a54, _b16;
-_b16 = CacheTypeId, _a54 = ConsumerCacheTypeId;
 var CacheImpl = class {
+  capacity;
+  context;
+  fiberId;
+  lookup;
+  timeToLive;
+  [CacheTypeId] = cacheVariance;
+  [ConsumerCacheTypeId] = consumerCacheVariance;
+  cacheState;
   constructor(capacity7, context10, fiberId3, lookup, timeToLive) {
-    __publicField(this, "capacity");
-    __publicField(this, "context");
-    __publicField(this, "fiberId");
-    __publicField(this, "lookup");
-    __publicField(this, "timeToLive");
-    __publicField(this, _b16, cacheVariance);
-    __publicField(this, _a54, consumerCacheVariance);
-    __publicField(this, "cacheState");
     this.capacity = capacity7;
     this.context = context10;
     this.fiberId = fiberId3;
@@ -83619,7 +83426,7 @@ var Service = function() {
               return fromEffect4(TagClass, map21(maker.effect.apply(null, arguments), (_) => new this(_)));
             }.bind(this);
           }
-          return layerCache ?? (layerCache = fromEffect4(TagClass, map21(maker.effect, (_) => new this(_))));
+          return layerCache ??= fromEffect4(TagClass, map21(maker.effect, (_) => new this(_)));
         }
       });
     } else if ("scoped" in maker) {
@@ -83631,19 +83438,19 @@ var Service = function() {
               return scoped2(TagClass, map21(maker.scoped.apply(null, arguments), (_) => new this(_)));
             }.bind(this);
           }
-          return layerCache ?? (layerCache = scoped2(TagClass, map21(maker.scoped, (_) => new this(_))));
+          return layerCache ??= scoped2(TagClass, map21(maker.scoped, (_) => new this(_)));
         }
       });
     } else if ("sync" in maker) {
       Object.defineProperty(TagClass, layerName, {
         get() {
-          return layerCache ?? (layerCache = sync4(TagClass, () => new this(maker.sync())));
+          return layerCache ??= sync4(TagClass, () => new this(maker.sync()));
         }
       });
     } else {
       Object.defineProperty(TagClass, layerName, {
         get() {
-          return layerCache ?? (layerCache = succeed7(TagClass, new this(maker.succeed)));
+          return layerCache ??= succeed7(TagClass, new this(maker.succeed));
         }
       });
     }
@@ -83656,7 +83463,7 @@ var Service = function() {
               return provide(this.DefaultWithoutDependencies.apply(null, arguments), maker.dependencies);
             };
           }
-          return layerWithDepsCache ?? (layerWithDepsCache = provide(this.DefaultWithoutDependencies, maker.dependencies));
+          return layerWithDepsCache ??= provide(this.DefaultWithoutDependencies, maker.dependencies);
         }
       });
     }
@@ -84565,7 +84372,7 @@ var NoShrinkArbitrary = class extends Arbitrary {
   canShrinkWithoutContext(value3) {
     return this.arb.canShrinkWithoutContext(value3);
   }
-  shrink(_value2, _context4) {
+  shrink(_value, _context) {
     return Stream.nil();
   }
   noShrink() {
@@ -86158,15 +85965,15 @@ var getJSONIdentifierAnnotation = /* @__PURE__ */ getAnnotation(JSONIdentifierAn
 var getJSONIdentifier = (annotated) => orElse2(getJSONIdentifierAnnotation(annotated), () => getIdentifierAnnotation(annotated));
 var ParseJsonSchemaId = /* @__PURE__ */ Symbol.for("effect/schema/ParseJson");
 var Declaration = class {
+  typeParameters;
+  decodeUnknown;
+  encodeUnknown;
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Declaration";
   constructor(typeParameters, decodeUnknown4, encodeUnknown3, annotations3 = {}) {
-    __publicField(this, "typeParameters");
-    __publicField(this, "decodeUnknown");
-    __publicField(this, "encodeUnknown");
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Declaration");
     this.typeParameters = typeParameters;
     this.decodeUnknown = decodeUnknown4;
     this.encodeUnknown = encodeUnknown3;
@@ -86191,13 +85998,13 @@ var Declaration = class {
 };
 var createASTGuard = (tag4) => (ast) => ast._tag === tag4;
 var Literal = class {
+  literal;
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Literal";
   constructor(literal2, annotations3 = {}) {
-    __publicField(this, "literal");
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Literal");
     this.literal = literal2;
     this.annotations = annotations3;
   }
@@ -86221,13 +86028,13 @@ var Literal = class {
 var isLiteral = /* @__PURE__ */ createASTGuard("Literal");
 var $null = /* @__PURE__ */ new Literal(null);
 var UniqueSymbol = class {
+  symbol;
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "UniqueSymbol";
   constructor(symbol3, annotations3 = {}) {
-    __publicField(this, "symbol");
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "UniqueSymbol");
     this.symbol = symbol3;
     this.annotations = annotations3;
   }
@@ -86250,12 +86057,12 @@ var UniqueSymbol = class {
 };
 var isUniqueSymbol = /* @__PURE__ */ createASTGuard("UniqueSymbol");
 var UndefinedKeyword = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "UndefinedKeyword";
   constructor(annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "UndefinedKeyword");
     this.annotations = annotations3;
   }
   /**
@@ -86278,12 +86085,12 @@ var undefinedKeyword = /* @__PURE__ */ new UndefinedKeyword({
   [TitleAnnotationId]: "undefined"
 });
 var VoidKeyword = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "VoidKeyword";
   constructor(annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "VoidKeyword");
     this.annotations = annotations3;
   }
   /**
@@ -86306,12 +86113,12 @@ var voidKeyword = /* @__PURE__ */ new VoidKeyword({
   [TitleAnnotationId]: "void"
 });
 var NeverKeyword = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "NeverKeyword";
   constructor(annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "NeverKeyword");
     this.annotations = annotations3;
   }
   /**
@@ -86335,12 +86142,12 @@ var neverKeyword = /* @__PURE__ */ new NeverKeyword({
 });
 var isNeverKeyword = /* @__PURE__ */ createASTGuard("NeverKeyword");
 var UnknownKeyword = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "UnknownKeyword";
   constructor(annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "UnknownKeyword");
     this.annotations = annotations3;
   }
   /**
@@ -86363,12 +86170,12 @@ var unknownKeyword = /* @__PURE__ */ new UnknownKeyword({
   [TitleAnnotationId]: "unknown"
 });
 var AnyKeyword = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "AnyKeyword";
   constructor(annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "AnyKeyword");
     this.annotations = annotations3;
   }
   /**
@@ -86391,12 +86198,12 @@ var anyKeyword = /* @__PURE__ */ new AnyKeyword({
   [TitleAnnotationId]: "any"
 });
 var StringKeyword = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "StringKeyword";
   constructor(annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "StringKeyword");
     this.annotations = annotations3;
   }
   /**
@@ -86421,12 +86228,12 @@ var stringKeyword = /* @__PURE__ */ new StringKeyword({
 });
 var isStringKeyword = /* @__PURE__ */ createASTGuard("StringKeyword");
 var NumberKeyword = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "NumberKeyword";
   constructor(annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "NumberKeyword");
     this.annotations = annotations3;
   }
   /**
@@ -86451,12 +86258,12 @@ var numberKeyword = /* @__PURE__ */ new NumberKeyword({
 });
 var isNumberKeyword = /* @__PURE__ */ createASTGuard("NumberKeyword");
 var BooleanKeyword = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "BooleanKeyword";
   constructor(annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "BooleanKeyword");
     this.annotations = annotations3;
   }
   /**
@@ -86481,12 +86288,12 @@ var booleanKeyword = /* @__PURE__ */ new BooleanKeyword({
 });
 var isBooleanKeyword = /* @__PURE__ */ createASTGuard("BooleanKeyword");
 var BigIntKeyword = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "BigIntKeyword";
   constructor(annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "BigIntKeyword");
     this.annotations = annotations3;
   }
   /**
@@ -86510,12 +86317,12 @@ var bigIntKeyword = /* @__PURE__ */ new BigIntKeyword({
   [DescriptionAnnotationId]: "a bigint"
 });
 var SymbolKeyword = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "SymbolKeyword";
   constructor(annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "SymbolKeyword");
     this.annotations = annotations3;
   }
   /**
@@ -86540,12 +86347,12 @@ var symbolKeyword = /* @__PURE__ */ new SymbolKeyword({
 });
 var isSymbolKeyword = /* @__PURE__ */ createASTGuard("SymbolKeyword");
 var ObjectKeyword = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "ObjectKeyword";
   constructor(annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "ObjectKeyword");
     this.annotations = annotations3;
   }
   /**
@@ -86569,13 +86376,13 @@ var objectKeyword = /* @__PURE__ */ new ObjectKeyword({
   [DescriptionAnnotationId]: "an object in the TypeScript meaning, i.e. the `object` type"
 });
 var Enums = class {
+  enums;
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Enums";
   constructor(enums, annotations3 = {}) {
-    __publicField(this, "enums");
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Enums");
     this.enums = enums;
     this.annotations = annotations3;
   }
@@ -86638,12 +86445,12 @@ var templateLiteralSpanTypeToString = (type) => {
   }
 };
 var TemplateLiteralSpan = class {
+  literal;
+  /**
+   * @since 3.10.0
+   */
+  type;
   constructor(type, literal2) {
-    __publicField(this, "literal");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "type");
     this.literal = literal2;
     if (isTemplateLiteralSpanType(type)) {
       this.type = type;
@@ -86668,14 +86475,14 @@ var TemplateLiteralSpan = class {
   }
 };
 var TemplateLiteral = class {
+  head;
+  spans;
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "TemplateLiteral";
   constructor(head14, spans, annotations3 = {}) {
-    __publicField(this, "head");
-    __publicField(this, "spans");
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "TemplateLiteral");
     this.head = head14;
     this.spans = spans;
     this.annotations = annotations3;
@@ -86701,9 +86508,9 @@ var TemplateLiteral = class {
 var formatTemplateLiteral = (ast) => "`" + ast.head + ast.spans.map(String).join("") + "`";
 var isTemplateLiteral = /* @__PURE__ */ createASTGuard("TemplateLiteral");
 var Type = class {
+  type;
+  annotations;
   constructor(type, annotations3 = {}) {
-    __publicField(this, "type");
-    __publicField(this, "annotations");
     this.type = type;
     this.annotations = annotations3;
   }
@@ -86724,9 +86531,9 @@ var Type = class {
   }
 };
 var OptionalType = class extends Type {
+  isOptional;
   constructor(type, isOptional, annotations3 = {}) {
     super(type, annotations3);
-    __publicField(this, "isOptional");
     this.isOptional = isOptional;
   }
   /**
@@ -86748,15 +86555,15 @@ var OptionalType = class extends Type {
 };
 var getRestASTs = (rest) => rest.map((annotatedAST) => annotatedAST.type);
 var TupleType = class {
+  elements;
+  rest;
+  isReadonly;
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "TupleType";
   constructor(elements, rest, isReadonly, annotations3 = {}) {
-    __publicField(this, "elements");
-    __publicField(this, "rest");
-    __publicField(this, "isReadonly");
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "TupleType");
     this.elements = elements;
     this.rest = rest;
     this.isReadonly = isReadonly;
@@ -86819,10 +86626,10 @@ var formatTuple = (ast) => {
   });
 };
 var PropertySignature = class extends OptionalType {
+  name;
+  isReadonly;
   constructor(name, type, isOptional, isReadonly, annotations3) {
     super(type, isOptional, annotations3);
-    __publicField(this, "name");
-    __publicField(this, "isReadonly");
     this.name = name;
     this.isReadonly = isReadonly;
   }
@@ -86857,13 +86664,13 @@ var isParameter = (ast) => {
   return false;
 };
 var IndexSignature = class {
+  type;
+  isReadonly;
+  /**
+   * @since 3.10.0
+   */
+  parameter;
   constructor(parameter, type, isReadonly) {
-    __publicField(this, "type");
-    __publicField(this, "isReadonly");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "parameter");
     this.type = type;
     this.isReadonly = isReadonly;
     if (isParameter(parameter)) {
@@ -86890,20 +86697,20 @@ var IndexSignature = class {
   }
 };
 var TypeLiteral = class {
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "TypeLiteral";
+  /**
+   * @since 3.10.0
+   */
+  propertySignatures;
+  /**
+   * @since 3.10.0
+   */
+  indexSignatures;
   constructor(propertySignatures, indexSignatures, annotations3 = {}) {
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "TypeLiteral");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "propertySignatures");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "indexSignatures");
     this.annotations = annotations3;
     const keys7 = {};
     for (let i = 0; i < propertySignatures.length; i++) {
@@ -87077,14 +86884,21 @@ var unify = (candidates2) => {
   }
   return out;
 };
-var _Union = class _Union {
+var Union = class _Union {
+  types;
+  annotations;
+  static make = (types2, annotations3) => {
+    return isMembers(types2) ? new _Union(types2, annotations3) : types2.length === 1 ? types2[0] : neverKeyword;
+  };
+  /** @internal */
+  static unify = (candidates2, annotations3) => {
+    return _Union.make(unify(flatten13(candidates2)), annotations3);
+  };
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Union";
   constructor(types2, annotations3 = {}) {
-    __publicField(this, "types");
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Union");
     this.types = types2;
     this.annotations = annotations3;
   }
@@ -87105,26 +86919,18 @@ var _Union = class _Union {
     };
   }
 };
-__publicField(_Union, "make", (types2, annotations3) => {
-  return isMembers(types2) ? new _Union(types2, annotations3) : types2.length === 1 ? types2[0] : neverKeyword;
-});
-/** @internal */
-__publicField(_Union, "unify", (candidates2, annotations3) => {
-  return _Union.make(unify(flatten13(candidates2)), annotations3);
-});
-var Union = _Union;
 var mapMembers = (members7, f) => members7.map(f);
 var isMembers = (as16) => as16.length > 1;
 var isUnion = /* @__PURE__ */ createASTGuard("Union");
 var toJSONMemoMap = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/Schema/AST/toJSONMemoMap"), () => /* @__PURE__ */ new WeakMap());
 var Suspend = class {
+  f;
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Suspend";
   constructor(f, annotations3 = {}) {
-    __publicField(this, "f");
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Suspend");
     this.f = f;
     this.annotations = annotations3;
     this.f = memoizeThunk(f);
@@ -87157,14 +86963,14 @@ var Suspend = class {
   }
 };
 var Refinement = class {
+  from;
+  filter;
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Refinement";
   constructor(from8, filter23, annotations3 = {}) {
-    __publicField(this, "from");
-    __publicField(this, "filter");
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Refinement");
     this.from = from8;
     this.filter = filter23;
     this.annotations = annotations3;
@@ -87192,15 +86998,15 @@ var Refinement = class {
 var isRefinement = /* @__PURE__ */ createASTGuard("Refinement");
 var defaultParseOption = {};
 var Transformation = class {
+  from;
+  to;
+  transformation;
+  annotations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Transformation";
   constructor(from8, to, transformation, annotations3 = {}) {
-    __publicField(this, "from");
-    __publicField(this, "to");
-    __publicField(this, "transformation");
-    __publicField(this, "annotations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Transformation");
     this.from = from8;
     this.to = to;
     this.transformation = transformation;
@@ -87226,33 +87032,31 @@ var Transformation = class {
 };
 var isTransformation = /* @__PURE__ */ createASTGuard("Transformation");
 var FinalTransformation = class {
+  decode;
+  encode;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "FinalTransformation";
   constructor(decode8, encode6) {
-    __publicField(this, "decode");
-    __publicField(this, "encode");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "FinalTransformation");
     this.decode = decode8;
     this.encode = encode6;
   }
 };
 var createTransformationGuard = (tag4) => (ast) => ast._tag === tag4;
 var ComposeTransformation = class {
-  constructor() {
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "ComposeTransformation");
-  }
+  /**
+   * @since 3.10.0
+   */
+  _tag = "ComposeTransformation";
 };
 var composeTransformation = /* @__PURE__ */ new ComposeTransformation();
 var PropertySignatureTransformation = class {
+  from;
+  to;
+  decode;
+  encode;
   constructor(from8, to, decode8, encode6) {
-    __publicField(this, "from");
-    __publicField(this, "to");
-    __publicField(this, "decode");
-    __publicField(this, "encode");
     this.from = from8;
     this.to = to;
     this.decode = decode8;
@@ -87261,12 +87065,12 @@ var PropertySignatureTransformation = class {
 };
 var isRenamingPropertySignatureTransformation = (t) => t.decode === identity && t.encode === identity;
 var TypeLiteralTransformation = class {
+  propertySignatureTransformations;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "TypeLiteralTransformation";
   constructor(propertySignatureTransformations) {
-    __publicField(this, "propertySignatureTransformations");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "TypeLiteralTransformation");
     this.propertySignatureTransformations = propertySignatureTransformations;
     const fromKeys = {};
     const toKeys = {};
@@ -87944,57 +87748,57 @@ var pruneUndefined = (ast, self2, onTransformation) => {
 
 // node_modules/effect/dist/esm/ParseResult.js
 var Pointer = class {
+  path;
+  actual;
+  issue;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Pointer";
   constructor(path4, actual, issue) {
-    __publicField(this, "path");
-    __publicField(this, "actual");
-    __publicField(this, "issue");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Pointer");
     this.path = path4;
     this.actual = actual;
     this.issue = issue;
   }
 };
 var Unexpected = class {
+  actual;
+  message;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Unexpected";
   constructor(actual, message) {
-    __publicField(this, "actual");
-    __publicField(this, "message");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Unexpected");
     this.actual = actual;
     this.message = message;
   }
 };
 var Missing = class {
+  ast;
+  message;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Missing";
+  /**
+   * @since 3.10.0
+   */
+  actual = void 0;
   constructor(ast, message) {
-    __publicField(this, "ast");
-    __publicField(this, "message");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Missing");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "actual");
     this.ast = ast;
     this.message = message;
   }
 };
 var Composite2 = class {
+  ast;
+  actual;
+  issues;
+  output;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Composite";
   constructor(ast, actual, issues, output) {
-    __publicField(this, "ast");
-    __publicField(this, "actual");
-    __publicField(this, "issues");
-    __publicField(this, "output");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Composite");
     this.ast = ast;
     this.actual = actual;
     this.issues = issues;
@@ -88002,15 +87806,15 @@ var Composite2 = class {
   }
 };
 var Refinement2 = class {
+  ast;
+  actual;
+  kind;
+  issue;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Refinement";
   constructor(ast, actual, kind, issue) {
-    __publicField(this, "ast");
-    __publicField(this, "actual");
-    __publicField(this, "kind");
-    __publicField(this, "issue");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Refinement");
     this.ast = ast;
     this.actual = actual;
     this.kind = kind;
@@ -88018,15 +87822,15 @@ var Refinement2 = class {
   }
 };
 var Transformation2 = class {
+  ast;
+  actual;
+  kind;
+  issue;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Transformation";
   constructor(ast, actual, kind, issue) {
-    __publicField(this, "ast");
-    __publicField(this, "actual");
-    __publicField(this, "kind");
-    __publicField(this, "issue");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Transformation");
     this.ast = ast;
     this.actual = actual;
     this.kind = kind;
@@ -88034,28 +87838,28 @@ var Transformation2 = class {
   }
 };
 var Type2 = class {
+  ast;
+  actual;
+  message;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Type";
   constructor(ast, actual, message) {
-    __publicField(this, "ast");
-    __publicField(this, "actual");
-    __publicField(this, "message");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Type");
     this.ast = ast;
     this.actual = actual;
     this.message = message;
   }
 };
 var Forbidden = class {
+  ast;
+  actual;
+  message;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "Forbidden";
   constructor(ast, actual, message) {
-    __publicField(this, "ast");
-    __publicField(this, "actual");
-    __publicField(this, "message");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "Forbidden");
     this.ast = ast;
     this.actual = actual;
     this.message = message;
@@ -88063,15 +87867,11 @@ var Forbidden = class {
 };
 var ParseErrorTypeId2 = /* @__PURE__ */ Symbol.for("effect/Schema/ParseErrorTypeId");
 var isParseError = (u) => hasProperty(u, ParseErrorTypeId2);
-var _a55;
 var ParseError2 = class extends (/* @__PURE__ */ TaggedError("ParseError")) {
-  constructor() {
-    super(...arguments);
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, _a55, ParseErrorTypeId2);
-  }
+  /**
+   * @since 3.10.0
+   */
+  [ParseErrorTypeId2] = ParseErrorTypeId2;
   get message() {
     return this.toString();
   }
@@ -88093,7 +87893,7 @@ var ParseError2 = class extends (/* @__PURE__ */ TaggedError("ParseError")) {
   /**
    * @since 3.10.0
    */
-  [(_a55 = ParseErrorTypeId2, NodeInspectSymbol)]() {
+  [NodeInspectSymbol]() {
     return this.toJSON();
   }
 };
@@ -89173,11 +88973,9 @@ var omit4 = /* @__PURE__ */ dual((args2) => isObject(args2[0]), (s, ...keys7) =>
 // node_modules/effect/dist/esm/Schema.js
 var TypeId22 = /* @__PURE__ */ Symbol.for("effect/Schema");
 function make47(ast) {
-  var _a91, _b37, _c8;
-  return _b37 = TypeId22, _a91 = TypeId22, _c8 = class {
-    constructor() {
-      __publicField(this, _b37, variance5);
-    }
+  return class SchemaClass {
+    [TypeId22] = variance5;
+    static ast = ast;
     static annotations(annotations3) {
       return make47(mergeSchemaAnnotations(this.ast, annotations3));
     }
@@ -89187,7 +88985,11 @@ function make47(ast) {
     static toString() {
       return String(ast);
     }
-  }, __publicField(_c8, "ast", ast), __publicField(_c8, "Type"), __publicField(_c8, "Encoded"), __publicField(_c8, "Context"), __publicField(_c8, _a91, variance5), _c8;
+    static Type;
+    static Encoded;
+    static Context;
+    static [TypeId22] = variance5;
+  };
 }
 var variance5 = {
   /* c8 ignore next */
@@ -89210,36 +89012,36 @@ var makeStandardFailureFromParseIssue = (issue) => map21(ArrayFormatter.formatIs
   }))
 }));
 var standardSchemaV1 = (schema, overrideOptions) => {
-  var _a91;
   const decodeUnknown4 = decodeUnknown2(schema, {
     errors: "all"
   });
-  return _a91 = class extends make47(schema.ast) {
-  }, __publicField(_a91, "~standard", {
-    version: 1,
-    vendor: "effect",
-    validate(value3) {
-      const scheduler2 = new SyncScheduler();
-      const fiber = runFork2(matchEffect3(decodeUnknown4(value3, overrideOptions), {
-        onFailure: makeStandardFailureFromParseIssue,
-        onSuccess: (value4) => succeed11({
-          value: value4
-        })
-      }), {
-        scheduler: scheduler2
-      });
-      scheduler2.flush();
-      const exit4 = fiber.unsafePoll();
-      if (exit4) {
-        return makeStandardResult(exit4);
-      }
-      return new Promise((resolve) => {
-        fiber.addObserver((exit5) => {
-          resolve(makeStandardResult(exit5));
+  return class StandardSchemaV1Class extends make47(schema.ast) {
+    static "~standard" = {
+      version: 1,
+      vendor: "effect",
+      validate(value3) {
+        const scheduler2 = new SyncScheduler();
+        const fiber = runFork2(matchEffect3(decodeUnknown4(value3, overrideOptions), {
+          onFailure: makeStandardFailureFromParseIssue,
+          onSuccess: (value4) => succeed11({
+            value: value4
+          })
+        }), {
+          scheduler: scheduler2
         });
-      });
-    }
-  }), _a91;
+        scheduler2.flush();
+        const exit4 = fiber.unsafePoll();
+        if (exit4) {
+          return makeStandardResult(exit4);
+        }
+        return new Promise((resolve) => {
+          fiber.addObserver((exit5) => {
+            resolve(makeStandardResult(exit5));
+          });
+        });
+      }
+    };
+  };
 };
 var builtInAnnotations = {
   typeConstructor: TypeConstructorAnnotationId,
@@ -89333,12 +89135,12 @@ function getDefaultLiteralAST(literals) {
   return isMembers(literals) ? Union.make(mapMembers(literals, (literal2) => new Literal(literal2))) : new Literal(literals[0]);
 }
 function makeLiteralClass(literals, ast = getDefaultLiteralAST(literals)) {
-  var _a91;
-  return _a91 = class extends make47(ast) {
+  return class LiteralClass extends make47(ast) {
     static annotations(annotations3) {
       return makeLiteralClass(this.literals, mergeSchemaAnnotations(this.ast, annotations3));
     }
-  }, __publicField(_a91, "literals", [...literals]), _a91;
+    static literals = [...literals];
+  };
 }
 function Literal2(...literals) {
   return isNonEmptyReadonlyArray(literals) ? makeLiteralClass(literals) : Never;
@@ -89346,15 +89148,13 @@ function Literal2(...literals) {
 var pickLiteral = (...literals) => (_schema) => Literal2(...literals);
 var UniqueSymbolFromSelf = (symbol3) => make47(new UniqueSymbol(symbol3));
 var getDefaultEnumsAST = (enums) => new Enums(Object.keys(enums).filter((key) => typeof enums[enums[key]] !== "number").map((key) => [key, enums[key]]));
-var makeEnumsClass = (enums, ast = getDefaultEnumsAST(enums)) => {
-  var _a91;
-  return _a91 = class extends make47(ast) {
-    static annotations(annotations3) {
-      return makeEnumsClass(this.enums, mergeSchemaAnnotations(this.ast, annotations3));
-    }
-  }, __publicField(_a91, "enums", {
+var makeEnumsClass = (enums, ast = getDefaultEnumsAST(enums)) => class EnumsClass extends make47(ast) {
+  static annotations(annotations3) {
+    return makeEnumsClass(this.enums, mergeSchemaAnnotations(this.ast, annotations3));
+  }
+  static enums = {
     ...enums
-  }), _a91;
+  };
 };
 var Enums2 = (enums) => makeEnumsClass(enums);
 var TemplateLiteral2 = (...[head14, ...tail4]) => {
@@ -89432,7 +89232,6 @@ function getTemplateLiteralParserCoercedElement(encoded, schema) {
   }
 }
 var TemplateLiteralParser = (...params) => {
-  var _a91;
   const encodedSchemas = [];
   const elements = [];
   const schemas = [];
@@ -89459,7 +89258,7 @@ var TemplateLiteralParser = (...params) => {
       [AutoTitleAnnotationId]: format7(Tuple(...schemas))
     });
   }
-  return _a91 = class extends transformOrFail(from8, to, {
+  return class TemplateLiteralParserClass extends transformOrFail(from8, to, {
     strict: false,
     decode: (i, _, ast) => {
       const match26 = re.exec(i);
@@ -89467,7 +89266,8 @@ var TemplateLiteralParser = (...params) => {
     },
     encode: (tuple5) => succeed13(tuple5.join(""))
   }) {
-  }, __publicField(_a91, "params", params.slice()), _a91;
+    static params = params.slice();
+  };
 };
 var declareConstructor = (typeParameters, options5, annotations3) => makeDeclareClass(typeParameters, new Declaration(typeParameters.map((tp) => tp.ast), (...typeParameters2) => options5.decode(...typeParameters2.map(make47)), (...typeParameters2) => options5.encode(...typeParameters2.map(make47)), toASTAnnotations(annotations3)));
 var declarePrimitive = (is6, annotations3) => {
@@ -89476,12 +89276,12 @@ var declarePrimitive = (is6, annotations3) => {
   return makeDeclareClass([], new Declaration([], decodeUnknown4, encodeUnknown3, toASTAnnotations(annotations3)));
 };
 function makeDeclareClass(typeParameters, ast) {
-  var _a91;
-  return _a91 = class extends make47(ast) {
+  return class DeclareClass extends make47(ast) {
     static annotations(annotations3) {
       return makeDeclareClass(this.typeParameters, mergeSchemaAnnotations(this.ast, annotations3));
     }
-  }, __publicField(_a91, "typeParameters", [...typeParameters]), _a91;
+    static typeParameters = [...typeParameters];
+  };
 }
 var declare = function() {
   if (Array.isArray(arguments[0])) {
@@ -89545,12 +89345,12 @@ var Object$ = class extends (/* @__PURE__ */ make47(objectKeyword)) {
 };
 var getDefaultUnionAST = (members7) => Union.make(members7.map((m) => m.ast));
 function makeUnionClass(members7, ast = getDefaultUnionAST(members7)) {
-  var _a91;
-  return _a91 = class extends make47(ast) {
+  return class UnionClass extends make47(ast) {
     static annotations(annotations3) {
       return makeUnionClass(this.members, mergeSchemaAnnotations(this.ast, annotations3));
     }
-  }, __publicField(_a91, "members", [...members7]), _a91;
+    static members = [...members7];
+  };
 }
 function Union2(...members7) {
   return isMembers(members7) ? makeUnionClass(members7) : isNonEmptyReadonlyArray(members7) ? members7[0] : Never;
@@ -89561,14 +89361,12 @@ var NullishOr = (self2) => Union2(self2, Null, Undefined);
 var keyof2 = (self2) => make47(keyof(self2.ast));
 var element = (self2) => new ElementImpl(new OptionalType(self2.ast, false), self2);
 var optionalElement = (self2) => new ElementImpl(new OptionalType(self2.ast, true), self2);
-var _a56;
-_a56 = TypeId22;
-var _ElementImpl = class _ElementImpl {
+var ElementImpl = class _ElementImpl {
+  ast;
+  from;
+  [TypeId22];
+  _Token;
   constructor(ast, from8) {
-    __publicField(this, "ast");
-    __publicField(this, "from");
-    __publicField(this, _a56);
-    __publicField(this, "_Token");
     this.ast = ast;
     this.from = from8;
   }
@@ -89582,35 +89380,35 @@ var _ElementImpl = class _ElementImpl {
     return `${this.ast.type}${this.ast.isOptional ? "?" : ""}`;
   }
 };
-var ElementImpl = _ElementImpl;
 var getDefaultTupleTypeAST = (elements, rest) => new TupleType(elements.map((el) => isSchema(el) ? new OptionalType(el.ast, false) : el.ast), rest.map((el) => isSchema(el) ? new Type(el.ast) : el.ast), true);
 function makeTupleTypeClass(elements, rest, ast = getDefaultTupleTypeAST(elements, rest)) {
-  var _a91;
-  return _a91 = class extends make47(ast) {
+  return class TupleTypeClass extends make47(ast) {
     static annotations(annotations3) {
       return makeTupleTypeClass(this.elements, this.rest, mergeSchemaAnnotations(this.ast, annotations3));
     }
-  }, __publicField(_a91, "elements", [...elements]), __publicField(_a91, "rest", [...rest]), _a91;
+    static elements = [...elements];
+    static rest = [...rest];
+  };
 }
 function Tuple(...args2) {
   return Array.isArray(args2[0]) ? makeTupleTypeClass(args2[0], args2.slice(1)) : makeTupleTypeClass(args2, []);
 }
 function makeArrayClass(value3, ast) {
-  var _a91;
-  return _a91 = class extends makeTupleTypeClass([], [value3], ast) {
+  return class ArrayClass extends makeTupleTypeClass([], [value3], ast) {
     static annotations(annotations3) {
       return makeArrayClass(this.value, mergeSchemaAnnotations(this.ast, annotations3));
     }
-  }, __publicField(_a91, "value", value3), _a91;
+    static value = value3;
+  };
 }
 var Array$ = (value3) => makeArrayClass(value3);
 function makeNonEmptyArrayClass(value3, ast) {
-  var _a91;
-  return _a91 = class extends makeTupleTypeClass([value3], [value3], ast) {
+  return class NonEmptyArrayClass extends makeTupleTypeClass([value3], [value3], ast) {
     static annotations(annotations3) {
       return makeNonEmptyArrayClass(this.value, mergeSchemaAnnotations(this.ast, annotations3));
     }
-  }, __publicField(_a91, "value", value3), _a91;
+    static value = value3;
+  };
 }
 var NonEmptyArray = (value3) => makeNonEmptyArrayClass(value3);
 function ArrayEnsure(value3) {
@@ -89629,14 +89427,14 @@ function NonEmptyArrayEnsure(value3) {
 }
 var formatPropertySignatureToken = (isOptional) => isOptional ? '"?:"' : '":"';
 var PropertySignatureDeclaration = class extends OptionalType {
+  isReadonly;
+  defaultValue;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "PropertySignatureDeclaration";
   constructor(type, isOptional, isReadonly, annotations3, defaultValue) {
     super(type, isOptional, annotations3);
-    __publicField(this, "isReadonly");
-    __publicField(this, "defaultValue");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "PropertySignatureDeclaration");
     this.isReadonly = isReadonly;
     this.defaultValue = defaultValue;
   }
@@ -89650,19 +89448,19 @@ var PropertySignatureDeclaration = class extends OptionalType {
   }
 };
 var FromPropertySignature = class extends OptionalType {
+  isReadonly;
+  fromKey;
   constructor(type, isOptional, isReadonly, annotations3, fromKey2) {
     super(type, isOptional, annotations3);
-    __publicField(this, "isReadonly");
-    __publicField(this, "fromKey");
     this.isReadonly = isReadonly;
     this.fromKey = fromKey2;
   }
 };
 var ToPropertySignature = class extends OptionalType {
+  isReadonly;
+  defaultValue;
   constructor(type, isOptional, isReadonly, annotations3, defaultValue) {
     super(type, isOptional, annotations3);
-    __publicField(this, "isReadonly");
-    __publicField(this, "defaultValue");
     this.isReadonly = isReadonly;
     this.defaultValue = defaultValue;
   }
@@ -89677,15 +89475,15 @@ var formatPropertyKey2 = (p) => {
   return String(p);
 };
 var PropertySignatureTransformation2 = class {
+  from;
+  to;
+  decode;
+  encode;
+  /**
+   * @since 3.10.0
+   */
+  _tag = "PropertySignatureTransformation";
   constructor(from8, to, decode8, encode6) {
-    __publicField(this, "from");
-    __publicField(this, "to");
-    __publicField(this, "decode");
-    __publicField(this, "encode");
-    /**
-     * @since 3.10.0
-     */
-    __publicField(this, "_tag", "PropertySignatureTransformation");
     this.from = from8;
     this.to = to;
     this.decode = decode8;
@@ -89716,17 +89514,15 @@ var mergeSignatureAnnotations = (ast, annotations3) => {
 };
 var PropertySignatureTypeId = /* @__PURE__ */ Symbol.for("effect/PropertySignature");
 var isPropertySignature = (u) => hasProperty(u, PropertySignatureTypeId);
-var _a57, _b17;
-_b17 = TypeId22, _a57 = PropertySignatureTypeId;
-var _PropertySignatureImpl = class _PropertySignatureImpl {
+var PropertySignatureImpl = class _PropertySignatureImpl {
+  ast;
+  [TypeId22];
+  [PropertySignatureTypeId] = null;
+  _TypeToken;
+  _Key;
+  _EncodedToken;
+  _HasDefault;
   constructor(ast) {
-    __publicField(this, "ast");
-    __publicField(this, _b17);
-    __publicField(this, _a57, null);
-    __publicField(this, "_TypeToken");
-    __publicField(this, "_Key");
-    __publicField(this, "_EncodedToken");
-    __publicField(this, "_HasDefault");
     this.ast = ast;
   }
   pipe() {
@@ -89739,12 +89535,11 @@ var _PropertySignatureImpl = class _PropertySignatureImpl {
     return String(this.ast);
   }
 };
-var PropertySignatureImpl = _PropertySignatureImpl;
 var makePropertySignature = (ast) => new PropertySignatureImpl(ast);
 var PropertySignatureWithFromImpl = class _PropertySignatureWithFromImpl extends PropertySignatureImpl {
+  from;
   constructor(ast, from8) {
     super(ast);
-    __publicField(this, "from");
     this.from = from8;
   }
   annotations(annotations3) {
@@ -89984,25 +89779,27 @@ var lazilyMergeDefaults = (fields, out) => {
   return out;
 };
 function makeTypeLiteralClass(fields, records, ast = getDefaultTypeLiteralAST(fields, records)) {
-  var _a91;
-  return _a91 = class extends make47(ast) {
+  return class TypeLiteralClass extends make47(ast) {
     static annotations(annotations3) {
       return makeTypeLiteralClass(this.fields, this.records, mergeSchemaAnnotations(this.ast, annotations3));
     }
+    static fields = {
+      ...fields
+    };
+    static records = [...records];
+    static make = (props, options5) => {
+      const propsWithDefaults = lazilyMergeDefaults(fields, {
+        ...props
+      });
+      return getDisableValidationMakeOption(options5) ? propsWithDefaults : validateSync(this)(propsWithDefaults);
+    };
     static pick(...keys7) {
       return Struct(pick4(fields, ...keys7));
     }
     static omit(...keys7) {
       return Struct(omit4(fields, ...keys7));
     }
-  }, __publicField(_a91, "fields", {
-    ...fields
-  }), __publicField(_a91, "records", [...records]), __publicField(_a91, "make", (props, options5) => {
-    const propsWithDefaults = lazilyMergeDefaults(fields, {
-      ...props
-    });
-    return getDisableValidationMakeOption(options5) ? propsWithDefaults : validateSync(_a91)(propsWithDefaults);
-  }), _a91;
+  };
 }
 function Struct(fields, ...records) {
   return makeTypeLiteralClass(fields, records);
@@ -90013,15 +89810,16 @@ var TaggedStruct = (value3, fields) => Struct({
   ...fields
 });
 function makeRecordClass(key, value3, ast) {
-  var _a91;
-  return _a91 = class extends makeTypeLiteralClass({}, [{
+  return class RecordClass extends makeTypeLiteralClass({}, [{
     key,
     value: value3
   }], ast) {
     static annotations(annotations3) {
       return makeRecordClass(key, value3, mergeSchemaAnnotations(this.ast, annotations3));
     }
-  }, __publicField(_a91, "key", key), __publicField(_a91, "value", value3), _a91;
+    static key = key;
+    static value = value3;
+  };
 }
 var Record = (options5) => makeRecordClass(options5.key, options5.value);
 var pick5 = (...keys7) => (self2) => make47(pick3(self2.ast, keys7));
@@ -90039,14 +89837,15 @@ var pluck = /* @__PURE__ */ dual(2, (schema, key) => {
   return out;
 });
 function makeBrandClass(from8, ast) {
-  var _a91;
-  return _a91 = class extends make47(ast) {
+  return class BrandClass extends make47(ast) {
     static annotations(annotations3) {
       return makeBrandClass(this.from, mergeSchemaAnnotations(this.ast, annotations3));
     }
-  }, __publicField(_a91, "make", (a, options5) => {
-    return getDisableValidationMakeOption(options5) ? a : validateSync(_a91)(a);
-  }), __publicField(_a91, "from", from8), _a91;
+    static make = (a, options5) => {
+      return getDisableValidationMakeOption(options5) ? a : validateSync(this)(a);
+    };
+    static from = from8;
+  };
 }
 var brand = (brand2, annotations3) => (self2) => {
   const annotation = match2(getBrandAnnotation(self2.ast), {
@@ -90187,14 +89986,17 @@ var compose3 = /* @__PURE__ */ dual((args2) => isSchema(args2[1]), (from8, to) =
 var suspend7 = (f) => make47(new Suspend(() => f().ast));
 var RefineSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/Refine");
 function makeRefineClass(from8, filter23, ast) {
-  var _a91, _b37, _c8;
-  return _c8 = class extends (_b37 = make47(ast), _a91 = RefineSchemaId, _b37) {
+  return class RefineClass extends make47(ast) {
     static annotations(annotations3) {
       return makeRefineClass(this.from, this.filter, mergeSchemaAnnotations(this.ast, annotations3));
     }
-  }, __publicField(_c8, _a91, from8), __publicField(_c8, "from", from8), __publicField(_c8, "filter", filter23), __publicField(_c8, "make", (a, options5) => {
-    return getDisableValidationMakeOption(options5) ? a : validateSync(_c8)(a);
-  }), _c8;
+    static [RefineSchemaId] = from8;
+    static from = from8;
+    static filter = filter23;
+    static make = (a, options5) => {
+      return getDisableValidationMakeOption(options5) ? a : validateSync(this)(a);
+    };
+  };
 }
 var fromFilterPredicateReturnTypeItem = (item, ast, input) => {
   if (isBoolean(item)) {
@@ -90242,12 +90044,13 @@ var filterEffect = /* @__PURE__ */ dual(2, (self2, f) => transformOrFail(self2, 
   encode: (a) => succeed13(a)
 }));
 function makeTransformationClass(from8, to, ast) {
-  var _a91;
-  return _a91 = class extends make47(ast) {
+  return class TransformationClass extends make47(ast) {
     static annotations(annotations3) {
       return makeTransformationClass(this.from, this.to, mergeSchemaAnnotations(this.ast, annotations3));
     }
-  }, __publicField(_a91, "from", from8), __publicField(_a91, "to", to), _a91;
+    static from = from8;
+    static to = to;
+  };
 }
 var transformOrFail = /* @__PURE__ */ dual((args2) => isSchema(args2[0]) && isSchema(args2[1]), (from8, to, options5) => makeTransformationClass(from8, to, new Transformation(from8.ast, to.ast, new FinalTransformation(options5.decode, options5.encode))));
 var transform2 = /* @__PURE__ */ dual((args2) => isSchema(args2[0]) && isSchema(args2[1]), (from8, to, options5) => transformOrFail(from8, to, {
@@ -92040,14 +91843,13 @@ var Class6 = (identifier2) => (fieldsOr, annotations3) => makeClass({
 });
 var getClassTag = (tag4) => withConstructorDefault(propertySignature(Literal2(tag4)), () => tag4);
 var TaggedClass3 = (identifier2) => (tag4, fieldsOr, annotations3) => {
-  var _a91;
   const fields = getFieldsFromFieldsOr(fieldsOr);
   const schema = getSchemaFromFieldsOr(fieldsOr);
   const newFields = {
     _tag: getClassTag(tag4)
   };
   const taggedFields = extendFields(newFields, fields);
-  return _a91 = class extends makeClass({
+  return class TaggedClass extends makeClass({
     kind: "TaggedClass",
     identifier: identifier2 ?? tag4,
     schema: extend4(schema, Struct(newFields)),
@@ -92055,7 +91857,8 @@ var TaggedClass3 = (identifier2) => (tag4, fieldsOr, annotations3) => {
     Base: Class2,
     annotations: annotations3
   }) {
-  }, __publicField(_a91, "_tag", tag4), _a91;
+    static _tag = tag4;
+  };
 };
 var TaggedError2 = (identifier2) => (tag4, fieldsOr, annotations3) => {
   class Base3 extends Error2 {
@@ -92077,8 +91880,8 @@ var TaggedError2 = (identifier2) => (tag4, fieldsOr, annotations3) => {
     annotations: annotations3,
     disableToString: true
   }) {
+    static _tag = tag4;
   }
-  __publicField(TaggedErrorClass, "_tag", tag4);
   if (!hasMessageField) {
     Object.defineProperty(TaggedErrorClass.prototype, "message", {
       get() {
@@ -92125,7 +91928,6 @@ var makeClass = ({
   kind,
   schema
 }) => {
-  var _a91, _b37;
   const classSymbol = /* @__PURE__ */ Symbol.for(`effect/Schema/${kind}/${identifier2}`);
   const [typeAnnotations, transformationAnnotations, encodedAnnotations] = getClassAnnotations(annotations3);
   const typeSchema_ = typeSchema(schema);
@@ -92151,7 +91953,7 @@ var makeClass = ({
     ...transformationAnnotations
   });
   const fallbackInstanceOf = (u) => hasProperty(u, classSymbol) && is(typeSide)(u);
-  const klass = (_b37 = class extends Base3 {
+  const klass = class extends Base3 {
     constructor(props = {}, options5 = false) {
       props = {
         ...props
@@ -92165,6 +91967,10 @@ var makeClass = ({
       }
       super(props, true);
     }
+    // ----------------
+    // Schema interface
+    // ----------------
+    static [TypeId22] = variance5;
     static get ast() {
       let out = astCache.get(this);
       if (out) {
@@ -92208,6 +92014,10 @@ var makeClass = ({
     static make(...args2) {
       return new this(...args2);
     }
+    static fields = {
+      ...fields
+    };
+    static identifier = identifier2;
     static extend(identifier3) {
       return (newFieldsOr, annotations4) => {
         const newFields = getFieldsFromFieldsOr(newFieldsOr);
@@ -92252,15 +92062,10 @@ var makeClass = ({
     // ----------------
     // other
     // ----------------
-    get [(_a91 = TypeId22, classSymbol)]() {
+    get [classSymbol]() {
       return classSymbol;
     }
-  }, // ----------------
-  // Schema interface
-  // ----------------
-  __publicField(_b37, _a91, variance5), __publicField(_b37, "fields", {
-    ...fields
-  }), __publicField(_b37, "identifier", identifier2), _b37);
+  };
   if (disableToString !== true) {
     Object.defineProperty(klass.prototype, "toString", {
       value() {
@@ -92830,11 +92635,10 @@ var serializeExit = /* @__PURE__ */ dual(2, (self2, value3) => encode5(exitSchem
 var deserializeExit = /* @__PURE__ */ dual(2, (self2, value3) => decodeUnknown3(exitSchema(self2))(value3));
 var asSerializableWithResult = (procedure) => procedure;
 var TaggedRequest = (identifier2) => (tag4, options5, annotations3) => {
-  var _a91;
   const taggedFields = extendFields({
     _tag: getClassTag(tag4)
   }, options5.payload);
-  return _a91 = class extends makeClass({
+  return class TaggedRequestClass extends makeClass({
     kind: "TaggedRequest",
     identifier: identifier2 ?? tag4,
     schema: Struct(taggedFields),
@@ -92842,6 +92646,9 @@ var TaggedRequest = (identifier2) => (tag4, options5, annotations3) => {
     Base: Class5,
     annotations: annotations3
   }) {
+    static _tag = tag4;
+    static success = options5.success;
+    static failure = options5.failure;
     get [symbolSerializable]() {
       return this.constructor;
     }
@@ -92851,7 +92658,7 @@ var TaggedRequest = (identifier2) => (tag4, options5, annotations3) => {
         success: options5.success
       };
     }
-  }, __publicField(_a91, "_tag", tag4), __publicField(_a91, "success", options5.success), __publicField(_a91, "failure", options5.failure), _a91;
+  };
 };
 var equivalence2 = (schema) => go2(schema.ast, []);
 var getEquivalenceAnnotation = /* @__PURE__ */ getAnnotation(EquivalenceAnnotationId);
@@ -93171,17 +92978,16 @@ var dequeueVariance = {
   /* c8 ignore next */
   _Out: (_) => _
 };
-var _a58, _b18, _c3;
-var QueueImpl = class extends (_c3 = Class3, _b18 = EnqueueTypeId, _a58 = DequeueTypeId, _c3) {
+var QueueImpl = class extends Class3 {
+  queue;
+  takers;
+  shutdownHook;
+  shutdownFlag;
+  strategy;
+  [EnqueueTypeId] = enqueueVariance;
+  [DequeueTypeId] = dequeueVariance;
   constructor(queue, takers, shutdownHook, shutdownFlag, strategy) {
     super();
-    __publicField(this, "queue");
-    __publicField(this, "takers");
-    __publicField(this, "shutdownHook");
-    __publicField(this, "shutdownFlag");
-    __publicField(this, "strategy");
-    __publicField(this, _b18, enqueueVariance);
-    __publicField(this, _a58, dequeueVariance);
     this.queue = queue;
     this.takers = takers;
     this.shutdownHook = shutdownHook;
@@ -93360,12 +93166,10 @@ var unsafeMake12 = (queue, takers, shutdownHook, shutdownFlag, strategy) => {
   return new QueueImpl(queue, takers, shutdownHook, shutdownFlag, strategy);
 };
 var make48 = (queue, strategy) => pipe(deferredMake(), map12((deferred) => unsafeMake12(queue, unbounded(), deferred, make14(false), strategy)));
-var _a59;
-_a59 = BackingQueueTypeId;
 var BackingQueueFromMutableQueue = class {
+  mutable;
+  [BackingQueueTypeId] = backingQueueVariance;
   constructor(mutable3) {
-    __publicField(this, "mutable");
-    __publicField(this, _a59, backingQueueVariance);
     this.mutable = mutable3;
   }
   poll(def) {
@@ -93406,13 +93210,9 @@ var takeN = /* @__PURE__ */ dual(2, (self2, n) => self2.takeBetween(n, n));
 var backPressureStrategy = () => new BackPressureStrategy();
 var droppingStrategy = () => new DroppingStrategy();
 var slidingStrategy = () => new SlidingStrategy();
-var _a60;
-_a60 = QueueStrategyTypeId;
 var BackPressureStrategy = class {
-  constructor() {
-    __publicField(this, _a60, queueStrategyVariance);
-    __publicField(this, "putters", /* @__PURE__ */ unbounded());
-  }
+  [QueueStrategyTypeId] = queueStrategyVariance;
+  putters = /* @__PURE__ */ unbounded();
   surplusSize() {
     return length3(this.putters);
   }
@@ -93472,12 +93272,8 @@ var BackPressureStrategy = class {
     unsafeOfferAll(this.putters, pipe(unsafePollAll(this.putters), filter5(([, _]) => _ !== deferred)));
   }
 };
-var _a61;
-_a61 = QueueStrategyTypeId;
 var DroppingStrategy = class {
-  constructor() {
-    __publicField(this, _a61, queueStrategyVariance);
-  }
+  [QueueStrategyTypeId] = queueStrategyVariance;
   surplusSize() {
     return 0;
   }
@@ -93492,12 +93288,8 @@ var DroppingStrategy = class {
   unsafeOnQueueEmptySpace(_queue, _takers) {
   }
 };
-var _a62;
-_a62 = QueueStrategyTypeId;
 var SlidingStrategy = class {
-  constructor() {
-    __publicField(this, _a62, queueStrategyVariance);
-  }
+  [QueueStrategyTypeId] = queueStrategyVariance;
   surplusSize() {
     return 0;
   }
@@ -93621,14 +93413,14 @@ var makeUnboundedPubSub = (options5) => new UnboundedPubSub(options5?.replay ? n
 var makeSubscription = (pubsub, subscribers, strategy) => map12(deferredMake(), (deferred) => unsafeMakeSubscription(pubsub, subscribers, pubsub.subscribe(), unbounded(), deferred, make14(false), strategy));
 var unsafeMakeSubscription = (pubsub, subscribers, subscription, pollers, shutdownHook, shutdownFlag, strategy) => new SubscriptionImpl(pubsub, subscribers, subscription, pollers, shutdownHook, shutdownFlag, strategy, pubsub.replayWindow());
 var BoundedPubSubArb = class {
+  capacity;
+  replayBuffer;
+  array;
+  publisherIndex = 0;
+  subscribers;
+  subscriberCount = 0;
+  subscribersIndex = 0;
   constructor(capacity7, replayBuffer) {
-    __publicField(this, "capacity");
-    __publicField(this, "replayBuffer");
-    __publicField(this, "array");
-    __publicField(this, "publisherIndex", 0);
-    __publicField(this, "subscribers");
-    __publicField(this, "subscriberCount", 0);
-    __publicField(this, "subscribersIndex", 0);
     this.capacity = capacity7;
     this.replayBuffer = replayBuffer;
     this.array = Array.from({
@@ -93711,10 +93503,10 @@ var BoundedPubSubArb = class {
   }
 };
 var BoundedPubSubArbSubscription = class {
+  self;
+  subscriberIndex;
+  unsubscribed;
   constructor(self2, subscriberIndex, unsubscribed) {
-    __publicField(this, "self");
-    __publicField(this, "subscriberIndex");
-    __publicField(this, "unsubscribed");
     this.self = self2;
     this.subscriberIndex = subscriberIndex;
     this.unsubscribed = unsubscribed;
@@ -93789,15 +93581,15 @@ var BoundedPubSubArbSubscription = class {
   }
 };
 var BoundedPubSubPow2 = class {
+  capacity;
+  replayBuffer;
+  array;
+  mask;
+  publisherIndex = 0;
+  subscribers;
+  subscriberCount = 0;
+  subscribersIndex = 0;
   constructor(capacity7, replayBuffer) {
-    __publicField(this, "capacity");
-    __publicField(this, "replayBuffer");
-    __publicField(this, "array");
-    __publicField(this, "mask");
-    __publicField(this, "publisherIndex", 0);
-    __publicField(this, "subscribers");
-    __publicField(this, "subscriberCount", 0);
-    __publicField(this, "subscribersIndex", 0);
     this.capacity = capacity7;
     this.replayBuffer = replayBuffer;
     this.array = Array.from({
@@ -93881,10 +93673,10 @@ var BoundedPubSubPow2 = class {
   }
 };
 var BoundedPubSubPow2Subscription = class {
+  self;
+  subscriberIndex;
+  unsubscribed;
   constructor(self2, subscriberIndex, unsubscribed) {
-    __publicField(this, "self");
-    __publicField(this, "subscriberIndex");
-    __publicField(this, "unsubscribed");
     this.self = self2;
     this.subscriberIndex = subscriberIndex;
     this.unsubscribed = unsubscribed;
@@ -93959,13 +93751,13 @@ var BoundedPubSubPow2Subscription = class {
   }
 };
 var BoundedPubSubSingle = class {
+  replayBuffer;
+  publisherIndex = 0;
+  subscriberCount = 0;
+  subscribers = 0;
+  value = AbsentValue;
+  capacity = 1;
   constructor(replayBuffer) {
-    __publicField(this, "replayBuffer");
-    __publicField(this, "publisherIndex", 0);
-    __publicField(this, "subscriberCount", 0);
-    __publicField(this, "subscribers", 0);
-    __publicField(this, "value", AbsentValue);
-    __publicField(this, "capacity", 1);
     this.replayBuffer = replayBuffer;
   }
   replayWindow() {
@@ -94029,10 +93821,10 @@ var BoundedPubSubSingle = class {
   }
 };
 var BoundedPubSubSingleSubscription = class {
+  self;
+  subscriberIndex;
+  unsubscribed;
   constructor(self2, subscriberIndex, unsubscribed) {
-    __publicField(this, "self");
-    __publicField(this, "subscriberIndex");
-    __publicField(this, "unsubscribed");
     this.self = self2;
     this.subscriberIndex = subscriberIndex;
     this.unsubscribed = unsubscribed;
@@ -94081,17 +93873,17 @@ var BoundedPubSubSingleSubscription = class {
   }
 };
 var UnboundedPubSub = class {
+  replayBuffer;
+  publisherHead = {
+    value: AbsentValue,
+    subscribers: 0,
+    next: null
+  };
+  publisherTail = this.publisherHead;
+  publisherIndex = 0;
+  subscribersIndex = 0;
+  capacity = Number.MAX_SAFE_INTEGER;
   constructor(replayBuffer) {
-    __publicField(this, "replayBuffer");
-    __publicField(this, "publisherHead", {
-      value: AbsentValue,
-      subscribers: 0,
-      next: null
-    });
-    __publicField(this, "publisherTail", this.publisherHead);
-    __publicField(this, "publisherIndex", 0);
-    __publicField(this, "subscribersIndex", 0);
-    __publicField(this, "capacity", Number.MAX_SAFE_INTEGER);
     this.replayBuffer = replayBuffer;
   }
   replayWindow() {
@@ -94148,11 +93940,11 @@ var UnboundedPubSub = class {
   }
 };
 var UnboundedPubSubSubscription = class {
+  self;
+  subscriberHead;
+  subscriberIndex;
+  unsubscribed;
   constructor(self2, subscriberHead, subscriberIndex, unsubscribed) {
-    __publicField(this, "self");
-    __publicField(this, "subscriberHead");
-    __publicField(this, "subscriberIndex");
-    __publicField(this, "unsubscribed");
     this.self = self2;
     this.subscriberHead = subscriberHead;
     this.subscriberIndex = subscriberIndex;
@@ -94245,19 +94037,18 @@ var UnboundedPubSubSubscription = class {
     }
   }
 };
-var _a63, _b19;
-var SubscriptionImpl = class extends (_b19 = Class3, _a63 = DequeueTypeId, _b19) {
+var SubscriptionImpl = class extends Class3 {
+  pubsub;
+  subscribers;
+  subscription;
+  pollers;
+  shutdownHook;
+  shutdownFlag;
+  strategy;
+  replayWindow;
+  [DequeueTypeId] = dequeueVariance;
   constructor(pubsub, subscribers, subscription, pollers, shutdownHook, shutdownFlag, strategy, replayWindow) {
     super();
-    __publicField(this, "pubsub");
-    __publicField(this, "subscribers");
-    __publicField(this, "subscription");
-    __publicField(this, "pollers");
-    __publicField(this, "shutdownHook");
-    __publicField(this, "shutdownFlag");
-    __publicField(this, "strategy");
-    __publicField(this, "replayWindow");
-    __publicField(this, _a63, dequeueVariance);
     this.pubsub = pubsub;
     this.subscribers = subscribers;
     this.subscription = subscription;
@@ -94384,18 +94175,16 @@ var takeRemainderLoop2 = (self2, min8, max11, acc) => {
     return succeed(pipe(acc, appendAll3(bs)));
   }));
 };
-var _a64, _b20;
-_b20 = EnqueueTypeId, _a64 = DequeueTypeId;
 var PubSubImpl = class {
+  pubsub;
+  subscribers;
+  scope;
+  shutdownHook;
+  shutdownFlag;
+  strategy;
+  [EnqueueTypeId] = enqueueVariance;
+  [DequeueTypeId] = dequeueVariance;
   constructor(pubsub, subscribers, scope5, shutdownHook, shutdownFlag, strategy) {
-    __publicField(this, "pubsub");
-    __publicField(this, "subscribers");
-    __publicField(this, "scope");
-    __publicField(this, "shutdownHook");
-    __publicField(this, "shutdownFlag");
-    __publicField(this, "strategy");
-    __publicField(this, _b20, enqueueVariance);
-    __publicField(this, _a64, dequeueVariance);
     this.pubsub = pubsub;
     this.subscribers = subscribers;
     this.scope = scope5;
@@ -94514,9 +94303,7 @@ var unsafeRemove2 = (queue, value3) => {
   unsafeOfferAll2(queue, pipe(unsafePollAllQueue(queue), filter5((elem) => elem !== value3)));
 };
 var BackPressureStrategy2 = class {
-  constructor() {
-    __publicField(this, "publishers", /* @__PURE__ */ unbounded());
-  }
+  publishers = /* @__PURE__ */ unbounded();
   get shutdown() {
     return flatMap11(fiberId, (fiberId3) => flatMap11(sync(() => unsafePollAllQueue(this.publishers)), (publishers) => forEachConcurrentDiscard(publishers, ([_, deferred, last6]) => last6 ? pipe(deferredInterruptWith(deferred, fiberId3), asVoid2) : void_3, false, false)));
   }
@@ -94656,17 +94443,17 @@ var unsafeStrategyCompleteSubscribers = (strategy, pubsub, subscribers) => {
   }
 };
 var ReplayBuffer = class {
+  capacity;
   constructor(capacity7) {
-    __publicField(this, "capacity");
-    __publicField(this, "head", {
-      value: AbsentValue,
-      next: null
-    });
-    __publicField(this, "tail", this.head);
-    __publicField(this, "size", 0);
-    __publicField(this, "index", 0);
     this.capacity = capacity7;
   }
+  head = {
+    value: AbsentValue,
+    next: null
+  };
+  tail = this.head;
+  size = 0;
+  index = 0;
   slide() {
     this.index++;
   }
@@ -94690,11 +94477,11 @@ var ReplayBuffer = class {
   }
 };
 var ReplayWindowImpl = class {
+  buffer;
+  head;
+  index;
+  remaining;
   constructor(buffer4) {
-    __publicField(this, "buffer");
-    __publicField(this, "head");
-    __publicField(this, "index");
-    __publicField(this, "remaining");
     this.buffer = buffer4;
     this.index = buffer4.index;
     this.remaining = buffer4.size;
@@ -94818,14 +94605,12 @@ var continuationVariance = {
   /* c8 ignore next */
   _OutDone2: (_) => _
 };
-var _a65;
-_a65 = ContinuationTypeId;
 var ContinuationKImpl = class {
+  onSuccess;
+  onHalt;
+  _tag = OP_CONTINUATION_K;
+  [ContinuationTypeId] = continuationVariance;
   constructor(onSuccess, onHalt) {
-    __publicField(this, "onSuccess");
-    __publicField(this, "onHalt");
-    __publicField(this, "_tag", OP_CONTINUATION_K);
-    __publicField(this, _a65, continuationVariance);
     this.onSuccess = onSuccess;
     this.onHalt = onHalt;
   }
@@ -94833,13 +94618,11 @@ var ContinuationKImpl = class {
     return isFailure4(exit4) ? this.onHalt(exit4.cause) : this.onSuccess(exit4.value);
   }
 };
-var _a66;
-_a66 = ContinuationTypeId;
 var ContinuationFinalizerImpl = class {
+  finalizer;
+  _tag = OP_CONTINUATION_FINALIZER;
+  [ContinuationTypeId] = continuationVariance;
   constructor(finalizer3) {
-    __publicField(this, "finalizer");
-    __publicField(this, "_tag", OP_CONTINUATION_FINALIZER);
-    __publicField(this, _a66, continuationVariance);
     this.finalizer = finalizer3;
   }
 };
@@ -95107,11 +94890,11 @@ var OP_PULL_FROM_UPSTREAM = "PullFromUpstream";
 var OP_DRAIN_CHILD_EXECUTORS = "DrainChildExecutors";
 var OP_EMIT3 = "Emit";
 var PullFromChild = class {
+  childExecutor;
+  parentSubexecutor;
+  onEmit;
+  _tag = OP_PULL_FROM_CHILD;
   constructor(childExecutor, parentSubexecutor, onEmit) {
-    __publicField(this, "childExecutor");
-    __publicField(this, "parentSubexecutor");
-    __publicField(this, "onEmit");
-    __publicField(this, "_tag", OP_PULL_FROM_CHILD);
     this.childExecutor = childExecutor;
     this.parentSubexecutor = parentSubexecutor;
     this.onEmit = onEmit;
@@ -95134,16 +94917,16 @@ var PullFromChild = class {
   }
 };
 var PullFromUpstream = class _PullFromUpstream {
+  upstreamExecutor;
+  createChild;
+  lastDone;
+  activeChildExecutors;
+  combineChildResults;
+  combineWithChildResult;
+  onPull;
+  onEmit;
+  _tag = OP_PULL_FROM_UPSTREAM;
   constructor(upstreamExecutor, createChild, lastDone, activeChildExecutors, combineChildResults, combineWithChildResult, onPull, onEmit) {
-    __publicField(this, "upstreamExecutor");
-    __publicField(this, "createChild");
-    __publicField(this, "lastDone");
-    __publicField(this, "activeChildExecutors");
-    __publicField(this, "combineChildResults");
-    __publicField(this, "combineWithChildResult");
-    __publicField(this, "onPull");
-    __publicField(this, "onEmit");
-    __publicField(this, "_tag", OP_PULL_FROM_UPSTREAM);
     this.upstreamExecutor = upstreamExecutor;
     this.createChild = createChild;
     this.lastDone = lastDone;
@@ -95174,15 +94957,15 @@ var PullFromUpstream = class _PullFromUpstream {
   }
 };
 var DrainChildExecutors = class _DrainChildExecutors {
+  upstreamExecutor;
+  lastDone;
+  activeChildExecutors;
+  upstreamDone;
+  combineChildResults;
+  combineWithChildResult;
+  onPull;
+  _tag = OP_DRAIN_CHILD_EXECUTORS;
   constructor(upstreamExecutor, lastDone, activeChildExecutors, upstreamDone, combineChildResults, combineWithChildResult, onPull) {
-    __publicField(this, "upstreamExecutor");
-    __publicField(this, "lastDone");
-    __publicField(this, "activeChildExecutors");
-    __publicField(this, "upstreamDone");
-    __publicField(this, "combineChildResults");
-    __publicField(this, "combineWithChildResult");
-    __publicField(this, "onPull");
-    __publicField(this, "_tag", OP_DRAIN_CHILD_EXECUTORS);
     this.upstreamExecutor = upstreamExecutor;
     this.lastDone = lastDone;
     this.activeChildExecutors = activeChildExecutors;
@@ -95212,10 +94995,10 @@ var DrainChildExecutors = class _DrainChildExecutors {
   }
 };
 var Emit2 = class {
+  value;
+  next;
+  _tag = OP_EMIT3;
   constructor(value3, next4) {
-    __publicField(this, "value");
-    __publicField(this, "next");
-    __publicField(this, "_tag", OP_EMIT3);
     this.value = value3;
     this.next = next4;
   }
@@ -95257,18 +95040,18 @@ var NoUpstream = (activeDownstreamCount) => {
 
 // node_modules/effect/dist/esm/internal/channel/channelExecutor.js
 var ChannelExecutor = class _ChannelExecutor {
+  _activeSubexecutor = void 0;
+  _cancelled = void 0;
+  _closeLastSubstream = void 0;
+  _currentChannel;
+  _done = void 0;
+  _doneStack = [];
+  _emitted = void 0;
+  _executeCloseLastSubstream;
+  _input = void 0;
+  _inProgressFinalizer = void 0;
+  _providedEnv;
   constructor(initialChannel, providedEnv, executeCloseLastSubstream) {
-    __publicField(this, "_activeSubexecutor");
-    __publicField(this, "_cancelled");
-    __publicField(this, "_closeLastSubstream");
-    __publicField(this, "_currentChannel");
-    __publicField(this, "_done");
-    __publicField(this, "_doneStack", []);
-    __publicField(this, "_emitted");
-    __publicField(this, "_executeCloseLastSubstream");
-    __publicField(this, "_input");
-    __publicField(this, "_inProgressFinalizer");
-    __publicField(this, "_providedEnv");
     this._currentChannel = initialChannel;
     this._executeCloseLastSubstream = executeCloseLastSubstream;
     this._providedEnv = providedEnv;
@@ -95995,8 +95778,8 @@ var stateDone = (done12) => ({
   done: done12
 });
 var SingleProducerAsyncInputImpl = class {
+  ref;
   constructor(ref) {
-    __publicField(this, "ref");
     this.ref = ref;
   }
   awaitRead() {
@@ -96565,12 +96348,10 @@ var sinkVariance2 = {
   /* c8 ignore next */
   _R: (_) => _
 };
-var _a67;
-_a67 = SinkTypeId3;
 var SinkImpl = class {
+  channel;
+  [SinkTypeId3] = sinkVariance2;
   constructor(channel) {
-    __publicField(this, "channel");
-    __publicField(this, _a67, sinkVariance2);
     this.channel = channel;
   }
   pipe() {
@@ -97196,25 +96977,24 @@ var variance6 = {
   _A: identity,
   _E: identity
 };
-var _a68, _b21, _c4;
-var RcRefImpl = class extends (_c4 = Class3, _b21 = TypeId23, _a68 = TypeId13, _c4) {
+var RcRefImpl = class extends Class3 {
+  acquire;
+  context;
+  scope;
+  idleTimeToLive;
+  [TypeId23] = variance6;
+  [TypeId13] = TypeId13;
+  state = stateEmpty2;
+  semaphore = /* @__PURE__ */ unsafeMakeSemaphore(1);
   constructor(acquire, context10, scope5, idleTimeToLive) {
     super();
-    __publicField(this, "acquire");
-    __publicField(this, "context");
-    __publicField(this, "scope");
-    __publicField(this, "idleTimeToLive");
-    __publicField(this, _b21, variance6);
-    __publicField(this, _a68, TypeId13);
-    __publicField(this, "state", stateEmpty2);
-    __publicField(this, "semaphore", /* @__PURE__ */ unsafeMakeSemaphore(1));
-    __publicField(this, "get");
     this.acquire = acquire;
     this.context = context10;
     this.scope = scope5;
     this.idleTimeToLive = idleTimeToLive;
     this.get = get15(this);
   }
+  get;
   commit() {
     return this.get;
   }
@@ -97543,8 +97323,8 @@ var Both2 = Both;
 
 // node_modules/effect/dist/esm/internal/stm/versioned.js
 var Versioned = class {
+  value;
   constructor(value3) {
-    __publicField(this, "value");
     this.value = value3;
   }
 };
@@ -97821,25 +97601,24 @@ var stmVariance = {
   /* c8 ignore next */
   _A: (_) => _
 };
-var _a69, _b22, _c5, _d2;
 var STMPrimitive = class {
+  effect_instruction_i0;
+  _op = OP_COMMIT;
+  effect_instruction_i1 = void 0;
+  effect_instruction_i2 = void 0;
+  [EffectTypeId4];
+  [StreamTypeId];
+  [SinkTypeId3];
+  [ChannelTypeId3];
+  get [STMTypeId2]() {
+    return stmVariance;
+  }
   constructor(effect_instruction_i0) {
-    __publicField(this, "effect_instruction_i0");
-    __publicField(this, "_op", OP_COMMIT);
-    __publicField(this, "effect_instruction_i1");
-    __publicField(this, "effect_instruction_i2");
-    __publicField(this, _d2);
-    __publicField(this, _c5);
-    __publicField(this, _b22);
-    __publicField(this, _a69);
     this.effect_instruction_i0 = effect_instruction_i0;
     this[EffectTypeId4] = effectVariance;
     this[StreamTypeId] = stmVariance;
     this[SinkTypeId3] = stmVariance;
     this[ChannelTypeId3] = stmVariance;
-  }
-  get [(_d2 = EffectTypeId4, _c5 = StreamTypeId, _b22 = SinkTypeId3, _a69 = ChannelTypeId3, STMTypeId2)]() {
-    return stmVariance;
   }
   [symbol2](that) {
     return this === that;
@@ -97980,12 +97759,12 @@ var completeTryCommit = (exit4, k) => {
   k(exit4);
 };
 var STMDriver = class {
+  self;
+  journal;
+  fiberId;
+  contStack = [];
+  env;
   constructor(self2, journal, fiberId3, r0) {
-    __publicField(this, "self");
-    __publicField(this, "journal");
-    __publicField(this, "fiberId");
-    __publicField(this, "contStack", []);
-    __publicField(this, "env");
     this.self = self2;
     this.journal = journal;
     this.fiberId = fiberId3;
@@ -98237,15 +98016,13 @@ var tRefVariance = {
   /* c8 ignore next */
   _A: (_) => _
 };
-var _a70;
-_a70 = TRefTypeId;
 var TRefImpl = class {
+  [TRefTypeId] = tRefVariance;
+  /** @internal */
+  todos;
+  /** @internal */
+  versioned;
   constructor(value3) {
-    __publicField(this, _a70, tRefVariance);
-    /** @internal */
-    __publicField(this, "todos");
-    /** @internal */
-    __publicField(this, "versioned");
     this.versioned = new Versioned(value3);
     this.todos = /* @__PURE__ */ new Map();
   }
@@ -98301,167 +98078,16 @@ var makeNode2 = (head14, subscribers, tail4) => ({
   subscribers,
   tail: tail4
 });
-var _a73, _b25;
-_b25 = TPubSubTypeId, _a73 = TDequeueTypeId;
 var TPubSubSubscriptionImpl = class {
+  pubsubSize;
+  publisherHead;
+  requestedCapacity;
+  subscriberHead;
+  subscriberCount;
+  subscribers;
+  [TPubSubTypeId] = TPubSubTypeId;
+  [TDequeueTypeId] = tDequeueVariance;
   constructor(pubsubSize, publisherHead, requestedCapacity, subscriberHead, subscriberCount, subscribers) {
-    __publicField(this, "pubsubSize");
-    __publicField(this, "publisherHead");
-    __publicField(this, "requestedCapacity");
-    __publicField(this, "subscriberHead");
-    __publicField(this, "subscriberCount");
-    __publicField(this, "subscribers");
-    __publicField(this, _b25, TPubSubTypeId);
-    __publicField(this, _a73, tDequeueVariance);
-    __publicField(this, "isShutdown", /* @__PURE__ */ effect3((journal) => {
-      const currentSubscriberHead = unsafeGet8(this.subscriberHead, journal);
-      return currentSubscriberHead === void 0;
-    }));
-    __publicField(this, "awaitShutdown", /* @__PURE__ */ flatMap21(this.isShutdown, (isShutdown7) => isShutdown7 ? void_9 : retry5));
-    __publicField(this, "size", /* @__PURE__ */ withSTMRuntime((runtime41) => {
-      let currentSubscriberHead = unsafeGet8(this.subscriberHead, runtime41.journal);
-      if (currentSubscriberHead === void 0) {
-        return interruptAs2(runtime41.fiberId);
-      }
-      let loop3 = true;
-      let size20 = 0;
-      while (loop3) {
-        const node = unsafeGet8(currentSubscriberHead, runtime41.journal);
-        if (node === void 0) {
-          loop3 = false;
-        } else {
-          const head14 = node.head;
-          const tail4 = node.tail;
-          if (head14 !== AbsentValue2) {
-            size20 = size20 + 1;
-            if (size20 >= Number.MAX_SAFE_INTEGER) {
-              loop3 = false;
-            }
-          }
-          currentSubscriberHead = tail4;
-        }
-      }
-      return succeed18(size20);
-    }));
-    __publicField(this, "isEmpty", /* @__PURE__ */ map28(this.size, (size20) => size20 === 0));
-    __publicField(this, "isFull", /* @__PURE__ */ map28(this.size, (size20) => size20 === this.capacity()));
-    __publicField(this, "peek", /* @__PURE__ */ withSTMRuntime((runtime41) => {
-      let currentSubscriberHead = unsafeGet8(this.subscriberHead, runtime41.journal);
-      if (currentSubscriberHead === void 0) {
-        return interruptAs2(runtime41.fiberId);
-      }
-      let value3 = AbsentValue2;
-      let loop3 = true;
-      while (loop3) {
-        const node = unsafeGet8(currentSubscriberHead, runtime41.journal);
-        if (node === void 0) {
-          return retry5;
-        }
-        const head14 = node.head;
-        const tail4 = node.tail;
-        if (head14 !== AbsentValue2) {
-          value3 = head14;
-          loop3 = false;
-        } else {
-          currentSubscriberHead = tail4;
-        }
-      }
-      return succeed18(value3);
-    }));
-    __publicField(this, "peekOption", /* @__PURE__ */ withSTMRuntime((runtime41) => {
-      let currentSubscriberHead = unsafeGet8(this.subscriberHead, runtime41.journal);
-      if (currentSubscriberHead === void 0) {
-        return interruptAs2(runtime41.fiberId);
-      }
-      let value3 = none2();
-      let loop3 = true;
-      while (loop3) {
-        const node = unsafeGet8(currentSubscriberHead, runtime41.journal);
-        if (node === void 0) {
-          value3 = none2();
-          loop3 = false;
-        } else {
-          const head14 = node.head;
-          const tail4 = node.tail;
-          if (head14 !== AbsentValue2) {
-            value3 = some2(head14);
-            loop3 = false;
-          } else {
-            currentSubscriberHead = tail4;
-          }
-        }
-      }
-      return succeed18(value3);
-    }));
-    __publicField(this, "shutdown", /* @__PURE__ */ effect3((journal) => {
-      let currentSubscriberHead = unsafeGet8(this.subscriberHead, journal);
-      if (currentSubscriberHead !== void 0) {
-        unsafeSet2(this.subscriberHead, void 0, journal);
-        let loop3 = true;
-        while (loop3) {
-          const node = unsafeGet8(currentSubscriberHead, journal);
-          if (node === void 0) {
-            loop3 = false;
-          } else {
-            const head14 = node.head;
-            const tail4 = node.tail;
-            if (head14 !== AbsentValue2) {
-              const subscribers = node.subscribers;
-              if (subscribers === 1) {
-                const size20 = unsafeGet8(this.pubsubSize, journal);
-                const updatedNode = makeNode2(AbsentValue2, 0, tail4);
-                unsafeSet2(currentSubscriberHead, updatedNode, journal);
-                unsafeSet2(this.publisherHead, tail4, journal);
-                unsafeSet2(this.pubsubSize, size20 - 1, journal);
-              } else {
-                const updatedNode = makeNode2(head14, subscribers - 1, tail4);
-                unsafeSet2(currentSubscriberHead, updatedNode, journal);
-              }
-            }
-            currentSubscriberHead = tail4;
-          }
-        }
-        const currentSubscriberCount = unsafeGet8(this.subscriberCount, journal);
-        unsafeSet2(this.subscriberCount, currentSubscriberCount - 1, journal);
-        unsafeSet2(this.subscribers, remove6(unsafeGet8(this.subscribers, journal), this.subscriberHead), journal);
-      }
-    }));
-    __publicField(this, "take", /* @__PURE__ */ withSTMRuntime((runtime41) => {
-      let currentSubscriberHead = unsafeGet8(this.subscriberHead, runtime41.journal);
-      if (currentSubscriberHead === void 0) {
-        return interruptAs2(runtime41.fiberId);
-      }
-      let value3 = AbsentValue2;
-      let loop3 = true;
-      while (loop3) {
-        const node = unsafeGet8(currentSubscriberHead, runtime41.journal);
-        if (node === void 0) {
-          return retry5;
-        }
-        const head14 = node.head;
-        const tail4 = node.tail;
-        if (head14 !== AbsentValue2) {
-          const subscribers = node.subscribers;
-          if (subscribers === 1) {
-            const size20 = unsafeGet8(this.pubsubSize, runtime41.journal);
-            const updatedNode = makeNode2(AbsentValue2, 0, tail4);
-            unsafeSet2(currentSubscriberHead, updatedNode, runtime41.journal);
-            unsafeSet2(this.publisherHead, tail4, runtime41.journal);
-            unsafeSet2(this.pubsubSize, size20 - 1, runtime41.journal);
-          } else {
-            const updatedNode = makeNode2(head14, subscribers - 1, tail4);
-            unsafeSet2(currentSubscriberHead, updatedNode, runtime41.journal);
-          }
-          unsafeSet2(this.subscriberHead, tail4, runtime41.journal);
-          value3 = head14;
-          loop3 = false;
-        } else {
-          currentSubscriberHead = tail4;
-        }
-      }
-      return succeed18(value3);
-    }));
-    __publicField(this, "takeAll", /* @__PURE__ */ this.takeUpTo(Number.POSITIVE_INFINITY));
     this.pubsubSize = pubsubSize;
     this.publisherHead = publisherHead;
     this.requestedCapacity = requestedCapacity;
@@ -98469,9 +98095,158 @@ var TPubSubSubscriptionImpl = class {
     this.subscriberCount = subscriberCount;
     this.subscribers = subscribers;
   }
+  isShutdown = /* @__PURE__ */ effect3((journal) => {
+    const currentSubscriberHead = unsafeGet8(this.subscriberHead, journal);
+    return currentSubscriberHead === void 0;
+  });
+  awaitShutdown = /* @__PURE__ */ flatMap21(this.isShutdown, (isShutdown7) => isShutdown7 ? void_9 : retry5);
   capacity() {
     return this.requestedCapacity;
   }
+  size = /* @__PURE__ */ withSTMRuntime((runtime41) => {
+    let currentSubscriberHead = unsafeGet8(this.subscriberHead, runtime41.journal);
+    if (currentSubscriberHead === void 0) {
+      return interruptAs2(runtime41.fiberId);
+    }
+    let loop3 = true;
+    let size20 = 0;
+    while (loop3) {
+      const node = unsafeGet8(currentSubscriberHead, runtime41.journal);
+      if (node === void 0) {
+        loop3 = false;
+      } else {
+        const head14 = node.head;
+        const tail4 = node.tail;
+        if (head14 !== AbsentValue2) {
+          size20 = size20 + 1;
+          if (size20 >= Number.MAX_SAFE_INTEGER) {
+            loop3 = false;
+          }
+        }
+        currentSubscriberHead = tail4;
+      }
+    }
+    return succeed18(size20);
+  });
+  isEmpty = /* @__PURE__ */ map28(this.size, (size20) => size20 === 0);
+  isFull = /* @__PURE__ */ map28(this.size, (size20) => size20 === this.capacity());
+  peek = /* @__PURE__ */ withSTMRuntime((runtime41) => {
+    let currentSubscriberHead = unsafeGet8(this.subscriberHead, runtime41.journal);
+    if (currentSubscriberHead === void 0) {
+      return interruptAs2(runtime41.fiberId);
+    }
+    let value3 = AbsentValue2;
+    let loop3 = true;
+    while (loop3) {
+      const node = unsafeGet8(currentSubscriberHead, runtime41.journal);
+      if (node === void 0) {
+        return retry5;
+      }
+      const head14 = node.head;
+      const tail4 = node.tail;
+      if (head14 !== AbsentValue2) {
+        value3 = head14;
+        loop3 = false;
+      } else {
+        currentSubscriberHead = tail4;
+      }
+    }
+    return succeed18(value3);
+  });
+  peekOption = /* @__PURE__ */ withSTMRuntime((runtime41) => {
+    let currentSubscriberHead = unsafeGet8(this.subscriberHead, runtime41.journal);
+    if (currentSubscriberHead === void 0) {
+      return interruptAs2(runtime41.fiberId);
+    }
+    let value3 = none2();
+    let loop3 = true;
+    while (loop3) {
+      const node = unsafeGet8(currentSubscriberHead, runtime41.journal);
+      if (node === void 0) {
+        value3 = none2();
+        loop3 = false;
+      } else {
+        const head14 = node.head;
+        const tail4 = node.tail;
+        if (head14 !== AbsentValue2) {
+          value3 = some2(head14);
+          loop3 = false;
+        } else {
+          currentSubscriberHead = tail4;
+        }
+      }
+    }
+    return succeed18(value3);
+  });
+  shutdown = /* @__PURE__ */ effect3((journal) => {
+    let currentSubscriberHead = unsafeGet8(this.subscriberHead, journal);
+    if (currentSubscriberHead !== void 0) {
+      unsafeSet2(this.subscriberHead, void 0, journal);
+      let loop3 = true;
+      while (loop3) {
+        const node = unsafeGet8(currentSubscriberHead, journal);
+        if (node === void 0) {
+          loop3 = false;
+        } else {
+          const head14 = node.head;
+          const tail4 = node.tail;
+          if (head14 !== AbsentValue2) {
+            const subscribers = node.subscribers;
+            if (subscribers === 1) {
+              const size20 = unsafeGet8(this.pubsubSize, journal);
+              const updatedNode = makeNode2(AbsentValue2, 0, tail4);
+              unsafeSet2(currentSubscriberHead, updatedNode, journal);
+              unsafeSet2(this.publisherHead, tail4, journal);
+              unsafeSet2(this.pubsubSize, size20 - 1, journal);
+            } else {
+              const updatedNode = makeNode2(head14, subscribers - 1, tail4);
+              unsafeSet2(currentSubscriberHead, updatedNode, journal);
+            }
+          }
+          currentSubscriberHead = tail4;
+        }
+      }
+      const currentSubscriberCount = unsafeGet8(this.subscriberCount, journal);
+      unsafeSet2(this.subscriberCount, currentSubscriberCount - 1, journal);
+      unsafeSet2(this.subscribers, remove6(unsafeGet8(this.subscribers, journal), this.subscriberHead), journal);
+    }
+  });
+  take = /* @__PURE__ */ withSTMRuntime((runtime41) => {
+    let currentSubscriberHead = unsafeGet8(this.subscriberHead, runtime41.journal);
+    if (currentSubscriberHead === void 0) {
+      return interruptAs2(runtime41.fiberId);
+    }
+    let value3 = AbsentValue2;
+    let loop3 = true;
+    while (loop3) {
+      const node = unsafeGet8(currentSubscriberHead, runtime41.journal);
+      if (node === void 0) {
+        return retry5;
+      }
+      const head14 = node.head;
+      const tail4 = node.tail;
+      if (head14 !== AbsentValue2) {
+        const subscribers = node.subscribers;
+        if (subscribers === 1) {
+          const size20 = unsafeGet8(this.pubsubSize, runtime41.journal);
+          const updatedNode = makeNode2(AbsentValue2, 0, tail4);
+          unsafeSet2(currentSubscriberHead, updatedNode, runtime41.journal);
+          unsafeSet2(this.publisherHead, tail4, runtime41.journal);
+          unsafeSet2(this.pubsubSize, size20 - 1, runtime41.journal);
+        } else {
+          const updatedNode = makeNode2(head14, subscribers - 1, tail4);
+          unsafeSet2(currentSubscriberHead, updatedNode, runtime41.journal);
+        }
+        unsafeSet2(this.subscriberHead, tail4, runtime41.journal);
+        value3 = head14;
+        loop3 = false;
+      } else {
+        currentSubscriberHead = tail4;
+      }
+    }
+    return succeed18(value3);
+  });
+  takeAll = /* @__PURE__ */ this.takeUpTo(Number.POSITIVE_INFINITY);
   takeUpTo(max11) {
     return withSTMRuntime((runtime41) => {
       let currentSubscriberHead = unsafeGet8(this.subscriberHead, runtime41.journal);
@@ -98523,11 +98298,11 @@ var take8 = take7;
 
 // node_modules/effect/dist/esm/internal/ringBuffer.js
 var RingBuffer = class {
+  capacity;
+  array;
+  size = 0;
+  current = 0;
   constructor(capacity7) {
-    __publicField(this, "capacity");
-    __publicField(this, "array");
-    __publicField(this, "size", 0);
-    __publicField(this, "current", 0);
     this.capacity = capacity7;
     this.array = Array.from({
       length: capacity7
@@ -98767,12 +98542,10 @@ var takeVariance = {
   /* c8 ignore next */
   _E: (_) => _
 };
-var _a74;
-_a74 = TakeTypeId;
 var TakeImpl = class {
+  exit;
+  [TakeTypeId] = takeVariance;
   constructor(exit4) {
-    __publicField(this, "exit");
-    __publicField(this, _a74, takeVariance);
     this.exit = exit4;
   }
   pipe() {
@@ -98865,12 +98638,10 @@ var streamVariance = {
   _E: (_) => _,
   _A: (_) => _
 };
-var _a75;
-_a75 = StreamTypeId3;
 var StreamImpl = class {
+  channel;
+  [StreamTypeId3] = streamVariance;
   constructor(channel) {
-    __publicField(this, "channel");
-    __publicField(this, _a75, streamVariance);
     this.channel = channel;
   }
   pipe() {
@@ -100183,10 +99954,10 @@ var rechunkProcess = (rechunker, target) => readWithCause({
   onDone: () => rechunker.emitIfNotEmpty()
 });
 var StreamRechunker = class {
+  n;
+  builder = [];
+  pos = 0;
   constructor(n) {
-    __publicField(this, "n");
-    __publicField(this, "builder", []);
-    __publicField(this, "pos", 0);
     this.n = n;
   }
   isEmpty() {
@@ -101474,15 +101245,14 @@ var bindEffect = /* @__PURE__ */ dual((args2) => typeof args2[0] !== "string", (
   [tag4]: a
 })), options5));
 var mapDequeue = (dequeue, f) => new MapDequeue(dequeue, f);
-var _a76, _b26;
-var MapDequeue = class extends (_b26 = Class3, _a76 = DequeueTypeId2, _b26) {
+var MapDequeue = class extends Class3 {
+  dequeue;
+  f;
+  [DequeueTypeId2] = {
+    _Out: (_) => _
+  };
   constructor(dequeue, f) {
     super();
-    __publicField(this, "dequeue");
-    __publicField(this, "f");
-    __publicField(this, _a76, {
-      _Out: (_) => _
-    });
     this.dequeue = dequeue;
     this.f = f;
   }
@@ -102608,19 +102378,17 @@ var subscriptionRefVariance = {
   /* c8 ignore next */
   _A: (_) => _
 };
-var _a77, _b27, _c6, _d3, _e, _f;
-var SubscriptionRefImpl = class extends (_f = Class3, _e = TypeId13, _d3 = TypeId26, _c6 = RefTypeId2, _b27 = SynchronizedRefTypeId, _a77 = SubscriptionRefTypeId, _f) {
+var SubscriptionRefImpl = class extends Class3 {
+  ref;
+  pubsub;
+  semaphore;
+  [TypeId13] = TypeId13;
+  [TypeId26] = TypeId26;
+  [RefTypeId2] = refVariance;
+  [SynchronizedRefTypeId] = synchronizedVariance;
+  [SubscriptionRefTypeId] = subscriptionRefVariance;
   constructor(ref, pubsub, semaphore) {
     super();
-    __publicField(this, "ref");
-    __publicField(this, "pubsub");
-    __publicField(this, "semaphore");
-    __publicField(this, _e, TypeId13);
-    __publicField(this, _d3, TypeId26);
-    __publicField(this, _c6, refVariance);
-    __publicField(this, _b27, synchronizedVariance);
-    __publicField(this, _a77, subscriptionRefVariance);
-    __publicField(this, "get");
     this.ref = ref;
     this.pubsub = pubsub;
     this.semaphore = semaphore;
@@ -102629,6 +102397,7 @@ var SubscriptionRefImpl = class extends (_f = Class3, _e = TypeId13, _d3 = TypeI
   commit() {
     return this.get;
   }
+  get;
   get changes() {
     return pipe(get12(this.ref), flatMap16((a) => map21(fromPubSub2(this.pubsub, {
       scoped: true
@@ -103144,17 +102913,16 @@ var runVariantStream = (initiatedVariant, stateRef, progressRef, currentVariantR
 };
 
 // node_modules/@midnight-ntwrk/wallet-sdk-runtime/dist/WalletBuilder.js
-var _buildState;
-var _WalletBuilder = class _WalletBuilder {
+var WalletBuilder = class _WalletBuilder {
   constructor(buildState) {
-    __privateAdd(this, _buildState);
-    __privateSet(this, _buildState, buildState);
+    this.#buildState = buildState;
   }
   static init() {
     return new _WalletBuilder({
       variants: []
     });
   }
+  #buildState;
   /**
    * Ensures that the built wallet uses a given variant.
    *
@@ -103163,7 +102931,7 @@ var _WalletBuilder = class _WalletBuilder {
    * @returns A new {@link WalletBuilder} that uses the variant that will be built from `variantBuilder`.
    */
   withVariant(sinceVersion, variantBuilder) {
-    const { sinceVersion: previousVersion } = __privateGet(this, _buildState).variants.at(-1) ?? {
+    const { sinceVersion: previousVersion } = this.#buildState.variants.at(-1) ?? {
       sinceVersion: ProtocolVersion_exports.ProtocolVersion(-1n)
     };
     if (sinceVersion <= previousVersion) {
@@ -103171,40 +102939,32 @@ var _WalletBuilder = class _WalletBuilder {
     }
     const newBuilder = { sinceVersion, variantBuilder };
     return new _WalletBuilder({
-      variants: hlist_exports.append(__privateGet(this, _buildState).variants, newBuilder)
+      variants: hlist_exports.append(this.#buildState.variants, newBuilder)
     });
   }
   /**
    * Builds a wallet like implementation.
    */
   build(...[maybeConfiguration]) {
-    var _a91;
-    if (__privateGet(this, _buildState).variants.length == 0) {
+    if (this.#buildState.variants.length == 0) {
       throw new WalletRuntimeError({ message: "Empty variants list" });
     }
-    const variants = __privateGet(this, _buildState).variants.map(({ sinceVersion, variantBuilder }) => ({
+    const variants = this.#buildState.variants.map(({ sinceVersion, variantBuilder }) => ({
       sinceVersion,
       variant: variantBuilder.build(maybeConfiguration ?? {})
     }));
-    return _a91 = class {
-      constructor(runtime41, runtimeScope) {
-        __publicField(this, "runtime");
-        __publicField(this, "runtimeScope");
-        __publicField(this, "rawState");
-        this.runtime = runtime41;
-        this.runtimeScope = runtimeScope;
-        this.rawState = ObservableOps_exports.fromStream(runtime41.stateChanges).pipe(rx.shareReplay({ refCount: true, bufferSize: 1 }));
-      }
+    return class BaseWallet {
+      static configuration = maybeConfiguration ?? {};
       static allVariants() {
         return variants;
       }
       static allVariantsRecord() {
-        return Variant_exports.makeVersionedRecord(_a91.allVariants());
+        return Variant_exports.makeVersionedRecord(BaseWallet.allVariants());
       }
       static startEmpty(WalletClass) {
         return Effect_exports.gen(this, function* () {
-          const initialState = yield* hlist_exports.head(_a91.allVariants()).variant.migrateState(null);
-          return _a91.startFirst(WalletClass, initialState);
+          const initialState = yield* hlist_exports.head(BaseWallet.allVariants()).variant.migrateState(null);
+          return BaseWallet.startFirst(WalletClass, initialState);
         }).pipe(Effect_exports.runSync);
       }
       static startFirst(WalletClass, state) {
@@ -103221,18 +102981,24 @@ var _WalletBuilder = class _WalletBuilder {
           return new WalletClass(runtime41, scope5);
         }).pipe(Effect_exports.runSync);
       }
+      runtime;
+      runtimeScope;
+      rawState;
       get syncComplete() {
         const { sourceGap, applyGap } = Effect_exports.runSync(this.runtime.progress);
         return sourceGap === 0n && applyGap === 0n;
       }
+      constructor(runtime41, runtimeScope) {
+        this.runtime = runtime41;
+        this.runtimeScope = runtimeScope;
+        this.rawState = ObservableOps_exports.fromStream(runtime41.stateChanges).pipe(rx.shareReplay({ refCount: true, bufferSize: 1 }));
+      }
       stop() {
         return Scope_exports.close(this.runtimeScope, Exit_exports.void).pipe(Effect_exports.runPromise);
       }
-    }, __publicField(_a91, "configuration", maybeConfiguration ?? {}), _a91;
+    };
   }
 };
-_buildState = new WeakMap();
-var WalletBuilder = _WalletBuilder;
 
 // node_modules/@midnight-ntwrk/wallet-sdk-dust-wallet/dist/DustWallet.js
 var rx2 = __toESM(require_cjs(), 1);
@@ -103353,17 +103119,16 @@ var protocolVersionChange = (previous2, current2) => {
   ] : [];
 };
 var V1Tag = /* @__PURE__ */ Symbol("V1");
-var _scope, _context, _v1Context;
 var RunningV1Variant = class {
+  __polyTag__ = V1Tag;
+  #scope;
+  #context;
+  #v1Context;
+  state;
   constructor(scope5, context10, v1Context) {
-    __publicField(this, "__polyTag__", V1Tag);
-    __privateAdd(this, _scope);
-    __privateAdd(this, _context);
-    __privateAdd(this, _v1Context);
-    __publicField(this, "state");
-    __privateSet(this, _scope, scope5);
-    __privateSet(this, _context, context10);
-    __privateSet(this, _v1Context, v1Context);
+    this.#scope = scope5;
+    this.#context = context10;
+    this.#v1Context = v1Context;
     this.state = Stream_exports.fromEffect(context10.stateRef.get).pipe(Stream_exports.flatMap((initialState) => context10.stateRef.changes.pipe(Stream_exports.mapAccum(initialState, (previous2, current2) => {
       return [current2, [previous2, current2]];
     }))), Stream_exports.mapConcat(([previous2, current2]) => {
@@ -103375,12 +103140,12 @@ var RunningV1Variant = class {
     }));
   }
   startSyncInBackground(startAux) {
-    return this.startSync(startAux).pipe(Stream_exports.runScoped(Sink_exports.drain), Effect_exports.forkScoped, Effect_exports.provideService(Scope_exports.Scope, __privateGet(this, _scope)));
+    return this.startSync(startAux).pipe(Stream_exports.runScoped(Sink_exports.drain), Effect_exports.forkScoped, Effect_exports.provideService(Scope_exports.Scope, this.#scope));
   }
   startSync(startAux) {
-    return pipe(SubscriptionRef_exports.get(__privateGet(this, _context).stateRef), Stream_exports.fromEffect, Stream_exports.flatMap((state) => __privateGet(this, _v1Context).syncService.updates(state, startAux)), Stream_exports.mapEffect((update7) => {
-      return SubscriptionRef_exports.updateEffect(__privateGet(this, _context).stateRef, (state) => Effect_exports.try({
-        try: () => __privateGet(this, _v1Context).syncCapability.applyUpdate(state, update7),
+    return pipe(SubscriptionRef_exports.get(this.#context.stateRef), Stream_exports.fromEffect, Stream_exports.flatMap((state) => this.#v1Context.syncService.updates(state, startAux)), Stream_exports.mapEffect((update7) => {
+      return SubscriptionRef_exports.updateEffect(this.#context.stateRef, (state) => Effect_exports.try({
+        try: () => this.#v1Context.syncCapability.applyUpdate(state, update7),
         catch: (err) => new OtherWalletError({
           message: "Error while applying sync update",
           cause: err
@@ -103397,35 +103162,32 @@ var RunningV1Variant = class {
     if (nightUtxos.some((utxo) => utxo.type !== nativeToken().raw)) {
       return Effect_exports.fail(new OtherWalletError({ message: "Token of a non-Night type received" }));
     }
-    return Effect_exports.Do.pipe(Effect_exports.bind("currentState", () => SubscriptionRef_exports.get(__privateGet(this, _context).stateRef)), Effect_exports.bind("blockData", () => __privateGet(this, _v1Context).syncService.blockData()), Effect_exports.let("currentTime", ({ blockData }) => currentTime ?? blockData.timestamp), Effect_exports.let("utxosWithDustValue", ({ currentState, currentTime: currentTime2 }) => {
-      return __privateGet(this, _v1Context).coinsAndBalancesCapability.estimateDustGeneration(currentState, nightUtxos, currentTime2);
+    return Effect_exports.Do.pipe(Effect_exports.bind("currentState", () => SubscriptionRef_exports.get(this.#context.stateRef)), Effect_exports.bind("blockData", () => this.#v1Context.syncService.blockData()), Effect_exports.let("currentTime", ({ blockData }) => currentTime ?? blockData.timestamp), Effect_exports.let("utxosWithDustValue", ({ currentState, currentTime: currentTime2 }) => {
+      return this.#v1Context.coinsAndBalancesCapability.estimateDustGeneration(currentState, nightUtxos, currentTime2);
     }), Effect_exports.flatMap(({ utxosWithDustValue, currentTime: currentTime2 }) => {
-      return __privateGet(this, _v1Context).transactingCapability.createDustGenerationTransaction(currentTime2, ttl, utxosWithDustValue, nightVerifyingKey, dustReceiverAddress).pipe(EitherOps_exports.toEffect);
+      return this.#v1Context.transactingCapability.createDustGenerationTransaction(currentTime2, ttl, utxosWithDustValue, nightVerifyingKey, dustReceiverAddress).pipe(EitherOps_exports.toEffect);
     }));
   }
   addDustGenerationSignature(transaction, signature) {
-    return __privateGet(this, _v1Context).transactingCapability.addDustGenerationSignature(transaction, signature).pipe(EitherOps_exports.toEffect);
+    return this.#v1Context.transactingCapability.addDustGenerationSignature(transaction, signature).pipe(EitherOps_exports.toEffect);
   }
   calculateFee(transactions) {
-    return pipe(__privateGet(this, _v1Context).syncService.blockData(), Effect_exports.map((blockData) => pipe(transactions, Array_exports.map((transaction) => __privateGet(this, _v1Context).transactingCapability.calculateFee(transaction, blockData.ledgerParameters)), ArrayOps_exports.sumBigInt)));
+    return pipe(this.#v1Context.syncService.blockData(), Effect_exports.map((blockData) => pipe(transactions, Array_exports.map((transaction) => this.#v1Context.transactingCapability.calculateFee(transaction, blockData.ledgerParameters)), ArrayOps_exports.sumBigInt)));
   }
   estimateFee(secretKey, transactions, ttl, currentTime) {
-    return pipe(Effect_exports.all([SubscriptionRef_exports.get(__privateGet(this, _context).stateRef), __privateGet(this, _v1Context).syncService.blockData()]), Effect_exports.flatMap(([state, blockData]) => pipe(__privateGet(this, _v1Context).transactingCapability.estimateFee(secretKey, state, transactions, ttl, currentTime ?? blockData.timestamp, blockData.ledgerParameters), EitherOps_exports.toEffect)));
+    return pipe(Effect_exports.all([SubscriptionRef_exports.get(this.#context.stateRef), this.#v1Context.syncService.blockData()]), Effect_exports.flatMap(([state, blockData]) => pipe(this.#v1Context.transactingCapability.estimateFee(secretKey, state, transactions, ttl, currentTime ?? blockData.timestamp, blockData.ledgerParameters), EitherOps_exports.toEffect)));
   }
   balanceTransactions(secretKey, transactions, ttl, currentTime) {
-    return SubscriptionRef_exports.modifyEffect(__privateGet(this, _context).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context).syncService.blockData(), Effect_exports.flatMap((blockData) => __privateGet(this, _v1Context).transactingCapability.balanceTransactions(secretKey, state, transactions, ttl, currentTime ?? blockData.timestamp, blockData.ledgerParameters)));
+    return SubscriptionRef_exports.modifyEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.syncService.blockData(), Effect_exports.flatMap((blockData) => this.#v1Context.transactingCapability.balanceTransactions(secretKey, state, transactions, ttl, currentTime ?? blockData.timestamp, blockData.ledgerParameters)));
     });
   }
   revertTransaction(transaction) {
-    return SubscriptionRef_exports.updateEffect(__privateGet(this, _context).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context).transactingCapability.revertTransaction(state, transaction), EitherOps_exports.toEffect);
+    return SubscriptionRef_exports.updateEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.transactingCapability.revertTransaction(state, transaction), EitherOps_exports.toEffect);
     });
   }
 };
-_scope = new WeakMap();
-_context = new WeakMap();
-_v1Context = new WeakMap();
 
 // node_modules/@midnight-ntwrk/wallet-sdk-indexer-client/dist/effect/Query.js
 var Query_exports = {};
@@ -103440,17 +103202,17 @@ var QueryClient = class extends Context_exports.Tag("@midnight-ntwrk/indexer-cli
 // node_modules/@midnight-ntwrk/wallet-sdk-indexer-client/dist/effect/Query.js
 var make66 = (name, document) => new QueryImpl(`${name}Query`, document);
 var QueryImpl = class extends Effectable_exports.Class {
+  name;
+  document;
   constructor(name, document) {
     super();
-    __publicField(this, "name");
-    __publicField(this, "document");
-    __publicField(this, "tag");
-    __publicField(this, "run");
     this.document = document;
     this.name = name;
     this.tag = Context_exports.GenericTag(name);
     this.run = ((variables) => Effect_exports.flatMap(this, (f) => f(variables)));
   }
+  tag;
+  run;
   commit() {
     const self2 = this;
     return Effect_exports.gen(function* () {
@@ -103478,17 +103240,17 @@ var SubscriptionClient = class extends Context_exports.Tag("@midnight-ntwrk/inde
 // node_modules/@midnight-ntwrk/wallet-sdk-indexer-client/dist/effect/Subscription.js
 var make67 = (name, document) => new SubscriptionImpl2(`${name}Subscription`, document);
 var SubscriptionImpl2 = class extends Effectable_exports.Class {
+  name;
+  document;
   constructor(name, document) {
     super();
-    __publicField(this, "name");
-    __publicField(this, "document");
-    __publicField(this, "tag");
-    __publicField(this, "run");
     this.document = document;
     this.name = name;
     this.tag = Context_exports.GenericTag(name);
     this.run = ((variables) => Stream_exports.flatMap(this, (f) => f(variables)));
   }
+  tag;
+  run;
   commit() {
     const self2 = this;
     return Effect_exports.gen(function* () {
@@ -103558,7 +103320,7 @@ function createClient(options5) {
         control.abort();
       });
       (async () => {
-        var _a91;
+        var _a3;
         let retryingErr = null, retries = 0;
         for (; ; ) {
           if (retryingErr) {
@@ -103573,7 +103335,7 @@ function createClient(options5) {
             const url2 = typeof options5.url === "function" ? await options5.url(request2) : options5.url;
             if (control.signal.aborted)
               return;
-            const headers = typeof options5.headers === "function" ? await options5.headers() : (_a91 = options5.headers) !== null && _a91 !== void 0 ? _a91 : {};
+            const headers = typeof options5.headers === "function" ? await options5.headers() : (_a3 = options5.headers) !== null && _a3 !== void 0 ? _a3 : {};
             if (control.signal.aborted)
               return;
             let res;
@@ -103647,11 +103409,11 @@ __export(HttpURL_exports, {
 
 // node_modules/@midnight-ntwrk/wallet-sdk-utilities/dist/networking/URLError.js
 var InvalidProtocolSchemeError = class extends Data_exports.TaggedError("InvalidProtocolSchemeError") {
+  static tag = "InvalidProtocolSchemeError";
 };
-__publicField(InvalidProtocolSchemeError, "tag", "InvalidProtocolSchemeError");
 var FailedToDeriveWebSocketUrlError = class extends Data_exports.TaggedError("FailedToDeriveWebSocketUrlError") {
+  static tag = "FailedToDeriveWebSocketUrlError";
 };
-__publicField(FailedToDeriveWebSocketUrlError, "tag", "FailedToDeriveWebSocketUrlError");
 
 // node_modules/@midnight-ntwrk/wallet-sdk-utilities/dist/networking/HttpURL.js
 var HttpURL = refined((url2) => url2.protocol === "http:" || url2.protocol === "https:", (url2) => error(`Invalid protocol scheme '${url2.protocol}'. Expected 'http:' or 'https:'`));
@@ -103696,9 +103458,9 @@ var layer = (config3) => Layer_exports.effect(QueryClient, HttpURL_exports.make(
 })), (client) => Effect_exports.sync(() => client.dispose()))), Effect_exports.map((client) => new HttpQueryClientImpl(client))));
 var HttpQueryClientImpl = class {
   constructor(client) {
-    __publicField(this, "client");
     this.client = client;
   }
+  client;
   query(document, variables) {
     return Effect_exports.async((resume2) => {
       let result2;
@@ -104378,14 +104140,11 @@ function createClient2(options5) {
   };
 }
 var TerminatedCloseEvent = class extends Error {
-  constructor() {
-    super(...arguments);
-    __publicField(this, "name", "TerminatedCloseEvent");
-    __publicField(this, "message", "4499: Terminated");
-    __publicField(this, "code", 4499);
-    __publicField(this, "reason", "Terminated");
-    __publicField(this, "wasClean", false);
-  }
+  name = "TerminatedCloseEvent";
+  message = "4499: Terminated";
+  code = 4499;
+  reason = "Terminated";
+  wasClean = false;
 };
 function isLikeCloseEvent(val) {
   return isObject3(val) && "code" in val && "reason" in val;
@@ -104419,9 +104178,9 @@ init_graphql2();
 var layer2 = (config3) => Layer_exports.scoped(SubscriptionClient, WsURL_exports.make(config3.url).pipe(Effect_exports.flatMap((url2) => Effect_exports.acquireRelease(Effect_exports.sync(() => createClient2({ url: url2.toString(), shouldRetry: () => false, keepAlive: config3.keepAlive ?? 15e3 })), (client) => Effect_exports.sync(() => client.dispose()))), Effect_exports.map((client) => new WebSocketSubscriptionClientImpl(client))));
 var WebSocketSubscriptionClientImpl = class {
   constructor(client) {
-    __publicField(this, "client");
     this.client = client;
   }
+  client;
   subscribe(document, variables) {
     return Stream_exports.async((emit2) => {
       const dispose = this.client.subscribe({ query: print(document), variables }, {
@@ -105229,19 +104988,8 @@ var ScaleBigInt = {
   }
 };
 var Bech32mSymbol = /* @__PURE__ */ Symbol("MidnightBech32m");
-var _MidnightBech32m = class _MidnightBech32m {
-  constructor(type, network, data) {
-    __publicField(this, "type");
-    __publicField(this, "network");
-    __publicField(this, "data");
-    this.data = data;
-    this.network = network;
-    this.type = type;
-    _MidnightBech32m.validateSegment("type", type);
-    if (network != mainnet) {
-      _MidnightBech32m.validateSegment("network", network);
-    }
-  }
+var MidnightBech32m = class _MidnightBech32m {
+  static prefix = "mn";
   static encode(networkId, item) {
     return item[Bech32mSymbol].encode(networkId, item);
   }
@@ -105263,6 +105011,18 @@ var _MidnightBech32m = class _MidnightBech32m {
     }
     return new _MidnightBech32m(type, network, Buffer.from(bech32parsed.bytes));
   }
+  type;
+  network;
+  data;
+  constructor(type, network, data) {
+    this.data = data;
+    this.network = network;
+    this.type = type;
+    _MidnightBech32m.validateSegment("type", type);
+    if (network != mainnet) {
+      _MidnightBech32m.validateSegment("network", network);
+    }
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   decode(tclass, networkId) {
     return tclass[Bech32mSymbol].decode(networkId, this);
@@ -105275,13 +105035,11 @@ var _MidnightBech32m = class _MidnightBech32m {
     return this.asString();
   }
 };
-__publicField(_MidnightBech32m, "prefix", "mn");
-var MidnightBech32m = _MidnightBech32m;
 var Bech32mCodec = class _Bech32mCodec {
+  type;
+  dataToBytes;
+  dataFromBytes;
   constructor(type, dataToBytes, dataFromBytes) {
-    __publicField(this, "type");
-    __publicField(this, "dataToBytes");
-    __publicField(this, "dataFromBytes");
     this.dataFromBytes = dataFromBytes;
     this.dataToBytes = dataToBytes;
     this.type = type;
@@ -105308,13 +105066,17 @@ var Bech32mCodec = class _Bech32mCodec {
     }
   }
 };
-var _a78, _b28;
-_b28 = Bech32mSymbol, _a78 = Bech32mSymbol;
-var _ShieldedAddress = class _ShieldedAddress {
+var ShieldedAddress = class _ShieldedAddress {
+  static codec = new Bech32mCodec("shield-addr", (addr) => Buffer.concat([addr.coinPublicKey.data, addr.encryptionPublicKey.data]), (bytes4) => {
+    const coinPublicKey = new ShieldedCoinPublicKey(bytes4.subarray(0, ShieldedCoinPublicKey.keyLength));
+    const encryptionPublicKey = new ShieldedEncryptionPublicKey(bytes4.subarray(ShieldedCoinPublicKey.keyLength));
+    return new _ShieldedAddress(coinPublicKey, encryptionPublicKey);
+  });
+  static [Bech32mSymbol] = _ShieldedAddress.codec;
+  [Bech32mSymbol] = _ShieldedAddress.codec;
+  coinPublicKey;
+  encryptionPublicKey;
   constructor(coinPublicKey, encryptionPublicKey) {
-    __publicField(this, _a78, _ShieldedAddress.codec);
-    __publicField(this, "coinPublicKey");
-    __publicField(this, "encryptionPublicKey");
     this.encryptionPublicKey = encryptionPublicKey;
     this.coinPublicKey = coinPublicKey;
   }
@@ -105328,32 +105090,18 @@ var _ShieldedAddress = class _ShieldedAddress {
     return this.coinPublicKey.equals(other.coinPublicKey) && this.encryptionPublicKey.equals(other.encryptionPublicKey);
   }
 };
-__publicField(_ShieldedAddress, "codec", new Bech32mCodec("shield-addr", (addr) => Buffer.concat([addr.coinPublicKey.data, addr.encryptionPublicKey.data]), (bytes4) => {
-  const coinPublicKey = new ShieldedCoinPublicKey(bytes4.subarray(0, ShieldedCoinPublicKey.keyLength));
-  const encryptionPublicKey = new ShieldedEncryptionPublicKey(bytes4.subarray(ShieldedCoinPublicKey.keyLength));
-  return new _ShieldedAddress(coinPublicKey, encryptionPublicKey);
-}));
-__publicField(_ShieldedAddress, _b28, _ShieldedAddress.codec);
-var ShieldedAddress = _ShieldedAddress;
-var _ShieldedEncryptionSecretKey = class _ShieldedEncryptionSecretKey {
-  constructor(zswap) {
-    // There are some bits in serialization of field elements and elliptic curve points, that are hard to replicate
-    // Thus using zswap implementation directly for serialization purposes
-    __publicField(this, "zswap");
-    this.zswap = zswap;
+var ShieldedCoinPublicKey = class _ShieldedCoinPublicKey {
+  static keyLength = 32;
+  static codec = new Bech32mCodec("shield-cpk", (cpk) => cpk.data, (repr) => new _ShieldedCoinPublicKey(repr));
+  static fromHexString(hexString) {
+    return new _ShieldedCoinPublicKey(Buffer.from(hexString, "hex"));
   }
-};
-__publicField(_ShieldedEncryptionSecretKey, "codec", new Bech32mCodec("shield-esk", (esk) => Buffer.from(esk.zswap.yesIKnowTheSecurityImplicationsOfThis_serialize()), (repr) => new _ShieldedEncryptionSecretKey(EncryptionSecretKey.deserialize(repr))));
-var _ShieldedCoinPublicKey = class _ShieldedCoinPublicKey {
+  data;
   constructor(data) {
-    __publicField(this, "data");
     this.data = data;
     if (data.length != _ShieldedCoinPublicKey.keyLength) {
       throw new Error("Coin public key needs to be 32 bytes long");
     }
-  }
-  static fromHexString(hexString) {
-    return new _ShieldedCoinPublicKey(Buffer.from(hexString, "hex"));
   }
   toHexString() {
     return this.data.toString("hex");
@@ -105363,16 +105111,15 @@ var _ShieldedCoinPublicKey = class _ShieldedCoinPublicKey {
     return otherKey.data.equals(this.data);
   }
 };
-__publicField(_ShieldedCoinPublicKey, "keyLength", 32);
-__publicField(_ShieldedCoinPublicKey, "codec", new Bech32mCodec("shield-cpk", (cpk) => cpk.data, (repr) => new _ShieldedCoinPublicKey(repr)));
-var ShieldedCoinPublicKey = _ShieldedCoinPublicKey;
-var _ShieldedEncryptionPublicKey = class _ShieldedEncryptionPublicKey {
-  constructor(data) {
-    __publicField(this, "data");
-    this.data = data;
-  }
+var ShieldedEncryptionPublicKey = class _ShieldedEncryptionPublicKey {
+  static keyLength = 32;
+  static codec = new Bech32mCodec("shield-epk", (cpk) => cpk.data, (repr) => new _ShieldedEncryptionPublicKey(repr));
   static fromHexString(hexString) {
     return new _ShieldedEncryptionPublicKey(Buffer.from(hexString, "hex"));
+  }
+  data;
+  constructor(data) {
+    this.data = data;
   }
   toHexString() {
     return this.data.toString("hex");
@@ -105382,15 +105129,13 @@ var _ShieldedEncryptionPublicKey = class _ShieldedEncryptionPublicKey {
     return otherKey.data.equals(this.data);
   }
 };
-__publicField(_ShieldedEncryptionPublicKey, "keyLength", 32);
-__publicField(_ShieldedEncryptionPublicKey, "codec", new Bech32mCodec("shield-epk", (cpk) => cpk.data, (repr) => new _ShieldedEncryptionPublicKey(repr)));
-var ShieldedEncryptionPublicKey = _ShieldedEncryptionPublicKey;
-var _a79, _b29;
-_b29 = Bech32mSymbol, _a79 = Bech32mSymbol;
-var _UnshieldedAddress = class _UnshieldedAddress {
+var UnshieldedAddress = class _UnshieldedAddress {
+  data;
+  static keyLength = 32;
+  static codec = new Bech32mCodec("addr", (addr) => addr.data, (repr) => new _UnshieldedAddress(repr));
+  static [Bech32mSymbol] = _UnshieldedAddress.codec;
+  [Bech32mSymbol] = _UnshieldedAddress.codec;
   constructor(data) {
-    __publicField(this, "data");
-    __publicField(this, _a79, _UnshieldedAddress.codec);
     if (data.length != _UnshieldedAddress.keyLength) {
       throw new Error("Unshielded address needs to be 32 bytes long");
     }
@@ -105404,16 +105149,15 @@ var _UnshieldedAddress = class _UnshieldedAddress {
     return otherAddress.data.equals(this.data);
   }
 };
-__publicField(_UnshieldedAddress, "keyLength", 32);
-__publicField(_UnshieldedAddress, "codec", new Bech32mCodec("addr", (addr) => addr.data, (repr) => new _UnshieldedAddress(repr)));
-__publicField(_UnshieldedAddress, _b29, _UnshieldedAddress.codec);
-var UnshieldedAddress = _UnshieldedAddress;
-var _a80, _b30;
-_b30 = Bech32mSymbol, _a80 = Bech32mSymbol;
-var _DustAddress = class _DustAddress {
+var DustAddress = class _DustAddress {
+  data;
+  static codec = new Bech32mCodec("dust", (daddr) => daddr.serialize(), (repr) => new _DustAddress(ScaleBigInt.decode(repr)));
+  static [Bech32mSymbol] = _DustAddress.codec;
+  [Bech32mSymbol] = _DustAddress.codec;
+  static encodePublicKey = (networkId, publicKey) => {
+    return _DustAddress.codec.encode(networkId, new _DustAddress(publicKey)).asString();
+  };
   constructor(data) {
-    __publicField(this, "data");
-    __publicField(this, _a80, _DustAddress.codec);
     if (data >= BLSScalar.modulus) {
       throw new Error("Dust address is too large");
     }
@@ -105427,12 +105171,6 @@ var _DustAddress = class _DustAddress {
     return otherAddress === this.data;
   }
 };
-__publicField(_DustAddress, "codec", new Bech32mCodec("dust", (daddr) => daddr.serialize(), (repr) => new _DustAddress(ScaleBigInt.decode(repr))));
-__publicField(_DustAddress, _b30, _DustAddress.codec);
-__publicField(_DustAddress, "encodePublicKey", (networkId, publicKey) => {
-  return _DustAddress.codec.encode(networkId, new _DustAddress(publicKey)).asString();
-});
-var DustAddress = _DustAddress;
 
 // node_modules/@midnight-ntwrk/wallet-sdk-dust-wallet/dist/v1/Keys.js
 var makeDefaultKeysCapability = () => {
@@ -105556,42 +105294,32 @@ var BindingMarker = {
 
 // node_modules/@midnight-ntwrk/wallet-sdk-capabilities/dist/balancer/Imbalances.js
 var Imbalances = new class {
-  constructor() {
-    __publicField(this, "empty", () => {
-      return /* @__PURE__ */ new Map();
-    });
-    __publicField(this, "fromEntry", (tokenType, value3) => {
-      return /* @__PURE__ */ new Map([[tokenType, value3]]);
-    });
-    __publicField(this, "fromEntries", (entries3) => {
-      const out = /* @__PURE__ */ new Map();
-      for (const [tokenType, value3] of entries3) {
-        const existingValue = this.getValue(out, tokenType);
-        out.set(tokenType, value3 + existingValue);
-      }
-      return out;
-    });
-    __publicField(this, "fromMap", (map116) => {
-      return this.fromEntries(map116.entries());
-    });
-    __publicField(this, "fromMaybeMap", (map116) => {
-      return this.fromMap(map116 ?? /* @__PURE__ */ new Map());
-    });
-    __publicField(this, "getValue", (map116, tokenType) => {
-      return map116.get(tokenType) ?? 0n;
-    });
-    __publicField(this, "typeSet", (map116) => {
-      return new Set(map116.keys());
-    });
-    __publicField(this, "merge", (a, b) => {
-      const allTokenTypes = this.typeSet(a).union(this.typeSet(b));
-      return this.fromEntries(allTokenTypes.values().map((tokenType) => {
-        const aValue = this.getValue(a, tokenType);
-        const bValue = this.getValue(b, tokenType);
-        return [tokenType, aValue + bValue];
-      }).filter(([, value3]) => value3 !== 0n).toArray());
-    });
-  }
+  empty = () => {
+    return /* @__PURE__ */ new Map();
+  };
+  fromEntry = (tokenType, value3) => {
+    return /* @__PURE__ */ new Map([[tokenType, value3]]);
+  };
+  fromEntries = (entries3) => {
+    const out = /* @__PURE__ */ new Map();
+    for (const [tokenType, value3] of entries3) {
+      const existingValue = this.getValue(out, tokenType);
+      out.set(tokenType, value3 + existingValue);
+    }
+    return out;
+  };
+  fromMap = (map116) => {
+    return this.fromEntries(map116.entries());
+  };
+  fromMaybeMap = (map116) => {
+    return this.fromMap(map116 ?? /* @__PURE__ */ new Map());
+  };
+  getValue = (map116, tokenType) => {
+    return map116.get(tokenType) ?? 0n;
+  };
+  typeSet = (map116) => {
+    return new Set(map116.keys());
+  };
   ensureZerosFor(map116, types2) {
     const out = this.fromEntries(map116.entries());
     for (const tokenType of types2) {
@@ -105600,17 +105328,25 @@ var Imbalances = new class {
     }
     return out;
   }
+  merge = (a, b) => {
+    const allTokenTypes = this.typeSet(a).union(this.typeSet(b));
+    return this.fromEntries(allTokenTypes.values().map((tokenType) => {
+      const aValue = this.getValue(a, tokenType);
+      const bValue = this.getValue(b, tokenType);
+      return [tokenType, aValue + bValue];
+    }).filter(([, value3]) => value3 !== 0n).toArray());
+  };
 }();
 
 // node_modules/@midnight-ntwrk/wallet-sdk-capabilities/dist/balancer/CounterOffer.js
 var CounterOffer = class {
+  imbalances;
+  transactionCostModel;
+  feeTokenType;
+  inputs;
+  outputs;
+  targetImbalances;
   constructor(imbalances, transactionCostModel, feeTokenType, targetImbalances) {
-    __publicField(this, "imbalances");
-    __publicField(this, "transactionCostModel");
-    __publicField(this, "feeTokenType");
-    __publicField(this, "inputs");
-    __publicField(this, "outputs");
-    __publicField(this, "targetImbalances");
     this.imbalances = Imbalances.ensureZerosFor(imbalances, Imbalances.typeSet(targetImbalances));
     this.transactionCostModel = transactionCostModel;
     this.feeTokenType = feeTokenType;
@@ -105656,9 +105392,9 @@ var CounterOffer = class {
 
 // node_modules/@midnight-ntwrk/wallet-sdk-capabilities/dist/balancer/Balancer.js
 var InsufficientFundsError2 = class extends Error {
+  tokenType;
   constructor(tokenType) {
     super(`Insufficient Funds: could not balance ${tokenType}`);
-    __publicField(this, "tokenType");
     this.tokenType = tokenType;
   }
 };
@@ -105792,16 +105528,7 @@ var fromSerialized = (serialized) => {
 };
 
 // node_modules/@midnight-ntwrk/wallet-sdk-capabilities/dist/pendingTransactions/pendingTransactionsService.js
-var _effectService, _scope2, _configuration;
-var _PendingTransactionsServiceImpl = class _PendingTransactionsServiceImpl {
-  constructor(effectService, scope5, configuration2) {
-    __privateAdd(this, _effectService);
-    __privateAdd(this, _scope2);
-    __privateAdd(this, _configuration);
-    __privateSet(this, _effectService, effectService);
-    __privateSet(this, _scope2, scope5);
-    __privateSet(this, _configuration, configuration2);
-  }
+var PendingTransactionsServiceImpl = class _PendingTransactionsServiceImpl {
   static init(initParams) {
     return _PendingTransactionsServiceImpl.initEffect(initParams).pipe(Effect_exports.runPromise);
   }
@@ -105815,44 +105542,47 @@ var _PendingTransactionsServiceImpl = class _PendingTransactionsServiceImpl {
       return new _PendingTransactionsServiceImpl(service3, scope5, initParams.configuration);
     });
   }
+  #effectService;
+  #scope;
+  #configuration;
+  constructor(effectService, scope5, configuration2) {
+    this.#effectService = effectService;
+    this.#scope = scope5;
+    this.#configuration = configuration2;
+  }
   addPendingTransaction(tx) {
-    return __privateGet(this, _effectService).addPendingTransaction(tx).pipe(Effect_exports.runPromise);
+    return this.#effectService.addPendingTransaction(tx).pipe(Effect_exports.runPromise);
   }
   clear(tx) {
-    return __privateGet(this, _effectService).clear(tx).pipe(Effect_exports.runPromise);
+    return this.#effectService.clear(tx).pipe(Effect_exports.runPromise);
   }
   start() {
-    return __privateGet(this, _effectService).startPolling(Stream_exports.tick(Duration_exports.seconds(1))).pipe(Effect_exports.provide(HttpQueryClient_exports.layer({
-      url: __privateGet(this, _configuration).indexerClientConnection.indexerHttpUrl
-    })), Effect_exports.provideService(Scope_exports.Scope, __privateGet(this, _scope2)), Effect_exports.provide(DefaultServices_exports.liveServices), Effect_exports.runFork, () => Promise.resolve());
+    return this.#effectService.startPolling(Stream_exports.tick(Duration_exports.seconds(1))).pipe(Effect_exports.provide(HttpQueryClient_exports.layer({
+      url: this.#configuration.indexerClientConnection.indexerHttpUrl
+    })), Effect_exports.provideService(Scope_exports.Scope, this.#scope), Effect_exports.provide(DefaultServices_exports.liveServices), Effect_exports.runFork, () => Promise.resolve());
   }
   state() {
-    return __privateGet(this, _effectService).state().pipe(ObservableOps_exports.fromStream);
+    return this.#effectService.state().pipe(ObservableOps_exports.fromStream);
   }
   stop() {
-    return pipe(Scope_exports.close(__privateGet(this, _scope2), Exit_exports.succeed(void 0)), Effect_exports.runPromise);
+    return pipe(Scope_exports.close(this.#scope, Exit_exports.succeed(void 0)), Effect_exports.runPromise);
   }
 };
-_effectService = new WeakMap();
-_scope2 = new WeakMap();
-_configuration = new WeakMap();
-var PendingTransactionsServiceImpl = _PendingTransactionsServiceImpl;
-var _state, _txTrait;
-var _PendingTransactionsServiceEffectImpl = class _PendingTransactionsServiceEffectImpl {
-  constructor(txTrait, initialState) {
-    __privateAdd(this, _state);
-    __privateAdd(this, _txTrait);
-    __privateSet(this, _txTrait, txTrait);
-    __privateSet(this, _state, SubscriptionRef_exports.make(initialState ?? empty38()).pipe(Effect_exports.runSync));
-  }
+var PendingTransactionsServiceEffectImpl = class _PendingTransactionsServiceEffectImpl {
+  #state;
+  #txTrait;
   static restore(data, txTrait) {
     return pipe(data, (data2) => deserialize2(data2, txTrait), EitherOps_exports.toEffect, Effect_exports.map((state) => new _PendingTransactionsServiceEffectImpl(txTrait, state)));
   }
+  constructor(txTrait, initialState) {
+    this.#txTrait = txTrait;
+    this.#state = SubscriptionRef_exports.make(initialState ?? empty38()).pipe(Effect_exports.runSync);
+  }
   state() {
-    return Stream_exports.concat(Stream_exports.fromEffect(SubscriptionRef_exports.get(__privateGet(this, _state))), __privateGet(this, _state).changes);
+    return Stream_exports.concat(Stream_exports.fromEffect(SubscriptionRef_exports.get(this.#state)), this.#state.changes);
   }
   startPolling(ticks) {
-    return ticks.pipe(Stream_exports.mapEffect(() => SubscriptionRef_exports.get(__privateGet(this, _state))), Stream_exports.mapConcat(allPending), Stream_exports.mapConcatEffect((item) => {
+    return ticks.pipe(Stream_exports.mapEffect(() => SubscriptionRef_exports.get(this.#state)), Stream_exports.mapConcat(allPending), Stream_exports.mapConcatEffect((item) => {
       return Effect_exports.gen(this, function* () {
         const now3 = yield* DateTime_exports.now;
         const result2 = yield* this.queryForStatus(item.tx);
@@ -105863,7 +105593,7 @@ var _PendingTransactionsServiceEffectImpl = class _PendingTransactionsServiceEff
               status: "FAILURE",
               segments: []
             };
-            return __privateGet(this, _txTrait).hasTTLExpired(item.tx, item.creationTime, now3) ? [{ ...item, result: failedResult }] : [];
+            return this.#txTrait.hasTTLExpired(item.tx, item.creationTime, now3) ? [{ ...item, result: failedResult }] : [];
           }
         });
       });
@@ -105874,13 +105604,13 @@ var _PendingTransactionsServiceEffectImpl = class _PendingTransactionsServiceEff
     }));
   }
   addPendingTransaction(tx) {
-    return SubscriptionRef_exports.updateEffect(__privateGet(this, _state), (state) => {
-      return DateTime_exports.now.pipe(Effect_exports.andThen((now3) => addPendingTransaction(state, tx, now3, __privateGet(this, _txTrait))));
+    return SubscriptionRef_exports.updateEffect(this.#state, (state) => {
+      return DateTime_exports.now.pipe(Effect_exports.andThen((now3) => addPendingTransaction(state, tx, now3, this.#txTrait)));
     });
   }
   clear(tx) {
-    return SubscriptionRef_exports.update(__privateGet(this, _state), (state) => {
-      return clear3(state, tx, __privateGet(this, _txTrait));
+    return SubscriptionRef_exports.update(this.#state, (state) => {
+      return clear3(state, tx, this.#txTrait);
     });
   }
   saveResult(tx, result2) {
@@ -105889,15 +105619,15 @@ var _PendingTransactionsServiceEffectImpl = class _PendingTransactionsServiceEff
         return this.clear(tx);
       case "FAILURE":
       case "PARTIAL_SUCCESS":
-        return SubscriptionRef_exports.update(__privateGet(this, _state), (state) => {
-          return saveResult(state, tx, result2, __privateGet(this, _txTrait));
+        return SubscriptionRef_exports.update(this.#state, (state) => {
+          return saveResult(state, tx, result2, this.#txTrait);
         });
     }
   }
   queryForStatus(tx) {
     return Effect_exports.gen(this, function* () {
       const statusQuery = yield* TransactionStatus;
-      const result2 = yield* statusQuery({ transactionId: __privateGet(this, _txTrait).firstId(tx) }).pipe(Effect_exports.catchAll((error4) => {
+      const result2 = yield* statusQuery({ transactionId: this.#txTrait.firstId(tx) }).pipe(Effect_exports.catchAll((error4) => {
         const fallback = { transactions: [] };
         return pipe(Effect_exports.logWarning(error4, "Observed error in PendingTransactionsService, retrying"), Effect_exports.as(fallback));
       }));
@@ -105908,7 +105638,7 @@ var _PendingTransactionsServiceEffectImpl = class _PendingTransactionsServiceEff
         if (res.transactionResult.status != "SUCCESS" && res.transactionResult.status != "FAILURE" && res.transactionResult.status != "PARTIAL_SUCCESS") {
           return Option_exports.none();
         }
-        if (__privateGet(this, _txTrait).areAllTxIdsIncluded(tx, res.identifiers)) {
+        if (this.#txTrait.areAllTxIdsIncluded(tx, res.identifiers)) {
           return Option_exports.some({
             status: res.transactionResult.status,
             segments: res.transactionResult.segments ?? []
@@ -105920,9 +105650,6 @@ var _PendingTransactionsServiceEffectImpl = class _PendingTransactionsServiceEff
     });
   }
 };
-_state = new WeakMap();
-_txTrait = new WeakMap();
-var PendingTransactionsServiceEffectImpl = _PendingTransactionsServiceEffectImpl;
 
 // node_modules/@midnight-ntwrk/wallet-sdk-prover-client/dist/effect/ProverClient.js
 var ProverClient = class extends Context_exports.Tag("@midnight-ntwrk/prover-client#ProverClient")() {
@@ -105936,10 +105663,7 @@ __export(HttpProverClient_exports, {
 });
 var TypeIdError = (typeId, tag4) => {
   class Base3 extends Error2 {
-    constructor() {
-      super(...arguments);
-      __publicField(this, "_tag", tag4);
-    }
+    _tag = tag4;
   }
   Base3.prototype[typeId] = typeId;
   Base3.prototype.name = tag4;
@@ -106389,13 +106113,12 @@ var HttpBodyError = (reason) => bodyError({
   [ErrorTypeId]: ErrorTypeId,
   reason
 });
-var _a83;
 var BodyBase = class {
+  [TypeId32];
   constructor() {
-    __publicField(this, _a83);
     this[TypeId32] = TypeId32;
   }
-  [(_a83 = TypeId32, NodeInspectSymbol)]() {
+  [NodeInspectSymbol]() {
     return this.toJSON();
   }
   toString() {
@@ -106403,10 +106126,7 @@ var BodyBase = class {
   }
 };
 var EmptyImpl = class extends BodyBase {
-  constructor() {
-    super(...arguments);
-    __publicField(this, "_tag", "Empty");
-  }
+  _tag = "Empty";
   toJSON() {
     return {
       _id: "@effect/platform/HttpBody",
@@ -106416,11 +106136,11 @@ var EmptyImpl = class extends BodyBase {
 };
 var empty41 = /* @__PURE__ */ new EmptyImpl();
 var Uint8ArrayImpl = class extends BodyBase {
+  body;
+  contentType;
+  _tag = "Uint8Array";
   constructor(body, contentType) {
     super();
-    __publicField(this, "body");
-    __publicField(this, "contentType");
-    __publicField(this, "_tag", "Uint8Array");
     this.body = body;
     this.contentType = contentType;
   }
@@ -106459,10 +106179,10 @@ var jsonSchema = (schema, options5) => {
 var file = (path4, options5) => flatMap16(FileSystem, (fs3) => map21(fs3.stat(path4), (info8) => stream2(fs3.stream(path4, options5), options5?.contentType, Number(info8.size))));
 var fileWeb = (file2) => stream2(fromReadableStream2(() => file2.stream(), identity), file2.type, file2.size);
 var FormDataImpl = class extends BodyBase {
+  formData;
+  _tag = "FormData";
   constructor(formData2) {
     super();
-    __publicField(this, "formData");
-    __publicField(this, "_tag", "FormData");
     this.formData = formData2;
   }
   toJSON() {
@@ -106489,12 +106209,12 @@ var formDataRecord = (entries3) => {
   return new FormDataImpl(formData2);
 };
 var StreamImpl2 = class extends BodyBase {
+  stream;
+  contentType;
+  contentLength;
+  _tag = "Stream";
   constructor(stream3, contentType, contentLength) {
     super();
-    __publicField(this, "stream");
-    __publicField(this, "contentType");
-    __publicField(this, "contentLength");
-    __publicField(this, "_tag", "Stream");
     this.stream = stream3;
     this.contentType = contentType;
     this.contentLength = contentLength;
@@ -106655,18 +106375,13 @@ var bodyStream = /* @__PURE__ */ dual((args2) => isClientRequest(args2[0]), (sel
 // node_modules/@midnight-ntwrk/wallet-sdk-prover-client/node_modules/@effect/platform/dist/esm/internal/httpClientResponse.js
 var TypeId34 = /* @__PURE__ */ Symbol.for("@effect/platform/HttpClientResponse");
 var fromWeb = (request2, source) => new ClientResponseImpl(request2, source);
-var _a84, _b33, _c7;
-var ClientResponseImpl = class extends (_c7 = Class, _b33 = TypeId31, _a84 = TypeId34, _c7) {
+var ClientResponseImpl = class extends Class {
+  request;
+  source;
+  [TypeId31];
+  [TypeId34];
   constructor(request2, source) {
     super();
-    __publicField(this, "request");
-    __publicField(this, "source");
-    __publicField(this, _b33);
-    __publicField(this, _a84);
-    __publicField(this, "cachedCookies");
-    __publicField(this, "textBody");
-    __publicField(this, "formDataBody");
-    __publicField(this, "arrayBufferBody");
     this.request = request2;
     this.source = source;
     this[TypeId31] = TypeId31;
@@ -106685,6 +106400,7 @@ var ClientResponseImpl = class extends (_c7 = Class, _b33 = TypeId31, _a84 = Typ
   get headers() {
     return fromInput3(this.source.headers);
   }
+  cachedCookies;
   get cookies() {
     if (this.cachedCookies) {
       return this.cachedCookies;
@@ -106718,8 +106434,9 @@ var ClientResponseImpl = class extends (_c7 = Class, _b33 = TypeId31, _a84 = Typ
       })
     });
   }
+  textBody;
   get text() {
-    return this.textBody ?? (this.textBody = tryPromise2({
+    return this.textBody ??= tryPromise2({
       try: () => this.source.text(),
       catch: (cause3) => new ResponseError({
         request: this.request,
@@ -106727,7 +106444,7 @@ var ClientResponseImpl = class extends (_c7 = Class, _b33 = TypeId31, _a84 = Typ
         reason: "Decode",
         cause: cause3
       })
-    }).pipe(cached3, runSync));
+    }).pipe(cached3, runSync);
   }
   get urlParamsBody() {
     return flatMap16(this.text, (_) => try_3({
@@ -106740,8 +106457,9 @@ var ClientResponseImpl = class extends (_c7 = Class, _b33 = TypeId31, _a84 = Typ
       })
     }));
   }
+  formDataBody;
   get formData() {
-    return this.formDataBody ?? (this.formDataBody = tryPromise2({
+    return this.formDataBody ??= tryPromise2({
       try: () => this.source.formData(),
       catch: (cause3) => new ResponseError({
         request: this.request,
@@ -106749,10 +106467,11 @@ var ClientResponseImpl = class extends (_c7 = Class, _b33 = TypeId31, _a84 = Typ
         reason: "Decode",
         cause: cause3
       })
-    }).pipe(cached3, runSync));
+    }).pipe(cached3, runSync);
   }
+  arrayBufferBody;
   get arrayBuffer() {
-    return this.arrayBufferBody ?? (this.arrayBufferBody = tryPromise2({
+    return this.arrayBufferBody ??= tryPromise2({
       try: () => this.source.arrayBuffer(),
       catch: (cause3) => new ResponseError({
         request: this.request,
@@ -106760,7 +106479,7 @@ var ClientResponseImpl = class extends (_c7 = Class, _b33 = TypeId31, _a84 = Typ
         reason: "Decode",
         cause: cause3
       })
-    }).pipe(cached3, runSync));
+    }).pipe(cached3, runSync);
   }
 };
 var filterStatus = /* @__PURE__ */ dual(2, (self2, f) => suspend5(() => f(self2.status) ? succeed11(self2) : fail11(new ResponseError({
@@ -106940,16 +106659,15 @@ var make73 = (f) => makeWith((effect4) => flatMap16(effect4, (request2) => withF
     })));
   });
 })), succeed11);
-var _a85, _b34;
 var InterruptibleResponse = class {
+  original;
+  controller;
   constructor(original, controller) {
-    __publicField(this, "original");
-    __publicField(this, "controller");
-    __publicField(this, _b34, TypeId34);
-    __publicField(this, _a85, TypeId31);
     this.original = original;
     this.controller = controller;
   }
+  [TypeId34] = TypeId34;
+  [TypeId31] = TypeId31;
   applyInterrupt(effect4) {
     return suspend5(() => {
       responseRegistry.unregister(this.original);
@@ -106999,7 +106717,7 @@ var InterruptibleResponse = class {
   toJSON() {
     return this.original.toJSON();
   }
-  [(_b34 = TypeId34, _a85 = TypeId31, NodeInspectSymbol)]() {
+  [NodeInspectSymbol]() {
     return this.original[NodeInspectSymbol]();
   }
 };
@@ -107321,13 +107039,9 @@ var create = (config3) => {
 };
 var HttpProverClientImpl = class {
   constructor(baseUrl3) {
-    __publicField(this, "baseUrl");
-    __publicField(this, "serverProverProvider", () => ({
-      check: async (serializedPreimage, _keyLocation) => pipe(Effect_exports.succeed(createCheckPayload(serializedPreimage)), Effect_exports.flatMap((tx) => this.request(CHECK_TX_PATH, tx, "Failed to check")), Effect_exports.map((response) => parseCheckResult(response)), Effect_exports.runPromise),
-      prove: async (serializedPreimage, _keyLocation, overwriteBindingInput) => pipe(Effect_exports.succeed(createProvingPayload(serializedPreimage, overwriteBindingInput)), Effect_exports.flatMap((tx) => this.request(PROVE_TX_PATH, tx, "Failed to prove")), Effect_exports.runPromise)
-    }));
     this.baseUrl = baseUrl3;
   }
+  baseUrl;
   request(path4, payload, failurePrefix) {
     const concatBytes3 = (chunks3) => Effect_exports.promise(() => BlobOps_exports.getBytes(new Blob(chunks3.map((chunk4) => new Uint8Array(chunk4)))));
     const receiveBody = (response) => pipe(response.stream, Stream_exports.runCollect, Effect_exports.flatMap((chunks3) => concatBytes3(Chunk_exports.toArray(chunks3))));
@@ -107351,6 +107065,10 @@ var HttpProverClientImpl = class {
       ResponseError: (err) => Effect_exports.orElseSucceed(err.response.text, () => "Unknown server error").pipe(Effect_exports.flatMap((message) => new ServerError({ message })))
     }), Effect_exports.provide(FetchHttpClient_exports.layer));
   }
+  serverProverProvider = () => ({
+    check: async (serializedPreimage, _keyLocation) => pipe(Effect_exports.succeed(createCheckPayload(serializedPreimage)), Effect_exports.flatMap((tx) => this.request(CHECK_TX_PATH, tx, "Failed to check")), Effect_exports.map((response) => parseCheckResult(response)), Effect_exports.runPromise),
+    prove: async (serializedPreimage, _keyLocation, overwriteBindingInput) => pipe(Effect_exports.succeed(createProvingPayload(serializedPreimage, overwriteBindingInput)), Effect_exports.flatMap((tx) => this.request(PROVE_TX_PATH, tx, "Failed to prove")), Effect_exports.runPromise)
+  });
   proveTransaction(transaction, costModel) {
     return pipe(Effect_exports.succeed(this.serverProverProvider()), Effect_exports.flatMap((provider) => Effect_exports.tryPromise({
       try: () => transaction.prove(provider, costModel),
@@ -107668,18 +107386,16 @@ function extractGlobal(name, fallback) {
 
 // node_modules/@polkadot/x-textdecoder/node.js
 var TextDecoder2 = /* @__PURE__ */ extractGlobal("TextDecoder", util.TextDecoder);
-var _encoder;
 var Fallback = class {
+  #encoder;
   constructor() {
-    __privateAdd(this, _encoder);
-    __privateSet(this, _encoder, new util.TextEncoder());
+    this.#encoder = new util.TextEncoder();
   }
   // For a Jest 26.0.1 environment, Buffer !== Uint8Array
   encode(value3) {
-    return Uint8Array.from(__privateGet(this, _encoder).encode(value3));
+    return Uint8Array.from(this.#encoder.encode(value3));
   }
 };
-_encoder = new WeakMap();
 var TextEncoder2 = /* @__PURE__ */ extractGlobal("TextEncoder", Fallback);
 
 // node_modules/@polkadot/util/is/function.js
@@ -108841,109 +108557,106 @@ function getRandomValues(output) {
 // node_modules/@polkadot/wasm-bridge/wbg.js
 var DEFAULT_CRYPTO = { getRandomValues };
 var DEFAULT_SELF = { crypto: DEFAULT_CRYPTO };
-var _bridge;
 var Wbg = class {
+  #bridge;
   constructor(bridge2) {
-    __privateAdd(this, _bridge);
-    /** @internal */
-    __publicField(this, "abort", () => {
-      throw new Error("abort");
-    });
-    /** @internal */
-    __publicField(this, "__wbindgen_is_undefined", (idx) => {
-      return __privateGet(this, _bridge).getObject(idx) === void 0;
-    });
-    /** @internal */
-    __publicField(this, "__wbindgen_throw", (ptr, len) => {
-      throw new Error(__privateGet(this, _bridge).getString(ptr, len));
-    });
-    /** @internal */
-    __publicField(this, "__wbg_self_1b7a39e3a92c949c", () => {
-      return __privateGet(this, _bridge).addObject(DEFAULT_SELF);
-    });
-    /** @internal */
-    __publicField(this, "__wbg_require_604837428532a733", (ptr, len) => {
-      throw new Error(`Unable to require ${__privateGet(this, _bridge).getString(ptr, len)}`);
-    });
-    /** @internal */
-    __publicField(this, "__wbg_crypto_968f1772287e2df0", (_idx) => {
-      return __privateGet(this, _bridge).addObject(DEFAULT_CRYPTO);
-    });
-    /** @internal */
-    __publicField(this, "__wbg_getRandomValues_a3d34b4fee3c2869", (_idx) => {
-      return __privateGet(this, _bridge).addObject(DEFAULT_CRYPTO.getRandomValues);
-    });
-    /** @internal */
-    __publicField(this, "__wbg_getRandomValues_f5e14ab7ac8e995d", (_arg0, ptr, len) => {
-      DEFAULT_CRYPTO.getRandomValues(__privateGet(this, _bridge).getU8a(ptr, len));
-    });
-    /** @internal */
-    __publicField(this, "__wbg_randomFillSync_d5bd2d655fdf256a", (_idx, _ptr, _len) => {
-      throw new Error("randomFillsync is not available");
-    });
-    /** @internal */
-    __publicField(this, "__wbindgen_object_drop_ref", (idx) => {
-      __privateGet(this, _bridge).takeObject(idx);
-    });
-    __privateSet(this, _bridge, bridge2);
+    this.#bridge = bridge2;
   }
+  /** @internal */
+  abort = () => {
+    throw new Error("abort");
+  };
+  /** @internal */
+  __wbindgen_is_undefined = (idx) => {
+    return this.#bridge.getObject(idx) === void 0;
+  };
+  /** @internal */
+  __wbindgen_throw = (ptr, len) => {
+    throw new Error(this.#bridge.getString(ptr, len));
+  };
+  /** @internal */
+  __wbg_self_1b7a39e3a92c949c = () => {
+    return this.#bridge.addObject(DEFAULT_SELF);
+  };
+  /** @internal */
+  __wbg_require_604837428532a733 = (ptr, len) => {
+    throw new Error(`Unable to require ${this.#bridge.getString(ptr, len)}`);
+  };
+  /** @internal */
+  __wbg_crypto_968f1772287e2df0 = (_idx) => {
+    return this.#bridge.addObject(DEFAULT_CRYPTO);
+  };
+  /** @internal */
+  __wbg_getRandomValues_a3d34b4fee3c2869 = (_idx) => {
+    return this.#bridge.addObject(DEFAULT_CRYPTO.getRandomValues);
+  };
+  /** @internal */
+  __wbg_getRandomValues_f5e14ab7ac8e995d = (_arg0, ptr, len) => {
+    DEFAULT_CRYPTO.getRandomValues(this.#bridge.getU8a(ptr, len));
+  };
+  /** @internal */
+  __wbg_randomFillSync_d5bd2d655fdf256a = (_idx, _ptr, _len) => {
+    throw new Error("randomFillsync is not available");
+  };
+  /** @internal */
+  __wbindgen_object_drop_ref = (idx) => {
+    this.#bridge.takeObject(idx);
+  };
 };
-_bridge = new WeakMap();
 
 // node_modules/@polkadot/wasm-bridge/bridge.js
-var _createWasm, _heap, _wbg, _cachegetInt32, _cachegetUint8, _heapNext, _wasm, _wasmError, _wasmPromise, _type;
 var Bridge = class {
+  #createWasm;
+  #heap;
+  #wbg;
+  #cachegetInt32;
+  #cachegetUint8;
+  #heapNext;
+  #wasm;
+  #wasmError;
+  #wasmPromise;
+  #type;
   constructor(createWasm2) {
-    __privateAdd(this, _createWasm);
-    __privateAdd(this, _heap);
-    __privateAdd(this, _wbg);
-    __privateAdd(this, _cachegetInt32);
-    __privateAdd(this, _cachegetUint8);
-    __privateAdd(this, _heapNext);
-    __privateAdd(this, _wasm);
-    __privateAdd(this, _wasmError);
-    __privateAdd(this, _wasmPromise);
-    __privateAdd(this, _type);
-    __privateSet(this, _createWasm, createWasm2);
-    __privateSet(this, _cachegetInt32, null);
-    __privateSet(this, _cachegetUint8, null);
-    __privateSet(this, _heap, new Array(32).fill(void 0).concat(void 0, null, true, false));
-    __privateSet(this, _heapNext, __privateGet(this, _heap).length);
-    __privateSet(this, _type, "none");
-    __privateSet(this, _wasm, null);
-    __privateSet(this, _wasmError, null);
-    __privateSet(this, _wasmPromise, null);
-    __privateSet(this, _wbg, { ...new Wbg(this) });
+    this.#createWasm = createWasm2;
+    this.#cachegetInt32 = null;
+    this.#cachegetUint8 = null;
+    this.#heap = new Array(32).fill(void 0).concat(void 0, null, true, false);
+    this.#heapNext = this.#heap.length;
+    this.#type = "none";
+    this.#wasm = null;
+    this.#wasmError = null;
+    this.#wasmPromise = null;
+    this.#wbg = { ...new Wbg(this) };
   }
   /** @description Returns the init error */
   get error() {
-    return __privateGet(this, _wasmError);
+    return this.#wasmError;
   }
   /** @description Returns the init type */
   get type() {
-    return __privateGet(this, _type);
+    return this.#type;
   }
   /** @description Returns the created wasm interface */
   get wasm() {
-    return __privateGet(this, _wasm);
+    return this.#wasm;
   }
   /** @description Performs the wasm initialization */
   async init(createWasm2) {
-    if (!__privateGet(this, _wasmPromise) || createWasm2) {
-      __privateSet(this, _wasmPromise, (createWasm2 || __privateGet(this, _createWasm))(__privateGet(this, _wbg)));
+    if (!this.#wasmPromise || createWasm2) {
+      this.#wasmPromise = (createWasm2 || this.#createWasm)(this.#wbg);
     }
-    const { error: error4, type, wasm: wasm5 } = await __privateGet(this, _wasmPromise);
-    __privateSet(this, _type, type);
-    __privateSet(this, _wasm, wasm5);
-    __privateSet(this, _wasmError, error4);
-    return __privateGet(this, _wasm);
+    const { error: error4, type, wasm: wasm5 } = await this.#wasmPromise;
+    this.#type = type;
+    this.#wasm = wasm5;
+    this.#wasmError = error4;
+    return this.#wasm;
   }
   /**
    * @internal
    * @description Gets an object from the heap
    */
   getObject(idx) {
-    return __privateGet(this, _heap)[idx];
+    return this.#heap[idx];
   }
   /**
    * @internal
@@ -108953,8 +108666,8 @@ var Bridge = class {
     if (idx < 36) {
       return;
     }
-    __privateGet(this, _heap)[idx] = __privateGet(this, _heapNext);
-    __privateSet(this, _heapNext, idx);
+    this.#heap[idx] = this.#heapNext;
+    this.#heapNext = idx;
   }
   /**
    * @internal
@@ -108970,12 +108683,12 @@ var Bridge = class {
    * @description Adds an object to the heap
    */
   addObject(obj) {
-    if (__privateGet(this, _heapNext) === __privateGet(this, _heap).length) {
-      __privateGet(this, _heap).push(__privateGet(this, _heap).length + 1);
+    if (this.#heapNext === this.#heap.length) {
+      this.#heap.push(this.#heap.length + 1);
     }
-    const idx = __privateGet(this, _heapNext);
-    __privateSet(this, _heapNext, __privateGet(this, _heap)[idx]);
-    __privateGet(this, _heap)[idx] = obj;
+    const idx = this.#heapNext;
+    this.#heapNext = this.#heap[idx];
+    this.#heap[idx] = obj;
     return idx;
   }
   /**
@@ -108983,20 +108696,20 @@ var Bridge = class {
    * @description Retrieve an Int32 in the WASM interface
    */
   getInt32() {
-    if (__privateGet(this, _cachegetInt32) === null || __privateGet(this, _cachegetInt32).buffer !== __privateGet(this, _wasm).memory.buffer) {
-      __privateSet(this, _cachegetInt32, new Int32Array(__privateGet(this, _wasm).memory.buffer));
+    if (this.#cachegetInt32 === null || this.#cachegetInt32.buffer !== this.#wasm.memory.buffer) {
+      this.#cachegetInt32 = new Int32Array(this.#wasm.memory.buffer);
     }
-    return __privateGet(this, _cachegetInt32);
+    return this.#cachegetInt32;
   }
   /**
    * @internal
    * @description Retrieve an Uint8Array in the WASM interface
    */
   getUint8() {
-    if (__privateGet(this, _cachegetUint8) === null || __privateGet(this, _cachegetUint8).buffer !== __privateGet(this, _wasm).memory.buffer) {
-      __privateSet(this, _cachegetUint8, new Uint8Array(__privateGet(this, _wasm).memory.buffer));
+    if (this.#cachegetUint8 === null || this.#cachegetUint8.buffer !== this.#wasm.memory.buffer) {
+      this.#cachegetUint8 = new Uint8Array(this.#wasm.memory.buffer);
     }
-    return __privateGet(this, _cachegetUint8);
+    return this.#cachegetUint8;
   }
   /**
    * @internal
@@ -109017,7 +108730,7 @@ var Bridge = class {
    * @description Allocates an Uint8Array in the WASM interface
    */
   allocU8a(arg) {
-    const ptr = __privateGet(this, _wasm).__wbindgen_malloc(arg.length * 1);
+    const ptr = this.#wasm.__wbindgen_malloc(arg.length * 1);
     this.getUint8().set(arg, ptr / 1);
     return [ptr, arg.length];
   }
@@ -109036,7 +108749,7 @@ var Bridge = class {
     const r0 = this.getInt32()[8 / 4 + 0];
     const r1 = this.getInt32()[8 / 4 + 1];
     const ret = this.getU8a(r0, r1).slice();
-    __privateGet(this, _wasm).__wbindgen_free(r0, r1 * 1);
+    this.#wasm.__wbindgen_free(r0, r1 * 1);
     return ret;
   }
   /**
@@ -109047,16 +108760,6 @@ var Bridge = class {
     return u8aToString(this.resultU8a());
   }
 };
-_createWasm = new WeakMap();
-_heap = new WeakMap();
-_wbg = new WeakMap();
-_cachegetInt32 = new WeakMap();
-_cachegetUint8 = new WeakMap();
-_heapNext = new WeakMap();
-_wasm = new WeakMap();
-_wasmError = new WeakMap();
-_wasmPromise = new WeakMap();
-_type = new WeakMap();
 
 // node_modules/@polkadot/wasm-bridge/init.js
 function createWasmFn(root2, wasmBytes2, asmFn) {
@@ -113808,8 +113511,8 @@ function _createCurveFields(type, CURVE, curveOpts = {}, FpFnLE) {
   }
   const Fp = createField(CURVE.p, curveOpts.Fp, FpFnLE);
   const Fn2 = createField(CURVE.n, curveOpts.Fn, FpFnLE);
-  const _b37 = "b" ;
-  const params = ["Gx", "Gy", "a", _b37];
+  const _b = "b" ;
+  const params = ["Gx", "Gy", "a", _b];
   for (const p of params) {
     if (!Fp.isValid(CURVE[p]))
       throw new Error(`CURVE.${p} must be valid field element of CURVE.Fp`);
@@ -114006,7 +113709,7 @@ function weierstrassN(params, extraOpts = {}) {
     if (!Fp.isOdd)
       throw new Error("compression is not supported: Field does not have .isOdd()");
   }
-  function pointToBytes(_c8, point, isCompressed) {
+  function pointToBytes(_c, point, isCompressed) {
     const { x, y } = point.toAffine();
     const bx = Fp.toBytes(x);
     _abool2(isCompressed, "isCompressed");
@@ -115268,13 +114971,13 @@ function extend5(that, name, value3) {
   });
 }
 var RpcError = class extends Error {
+  code;
+  data;
+  message;
+  name;
+  stack;
   constructor(message = "", code = UNKNOWN, data) {
     super();
-    __publicField(this, "code");
-    __publicField(this, "data");
-    __publicField(this, "message");
-    __publicField(this, "name");
-    __publicField(this, "stack");
     extend5(this, "message", String(message));
     extend5(this, "name", this.constructor.name);
     extend5(this, "data", data);
@@ -115286,14 +114989,14 @@ var RpcError = class extends Error {
       stack && extend5(this, "stack", stack);
     }
   }
+  static CODES = {
+    ASSERT: -90009,
+    INVALID_JSONRPC: -99998,
+    METHOD_NOT_FOUND: -32601,
+    // Rust client
+    UNKNOWN
+  };
 };
-__publicField(RpcError, "CODES", {
-  ASSERT: -90009,
-  INVALID_JSONRPC: -99998,
-  METHOD_NOT_FOUND: -32601,
-  // Rust client
-  UNKNOWN
-});
 
 // node_modules/@polkadot/rpc-provider/coder/index.js
 function formatErrorData(data) {
@@ -115309,11 +115012,8 @@ function checkError(error4) {
     throw new RpcError(`${code}: ${message}${formatErrorData(data)}`, code, data);
   }
 }
-var _id;
 var RpcCoder = class {
-  constructor() {
-    __privateAdd(this, _id, 0);
-  }
+  #id = 0;
   decodeResponse(response) {
     if (!response || response.jsonrpc !== "2.0") {
       throw new Error("Invalid jsonrpc field in decoded object");
@@ -115337,7 +115037,7 @@ var RpcCoder = class {
     return [id3, stringify2(data)];
   }
   encodeObject(method, params) {
-    const id3 = ++__privateWrapper(this, _id)._;
+    const id3 = ++this.#id;
     return [id3, {
       id: id3,
       jsonrpc: "2.0",
@@ -115346,7 +115046,6 @@ var RpcCoder = class {
     }];
   }
 };
-_id = new WeakMap();
 var WS_URL = "ws://127.0.0.1:9944";
 var defaults_default = {
   WS_URL
@@ -115357,41 +115056,36 @@ var DEFAULT_CAPACITY = 1024;
 var DEFAULT_TTL = 3e4;
 var MAX_TTL = 18e5;
 var DISABLED_TTL = 31536e6;
-var _expires, _ttl;
 var LRUNode = class {
+  key;
+  #expires;
+  #ttl;
+  createdAt;
+  next;
+  prev;
   constructor(key, ttl) {
-    __publicField(this, "key");
-    __privateAdd(this, _expires);
-    __privateAdd(this, _ttl);
-    __publicField(this, "createdAt");
-    __publicField(this, "next");
-    __publicField(this, "prev");
     this.key = key;
-    __privateSet(this, _ttl, ttl);
-    __privateSet(this, _expires, Date.now() + ttl);
+    this.#ttl = ttl;
+    this.#expires = Date.now() + ttl;
     this.createdAt = Date.now();
     this.next = this.prev = this;
   }
   refresh() {
-    __privateSet(this, _expires, Date.now() + __privateGet(this, _ttl));
+    this.#expires = Date.now() + this.#ttl;
   }
   get expiry() {
-    return __privateGet(this, _expires);
+    return this.#expires;
   }
 };
-_expires = new WeakMap();
-_ttl = new WeakMap();
-var _data, _refs, _length, _head, _tail, _ttl2, _LRUCache_instances, evictTTL_fn, toHead_fn;
 var LRUCache = class {
+  capacity;
+  #data = /* @__PURE__ */ new Map();
+  #refs = /* @__PURE__ */ new Map();
+  #length = 0;
+  #head;
+  #tail;
+  #ttl;
   constructor(capacity7 = DEFAULT_CAPACITY, ttl = DEFAULT_TTL) {
-    __privateAdd(this, _LRUCache_instances);
-    __publicField(this, "capacity");
-    __privateAdd(this, _data, /* @__PURE__ */ new Map());
-    __privateAdd(this, _refs, /* @__PURE__ */ new Map());
-    __privateAdd(this, _length, 0);
-    __privateAdd(this, _head);
-    __privateAdd(this, _tail);
-    __privateAdd(this, _ttl2);
     if (!Number.isInteger(capacity7) || capacity7 < 0) {
       throw new Error(`LRUCache initialization error: 'capacity' must be a non-negative integer. Received: ${capacity7}`);
     }
@@ -115399,20 +115093,20 @@ var LRUCache = class {
       throw new Error(`LRUCache initialization error: 'ttl' must be between 0 and ${MAX_TTL} ms or null to disable. Received: ${ttl}`);
     }
     this.capacity = capacity7;
-    ttl ? __privateSet(this, _ttl2, ttl) : __privateSet(this, _ttl2, DISABLED_TTL);
-    __privateSet(this, _head, __privateSet(this, _tail, new LRUNode("<empty>", __privateGet(this, _ttl2))));
+    ttl ? this.#ttl = ttl : this.#ttl = DISABLED_TTL;
+    this.#head = this.#tail = new LRUNode("<empty>", this.#ttl);
   }
   get ttl() {
-    return __privateGet(this, _ttl2);
+    return this.#ttl;
   }
   get length() {
-    return __privateGet(this, _length);
+    return this.#length;
   }
   get lengthData() {
-    return __privateGet(this, _data).size;
+    return this.#data.size;
   }
   get lengthRefs() {
-    return __privateGet(this, _refs).size;
+    return this.#refs.size;
   }
   entries() {
     const keys7 = this.keys();
@@ -115420,15 +115114,15 @@ var LRUCache = class {
     const entries3 = new Array(count7);
     for (let i = 0; i < count7; i++) {
       const key = keys7[i];
-      entries3[i] = [key, __privateGet(this, _data).get(key)];
+      entries3[i] = [key, this.#data.get(key)];
     }
     return entries3;
   }
   keys() {
     const keys7 = [];
-    if (__privateGet(this, _length)) {
-      let curr = __privateGet(this, _head);
-      while (curr !== __privateGet(this, _tail)) {
+    if (this.#length) {
+      let curr = this.#head;
+      while (curr !== this.#tail) {
         keys7.push(curr.key);
         curr = curr.next;
       }
@@ -115437,69 +115131,62 @@ var LRUCache = class {
     return keys7;
   }
   get(key) {
-    const data = __privateGet(this, _data).get(key);
+    const data = this.#data.get(key);
     if (data) {
-      __privateMethod(this, _LRUCache_instances, toHead_fn).call(this, key);
-      __privateMethod(this, _LRUCache_instances, evictTTL_fn).call(this);
+      this.#toHead(key);
+      this.#evictTTL();
       return data;
     }
-    __privateMethod(this, _LRUCache_instances, evictTTL_fn).call(this);
+    this.#evictTTL();
     return null;
   }
   set(key, value3) {
-    if (__privateGet(this, _data).has(key)) {
-      __privateMethod(this, _LRUCache_instances, toHead_fn).call(this, key);
+    if (this.#data.has(key)) {
+      this.#toHead(key);
     } else {
-      const node = new LRUNode(key, __privateGet(this, _ttl2));
-      __privateGet(this, _refs).set(node.key, node);
+      const node = new LRUNode(key, this.#ttl);
+      this.#refs.set(node.key, node);
       if (this.length === 0) {
-        __privateSet(this, _head, __privateSet(this, _tail, node));
+        this.#head = this.#tail = node;
       } else {
-        __privateGet(this, _head).prev = node;
-        node.next = __privateGet(this, _head);
-        __privateSet(this, _head, node);
+        this.#head.prev = node;
+        node.next = this.#head;
+        this.#head = node;
       }
-      if (__privateGet(this, _length) === this.capacity) {
-        __privateGet(this, _data).delete(__privateGet(this, _tail).key);
-        __privateGet(this, _refs).delete(__privateGet(this, _tail).key);
-        __privateSet(this, _tail, __privateGet(this, _tail).prev);
-        __privateGet(this, _tail).next = __privateGet(this, _head);
+      if (this.#length === this.capacity) {
+        this.#data.delete(this.#tail.key);
+        this.#refs.delete(this.#tail.key);
+        this.#tail = this.#tail.prev;
+        this.#tail.next = this.#head;
       } else {
-        __privateSet(this, _length, __privateGet(this, _length) + 1);
+        this.#length += 1;
       }
     }
-    __privateMethod(this, _LRUCache_instances, evictTTL_fn).call(this);
-    __privateGet(this, _data).set(key, value3);
+    this.#evictTTL();
+    this.#data.set(key, value3);
   }
-};
-_data = new WeakMap();
-_refs = new WeakMap();
-_length = new WeakMap();
-_head = new WeakMap();
-_tail = new WeakMap();
-_ttl2 = new WeakMap();
-_LRUCache_instances = new WeakSet();
-evictTTL_fn = function() {
-  while (__privateGet(this, _tail).expiry && __privateGet(this, _tail).expiry < Date.now() && __privateGet(this, _length) > 0) {
-    __privateGet(this, _refs).delete(__privateGet(this, _tail).key);
-    __privateGet(this, _data).delete(__privateGet(this, _tail).key);
-    __privateSet(this, _length, __privateGet(this, _length) - 1);
-    __privateSet(this, _tail, __privateGet(this, _tail).prev);
-    __privateGet(this, _tail).next = __privateGet(this, _head);
+  #evictTTL() {
+    while (this.#tail.expiry && this.#tail.expiry < Date.now() && this.#length > 0) {
+      this.#refs.delete(this.#tail.key);
+      this.#data.delete(this.#tail.key);
+      this.#length -= 1;
+      this.#tail = this.#tail.prev;
+      this.#tail.next = this.#head;
+    }
+    if (this.#length === 0) {
+      this.#head = this.#tail = new LRUNode("<empty>", this.#ttl);
+    }
   }
-  if (__privateGet(this, _length) === 0) {
-    __privateSet(this, _head, __privateSet(this, _tail, new LRUNode("<empty>", __privateGet(this, _ttl2))));
-  }
-};
-toHead_fn = function(key) {
-  const ref = __privateGet(this, _refs).get(key);
-  if (ref && ref !== __privateGet(this, _head)) {
-    ref.refresh();
-    ref.prev.next = ref.next;
-    ref.next.prev = ref.prev;
-    ref.next = __privateGet(this, _head);
-    __privateGet(this, _head).prev = ref;
-    __privateSet(this, _head, ref);
+  #toHead(key) {
+    const ref = this.#refs.get(key);
+    if (ref && ref !== this.#head) {
+      ref.refresh();
+      ref.prev.next = ref.next;
+      ref.next.prev = ref.prev;
+      ref.next = this.#head;
+      this.#head.prev = ref;
+      this.#head = ref;
+    }
   }
 };
 
@@ -115577,8 +115264,26 @@ function eraseRecord(record3, cb) {
 function defaultEndpointStats() {
   return { bytesRecv: 0, bytesSent: 0, cached: 0, errors: 0, requests: 0, subscriptions: 0, timeout: 0 };
 }
-var _callCache, _coder, _endpoints, _headers, _eventemitter, _handlers, _isReadyPromise, _stats, _waitingForId, _cacheCapacity, _ttl3, _autoConnectMs, _endpointIndex, _endpointStats, _isConnected, _subscriptions, _timeoutId, _websocket, _timeout, _WsProvider_instances, send_fn, _emit, _onSocketClose, _onSocketError, _onSocketMessage, _onSocketMessageResult, _onSocketMessageSubscribe, _onSocketOpen, _resubscribe, _timeoutHandlers;
-var _WsProvider = class _WsProvider {
+var WsProvider = class _WsProvider {
+  #callCache;
+  #coder;
+  #endpoints;
+  #headers;
+  #eventemitter;
+  #handlers = {};
+  #isReadyPromise;
+  #stats;
+  #waitingForId = {};
+  #cacheCapacity;
+  #ttl;
+  #autoConnectMs;
+  #endpointIndex;
+  #endpointStats;
+  #isConnected = false;
+  #subscriptions = {};
+  #timeoutId = null;
+  #websocket;
+  #timeout;
   /**
    * @param {string | string[]} endpoint The endpoint url. Usually `ws://ip:9944` or `wss://ip:9944`, may provide an array of endpoint strings.
    * @param {number | false} autoConnectMs Whether to connect automatically or not (default). Provided value is used as a delay between retries.
@@ -115588,164 +115293,6 @@ var _WsProvider = class _WsProvider {
    * @param {number} [cacheTtl] Custom TTL of the WsProvider LRUCache. Determines how long an object can live in the cache. Defaults to DEFAULT_TTL` (30000)
    */
   constructor(endpoint = defaults_default.WS_URL, autoConnectMs = RETRY_DELAY, headers = {}, timeout5, cacheCapacity, cacheTtl) {
-    __privateAdd(this, _WsProvider_instances);
-    __privateAdd(this, _callCache);
-    __privateAdd(this, _coder);
-    __privateAdd(this, _endpoints);
-    __privateAdd(this, _headers);
-    __privateAdd(this, _eventemitter);
-    __privateAdd(this, _handlers, {});
-    __privateAdd(this, _isReadyPromise);
-    __privateAdd(this, _stats);
-    __privateAdd(this, _waitingForId, {});
-    __privateAdd(this, _cacheCapacity);
-    __privateAdd(this, _ttl3);
-    __privateAdd(this, _autoConnectMs);
-    __privateAdd(this, _endpointIndex);
-    __privateAdd(this, _endpointStats);
-    __privateAdd(this, _isConnected, false);
-    __privateAdd(this, _subscriptions, {});
-    __privateAdd(this, _timeoutId, null);
-    __privateAdd(this, _websocket);
-    __privateAdd(this, _timeout);
-    __privateAdd(this, _emit, (type, ...args2) => {
-      __privateGet(this, _eventemitter).emit(type, ...args2);
-    });
-    __privateAdd(this, _onSocketClose, (event) => {
-      const error4 = new Error(`disconnected from ${this.endpoint}: ${event.code}:: ${event.reason || getWSErrorString(event.code)}`);
-      if (__privateGet(this, _autoConnectMs) > 0) {
-        l.error(error4.message);
-      }
-      __privateSet(this, _isConnected, false);
-      if (__privateGet(this, _websocket)) {
-        __privateGet(this, _websocket).onclose = null;
-        __privateGet(this, _websocket).onerror = null;
-        __privateGet(this, _websocket).onmessage = null;
-        __privateGet(this, _websocket).onopen = null;
-        __privateSet(this, _websocket, null);
-      }
-      if (__privateGet(this, _timeoutId)) {
-        clearInterval(__privateGet(this, _timeoutId));
-        __privateSet(this, _timeoutId, null);
-      }
-      eraseRecord(__privateGet(this, _handlers), (h) => {
-        try {
-          h.callback(error4, void 0);
-        } catch (err) {
-          l.error(err);
-        }
-      });
-      eraseRecord(__privateGet(this, _waitingForId));
-      __privateSet(this, _endpointStats, defaultEndpointStats());
-      __privateGet(this, _emit).call(this, "disconnected");
-      if (__privateGet(this, _autoConnectMs) > 0) {
-        setTimeout(() => {
-          this.connectWithRetry().catch(noop);
-        }, __privateGet(this, _autoConnectMs));
-      }
-    });
-    __privateAdd(this, _onSocketError, (error4) => {
-      l.debug(() => ["socket error", error4]);
-      __privateGet(this, _emit).call(this, "error", error4);
-    });
-    __privateAdd(this, _onSocketMessage, (message) => {
-      l.debug(() => ["received", message.data]);
-      const bytesRecv = message.data.length;
-      __privateGet(this, _endpointStats).bytesRecv += bytesRecv;
-      __privateGet(this, _stats).total.bytesRecv += bytesRecv;
-      const response = JSON.parse(message.data);
-      return isUndefined2(response.method) ? __privateGet(this, _onSocketMessageResult).call(this, response) : __privateGet(this, _onSocketMessageSubscribe).call(this, response);
-    });
-    __privateAdd(this, _onSocketMessageResult, (response) => {
-      const handler = __privateGet(this, _handlers)[response.id];
-      if (!handler) {
-        l.debug(() => `Unable to find handler for id=${response.id}`);
-        return;
-      }
-      try {
-        const { method, params, subscription } = handler;
-        const result2 = __privateGet(this, _coder).decodeResponse(response);
-        handler.callback(null, result2);
-        if (subscription) {
-          const subId = `${subscription.type}::${result2}`;
-          __privateGet(this, _subscriptions)[subId] = objectSpread({}, subscription, {
-            method,
-            params
-          });
-          if (__privateGet(this, _waitingForId)[subId]) {
-            __privateGet(this, _onSocketMessageSubscribe).call(this, __privateGet(this, _waitingForId)[subId]);
-          }
-        }
-      } catch (error4) {
-        __privateGet(this, _endpointStats).errors++;
-        __privateGet(this, _stats).total.errors++;
-        handler.callback(error4, void 0);
-      }
-      delete __privateGet(this, _handlers)[response.id];
-    });
-    __privateAdd(this, _onSocketMessageSubscribe, (response) => {
-      if (!response.method) {
-        throw new Error("No method found in JSONRPC response");
-      }
-      const method = ALIASES[response.method] || response.method;
-      const subId = `${method}::${response.params.subscription}`;
-      const handler = __privateGet(this, _subscriptions)[subId];
-      if (!handler) {
-        __privateGet(this, _waitingForId)[subId] = response;
-        l.debug(() => `Unable to find handler for subscription=${subId}`);
-        return;
-      }
-      delete __privateGet(this, _waitingForId)[subId];
-      try {
-        const result2 = __privateGet(this, _coder).decodeResponse(response);
-        handler.callback(null, result2);
-      } catch (error4) {
-        __privateGet(this, _endpointStats).errors++;
-        __privateGet(this, _stats).total.errors++;
-        handler.callback(error4, void 0);
-      }
-    });
-    __privateAdd(this, _onSocketOpen, () => {
-      if (__privateGet(this, _websocket) === null) {
-        throw new Error("WebSocket cannot be null in onOpen");
-      }
-      l.debug(() => ["connected to", this.endpoint]);
-      __privateSet(this, _isConnected, true);
-      __privateGet(this, _resubscribe).call(this);
-      __privateGet(this, _emit).call(this, "connected");
-      return true;
-    });
-    __privateAdd(this, _resubscribe, () => {
-      const subscriptions = __privateGet(this, _subscriptions);
-      __privateSet(this, _subscriptions, {});
-      Promise.all(Object.keys(subscriptions).map(async (id3) => {
-        const { callback, method, params, type } = subscriptions[id3];
-        if (type.startsWith("author_")) {
-          return;
-        }
-        try {
-          await this.subscribe(type, method, params, callback);
-        } catch (error4) {
-          l.error(error4);
-        }
-      })).catch(l.error);
-    });
-    __privateAdd(this, _timeoutHandlers, () => {
-      const now3 = Date.now();
-      const ids3 = Object.keys(__privateGet(this, _handlers));
-      for (let i = 0, count7 = ids3.length; i < count7; i++) {
-        const handler = __privateGet(this, _handlers)[ids3[i]];
-        if (now3 - handler.start > __privateGet(this, _timeout)) {
-          try {
-            handler.callback(new Error(`No response received from RPC endpoint in ${__privateGet(this, _timeout) / 1e3}s`), void 0);
-          } catch {
-          }
-          __privateGet(this, _endpointStats).timeout++;
-          __privateGet(this, _stats).total.timeout++;
-          delete __privateGet(this, _handlers)[ids3[i]];
-        }
-      }
-    });
     const endpoints = Array.isArray(endpoint) ? endpoint : [endpoint];
     if (endpoints.length === 0) {
       throw new Error("WsProvider requires at least one Endpoint");
@@ -115756,30 +115303,30 @@ var _WsProvider = class _WsProvider {
       }
     });
     const ttl = cacheTtl === void 0 ? DEFAULT_TTL : cacheTtl;
-    __privateSet(this, _callCache, new LRUCache(cacheCapacity === 0 ? 0 : cacheCapacity || DEFAULT_CAPACITY, ttl));
-    __privateSet(this, _ttl3, cacheTtl);
-    __privateSet(this, _cacheCapacity, cacheCapacity || DEFAULT_CAPACITY);
-    __privateSet(this, _eventemitter, new import_index.default());
-    __privateSet(this, _autoConnectMs, autoConnectMs || 0);
-    __privateSet(this, _coder, new RpcCoder());
-    __privateSet(this, _endpointIndex, -1);
-    __privateSet(this, _endpoints, endpoints);
-    __privateSet(this, _headers, headers);
-    __privateSet(this, _websocket, null);
-    __privateSet(this, _stats, {
+    this.#callCache = new LRUCache(cacheCapacity === 0 ? 0 : cacheCapacity || DEFAULT_CAPACITY, ttl);
+    this.#ttl = cacheTtl;
+    this.#cacheCapacity = cacheCapacity || DEFAULT_CAPACITY;
+    this.#eventemitter = new import_index.default();
+    this.#autoConnectMs = autoConnectMs || 0;
+    this.#coder = new RpcCoder();
+    this.#endpointIndex = -1;
+    this.#endpoints = endpoints;
+    this.#headers = headers;
+    this.#websocket = null;
+    this.#stats = {
       active: { requests: 0, subscriptions: 0 },
       total: defaultEndpointStats()
-    });
-    __privateSet(this, _endpointStats, defaultEndpointStats());
-    __privateSet(this, _timeout, timeout5 || DEFAULT_TIMEOUT_MS);
+    };
+    this.#endpointStats = defaultEndpointStats();
+    this.#timeout = timeout5 || DEFAULT_TIMEOUT_MS;
     if (autoConnectMs && autoConnectMs > 0) {
       this.connectWithRetry().catch(noop);
     }
-    __privateSet(this, _isReadyPromise, new Promise((resolve) => {
-      __privateGet(this, _eventemitter).once("connected", () => {
+    this.#isReadyPromise = new Promise((resolve) => {
+      this.#eventemitter.once("connected", () => {
         resolve(this);
       });
-    }));
+    });
   }
   /**
    * @summary `true` when this provider supports subscriptions
@@ -115798,25 +115345,25 @@ var _WsProvider = class _WsProvider {
    * @return {boolean} true if connected
    */
   get isConnected() {
-    return __privateGet(this, _isConnected);
+    return this.#isConnected;
   }
   /**
    * @description Promise that resolves the first time we are connected and loaded
    */
   get isReady() {
-    return __privateGet(this, _isReadyPromise);
+    return this.#isReadyPromise;
   }
   get endpoint() {
-    return __privateGet(this, _endpoints)[__privateGet(this, _endpointIndex)];
+    return this.#endpoints[this.#endpointIndex];
   }
   /**
    * @description Returns a clone of the object
    */
   clone() {
-    return new _WsProvider(__privateGet(this, _endpoints));
+    return new _WsProvider(this.#endpoints);
   }
   selectEndpointIndex(endpoints) {
-    return (__privateGet(this, _endpointIndex) + 1) % endpoints.length;
+    return (this.#endpointIndex + 1) % endpoints.length;
   }
   /**
    * @summary Manually connect
@@ -115825,24 +115372,24 @@ var _WsProvider = class _WsProvider {
    */
   // eslint-disable-next-line @typescript-eslint/require-await
   async connect() {
-    if (__privateGet(this, _websocket)) {
+    if (this.#websocket) {
       throw new Error("WebSocket is already connected");
     }
     try {
-      __privateSet(this, _endpointIndex, this.selectEndpointIndex(__privateGet(this, _endpoints)));
-      __privateSet(this, _websocket, typeof xglobal.WebSocket !== "undefined" && isChildClass(xglobal.WebSocket, WebSocket3) ? new WebSocket3(this.endpoint) : new WebSocket3(this.endpoint, void 0, {
-        headers: __privateGet(this, _headers)
-      }));
-      if (__privateGet(this, _websocket)) {
-        __privateGet(this, _websocket).onclose = __privateGet(this, _onSocketClose);
-        __privateGet(this, _websocket).onerror = __privateGet(this, _onSocketError);
-        __privateGet(this, _websocket).onmessage = __privateGet(this, _onSocketMessage);
-        __privateGet(this, _websocket).onopen = __privateGet(this, _onSocketOpen);
+      this.#endpointIndex = this.selectEndpointIndex(this.#endpoints);
+      this.#websocket = typeof xglobal.WebSocket !== "undefined" && isChildClass(xglobal.WebSocket, WebSocket3) ? new WebSocket3(this.endpoint) : new WebSocket3(this.endpoint, void 0, {
+        headers: this.#headers
+      });
+      if (this.#websocket) {
+        this.#websocket.onclose = this.#onSocketClose;
+        this.#websocket.onerror = this.#onSocketError;
+        this.#websocket.onmessage = this.#onSocketMessage;
+        this.#websocket.onopen = this.#onSocketOpen;
       }
-      __privateSet(this, _timeoutId, setInterval(() => __privateGet(this, _timeoutHandlers).call(this), TIMEOUT_INTERVAL));
+      this.#timeoutId = setInterval(() => this.#timeoutHandlers(), TIMEOUT_INTERVAL);
     } catch (error4) {
       l.error(error4);
-      __privateGet(this, _emit).call(this, "error", error4);
+      this.#emit("error", error4);
       throw error4;
     }
   }
@@ -115850,13 +115397,13 @@ var _WsProvider = class _WsProvider {
    * @description Connect, never throwing an error, but rather forcing a retry
    */
   async connectWithRetry() {
-    if (__privateGet(this, _autoConnectMs) > 0) {
+    if (this.#autoConnectMs > 0) {
       try {
         await this.connect();
       } catch {
         setTimeout(() => {
           this.connectWithRetry().catch(noop);
-        }, __privateGet(this, _autoConnectMs));
+        }, this.#autoConnectMs);
       }
     }
   }
@@ -115865,14 +115412,14 @@ var _WsProvider = class _WsProvider {
    */
   // eslint-disable-next-line @typescript-eslint/require-await
   async disconnect() {
-    __privateSet(this, _autoConnectMs, 0);
+    this.#autoConnectMs = 0;
     try {
-      if (__privateGet(this, _websocket)) {
-        __privateGet(this, _websocket).close(1e3);
+      if (this.#websocket) {
+        this.#websocket.close(1e3);
       }
     } catch (error4) {
       l.error(error4);
-      __privateGet(this, _emit).call(this, "error", error4);
+      this.#emit("error", error4);
       throw error4;
     }
   }
@@ -115882,20 +115429,20 @@ var _WsProvider = class _WsProvider {
   get stats() {
     return {
       active: {
-        requests: Object.keys(__privateGet(this, _handlers)).length,
-        subscriptions: Object.keys(__privateGet(this, _subscriptions)).length
+        requests: Object.keys(this.#handlers).length,
+        subscriptions: Object.keys(this.#subscriptions).length
       },
-      total: __privateGet(this, _stats).total
+      total: this.#stats.total
     };
   }
   /**
   * @description Returns the connection stats
   */
   get ttl() {
-    return __privateGet(this, _ttl3);
+    return this.#ttl;
   }
   get endpointStats() {
-    return __privateGet(this, _endpointStats);
+    return this.#endpointStats;
   }
   /**
    * @summary Listens on events after having subscribed using the [[subscribe]] function.
@@ -115904,9 +115451,9 @@ var _WsProvider = class _WsProvider {
    * @return unsubscribe function
    */
   on(type, sub) {
-    __privateGet(this, _eventemitter).on(type, sub);
+    this.#eventemitter.on(type, sub);
     return () => {
-      __privateGet(this, _eventemitter).removeListener(type, sub);
+      this.#eventemitter.removeListener(type, sub);
     };
   }
   /**
@@ -115916,24 +115463,56 @@ var _WsProvider = class _WsProvider {
    * @param subscription Subscription details (internally used)
    */
   send(method, params, isCacheable, subscription) {
-    __privateGet(this, _endpointStats).requests++;
-    __privateGet(this, _stats).total.requests++;
-    const [id3, body] = __privateGet(this, _coder).encodeJson(method, params);
-    if (__privateGet(this, _cacheCapacity) === 0) {
-      return __privateMethod(this, _WsProvider_instances, send_fn).call(this, id3, body, method, params, subscription);
+    this.#endpointStats.requests++;
+    this.#stats.total.requests++;
+    const [id3, body] = this.#coder.encodeJson(method, params);
+    if (this.#cacheCapacity === 0) {
+      return this.#send(id3, body, method, params, subscription);
     }
     const cacheKey = isCacheable ? `${method}::${stringify2(params)}` : "";
-    let resultPromise = isCacheable ? __privateGet(this, _callCache).get(cacheKey) : null;
+    let resultPromise = isCacheable ? this.#callCache.get(cacheKey) : null;
     if (!resultPromise) {
-      resultPromise = __privateMethod(this, _WsProvider_instances, send_fn).call(this, id3, body, method, params, subscription);
+      resultPromise = this.#send(id3, body, method, params, subscription);
       if (isCacheable) {
-        __privateGet(this, _callCache).set(cacheKey, resultPromise);
+        this.#callCache.set(cacheKey, resultPromise);
       }
     } else {
-      __privateGet(this, _endpointStats).cached++;
-      __privateGet(this, _stats).total.cached++;
+      this.#endpointStats.cached++;
+      this.#stats.total.cached++;
     }
     return resultPromise;
+  }
+  async #send(id3, body, method, params, subscription) {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!this.isConnected || this.#websocket === null) {
+          throw new Error("WebSocket is not connected");
+        }
+        const callback = (error4, result2) => {
+          error4 ? reject(error4) : resolve(result2);
+        };
+        l.debug(() => ["calling", method, body]);
+        this.#handlers[id3] = {
+          callback,
+          method,
+          params,
+          start: Date.now(),
+          subscription
+        };
+        const bytesSent = body.length;
+        this.#endpointStats.bytesSent += bytesSent;
+        this.#stats.total.bytesSent += bytesSent;
+        this.#websocket.send(body);
+      } catch (error4) {
+        this.#endpointStats.errors++;
+        this.#stats.total.errors++;
+        const rpcError = error4;
+        const failedRequest = `
+Failed WS Request: ${JSON.stringify({ method, params })}`;
+        rpcError.message = `${rpcError.message}${failedRequest}`;
+        reject(rpcError);
+      }
+    });
   }
   /**
    * @name subscribe
@@ -115954,8 +115533,8 @@ var _WsProvider = class _WsProvider {
    * ```
    */
   subscribe(type, method, params, callback) {
-    __privateGet(this, _endpointStats).subscriptions++;
-    __privateGet(this, _stats).total.subscriptions++;
+    this.#endpointStats.subscriptions++;
+    this.#stats.total.subscriptions++;
     return this.send(method, params, false, { callback, type });
   }
   /**
@@ -115963,80 +115542,156 @@ var _WsProvider = class _WsProvider {
    */
   async unsubscribe(type, method, id3) {
     const subscription = `${type}::${id3}`;
-    if (isUndefined2(__privateGet(this, _subscriptions)[subscription])) {
+    if (isUndefined2(this.#subscriptions[subscription])) {
       l.debug(() => `Unable to find active subscription=${subscription}`);
       return false;
     }
-    delete __privateGet(this, _subscriptions)[subscription];
+    delete this.#subscriptions[subscription];
     try {
-      return this.isConnected && !isNull(__privateGet(this, _websocket)) ? this.send(method, [id3]) : true;
+      return this.isConnected && !isNull(this.#websocket) ? this.send(method, [id3]) : true;
     } catch {
       return false;
     }
   }
-};
-_callCache = new WeakMap();
-_coder = new WeakMap();
-_endpoints = new WeakMap();
-_headers = new WeakMap();
-_eventemitter = new WeakMap();
-_handlers = new WeakMap();
-_isReadyPromise = new WeakMap();
-_stats = new WeakMap();
-_waitingForId = new WeakMap();
-_cacheCapacity = new WeakMap();
-_ttl3 = new WeakMap();
-_autoConnectMs = new WeakMap();
-_endpointIndex = new WeakMap();
-_endpointStats = new WeakMap();
-_isConnected = new WeakMap();
-_subscriptions = new WeakMap();
-_timeoutId = new WeakMap();
-_websocket = new WeakMap();
-_timeout = new WeakMap();
-_WsProvider_instances = new WeakSet();
-send_fn = async function(id3, body, method, params, subscription) {
-  return new Promise((resolve, reject) => {
-    try {
-      if (!this.isConnected || __privateGet(this, _websocket) === null) {
-        throw new Error("WebSocket is not connected");
-      }
-      const callback = (error4, result2) => {
-        error4 ? reject(error4) : resolve(result2);
-      };
-      l.debug(() => ["calling", method, body]);
-      __privateGet(this, _handlers)[id3] = {
-        callback,
-        method,
-        params,
-        start: Date.now(),
-        subscription
-      };
-      const bytesSent = body.length;
-      __privateGet(this, _endpointStats).bytesSent += bytesSent;
-      __privateGet(this, _stats).total.bytesSent += bytesSent;
-      __privateGet(this, _websocket).send(body);
-    } catch (error4) {
-      __privateGet(this, _endpointStats).errors++;
-      __privateGet(this, _stats).total.errors++;
-      const rpcError = error4;
-      const failedRequest = `
-Failed WS Request: ${JSON.stringify({ method, params })}`;
-      rpcError.message = `${rpcError.message}${failedRequest}`;
-      reject(rpcError);
+  #emit = (type, ...args2) => {
+    this.#eventemitter.emit(type, ...args2);
+  };
+  #onSocketClose = (event) => {
+    const error4 = new Error(`disconnected from ${this.endpoint}: ${event.code}:: ${event.reason || getWSErrorString(event.code)}`);
+    if (this.#autoConnectMs > 0) {
+      l.error(error4.message);
     }
-  });
+    this.#isConnected = false;
+    if (this.#websocket) {
+      this.#websocket.onclose = null;
+      this.#websocket.onerror = null;
+      this.#websocket.onmessage = null;
+      this.#websocket.onopen = null;
+      this.#websocket = null;
+    }
+    if (this.#timeoutId) {
+      clearInterval(this.#timeoutId);
+      this.#timeoutId = null;
+    }
+    eraseRecord(this.#handlers, (h) => {
+      try {
+        h.callback(error4, void 0);
+      } catch (err) {
+        l.error(err);
+      }
+    });
+    eraseRecord(this.#waitingForId);
+    this.#endpointStats = defaultEndpointStats();
+    this.#emit("disconnected");
+    if (this.#autoConnectMs > 0) {
+      setTimeout(() => {
+        this.connectWithRetry().catch(noop);
+      }, this.#autoConnectMs);
+    }
+  };
+  #onSocketError = (error4) => {
+    l.debug(() => ["socket error", error4]);
+    this.#emit("error", error4);
+  };
+  #onSocketMessage = (message) => {
+    l.debug(() => ["received", message.data]);
+    const bytesRecv = message.data.length;
+    this.#endpointStats.bytesRecv += bytesRecv;
+    this.#stats.total.bytesRecv += bytesRecv;
+    const response = JSON.parse(message.data);
+    return isUndefined2(response.method) ? this.#onSocketMessageResult(response) : this.#onSocketMessageSubscribe(response);
+  };
+  #onSocketMessageResult = (response) => {
+    const handler = this.#handlers[response.id];
+    if (!handler) {
+      l.debug(() => `Unable to find handler for id=${response.id}`);
+      return;
+    }
+    try {
+      const { method, params, subscription } = handler;
+      const result2 = this.#coder.decodeResponse(response);
+      handler.callback(null, result2);
+      if (subscription) {
+        const subId = `${subscription.type}::${result2}`;
+        this.#subscriptions[subId] = objectSpread({}, subscription, {
+          method,
+          params
+        });
+        if (this.#waitingForId[subId]) {
+          this.#onSocketMessageSubscribe(this.#waitingForId[subId]);
+        }
+      }
+    } catch (error4) {
+      this.#endpointStats.errors++;
+      this.#stats.total.errors++;
+      handler.callback(error4, void 0);
+    }
+    delete this.#handlers[response.id];
+  };
+  #onSocketMessageSubscribe = (response) => {
+    if (!response.method) {
+      throw new Error("No method found in JSONRPC response");
+    }
+    const method = ALIASES[response.method] || response.method;
+    const subId = `${method}::${response.params.subscription}`;
+    const handler = this.#subscriptions[subId];
+    if (!handler) {
+      this.#waitingForId[subId] = response;
+      l.debug(() => `Unable to find handler for subscription=${subId}`);
+      return;
+    }
+    delete this.#waitingForId[subId];
+    try {
+      const result2 = this.#coder.decodeResponse(response);
+      handler.callback(null, result2);
+    } catch (error4) {
+      this.#endpointStats.errors++;
+      this.#stats.total.errors++;
+      handler.callback(error4, void 0);
+    }
+  };
+  #onSocketOpen = () => {
+    if (this.#websocket === null) {
+      throw new Error("WebSocket cannot be null in onOpen");
+    }
+    l.debug(() => ["connected to", this.endpoint]);
+    this.#isConnected = true;
+    this.#resubscribe();
+    this.#emit("connected");
+    return true;
+  };
+  #resubscribe = () => {
+    const subscriptions = this.#subscriptions;
+    this.#subscriptions = {};
+    Promise.all(Object.keys(subscriptions).map(async (id3) => {
+      const { callback, method, params, type } = subscriptions[id3];
+      if (type.startsWith("author_")) {
+        return;
+      }
+      try {
+        await this.subscribe(type, method, params, callback);
+      } catch (error4) {
+        l.error(error4);
+      }
+    })).catch(l.error);
+  };
+  #timeoutHandlers = () => {
+    const now3 = Date.now();
+    const ids3 = Object.keys(this.#handlers);
+    for (let i = 0, count7 = ids3.length; i < count7; i++) {
+      const handler = this.#handlers[ids3[i]];
+      if (now3 - handler.start > this.#timeout) {
+        try {
+          handler.callback(new Error(`No response received from RPC endpoint in ${this.#timeout / 1e3}s`), void 0);
+        } catch {
+        }
+        this.#endpointStats.timeout++;
+        this.#stats.total.timeout++;
+        delete this.#handlers[ids3[i]];
+      }
+    }
+  };
 };
-_emit = new WeakMap();
-_onSocketClose = new WeakMap();
-_onSocketError = new WeakMap();
-_onSocketMessage = new WeakMap();
-_onSocketMessageResult = new WeakMap();
-_onSocketMessageSubscribe = new WeakMap();
-_onSocketOpen = new WeakMap();
-_resubscribe = new WeakMap();
-_timeoutHandlers = new WeakMap();
-var WsProvider = _WsProvider;
 
 // node_modules/@polkadot/api/submittable/createClass.js
 var import_rxjs89 = __toESM(require_cjs(), 1);
@@ -123118,20 +122773,20 @@ function compareArray(a, b) {
 
 // node_modules/@polkadot/types-codec/abstract/Array.js
 var AbstractArray = class extends Array {
-  constructor(registry, length5) {
-    super(length5);
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    this.registry = registry;
-  }
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
   /**
    * @description This ensures that operators such as clice, filter, map, etc. return
    * new Array instances (without this we need to apply overrides)
    */
   static get [Symbol.species]() {
     return Array;
+  }
+  constructor(registry, length5) {
+    super(length5);
+    this.registry = registry;
   }
   /**
    * @description The length of the value when encoded as a Uint8Array
@@ -123269,16 +122924,15 @@ var AbstractArray = class extends Array {
 };
 
 // node_modules/@polkadot/types-codec/abstract/Base.js
-var _raw;
 var AbstractBase = class {
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
+  #raw;
   constructor(registry, value3, initialU8aLength) {
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _raw);
     this.initialU8aLength = initialU8aLength;
-    __privateSet(this, _raw, value3);
+    this.#raw = value3;
     this.registry = registry;
   }
   /**
@@ -123297,77 +122951,76 @@ var AbstractBase = class {
    * @description returns the inner (wrapped value)
    */
   get inner() {
-    return __privateGet(this, _raw);
+    return this.#raw;
   }
   /**
    * @description Checks if the value is an empty value
    */
   get isEmpty() {
-    return __privateGet(this, _raw).isEmpty;
+    return this.#raw.isEmpty;
   }
   /**
    * @description Compares the value of the input to see if there is a match
    */
   eq(other) {
-    return __privateGet(this, _raw).eq(other);
+    return this.#raw.eq(other);
   }
   /**
    * @description Returns a breakdown of the hex encoding for this Codec
    */
   inspect() {
-    return __privateGet(this, _raw).inspect();
+    return this.#raw.inspect();
   }
   /**
    * @description Returns a hex string representation of the value. isLe returns a LE (number-only) representation
    */
   toHex(isLe) {
-    return __privateGet(this, _raw).toHex(isLe);
+    return this.#raw.toHex(isLe);
   }
   /**
    * @description Converts the Object to to a human-friendly JSON, with additional fields, expansion and formatting of information
    */
   toHuman(isExtended, disableAscii) {
-    return __privateGet(this, _raw).toHuman(isExtended, disableAscii);
+    return this.#raw.toHuman(isExtended, disableAscii);
   }
   /**
    * @description Converts the Object to JSON, typically used for RPC transfers
    */
   toJSON() {
-    return __privateGet(this, _raw).toJSON();
+    return this.#raw.toJSON();
   }
   /**
    * @description Converts the value in a best-fit primitive form
    */
   toPrimitive(disableAscii) {
-    return __privateGet(this, _raw).toPrimitive(disableAscii);
+    return this.#raw.toPrimitive(disableAscii);
   }
   /**
    * @description Returns the string representation of the value
    */
   toString() {
-    return __privateGet(this, _raw).toString();
+    return this.#raw.toString();
   }
   /**
    * @description Encodes the value as a Uint8Array as per the SCALE specifications
    * @param isBare true when the value has none of the type-specific prefixes (internal)
    */
   toU8a(isBare) {
-    return __privateGet(this, _raw).toU8a(isBare);
+    return this.#raw.toU8a(isBare);
   }
   /**
    * @description Returns the inner wrapped value (equivalent to valueOf)
    */
   unwrap() {
-    return __privateGet(this, _raw);
+    return this.#raw;
   }
   /**
    * @description Returns the inner wrapped value
    */
   valueOf() {
-    return __privateGet(this, _raw);
+    return this.#raw;
   }
 };
-_raw = new WeakMap();
 
 // node_modules/@polkadot/types-codec/abstract/Int.js
 var DEFAULT_UINT_BITS = 64;
@@ -123415,24 +123068,23 @@ function decodeAbstractInt(value3, isNegative2) {
   }
   throw new Error(`Unable to create BN from unknown type ${typeof value3}`);
 }
-var _bitLength;
 var AbstractInt = class extends import_bn.default {
+  registry;
+  encodedLength;
+  isUnsigned;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
+  #bitLength;
   constructor(registry, value3 = 0, bitLength = DEFAULT_UINT_BITS, isSigned = false) {
     super(
       // shortcut isU8a as used in SCALE decoding
       isU8a(value3) ? bitLength <= 48 ? u8aToNumber(value3.subarray(0, bitLength / 8), { isNegative: isSigned }) : u8aToBn(value3.subarray(0, bitLength / 8), { isLe: true, isNegative: isSigned }).toString() : decodeAbstractInt(value3, isSigned)
     );
-    __publicField(this, "registry");
-    __publicField(this, "encodedLength");
-    __publicField(this, "isUnsigned");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _bitLength);
     this.registry = registry;
-    __privateSet(this, _bitLength, bitLength);
-    this.encodedLength = __privateGet(this, _bitLength) / 8;
-    this.initialU8aLength = __privateGet(this, _bitLength) / 8;
+    this.#bitLength = bitLength;
+    this.encodedLength = this.#bitLength / 8;
+    this.initialU8aLength = this.#bitLength / 8;
     this.isUnsigned = !isSigned;
     const isNegative2 = this.isNeg();
     const maxBits = bitLength - (isSigned && !isNegative2 ? 1 : 0);
@@ -123458,7 +123110,7 @@ var AbstractInt = class extends import_bn.default {
    * @description Returns the number of bits in the value
    */
   bitLength() {
-    return __privateGet(this, _bitLength);
+    return this.#bitLength;
   }
   /**
    * @description Compares the value of the input to see if there is a match
@@ -123480,7 +123132,7 @@ var AbstractInt = class extends import_bn.default {
    */
   isMax() {
     const u8a = this.toU8a().filter((b) => b === 255);
-    return u8a.length === __privateGet(this, _bitLength) / 8;
+    return u8a.length === this.#bitLength / 8;
   }
   /**
    * @description Returns a BigInt representation of the number
@@ -123519,7 +123171,7 @@ var AbstractInt = class extends import_bn.default {
    * @description Converts the Object to JSON, typically used for RPC transfers
    */
   toJSON(onlyHex = false) {
-    return onlyHex || __privateGet(this, _bitLength) > 128 || super.bitLength() > MAX_NUMBER_BITS ? this.toHex() : this.toNumber();
+    return onlyHex || this.#bitLength > 128 || super.bitLength() > MAX_NUMBER_BITS ? this.toHex() : this.toNumber();
   }
   /**
    * @description Returns the value in a primitive form, either number when <= 52 bits, or string otherwise
@@ -123551,7 +123203,6 @@ var AbstractInt = class extends import_bn.default {
     });
   }
 };
-_bitLength = new WeakMap();
 
 // node_modules/@polkadot/types-codec/utils/compareMap.js
 function hasMismatch(a, b) {
@@ -123955,20 +123606,19 @@ function decodeCompact(registry, Type4, value3) {
   }
   return [new Type4(registry, value3), 0];
 }
-var _Type, _raw2;
-var _Compact = class _Compact {
+var Compact = class _Compact {
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
+  #Type;
+  #raw;
   constructor(registry, Type4, value3 = 0, { definition, setDefinition = identity6 } = {}) {
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _Type);
-    __privateAdd(this, _raw2);
     this.registry = registry;
-    __privateSet(this, _Type, definition || setDefinition(typeToConstructor(registry, Type4)));
-    const [raw, decodedLength] = decodeCompact(registry, __privateGet(this, _Type), value3);
+    this.#Type = definition || setDefinition(typeToConstructor(registry, Type4));
+    const [raw, decodedLength] = decodeCompact(registry, this.#Type, value3);
     this.initialU8aLength = decodedLength;
-    __privateSet(this, _raw2, raw);
+    this.#raw = raw;
   }
   static with(Type4) {
     let definition;
@@ -123995,19 +123645,19 @@ var _Compact = class _Compact {
    * @description Checks if the value is an empty value
    */
   get isEmpty() {
-    return __privateGet(this, _raw2).isEmpty;
+    return this.#raw.isEmpty;
   }
   /**
    * @description Returns the number of bits in the value
    */
   bitLength() {
-    return __privateGet(this, _raw2).bitLength();
+    return this.#raw.bitLength();
   }
   /**
    * @description Compares the value of the input to see if there is a match
    */
   eq(other) {
-    return __privateGet(this, _raw2).eq(other instanceof _Compact ? __privateGet(other, _raw2) : other);
+    return this.#raw.eq(other instanceof _Compact ? other.#raw : other);
   }
   /**
    * @description Returns a breakdown of the hex encoding for this Codec
@@ -124021,84 +123671,80 @@ var _Compact = class _Compact {
    * @description Returns a BigInt representation of the number
    */
   toBigInt() {
-    return __privateGet(this, _raw2).toBigInt();
+    return this.#raw.toBigInt();
   }
   /**
    * @description Returns the BN representation of the number
    */
   toBn() {
-    return __privateGet(this, _raw2).toBn();
+    return this.#raw.toBn();
   }
   /**
    * @description Returns a hex string representation of the value. isLe returns a LE (number-only) representation
    */
   toHex(isLe) {
-    return __privateGet(this, _raw2).toHex(isLe);
+    return this.#raw.toHex(isLe);
   }
   /**
    * @description Converts the Object to to a human-friendly JSON, with additional fields, expansion and formatting of information
    */
   toHuman(isExtended, disableAscii) {
-    return __privateGet(this, _raw2).toHuman(isExtended, disableAscii);
+    return this.#raw.toHuman(isExtended, disableAscii);
   }
   /**
    * @description Converts the Object to JSON, typically used for RPC transfers
    */
   toJSON() {
-    return __privateGet(this, _raw2).toJSON();
+    return this.#raw.toJSON();
   }
   /**
    * @description Returns the number representation for the value
    */
   toNumber() {
-    return __privateGet(this, _raw2).toNumber();
+    return this.#raw.toNumber();
   }
   /**
    * @description Converts the value in a best-fit primitive form
    */
   toPrimitive(disableAscii) {
-    return __privateGet(this, _raw2).toPrimitive(disableAscii);
+    return this.#raw.toPrimitive(disableAscii);
   }
   /**
    * @description Returns the base runtime type name for this instance
    */
   toRawType() {
-    return `Compact<${this.registry.getClassName(__privateGet(this, _Type)) || __privateGet(this, _raw2).toRawType()}>`;
+    return `Compact<${this.registry.getClassName(this.#Type) || this.#raw.toRawType()}>`;
   }
   /**
    * @description Returns the string representation of the value
    */
   toString() {
-    return __privateGet(this, _raw2).toString();
+    return this.#raw.toString();
   }
   /**
    * @description Encodes the value as a Uint8Array as per the SCALE specifications
    */
   toU8a(_isBare) {
-    return compactToU8a(__privateGet(this, _raw2).toBn());
+    return compactToU8a(this.#raw.toBn());
   }
   /**
    * @description Returns the embedded [[UInt]] or [[Moment]] value
    */
   unwrap() {
-    return __privateGet(this, _raw2);
+    return this.#raw;
   }
 };
-_Type = new WeakMap();
-_raw2 = new WeakMap();
-var Compact = _Compact;
 
 // node_modules/@polkadot/types-codec/base/DoNotConstruct.js
-var _neverError;
-var _DoNotConstruct = class _DoNotConstruct {
+var DoNotConstruct = class _DoNotConstruct {
+  registry;
+  createdAtHash;
+  isStorageFallback;
+  #neverError;
   constructor(registry, typeName = "DoNotConstruct") {
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _neverError);
     this.registry = registry;
-    __privateSet(this, _neverError, new Error(`DoNotConstruct: Cannot construct unknown type ${typeName}`));
-    throw __privateGet(this, _neverError);
+    this.#neverError = new Error(`DoNotConstruct: Cannot construct unknown type ${typeName}`);
+    throw this.#neverError;
   }
   static with(typeName) {
     return class extends _DoNotConstruct {
@@ -124111,87 +123757,85 @@ var _DoNotConstruct = class _DoNotConstruct {
    * @description The length of the value when encoded as a Uint8Array
    */
   get encodedLength() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
   /**
    * @description returns a hash of the contents
    */
   get hash() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
   /**
    * @description Checks if the value is an empty value (always true)
    */
   get isEmpty() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
   /**
    * @description Unimplemented
    */
   eq() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
   /**
    * @description Unimplemented
    */
   inspect() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
   /**
    * @description Unimplemented
    */
   toHex() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
   /**
    * @description Unimplemented
    */
   toHuman() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
   /**
    * @description Unimplemented
    */
   toJSON() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
   /**
    * @description Unimplemented
    */
   toPrimitive() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
   /**
    * @description Unimplemented
    */
   toRawType() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
   /**
    * @description Unimplemented
    */
   toString() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
   /**
    * @description Unimplemented
    */
   toU8a() {
-    throw __privateGet(this, _neverError);
+    throw this.#neverError;
   }
 };
-_neverError = new WeakMap();
-var DoNotConstruct = _DoNotConstruct;
 
 // node_modules/@polkadot/types-codec/base/Null.js
 var Null2 = class _Null {
+  encodedLength = 0;
+  isEmpty = true;
+  registry;
+  createdAtHash;
+  initialU8aLength = 0;
+  isStorageFallback;
   constructor(registry) {
-    __publicField(this, "encodedLength", 0);
-    __publicField(this, "isEmpty", true);
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength", 0);
-    __publicField(this, "isStorageFallback");
     this.registry = registry;
   }
   /**
@@ -124267,25 +123911,25 @@ function isRustEnum(def) {
   }
   return true;
 }
-function extractDef(registry, _def2) {
+function extractDef(registry, _def) {
   const def = {};
   let isBasic;
   let isIndexed;
-  if (Array.isArray(_def2)) {
-    for (let i = 0, count7 = _def2.length; i < count7; i++) {
-      def[_def2[i]] = { Type: Null2, index: i };
+  if (Array.isArray(_def)) {
+    for (let i = 0, count7 = _def.length; i < count7; i++) {
+      def[_def[i]] = { Type: Null2, index: i };
     }
     isBasic = true;
     isIndexed = false;
-  } else if (isRustEnum(_def2)) {
-    const [Types, keys7] = mapToTypeMap(registry, _def2);
+  } else if (isRustEnum(_def)) {
+    const [Types, keys7] = mapToTypeMap(registry, _def);
     for (let i = 0, count7 = keys7.length; i < count7; i++) {
       def[keys7[i]] = { Type: Types[i], index: i };
     }
     isBasic = !Object.values(def).some(({ Type: Type4 }) => Type4 !== Null2);
     isIndexed = false;
   } else {
-    const entries3 = Object.entries(_def2);
+    const entries3 = Object.entries(_def);
     for (let i = 0, count7 = entries3.length; i < count7; i++) {
       const [key, index] = entries3[i];
       def[key] = { Type: Null2, index };
@@ -124356,64 +124000,63 @@ function decodeEnum(registry, def, value3, index) {
   }
   return createFromValue(registry, def, Object.values(def)[0].index);
 }
-var _def, _entryIndex, _indexes, _isBasic, _isIndexed, _raw3;
-var _Enum = class _Enum {
+var Enum = class _Enum {
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
+  #def;
+  #entryIndex;
+  #indexes;
+  #isBasic;
+  #isIndexed;
+  #raw;
   constructor(registry, Types, value3, index, { definition, setDefinition = identity6 } = {}) {
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _def);
-    __privateAdd(this, _entryIndex);
-    __privateAdd(this, _indexes);
-    __privateAdd(this, _isBasic);
-    __privateAdd(this, _isIndexed);
-    __privateAdd(this, _raw3);
     const { def, isBasic, isIndexed } = definition || setDefinition(extractDef(registry, Types));
     const decoded = isU8a(value3) && value3.length && !isNumber2(index) ? createFromU8a(registry, def, value3[0], value3.subarray(1)) : decodeEnum(registry, def, value3, index);
     this.registry = registry;
-    __privateSet(this, _def, def);
-    __privateSet(this, _isBasic, isBasic);
-    __privateSet(this, _isIndexed, isIndexed);
-    __privateSet(this, _indexes, Object.values(def).map(({ index: index2 }) => index2));
-    __privateSet(this, _entryIndex, __privateGet(this, _indexes).indexOf(decoded.index));
-    __privateSet(this, _raw3, decoded.value);
-    if (__privateGet(this, _raw3).initialU8aLength) {
-      this.initialU8aLength = 1 + __privateGet(this, _raw3).initialU8aLength;
+    this.#def = def;
+    this.#isBasic = isBasic;
+    this.#isIndexed = isIndexed;
+    this.#indexes = Object.values(def).map(({ index: index2 }) => index2);
+    this.#entryIndex = this.#indexes.indexOf(decoded.index);
+    this.#raw = decoded.value;
+    if (this.#raw.initialU8aLength) {
+      this.initialU8aLength = 1 + this.#raw.initialU8aLength;
     }
   }
   static with(Types) {
-    var _a91;
     let definition;
     const setDefinition = (d) => definition = d;
-    return _a91 = class extends _Enum {
+    return class extends _Enum {
+      static {
+        const keys7 = Array.isArray(Types) ? Types : Object.keys(Types);
+        const count7 = keys7.length;
+        const asKeys = new Array(count7);
+        const isKeys = new Array(count7);
+        for (let i = 0; i < count7; i++) {
+          const name = stringPascalCase(keys7[i]);
+          asKeys[i] = `as${name}`;
+          isKeys[i] = `is${name}`;
+        }
+        objectProperties(this.prototype, isKeys, (_, i, self2) => self2.type === keys7[i]);
+        objectProperties(this.prototype, asKeys, (k, i, self2) => {
+          if (self2.type !== keys7[i]) {
+            throw new Error(`Cannot convert '${self2.type}' via ${k}`);
+          }
+          return self2.value;
+        });
+      }
       constructor(registry, value3, index) {
         super(registry, Types, value3, index, { definition, setDefinition });
       }
-    }, (() => {
-      const keys7 = Array.isArray(Types) ? Types : Object.keys(Types);
-      const count7 = keys7.length;
-      const asKeys = new Array(count7);
-      const isKeys = new Array(count7);
-      for (let i = 0; i < count7; i++) {
-        const name = stringPascalCase(keys7[i]);
-        asKeys[i] = `as${name}`;
-        isKeys[i] = `is${name}`;
-      }
-      objectProperties(_a91.prototype, isKeys, (_, i, self2) => self2.type === keys7[i]);
-      objectProperties(_a91.prototype, asKeys, (k, i, self2) => {
-        if (self2.type !== keys7[i]) {
-          throw new Error(`Cannot convert '${self2.type}' via ${k}`);
-        }
-        return self2.value;
-      });
-    })(), _a91;
+    };
   }
   /**
    * @description The length of the value when encoded as a Uint8Array
    */
   get encodedLength() {
-    return 1 + __privateGet(this, _raw3).encodedLength;
+    return 1 + this.#raw.encodedLength;
   }
   /**
    * @description returns a hash of the contents
@@ -124425,55 +124068,55 @@ var _Enum = class _Enum {
    * @description The index of the enum value
    */
   get index() {
-    return __privateGet(this, _indexes)[__privateGet(this, _entryIndex)];
+    return this.#indexes[this.#entryIndex];
   }
   /**
    * @description The value of the enum
    */
   get inner() {
-    return __privateGet(this, _raw3);
+    return this.#raw;
   }
   /**
    * @description true if this is a basic enum (no values)
    */
   get isBasic() {
-    return __privateGet(this, _isBasic);
+    return this.#isBasic;
   }
   /**
    * @description Checks if the value is an empty value
    */
   get isEmpty() {
-    return __privateGet(this, _raw3).isEmpty;
+    return this.#raw.isEmpty;
   }
   /**
    * @description Checks if the Enum points to a [[Null]] type
    */
   get isNone() {
-    return __privateGet(this, _raw3) instanceof Null2;
+    return this.#raw instanceof Null2;
   }
   /**
    * @description The available keys for this enum
    */
   get defIndexes() {
-    return __privateGet(this, _indexes);
+    return this.#indexes;
   }
   /**
    * @description The available keys for this enum
    */
   get defKeys() {
-    return Object.keys(__privateGet(this, _def));
+    return Object.keys(this.#def);
   }
   /**
    * @description The name of the type this enum value represents
    */
   get type() {
-    return this.defKeys[__privateGet(this, _entryIndex)];
+    return this.defKeys[this.#entryIndex];
   }
   /**
    * @description The value of the enum
    */
   get value() {
-    return __privateGet(this, _raw3);
+    return this.#raw;
   }
   /**
    * @description Compares the value of the input to see if there is a match
@@ -124483,7 +124126,7 @@ var _Enum = class _Enum {
       return !this.toU8a().some((entry, index) => entry !== other[index]);
     } else if (isNumber2(other)) {
       return this.toNumber() === other;
-    } else if (__privateGet(this, _isBasic) && isString2(other)) {
+    } else if (this.#isBasic && isString2(other)) {
       return this.type === other;
     } else if (isHex(other)) {
       return this.toHex() === other;
@@ -124498,10 +124141,10 @@ var _Enum = class _Enum {
    * @description Returns a breakdown of the hex encoding for this Codec
    */
   inspect() {
-    if (__privateGet(this, _isBasic)) {
+    if (this.#isBasic) {
       return { outer: [new Uint8Array([this.index])] };
     }
-    const { inner, outer = [] } = __privateGet(this, _raw3).inspect();
+    const { inner, outer = [] } = this.#raw.inspect();
     return {
       inner,
       outer: [new Uint8Array([this.index]), ...outer]
@@ -124517,13 +124160,13 @@ var _Enum = class _Enum {
    * @description Converts the Object to to a human-friendly JSON, with additional fields, expansion and formatting of information
    */
   toHuman(isExtended, disableAscii) {
-    return __privateGet(this, _isBasic) || this.isNone ? this.type : { [this.type]: __privateGet(this, _raw3).toHuman(isExtended, disableAscii) };
+    return this.#isBasic || this.isNone ? this.type : { [this.type]: this.#raw.toHuman(isExtended, disableAscii) };
   }
   /**
    * @description Converts the Object to JSON, typically used for RPC transfers
    */
   toJSON() {
-    return __privateGet(this, _isBasic) ? this.type : { [stringCamelCase(this.type)]: __privateGet(this, _raw3).toJSON() };
+    return this.#isBasic ? this.type : { [stringCamelCase(this.type)]: this.#raw.toJSON() };
   }
   /**
    * @description Returns the number representation for the value
@@ -124535,19 +124178,19 @@ var _Enum = class _Enum {
    * @description Converts the value in a best-fit primitive form
    */
   toPrimitive(disableAscii) {
-    return __privateGet(this, _isBasic) ? this.type : { [stringCamelCase(this.type)]: __privateGet(this, _raw3).toPrimitive(disableAscii) };
+    return this.#isBasic ? this.type : { [stringCamelCase(this.type)]: this.#raw.toPrimitive(disableAscii) };
   }
   /**
    * @description Returns a raw struct representation of the enum types
    */
   _toRawStruct() {
-    if (__privateGet(this, _isBasic)) {
-      return __privateGet(this, _isIndexed) ? this.defKeys.reduce((out, key, index) => {
-        out[key] = __privateGet(this, _indexes)[index];
+    if (this.#isBasic) {
+      return this.#isIndexed ? this.defKeys.reduce((out, key, index) => {
+        out[key] = this.#indexes[index];
         return out;
       }, {}) : this.defKeys;
     }
-    const entries3 = Object.entries(__privateGet(this, _def));
+    const entries3 = Object.entries(this.#def);
     return typesToMap(this.registry, entries3.reduce((out, [key, { Type: Type4 }], i) => {
       out[0][i] = Type4;
       out[1][i] = key;
@@ -124571,19 +124214,12 @@ var _Enum = class _Enum {
    * @param isBare true when the value has none of the type-specific prefixes (internal)
    */
   toU8a(isBare) {
-    return isBare ? __privateGet(this, _raw3).toU8a(isBare) : u8aConcatStrict([
+    return isBare ? this.#raw.toU8a(isBare) : u8aConcatStrict([
       new Uint8Array([this.index]),
-      __privateGet(this, _raw3).toU8a(isBare)
+      this.#raw.toU8a(isBare)
     ]);
   }
 };
-_def = new WeakMap();
-_entryIndex = new WeakMap();
-_indexes = new WeakMap();
-_isBasic = new WeakMap();
-_isIndexed = new WeakMap();
-_raw3 = new WeakMap();
-var Enum = _Enum;
 
 // node_modules/@polkadot/types-codec/base/Int.js
 var Int2 = class _Int extends AbstractInt {
@@ -124628,20 +124264,19 @@ function decodeOption2(registry, Type4, value3) {
   }
   return new Type4(registry, value3);
 }
-var _Type2, _raw4;
-var _Option = class _Option {
+var Option2 = class _Option {
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
+  #Type;
+  #raw;
   constructor(registry, typeName, value3, { definition, setDefinition = identity6 } = {}) {
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _Type2);
-    __privateAdd(this, _raw4);
     const Type4 = definition || setDefinition(typeToConstructor(registry, typeName));
     const decoded = isU8a(value3) && value3.length && !isCodec(value3) ? value3[0] === 0 ? new None4(registry) : new Type4(registry, value3.subarray(1)) : decodeOption2(registry, Type4, value3);
     this.registry = registry;
-    __privateSet(this, _Type2, Type4);
-    __privateSet(this, _raw4, decoded);
+    this.#Type = Type4;
+    this.#raw = decoded;
     if (decoded?.initialU8aLength) {
       this.initialU8aLength = 1 + decoded.initialU8aLength;
     }
@@ -124662,7 +124297,7 @@ var _Option = class _Option {
    * @description The length of the value when encoded as a Uint8Array
    */
   get encodedLength() {
-    return 1 + __privateGet(this, _raw4).encodedLength;
+    return 1 + this.#raw.encodedLength;
   }
   /**
    * @description returns a hash of the contents
@@ -124680,7 +124315,7 @@ var _Option = class _Option {
    * @description Checks if the Option has no value
    */
   get isNone() {
-    return __privateGet(this, _raw4) instanceof None4;
+    return this.#raw instanceof None4;
   }
   /**
    * @description Checks if the Option has a value
@@ -124692,7 +124327,7 @@ var _Option = class _Option {
    * @description The actual value for the Option
    */
   get value() {
-    return __privateGet(this, _raw4);
+    return this.#raw;
   }
   /**
    * @description Compares the value of the input to see if there is a match
@@ -124710,7 +124345,7 @@ var _Option = class _Option {
     if (this.isNone) {
       return { outer: [new Uint8Array([0])] };
     }
-    const { inner, outer = [] } = __privateGet(this, _raw4).inspect();
+    const { inner, outer = [] } = this.#raw.inspect();
     return {
       inner,
       outer: [new Uint8Array([1]), ...outer]
@@ -124726,32 +124361,32 @@ var _Option = class _Option {
    * @description Converts the Object to to a human-friendly JSON, with additional fields, expansion and formatting of information
    */
   toHuman(isExtended, disableAscii) {
-    return __privateGet(this, _raw4).toHuman(isExtended, disableAscii);
+    return this.#raw.toHuman(isExtended, disableAscii);
   }
   /**
    * @description Converts the Object to JSON, typically used for RPC transfers
    */
   toJSON() {
-    return this.isNone ? null : __privateGet(this, _raw4).toJSON();
+    return this.isNone ? null : this.#raw.toJSON();
   }
   /**
    * @description Converts the value in a best-fit primitive form
    */
   toPrimitive(disableAscii) {
-    return this.isNone ? null : __privateGet(this, _raw4).toPrimitive(disableAscii);
+    return this.isNone ? null : this.#raw.toPrimitive(disableAscii);
   }
   /**
    * @description Returns the base runtime type name for this instance
    */
   toRawType(isBare) {
-    const wrapped = this.registry.getClassName(__privateGet(this, _Type2)) || new (__privateGet(this, _Type2))(this.registry).toRawType();
+    const wrapped = this.registry.getClassName(this.#Type) || new this.#Type(this.registry).toRawType();
     return isBare ? wrapped : `Option<${wrapped}>`;
   }
   /**
    * @description Returns the string representation of the value
    */
   toString() {
-    return __privateGet(this, _raw4).toString();
+    return this.#raw.toString();
   }
   /**
    * @description Encodes the value as a Uint8Array as per the SCALE specifications
@@ -124759,12 +124394,12 @@ var _Option = class _Option {
    */
   toU8a(isBare) {
     if (isBare) {
-      return __privateGet(this, _raw4).toU8a(true);
+      return this.#raw.toU8a(true);
     }
     const u8a = new Uint8Array(this.encodedLength);
     if (this.isSome) {
       u8a.set([1]);
-      u8a.set(__privateGet(this, _raw4).toU8a(), 1);
+      u8a.set(this.#raw.toU8a(), 1);
     }
     return u8a;
   }
@@ -124775,7 +124410,7 @@ var _Option = class _Option {
     if (this.isNone) {
       throw new Error("Option: unwrapping a None value");
     }
-    return __privateGet(this, _raw4);
+    return this.#raw;
   }
   /**
    * @description Returns the value that the Option represents (if available) or defaultValue if none
@@ -124789,12 +124424,9 @@ var _Option = class _Option {
    * @param defaultValue The value to return if the option isNone
    */
   unwrapOrDefault() {
-    return this.isSome ? this.unwrap() : new (__privateGet(this, _Type2))(this.registry);
+    return this.isSome ? this.unwrap() : new this.#Type(this.registry);
   }
 };
-_Type2 = new WeakMap();
-_raw4 = new WeakMap();
-var Option2 = _Option;
 
 // node_modules/@polkadot/types-codec/base/Result.js
 var Result = class _Result extends Enum {
@@ -124877,14 +124509,13 @@ function decodeTuple(registry, result2, value3, Classes) {
   }
   throw new Error(`Expected array input to Tuple decoding, found ${typeof value3}: ${stringify2(value3)}`);
 }
-var _Types;
-var _Tuple = class _Tuple extends AbstractArray {
+var Tuple2 = class _Tuple extends AbstractArray {
+  #Types;
   constructor(registry, Types, value3, { definition, setDefinition = identity6 } = {}) {
     const Classes = definition || setDefinition(Array.isArray(Types) ? [typesToConstructors(registry, Types), []] : isFunction3(Types) || isString2(Types) ? [[typeToConstructor(registry, Types)], []] : mapToTypeMap(registry, Types));
     super(registry, Classes[0].length);
-    __privateAdd(this, _Types);
     this.initialU8aLength = (isU8a(value3) ? decodeU8a(registry, this, value3, Classes) : decodeTuple(registry, this, value3, Classes))[1];
-    __privateSet(this, _Types, Classes);
+    this.#Types = Classes;
   }
   static with(Types) {
     let definition;
@@ -124909,7 +124540,7 @@ var _Tuple = class _Tuple extends AbstractArray {
    * @description The types definition of the tuple
    */
   get Types() {
-    return __privateGet(this, _Types)[1].length ? __privateGet(this, _Types)[1] : __privateGet(this, _Types)[0].map((T) => new T(this.registry).toRawType());
+    return this.#Types[1].length ? this.#Types[1] : this.#Types[0].map((T) => new T(this.registry).toRawType());
   }
   /**
    * @description Returns a breakdown of the hex encoding for this Codec
@@ -124923,7 +124554,7 @@ var _Tuple = class _Tuple extends AbstractArray {
    * @description Returns the base runtime type name for this instance
    */
   toRawType() {
-    const types2 = __privateGet(this, _Types)[0].map((T) => this.registry.getClassName(T) || new T(this.registry).toRawType());
+    const types2 = this.#Types[0].map((T) => this.registry.getClassName(T) || new T(this.registry).toRawType());
     return `(${types2.join(",")})`;
   }
   /**
@@ -124940,8 +124571,6 @@ var _Tuple = class _Tuple extends AbstractArray {
     return u8aConcatStrict(this.toU8aInner(isBare));
   }
 };
-_Types = new WeakMap();
-var Tuple2 = _Tuple;
 
 // node_modules/@polkadot/types-codec/base/UInt.js
 var UInt = class _UInt extends AbstractInt {
@@ -124993,14 +124622,13 @@ function decodeVec(registry, result2, value3, startAt, Type4) {
   }
   return decodeU8aVec(registry, result2, u8aToU8a(value3), startAt, Type4);
 }
-var _Type3;
-var _Vec = class _Vec extends AbstractArray {
+var Vec = class _Vec extends AbstractArray {
+  #Type;
   constructor(registry, Type4, value3 = [], { definition, setDefinition = identity6 } = {}) {
     const [decodeFrom, length5, startAt] = decodeVecLength(value3);
     super(registry, length5);
-    __privateAdd(this, _Type3);
-    __privateSet(this, _Type3, definition || setDefinition(typeToConstructor(registry, Type4)));
-    this.initialU8aLength = (isU8a(decodeFrom) ? decodeU8aVec(registry, this, decodeFrom, startAt, __privateGet(this, _Type3)) : decodeVec(registry, this, decodeFrom, startAt, __privateGet(this, _Type3)))[0];
+    this.#Type = definition || setDefinition(typeToConstructor(registry, Type4));
+    this.initialU8aLength = (isU8a(decodeFrom) ? decodeU8aVec(registry, this, decodeFrom, startAt, this.#Type) : decodeVec(registry, this, decodeFrom, startAt, this.#Type))[0];
   }
   static with(Type4) {
     let definition;
@@ -125015,13 +124643,13 @@ var _Vec = class _Vec extends AbstractArray {
    * @description The type for the items
    */
   get Type() {
-    return __privateGet(this, _Type3).name;
+    return this.#Type.name;
   }
   /**
    * @description Finds the index of the value in the array
    */
   indexOf(other) {
-    const check5 = other instanceof __privateGet(this, _Type3) ? other : new (__privateGet(this, _Type3))(this.registry, other);
+    const check5 = other instanceof this.#Type ? other : new this.#Type(this.registry, other);
     for (let i = 0, count7 = this.length; i < count7; i++) {
       if (check5.eq(this[i])) {
         return i;
@@ -125033,20 +124661,17 @@ var _Vec = class _Vec extends AbstractArray {
    * @description Returns the base runtime type name for this instance
    */
   toRawType() {
-    return `Vec<${this.registry.getClassName(__privateGet(this, _Type3)) || new (__privateGet(this, _Type3))(this.registry).toRawType()}>`;
+    return `Vec<${this.registry.getClassName(this.#Type) || new this.#Type(this.registry).toRawType()}>`;
   }
 };
-_Type3 = new WeakMap();
-var Vec = _Vec;
 
 // node_modules/@polkadot/types-codec/base/VecFixed.js
-var _Type4;
-var _VecFixed = class _VecFixed extends AbstractArray {
+var VecFixed = class _VecFixed extends AbstractArray {
+  #Type;
   constructor(registry, Type4, length5, value3 = [], { definition, setDefinition = identity6 } = {}) {
     super(registry, length5);
-    __privateAdd(this, _Type4);
-    __privateSet(this, _Type4, definition || setDefinition(typeToConstructor(registry, Type4)));
-    this.initialU8aLength = (isU8a(value3) ? decodeU8aVec(registry, this, value3, 0, __privateGet(this, _Type4)) : decodeVec(registry, this, value3, 0, __privateGet(this, _Type4)))[1];
+    this.#Type = definition || setDefinition(typeToConstructor(registry, Type4));
+    this.initialU8aLength = (isU8a(value3) ? decodeU8aVec(registry, this, value3, 0, this.#Type) : decodeVec(registry, this, value3, 0, this.#Type))[1];
   }
   static with(Type4, length5) {
     let definition;
@@ -125061,7 +124686,7 @@ var _VecFixed = class _VecFixed extends AbstractArray {
    * @description The type for the items
    */
   get Type() {
-    return new (__privateGet(this, _Type4))(this.registry).toRawType();
+    return new this.#Type(this.registry).toRawType();
   }
   /**
    * @description The length of the value when encoded as a Uint8Array
@@ -125092,26 +124717,24 @@ var _VecFixed = class _VecFixed extends AbstractArray {
     return `[${this.Type};${this.length}]`;
   }
 };
-_Type4 = new WeakMap();
-var VecFixed = _VecFixed;
 
 // node_modules/@polkadot/types-codec/native/Raw.js
 var Raw = class extends Uint8Array {
-  constructor(registry, value3, initialU8aLength) {
-    super(u8aToU8a(value3));
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    this.registry = registry;
-    this.initialU8aLength = initialU8aLength;
-  }
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
   /**
    * @description This ensures that operators such as clice, filter, map, etc. return
    * new Array instances (without this we need to apply overrides)
    */
   static get [Symbol.species]() {
     return Uint8Array;
+  }
+  constructor(registry, value3, initialU8aLength) {
+    super(u8aToU8a(value3));
+    this.registry = registry;
+    this.initialU8aLength = initialU8aLength;
   }
   /**
    * @description The length of the value when encoded as a Uint8Array
@@ -125244,31 +124867,30 @@ function decodeBitVec(value3) {
   }
   return decodeBitVecU8a(value3);
 }
-var _decodedLength, _isMsb;
 var BitVec = class extends Raw {
+  #decodedLength;
+  #isMsb;
   // In lieu of having the Msb/Lsb identifiers passed through, we default to assuming
   // we are dealing with Lsb, which is the default (as of writing) BitVec format used
   // in the Polkadot code (this only affects the toHuman displays)
   constructor(registry, value3, isMsb = false) {
     const [decodedLength, u8a] = decodeBitVec(value3);
     super(registry, u8a);
-    __privateAdd(this, _decodedLength);
-    __privateAdd(this, _isMsb);
-    __privateSet(this, _decodedLength, decodedLength);
-    __privateSet(this, _isMsb, isMsb);
+    this.#decodedLength = decodedLength;
+    this.#isMsb = isMsb;
   }
   /**
    * @description The length of the value when encoded as a Uint8Array
    */
   get encodedLength() {
-    return this.length + compactToU8a(__privateGet(this, _decodedLength)).length;
+    return this.length + compactToU8a(this.#decodedLength).length;
   }
   /**
    * @description Returns a breakdown of the hex encoding for this Codec
    */
   inspect() {
     return {
-      outer: [compactToU8a(__privateGet(this, _decodedLength)), super.toU8a()]
+      outer: [compactToU8a(this.#decodedLength), super.toU8a()]
     };
   }
   /**
@@ -125291,7 +124913,7 @@ var BitVec = class extends Raw {
       const off = i * 8;
       const v = map116[i];
       for (let j = 0; j < 8; j++) {
-        result2[off + j] = __privateGet(this, _isMsb) ? v[j] : v[7 - j];
+        result2[off + j] = this.#isMsb ? v[j] : v[7 - j];
       }
     }
     return result2;
@@ -125300,7 +124922,7 @@ var BitVec = class extends Raw {
    * @description Converts the Object to to a human-friendly JSON, with additional fields, expansion and formatting of information
    */
   toHuman() {
-    return `0b${[...this.toU8a(true)].map((d) => `00000000${d.toString(2)}`.slice(-8)).map((s) => __privateGet(this, _isMsb) ? s : s.split("").reverse().join("")).join("_")}`;
+    return `0b${[...this.toU8a(true)].map((d) => `00000000${d.toString(2)}`.slice(-8)).map((s) => this.#isMsb ? s : s.split("").reverse().join("")).join("_")}`;
   }
   /**
    * @description Returns the base runtime type name for this instance
@@ -125314,11 +124936,9 @@ var BitVec = class extends Raw {
    */
   toU8a(isBare) {
     const bitVec = super.toU8a(isBare);
-    return isBare ? bitVec : u8aConcatStrict([compactToU8a(__privateGet(this, _decodedLength)), bitVec]);
+    return isBare ? bitVec : u8aConcatStrict([compactToU8a(this.#decodedLength), bitVec]);
   }
 };
-_decodedLength = new WeakMap();
-_isMsb = new WeakMap();
 
 // node_modules/@polkadot/types-codec/native/Struct.js
 function noopSetDefinition(d) {
@@ -125375,41 +124995,40 @@ function decodeStructFromObject(registry, [Types, keys7], value3, jsonMap) {
   }
   return [raw, 0];
 }
-var _jsonMap, _Types2;
-var _Struct = class _Struct extends Map {
+var Struct2 = class _Struct extends Map {
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
+  #jsonMap;
+  #Types;
   constructor(registry, Types, value3, jsonMap = /* @__PURE__ */ new Map(), { definition, setDefinition = noopSetDefinition } = {}) {
     const typeMap = definition || setDefinition(mapToTypeMap(registry, Types));
     const [decoded, decodedLength] = isU8a(value3) || isHex(value3) ? decodeU8aStruct(registry, new Array(typeMap[0].length), u8aToU8a(value3), typeMap) : value3 instanceof _Struct ? [value3, 0] : decodeStructFromObject(registry, typeMap, value3 || {}, jsonMap);
     super(decoded);
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _jsonMap);
-    __privateAdd(this, _Types2);
     this.initialU8aLength = decodedLength;
     this.registry = registry;
-    __privateSet(this, _jsonMap, jsonMap);
-    __privateSet(this, _Types2, typeMap);
+    this.#jsonMap = jsonMap;
+    this.#Types = typeMap;
   }
   static with(Types, jsonMap) {
-    var _a91;
     let definition;
     const setDefinition = (d) => definition = d;
-    return _a91 = class extends _Struct {
+    return class extends _Struct {
+      static {
+        const keys7 = Object.keys(Types);
+        objectProperties(this.prototype, keys7, (k, _, self2) => self2.get(k));
+      }
       constructor(registry, value3) {
         super(registry, Types, value3, jsonMap, { definition, setDefinition });
       }
-    }, (() => {
-      const keys7 = Object.keys(Types);
-      objectProperties(_a91.prototype, keys7, (k, _, self2) => self2.get(k));
-    })(), _a91;
+    };
   }
   /**
    * @description The available keys for this struct
    */
   get defKeys() {
-    return __privateGet(this, _Types2)[1];
+    return this.#Types[1];
   }
   /**
    * @description Checks if the value is an empty value '{}'
@@ -125438,7 +125057,7 @@ var _Struct = class _Struct extends Map {
    */
   get Type() {
     const result2 = {};
-    const [Types, keys7] = __privateGet(this, _Types2);
+    const [Types, keys7] = this.#Types;
     for (let i = 0, count7 = keys7.length; i < count7; i++) {
       result2[keys7[i]] = new Types[i](this.registry).toRawType();
     }
@@ -125512,7 +125131,7 @@ var _Struct = class _Struct extends Map {
   toJSON() {
     const json3 = {};
     for (const [k, v] of this.entries()) {
-      json3[__privateGet(this, _jsonMap).get(k) || k] = v.toJSON();
+      json3[this.#jsonMap.get(k) || k] = v.toJSON();
     }
     return json3;
   }
@@ -125530,7 +125149,7 @@ var _Struct = class _Struct extends Map {
    * @description Returns the base runtime type name for this instance
    */
   toRawType() {
-    return stringify2(typesToMap(this.registry, __privateGet(this, _Types2)));
+    return stringify2(typesToMap(this.registry, this.#Types));
   }
   /**
    * @description Returns the string representation of the value
@@ -125550,9 +125169,6 @@ var _Struct = class _Struct extends Map {
     return u8aConcatStrict(encoded);
   }
 };
-_jsonMap = new WeakMap();
-_Types2 = new WeakMap();
-var Struct2 = _Struct;
 
 // node_modules/@polkadot/types-codec/extended/Map.js
 var l4 = logger("Map");
@@ -125596,23 +125212,22 @@ function decodeMap(registry, keyType, valType, value3) {
   }
   throw new Error("Map: cannot decode type");
 }
-var _KeyClass, _ValClass, _type2;
 var CodecMap = class extends Map {
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
+  #KeyClass;
+  #ValClass;
+  #type;
   constructor(registry, keyType, valType, rawValue, type = "HashMap") {
     const [KeyClass, ValClass, decoded, decodedLength] = decodeMap(registry, keyType, valType, rawValue);
     super(type === "BTreeMap" ? sortMap(decoded) : decoded);
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _KeyClass);
-    __privateAdd(this, _ValClass);
-    __privateAdd(this, _type2);
     this.registry = registry;
     this.initialU8aLength = decodedLength;
-    __privateSet(this, _KeyClass, KeyClass);
-    __privateSet(this, _ValClass, ValClass);
-    __privateSet(this, _type2, type);
+    this.#KeyClass = KeyClass;
+    this.#ValClass = ValClass;
+    this.#type = type;
   }
   /**
    * @description The length of the value when encoded as a Uint8Array
@@ -125696,7 +125311,7 @@ var CodecMap = class extends Map {
    * @description Returns the base runtime type name for this instance
    */
   toRawType() {
-    return `${__privateGet(this, _type2)}<${this.registry.getClassName(__privateGet(this, _KeyClass)) || new (__privateGet(this, _KeyClass))(this.registry).toRawType()},${this.registry.getClassName(__privateGet(this, _ValClass)) || new (__privateGet(this, _ValClass))(this.registry).toRawType()}>`;
+    return `${this.#type}<${this.registry.getClassName(this.#KeyClass) || new this.#KeyClass(this.registry).toRawType()},${this.registry.getClassName(this.#ValClass) || new this.#ValClass(this.registry).toRawType()}>`;
   }
   /**
    * @description Returns the string representation of the value
@@ -125719,9 +125334,6 @@ var CodecMap = class extends Map {
     return u8aConcatStrict(encoded);
   }
 };
-_KeyClass = new WeakMap();
-_ValClass = new WeakMap();
-_type2 = new WeakMap();
 
 // node_modules/@polkadot/types-codec/extended/BTreeMap.js
 var BTreeMap = class _BTreeMap extends CodecMap {
@@ -125769,19 +125381,18 @@ function decodeSet(registry, valType, value3) {
   }
   throw new Error("BTreeSet: cannot decode type");
 }
-var _ValClass2;
-var _BTreeSet = class _BTreeSet extends Set {
+var BTreeSet = class _BTreeSet extends Set {
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
+  #ValClass;
   constructor(registry, valType, rawValue) {
     const [ValClass, values7, decodedLength] = decodeSet(registry, valType, rawValue);
     super(sortSet(values7));
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _ValClass2);
     this.registry = registry;
     this.initialU8aLength = decodedLength;
-    __privateSet(this, _ValClass2, ValClass);
+    this.#ValClass = ValClass;
   }
   static with(valType) {
     return class extends _BTreeSet {
@@ -125867,7 +125478,7 @@ var _BTreeSet = class _BTreeSet extends Set {
    * @description Returns the base runtime type name for this instance
    */
   toRawType() {
-    return `BTreeSet<${this.registry.getClassName(__privateGet(this, _ValClass2)) || new (__privateGet(this, _ValClass2))(this.registry).toRawType()}>`;
+    return `BTreeSet<${this.registry.getClassName(this.#ValClass) || new this.#ValClass(this.registry).toRawType()}>`;
   }
   /**
    * @description Converts the value in a best-fit primitive form
@@ -125900,8 +125511,6 @@ var _BTreeSet = class _BTreeSet extends Set {
     return u8aConcatStrict(encoded);
   }
 };
-_ValClass2 = new WeakMap();
-var BTreeSet = _BTreeSet;
 
 // node_modules/@polkadot/types-codec/extended/Bytes.js
 var MAX_LENGTH2 = 10 * 1024 * 1024;
@@ -125966,12 +125575,12 @@ var HashMap2 = class _HashMap extends CodecMap {
 
 // node_modules/@polkadot/types-codec/native/Bool.js
 var bool = class extends Boolean {
+  registry;
+  createdAtHash;
+  initialU8aLength = 1;
+  isStorageFallback;
   constructor(registry, value3 = false) {
     super(isU8a(value3) ? value3[0] === 1 : value3 instanceof Boolean ? value3.valueOf() : !!value3);
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength", 1);
-    __publicField(this, "isStorageFallback");
     this.registry = registry;
   }
   /**
@@ -126114,12 +125723,11 @@ var OptionBool = class extends Option2 {
 };
 
 // node_modules/@polkadot/types-codec/extended/Range.js
-var _rangeName;
-var _Range = class _Range extends Tuple2 {
+var Range = class _Range extends Tuple2 {
+  #rangeName;
   constructor(registry, Type4, value3, { rangeName = "Range" } = {}) {
     super(registry, [Type4, Type4], value3);
-    __privateAdd(this, _rangeName);
-    __privateSet(this, _rangeName, rangeName);
+    this.#rangeName = rangeName;
   }
   static with(Type4) {
     return class extends _Range {
@@ -126144,11 +125752,9 @@ var _Range = class _Range extends Tuple2 {
    * @description Returns the base runtime type name for this instance
    */
   toRawType() {
-    return `${__privateGet(this, _rangeName)}<${this.start.toRawType()}>`;
+    return `${this.#rangeName}<${this.start.toRawType()}>`;
   }
 };
-_rangeName = new WeakMap();
-var Range = _Range;
 
 // node_modules/@polkadot/types-codec/extended/RangeInclusive.js
 var RangeInclusive = class _RangeInclusive extends Range {
@@ -126187,16 +125793,15 @@ function decodeText4(value3) {
   }
   return [value3 ? value3.toString() : "", 0];
 }
-var _override;
 var Text = class extends String {
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
+  #override = null;
   constructor(registry, value3) {
     const [str, decodedLength] = decodeText4(value3);
     super(str);
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _override, null);
     this.registry = registry;
     this.initialU8aLength = decodedLength;
   }
@@ -126243,7 +125848,7 @@ var Text = class extends String {
    * @description Set an override value for this
    */
   setOverride(override) {
-    __privateSet(this, _override, override);
+    this.#override = override;
   }
   /**
    * @description Returns a hex string representation of the value
@@ -126279,7 +125884,7 @@ var Text = class extends String {
    * @description Returns the string representation of the value
    */
   toString() {
-    return __privateGet(this, _override) || super.toString();
+    return this.#override || super.toString();
   }
   /**
    * @description Encodes the value as a Uint8Array as per the SCALE specifications
@@ -126290,7 +125895,6 @@ var Text = class extends String {
     return isBare ? encoded : compactAddLength(encoded);
   }
 };
-_override = new WeakMap();
 
 // node_modules/@polkadot/types-codec/extended/Type.js
 var Type3 = class extends Text {
@@ -126355,17 +125959,16 @@ function decodeRaw(registry, typeName, value3) {
   const instance = new Type4(registry, value3);
   return [Type4, instance, compactAddLength(instance.toU8a())];
 }
-var _Type5, _decoded, _opaqueName;
-var _WrapperKeepOpaque = class _WrapperKeepOpaque extends Bytes {
+var WrapperKeepOpaque = class _WrapperKeepOpaque extends Bytes {
+  #Type;
+  #decoded;
+  #opaqueName;
   constructor(registry, typeName, value3, { opaqueName = "WrapperKeepOpaque" } = {}) {
     const [Type4, decoded, u8a] = decodeRaw(registry, typeName, value3);
     super(registry, u8a);
-    __privateAdd(this, _Type5);
-    __privateAdd(this, _decoded);
-    __privateAdd(this, _opaqueName);
-    __privateSet(this, _Type5, Type4);
-    __privateSet(this, _decoded, decoded);
-    __privateSet(this, _opaqueName, opaqueName);
+    this.#Type = Type4;
+    this.#decoded = decoded;
+    this.#opaqueName = opaqueName;
   }
   static with(Type4) {
     return class extends _WrapperKeepOpaque {
@@ -126378,14 +125981,14 @@ var _WrapperKeepOpaque = class _WrapperKeepOpaque extends Bytes {
    * @description Checks if the wrapper is decodable
    */
   get isDecoded() {
-    return !!__privateGet(this, _decoded);
+    return !!this.#decoded;
   }
   /**
    * @description Returns a breakdown of the hex encoding for this Codec
    */
   inspect() {
-    return __privateGet(this, _decoded) ? {
-      inner: [__privateGet(this, _decoded).inspect()],
+    return this.#decoded ? {
+      inner: [this.#decoded.inspect()],
       outer: [compactToU8a(this.length)]
     } : {
       outer: [compactToU8a(this.length), this.toU8a(true)]
@@ -126395,40 +125998,36 @@ var _WrapperKeepOpaque = class _WrapperKeepOpaque extends Bytes {
    * @description Converts the Object to to a human-friendly JSON, with additional fields, expansion and formatting of information
    */
   toHuman(isExtended, disableAscii) {
-    return __privateGet(this, _decoded) ? __privateGet(this, _decoded).toHuman(isExtended, disableAscii) : super.toHuman(isExtended, disableAscii);
+    return this.#decoded ? this.#decoded.toHuman(isExtended, disableAscii) : super.toHuman(isExtended, disableAscii);
   }
   /**
    * @description Converts the value in a best-fit primitive form
    */
   toPrimitive(disableAscii) {
-    return __privateGet(this, _decoded) ? __privateGet(this, _decoded).toPrimitive(disableAscii) : super.toPrimitive(disableAscii);
+    return this.#decoded ? this.#decoded.toPrimitive(disableAscii) : super.toPrimitive(disableAscii);
   }
   /**
    * @description Returns the base runtime type name for this instance
    */
   toRawType() {
-    return `${__privateGet(this, _opaqueName)}<${this.registry.getClassName(__privateGet(this, _Type5)) || (__privateGet(this, _decoded) ? __privateGet(this, _decoded).toRawType() : new (__privateGet(this, _Type5))(this.registry).toRawType())}>`;
+    return `${this.#opaqueName}<${this.registry.getClassName(this.#Type) || (this.#decoded ? this.#decoded.toRawType() : new this.#Type(this.registry).toRawType())}>`;
   }
   /**
    * @description Converts the Object to to a string (either decoded or bytes)
    */
   toString() {
-    return __privateGet(this, _decoded) ? __privateGet(this, _decoded).toString() : super.toString();
+    return this.#decoded ? this.#decoded.toString() : super.toString();
   }
   /**
    * @description Returns the decoded that the WrapperKeepOpaque represents (if available), throws if non-decodable
    */
   unwrap() {
-    if (!__privateGet(this, _decoded)) {
-      throw new Error(`${__privateGet(this, _opaqueName)}: unwrapping an undecodable value`);
+    if (!this.#decoded) {
+      throw new Error(`${this.#opaqueName}: unwrapping an undecodable value`);
     }
-    return __privateGet(this, _decoded);
+    return this.#decoded;
   }
 };
-_Type5 = new WeakMap();
-_decoded = new WeakMap();
-_opaqueName = new WeakMap();
-var WrapperKeepOpaque = _WrapperKeepOpaque;
 
 // node_modules/@polkadot/types-codec/extended/WrapperOpaque.js
 var WrapperOpaque = class _WrapperOpaque extends WrapperKeepOpaque {
@@ -126451,17 +126050,16 @@ var WrapperOpaque = class _WrapperOpaque extends WrapperKeepOpaque {
 };
 
 // node_modules/@polkadot/types-codec/native/Float.js
-var _bitLength2;
-var _Float = class _Float extends Number {
+var Float = class _Float extends Number {
+  encodedLength;
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
+  #bitLength;
   constructor(registry, value3, { bitLength = 32 } = {}) {
     super(isU8a(value3) || isHex(value3) ? value3.length === 0 ? 0 : u8aToFloat(u8aToU8a(value3), { bitLength }) : value3 || 0);
-    __publicField(this, "encodedLength");
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _bitLength2);
-    __privateSet(this, _bitLength2, bitLength);
+    this.#bitLength = bitLength;
     this.encodedLength = bitLength / 8;
     this.initialU8aLength = this.encodedLength;
     this.registry = registry;
@@ -126533,32 +126131,30 @@ var _Float = class _Float extends Number {
    * @description Returns the base runtime type name for this instance
    */
   toRawType() {
-    return `f${__privateGet(this, _bitLength2)}`;
+    return `f${this.#bitLength}`;
   }
   /**
    * @description Encodes the value as a Uint8Array as per the SCALE specifications
    */
   toU8a(_isBare) {
     return floatToU8a(this, {
-      bitLength: __privateGet(this, _bitLength2)
+      bitLength: this.#bitLength
     });
   }
 };
-_bitLength2 = new WeakMap();
-var Float = _Float;
 
 // node_modules/@polkadot/types-codec/native/Json.js
 function decodeJson(value3) {
   return Object.entries(value3 || {});
 }
 var Json = class extends Map {
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
   constructor(registry, value3) {
     const decoded = decodeJson(value3);
     super(decoded);
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
     this.registry = registry;
     objectProperties(this, decoded.map(([k]) => k), (k) => this.get(k));
   }
@@ -126671,8 +126267,8 @@ function decodeSetArray(setValues, values7) {
   }
   return result2;
 }
-function decodeSetNumber(setValues, _value2) {
-  const bn = bnToBn(_value2);
+function decodeSetNumber(setValues, _value) {
+  const bn = bnToBn(_value);
   const keys7 = Object.keys(setValues);
   const result2 = [];
   for (let i = 0, count7 = keys7.length; i < count7; i++) {
@@ -126702,51 +126298,40 @@ function decodeSet2(setValues, value3 = 0, bitLength) {
   }
   return decodeSetNumber(setValues, value3);
 }
-var _allowed, _byteLength;
-var _CodecSet = class _CodecSet extends Set {
+var CodecSet = class _CodecSet extends Set {
+  registry;
+  createdAtHash;
+  initialU8aLength;
+  isStorageFallback;
+  #allowed;
+  #byteLength;
   constructor(registry, setValues, value3, bitLength = 8) {
     super(decodeSet2(setValues, value3, bitLength));
-    __publicField(this, "registry");
-    __publicField(this, "createdAtHash");
-    __publicField(this, "initialU8aLength");
-    __publicField(this, "isStorageFallback");
-    __privateAdd(this, _allowed);
-    __privateAdd(this, _byteLength);
-    /**
-     * @description adds a value to the Set (extended to allow for validity checking)
-     */
-    __publicField(this, "add", (key) => {
-      if (__privateGet(this, _allowed) && isUndefined2(__privateGet(this, _allowed)[key])) {
-        throw new Error(`Set: Invalid key '${key}' on add`);
-      }
-      super.add(key);
-      return this;
-    });
     this.registry = registry;
-    __privateSet(this, _allowed, setValues);
-    __privateSet(this, _byteLength, bitLength / 8);
+    this.#allowed = setValues;
+    this.#byteLength = bitLength / 8;
   }
   static with(values7, bitLength) {
-    var _a91;
-    return _a91 = class extends _CodecSet {
+    return class extends _CodecSet {
+      static {
+        const keys7 = Object.keys(values7);
+        const count7 = keys7.length;
+        const isKeys = new Array(count7);
+        for (let i = 0; i < count7; i++) {
+          isKeys[i] = `is${stringPascalCase(keys7[i])}`;
+        }
+        objectProperties(this.prototype, isKeys, (_, i, self2) => self2.strings.includes(keys7[i]));
+      }
       constructor(registry, value3) {
         super(registry, values7, value3, bitLength);
       }
-    }, (() => {
-      const keys7 = Object.keys(values7);
-      const count7 = keys7.length;
-      const isKeys = new Array(count7);
-      for (let i = 0; i < count7; i++) {
-        isKeys[i] = `is${stringPascalCase(keys7[i])}`;
-      }
-      objectProperties(_a91.prototype, isKeys, (_, i, self2) => self2.strings.includes(keys7[i]));
-    })(), _a91;
+    };
   }
   /**
    * @description The length of the value when encoded as a Uint8Array
    */
   get encodedLength() {
-    return __privateGet(this, _byteLength);
+    return this.#byteLength;
   }
   /**
    * @description returns a hash of the contents
@@ -126770,8 +126355,18 @@ var _CodecSet = class _CodecSet extends Set {
    * @description The encoded value for the set members
    */
   get valueEncoded() {
-    return encodeSet(__privateGet(this, _allowed), this.strings);
+    return encodeSet(this.#allowed, this.strings);
   }
+  /**
+   * @description adds a value to the Set (extended to allow for validity checking)
+   */
+  add = (key) => {
+    if (this.#allowed && isUndefined2(this.#allowed[key])) {
+      throw new Error(`Set: Invalid key '${key}' on add`);
+    }
+    super.add(key);
+    return this;
+  };
   /**
    * @description Compares the value of the input to see if there is a match
    */
@@ -126827,7 +126422,7 @@ var _CodecSet = class _CodecSet extends Set {
    * @description Returns the base runtime type name for this instance
    */
   toRawType() {
-    return stringify2({ _set: __privateGet(this, _allowed) });
+    return stringify2({ _set: this.#allowed });
   }
   /**
    * @description Returns the string representation of the value
@@ -126840,85 +126435,58 @@ var _CodecSet = class _CodecSet extends Set {
    */
   toU8a(_isBare) {
     return bnToU8a(this.valueEncoded, {
-      bitLength: __privateGet(this, _byteLength) * 8,
+      bitLength: this.#byteLength * 8,
       isLe: true
     });
   }
 };
-_allowed = new WeakMap();
-_byteLength = new WeakMap();
-var CodecSet = _CodecSet;
 
 // node_modules/@polkadot/types-codec/primitive/F32.js
 var f322 = class extends Float.with(32) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__FloatType", "f32");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __FloatType = "f32";
 };
 
 // node_modules/@polkadot/types-codec/primitive/F64.js
 var f642 = class extends Float.with(64) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__FloatType", "f64");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __FloatType = "f64";
 };
 
 // node_modules/@polkadot/types-codec/primitive/I8.js
 var i8 = class extends Int2.with(8) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__IntType", "i8");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __IntType = "i8";
 };
 
 // node_modules/@polkadot/types-codec/primitive/I16.js
 var i16 = class extends Int2.with(16) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__IntType", "i16");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __IntType = "i16";
 };
 
 // node_modules/@polkadot/types-codec/primitive/I32.js
 var i32 = class extends Int2.with(32) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__IntType", "i32");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __IntType = "i32";
 };
 
 // node_modules/@polkadot/types-codec/primitive/I64.js
 var i64 = class extends Int2.with(64) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__IntType", "i64");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __IntType = "i64";
 };
 
 // node_modules/@polkadot/types-codec/primitive/I128.js
 var i128 = class extends Int2.with(128) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__IntType", "i128");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __IntType = "i128";
 };
 
 // node_modules/@polkadot/types-codec/primitive/I256.js
 var i256 = class extends Int2.with(256) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__IntType", "i256");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __IntType = "i256";
 };
 
 // node_modules/@polkadot/types-codec/primitive/ISize.js
@@ -126931,56 +126499,38 @@ var isize = class extends i32 {
 
 // node_modules/@polkadot/types-codec/primitive/U8.js
 var u82 = class extends UInt.with(8) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__UIntType", "u8");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __UIntType = "u8";
 };
 
 // node_modules/@polkadot/types-codec/primitive/U16.js
 var u162 = class extends UInt.with(16) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__UIntType", "u16");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __UIntType = "u16";
 };
 
 // node_modules/@polkadot/types-codec/primitive/U32.js
 var u325 = class extends UInt.with(32) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__UIntType", "u32");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __UIntType = "u32";
 };
 
 // node_modules/@polkadot/types-codec/primitive/U64.js
 var u64 = class extends UInt.with(64) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__UIntType", "u64");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __UIntType = "u64";
 };
 
 // node_modules/@polkadot/types-codec/primitive/U128.js
 var u128 = class extends UInt.with(128) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__UIntType", "u128");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __UIntType = "u128";
 };
 
 // node_modules/@polkadot/types-codec/primitive/U256.js
 var u256 = class extends UInt.with(256) {
-  constructor() {
-    super(...arguments);
-    // NOTE without this, we cannot properly determine extensions
-    __publicField(this, "__UIntType", "u256");
-  }
+  // NOTE without this, we cannot properly determine extensions
+  __UIntType = "u256";
 };
 
 // node_modules/@polkadot/types-codec/primitive/USize.js
@@ -127201,8 +126751,8 @@ var wrappedExtraction = [
 function extractSubType(type, [start3, end6]) {
   return type.substring(start3.length, type.length - end6.length);
 }
-function getTypeDef(_type3, { displayName, name } = {}, count7 = 0) {
-  const type = sanitize(_type3);
+function getTypeDef(_type, { displayName, name } = {}, count7 = 0) {
+  const type = sanitize(_type);
   const value3 = { displayName, info: TypeDefInfo.Plain, name, type };
   if (++count7 > 64) {
     throw new Error("getTypeDef: Maximum nested limit reached");
@@ -127268,11 +126818,11 @@ function createWithSub(Clazz, value3) {
   return Clazz.with(getSubType(value3));
 }
 var infoMapping = {
-  [TypeDefInfo.BTreeMap]: (_registry2, value3) => createHashMap(BTreeMap, value3),
-  [TypeDefInfo.BTreeSet]: (_registry2, value3) => createWithSub(BTreeSet, value3),
-  [TypeDefInfo.Compact]: (_registry2, value3) => createWithSub(Compact, value3),
-  [TypeDefInfo.DoNotConstruct]: (_registry2, value3) => DoNotConstruct.with(value3.displayName || value3.type),
-  [TypeDefInfo.Enum]: (_registry2, value3) => {
+  [TypeDefInfo.BTreeMap]: (_registry, value3) => createHashMap(BTreeMap, value3),
+  [TypeDefInfo.BTreeSet]: (_registry, value3) => createWithSub(BTreeSet, value3),
+  [TypeDefInfo.Compact]: (_registry, value3) => createWithSub(Compact, value3),
+  [TypeDefInfo.DoNotConstruct]: (_registry, value3) => DoNotConstruct.with(value3.displayName || value3.type),
+  [TypeDefInfo.Enum]: (_registry, value3) => {
     const subs = getSubDefArray(value3);
     return Enum.with(subs.every(({ type }) => type === "Null") ? subs.reduce((out, { index, name }, count7) => {
       if (!name) {
@@ -127282,10 +126832,10 @@ var infoMapping = {
       return out;
     }, {}) : getTypeClassMap(value3));
   },
-  [TypeDefInfo.HashMap]: (_registry2, value3) => createHashMap(HashMap2, value3),
-  [TypeDefInfo.Int]: (_registry2, value3) => createInt(Int2, value3),
+  [TypeDefInfo.HashMap]: (_registry, value3) => createHashMap(HashMap2, value3),
+  [TypeDefInfo.Int]: (_registry, value3) => createInt(Int2, value3),
   // We have circular deps between Linkage & Struct
-  [TypeDefInfo.Linkage]: (_registry2, value3) => {
+  [TypeDefInfo.Linkage]: (_registry, value3) => {
     const type = `Option<${getSubType(value3)}>`;
     const Clazz = Struct2.with({ previous: type, next: type });
     Clazz.prototype.toRawType = function() {
@@ -127293,21 +126843,21 @@ var infoMapping = {
     };
     return Clazz;
   },
-  [TypeDefInfo.Null]: (_registry2, _value2) => Null2,
-  [TypeDefInfo.Option]: (_registry2, value3) => {
+  [TypeDefInfo.Null]: (_registry, _value) => Null2,
+  [TypeDefInfo.Option]: (_registry, value3) => {
     if (!value3.sub || Array.isArray(value3.sub)) {
       throw new Error("Expected type information for Option");
     }
     return createWithSub(Option2, value3);
   },
   [TypeDefInfo.Plain]: (registry, value3) => registry.getOrUnknown(value3.type),
-  [TypeDefInfo.Range]: (_registry2, value3) => createWithSub(Range, value3),
-  [TypeDefInfo.RangeInclusive]: (_registry2, value3) => createWithSub(RangeInclusive, value3),
-  [TypeDefInfo.Result]: (_registry2, value3) => {
+  [TypeDefInfo.Range]: (_registry, value3) => createWithSub(Range, value3),
+  [TypeDefInfo.RangeInclusive]: (_registry, value3) => createWithSub(RangeInclusive, value3),
+  [TypeDefInfo.Result]: (_registry, value3) => {
     const [Ok, Err] = getTypeClassArray(value3);
     return Result.with({ Err, Ok });
   },
-  [TypeDefInfo.Set]: (_registry2, value3) => CodecSet.with(getSubDefArray(value3).reduce((result2, { index, name }) => {
+  [TypeDefInfo.Set]: (_registry, value3) => CodecSet.with(getSubDefArray(value3).reduce((result2, { index, name }) => {
     if (!name || !isNumber2(index)) {
       throw new Error("No name found in sub definition");
     }
@@ -127315,23 +126865,23 @@ var infoMapping = {
     return result2;
   }, {}), value3.length),
   [TypeDefInfo.Si]: (registry, value3) => getTypeClass(registry, registry.lookup.getTypeDef(value3.type)),
-  [TypeDefInfo.Struct]: (_registry2, value3) => Struct2.with(getTypeClassMap(value3), value3.alias),
-  [TypeDefInfo.Tuple]: (_registry2, value3) => Tuple2.with(getTypeClassArray(value3)),
-  [TypeDefInfo.UInt]: (_registry2, value3) => createInt(UInt, value3),
-  [TypeDefInfo.Vec]: (_registry2, { sub }) => {
+  [TypeDefInfo.Struct]: (_registry, value3) => Struct2.with(getTypeClassMap(value3), value3.alias),
+  [TypeDefInfo.Tuple]: (_registry, value3) => Tuple2.with(getTypeClassArray(value3)),
+  [TypeDefInfo.UInt]: (_registry, value3) => createInt(UInt, value3),
+  [TypeDefInfo.Vec]: (_registry, { sub }) => {
     if (!sub || Array.isArray(sub)) {
       throw new Error("Expected type information for vector");
     }
     return sub.type === "u8" ? Bytes : Vec.with(getTypeDefType(sub));
   },
-  [TypeDefInfo.VecFixed]: (_registry2, { displayName, length: length5, sub }) => {
+  [TypeDefInfo.VecFixed]: (_registry, { displayName, length: length5, sub }) => {
     if (!isNumber2(length5) || !sub || Array.isArray(sub)) {
       throw new Error("Expected length & type information for fixed vector");
     }
     return sub.type === "u8" ? U8aFixed.with(length5 * 8, displayName) : VecFixed.with(getTypeDefType(sub), length5);
   },
-  [TypeDefInfo.WrapperKeepOpaque]: (_registry2, value3) => createWithSub(WrapperKeepOpaque, value3),
-  [TypeDefInfo.WrapperOpaque]: (_registry2, value3) => createWithSub(WrapperOpaque, value3)
+  [TypeDefInfo.WrapperKeepOpaque]: (_registry, value3) => createWithSub(WrapperKeepOpaque, value3),
+  [TypeDefInfo.WrapperOpaque]: (_registry, value3) => createWithSub(WrapperOpaque, value3)
 };
 function constructTypeClass(registry, typeDef) {
   try {
@@ -127461,15 +127011,15 @@ var encoders = {
     return sub.every(({ type }) => type === "Null") ? stringify2({ _enum: sub.map(({ name }, index) => `${name || `Empty${index}`}`) }) : encodeSubTypes(registry, sub, true);
   },
   [TypeDefInfo.HashMap]: (registry, typeDef) => encodeWithParams(registry, typeDef, "HashMap"),
-  [TypeDefInfo.Int]: (_registry2, { length: length5 = 32 }) => `Int<${length5}>`,
+  [TypeDefInfo.Int]: (_registry, { length: length5 = 32 }) => `Int<${length5}>`,
   [TypeDefInfo.Linkage]: (registry, typeDef) => encodeWithParams(registry, typeDef, "Linkage"),
-  [TypeDefInfo.Null]: (_registry2, _typeDef2) => "Null",
+  [TypeDefInfo.Null]: (_registry, _typeDef) => "Null",
   [TypeDefInfo.Option]: (registry, typeDef) => encodeWithParams(registry, typeDef, "Option"),
-  [TypeDefInfo.Plain]: (_registry2, { displayName, type }) => displayName || type,
+  [TypeDefInfo.Plain]: (_registry, { displayName, type }) => displayName || type,
   [TypeDefInfo.Range]: (registry, typeDef) => encodeWithParams(registry, typeDef, "Range"),
   [TypeDefInfo.RangeInclusive]: (registry, typeDef) => encodeWithParams(registry, typeDef, "RangeInclusive"),
   [TypeDefInfo.Result]: (registry, typeDef) => encodeWithParams(registry, typeDef, "Result"),
-  [TypeDefInfo.Set]: (_registry2, { length: length5 = 8, sub }) => {
+  [TypeDefInfo.Set]: (_registry, { length: length5 = 8, sub }) => {
     if (!Array.isArray(sub)) {
       throw new Error("Unable to encode Set type");
     }
@@ -127477,7 +127027,7 @@ var encoders = {
       _set: sub.reduce((all15, { index, name }, count7) => objectSpread(all15, { [`${name || `Unknown${index || count7}`}`]: index || count7 }), { _bitLength: length5 || 8 })
     });
   },
-  [TypeDefInfo.Si]: (_registry2, { lookupName, type }) => lookupName || type,
+  [TypeDefInfo.Si]: (_registry, { lookupName, type }) => lookupName || type,
   [TypeDefInfo.Struct]: (registry, { alias: alias2, sub }) => {
     if (!Array.isArray(sub)) {
       throw new Error("Unable to encode Struct type");
@@ -127492,9 +127042,9 @@ var encoders = {
     }
     return `(${sub.map((type) => encodeTypeDef(registry, type)).join(",")})`;
   },
-  [TypeDefInfo.UInt]: (_registry2, { length: length5 = 32 }) => `UInt<${length5}>`,
+  [TypeDefInfo.UInt]: (_registry, { length: length5 = 32 }) => `UInt<${length5}>`,
   [TypeDefInfo.Vec]: (registry, typeDef) => encodeWithParams(registry, typeDef, "Vec"),
-  [TypeDefInfo.VecFixed]: (_registry2, { length: length5, sub }) => {
+  [TypeDefInfo.VecFixed]: (_registry, { length: length5, sub }) => {
     if (!isNumber2(length5) || !sub || Array.isArray(sub)) {
       throw new Error("Unable to encode VecFixed type");
     }
@@ -132760,37 +132310,35 @@ function extractTypeInfo(lookup, portable) {
   }
   return { lookups, names, params, types: types2 };
 }
-var _alias, _lookups, _names, _params, _typeDefs, _types, _PortableRegistry_instances, createSiDef_fn, getLookupId_fn, extract_fn, extractArray_fn, extractBitSequence_fn, extractCompact_fn, extractComposite_fn, extractCompositeSet_fn, extractFields_fn, extractFieldsAlias_fn, extractHistoric_fn, extractPrimitive_fn, extractAliasPath_fn, extractSequence_fn, extractTuple_fn, extractVariant_fn, extractVariantEnum_fn;
 var PortableRegistry = class extends Struct2 {
+  #alias;
+  #lookups;
+  #names;
+  #params;
+  #typeDefs = {};
+  #types;
   constructor(registry, value3, isContract) {
     super(registry, {
       types: "Vec<PortableType>"
     }, value3);
-    __privateAdd(this, _PortableRegistry_instances);
-    __privateAdd(this, _alias);
-    __privateAdd(this, _lookups);
-    __privateAdd(this, _names);
-    __privateAdd(this, _params);
-    __privateAdd(this, _typeDefs, {});
-    __privateAdd(this, _types);
     const { lookups, names, params, types: types2 } = extractTypeInfo(this, this.types);
-    __privateSet(this, _alias, extractAliases(params, isContract));
-    __privateSet(this, _lookups, lookups);
-    __privateSet(this, _names, names);
-    __privateSet(this, _params, params);
-    __privateSet(this, _types, types2);
+    this.#alias = extractAliases(params, isContract);
+    this.#lookups = lookups;
+    this.#names = names;
+    this.#params = params;
+    this.#types = types2;
   }
   /**
    * @description Returns all the available type names for this chain
    **/
   get names() {
-    return Object.values(__privateGet(this, _names)).sort();
+    return Object.values(this.#names).sort();
   }
   /**
    * @description Returns all the available parameterized types for this chain
    **/
   get paramTypes() {
-    return __privateGet(this, _params);
+    return this.#params;
   }
   /**
    * @description The types of the registry
@@ -132802,19 +132350,19 @@ var PortableRegistry = class extends Struct2 {
    * @description Register all available types into the registry (generally for internal usage)
    */
   register() {
-    registerTypes(this, __privateGet(this, _lookups), __privateGet(this, _names), __privateGet(this, _params));
+    registerTypes(this, this.#lookups, this.#names, this.#params);
   }
   /**
    * @description Returns the name for a specific lookup
    */
   getName(lookupId) {
-    return __privateGet(this, _names)[__privateMethod(this, _PortableRegistry_instances, getLookupId_fn).call(this, lookupId)];
+    return this.#names[this.#getLookupId(lookupId)];
   }
   /**
    * @description Finds a specific type in the registry
    */
   getSiType(lookupId) {
-    const found = (__privateGet(this, _types) || this.types)[__privateMethod(this, _PortableRegistry_instances, getLookupId_fn).call(this, lookupId)];
+    const found = (this.#types || this.types)[this.#getLookupId(lookupId)];
     if (!found) {
       throw new Error(`PortableRegistry: Unable to find type with lookupId ${lookupId.toString()}`);
     }
@@ -132824,9 +132372,9 @@ var PortableRegistry = class extends Struct2 {
    * @description Lookup the type definition for the index
    */
   getTypeDef(lookupId) {
-    const lookupIndex = __privateMethod(this, _PortableRegistry_instances, getLookupId_fn).call(this, lookupId);
-    if (!__privateGet(this, _typeDefs)[lookupIndex]) {
-      const lookupName = __privateGet(this, _names)[lookupIndex];
+    const lookupIndex = this.#getLookupId(lookupId);
+    if (!this.#typeDefs[lookupIndex]) {
+      const lookupName = this.#names[lookupIndex];
       const empty45 = {
         info: TypeDefInfo.DoNotConstruct,
         lookupIndex,
@@ -132834,23 +132382,23 @@ var PortableRegistry = class extends Struct2 {
         type: this.registry.createLookupType(lookupIndex)
       };
       if (lookupName) {
-        __privateGet(this, _typeDefs)[lookupIndex] = empty45;
+        this.#typeDefs[lookupIndex] = empty45;
       }
-      const extracted = __privateMethod(this, _PortableRegistry_instances, extract_fn).call(this, this.getSiType(lookupId), lookupIndex);
+      const extracted = this.#extract(this.getSiType(lookupId), lookupIndex);
       if (!lookupName) {
-        __privateGet(this, _typeDefs)[lookupIndex] = empty45;
+        this.#typeDefs[lookupIndex] = empty45;
       }
       Object.keys(extracted).forEach((k) => {
         if (k !== "lookupName" || extracted[k]) {
-          __privateGet(this, _typeDefs)[lookupIndex][k] = extracted[k];
+          this.#typeDefs[lookupIndex][k] = extracted[k];
         }
       });
       if (extracted.info === TypeDefInfo.Plain) {
-        __privateGet(this, _typeDefs)[lookupIndex].lookupNameRoot = __privateGet(this, _typeDefs)[lookupIndex].lookupName;
-        delete __privateGet(this, _typeDefs)[lookupIndex].lookupName;
+        this.#typeDefs[lookupIndex].lookupNameRoot = this.#typeDefs[lookupIndex].lookupName;
+        delete this.#typeDefs[lookupIndex].lookupName;
       }
     }
-    return __privateGet(this, _typeDefs)[lookupIndex];
+    return this.#typeDefs[lookupIndex];
   }
   /**
    * @description For a specific field, perform adjustments to not have built-in conflicts
@@ -132870,352 +132418,345 @@ var PortableRegistry = class extends Struct2 {
     }
     return [nameField, nameOrig];
   }
-};
-_alias = new WeakMap();
-_lookups = new WeakMap();
-_names = new WeakMap();
-_params = new WeakMap();
-_typeDefs = new WeakMap();
-_types = new WeakMap();
-_PortableRegistry_instances = new WeakSet();
-/** @internal Creates a TypeDef based on an internal lookupId */
-createSiDef_fn = function(lookupId) {
-  const typeDef = this.getTypeDef(lookupId);
-  const lookupIndex = lookupId.toNumber();
-  return [TypeDefInfo.DoNotConstruct, TypeDefInfo.Enum, TypeDefInfo.Struct].includes(typeDef.info) && typeDef.lookupName ? {
-    docs: typeDef.docs,
-    info: TypeDefInfo.Si,
-    lookupIndex,
-    lookupName: __privateGet(this, _names)[lookupIndex],
-    type: this.registry.createLookupType(lookupId)
-  } : typeDef;
-};
-/** @internal Converts a lookupId input to the actual lookup index */
-getLookupId_fn = function(lookupId) {
-  if (isString2(lookupId)) {
-    if (!this.registry.isLookupType(lookupId)) {
-      throw new Error(`PortableRegistry: Expected a lookup string type, found ${lookupId}`);
-    }
-    return parseInt(lookupId.replace("Lookup", ""), 10);
-  } else if (isNumber2(lookupId)) {
-    return lookupId;
-  }
-  return lookupId.toNumber();
-};
-/** @internal Converts a type into a TypeDef for Codec usage */
-extract_fn = function(type, lookupIndex) {
-  const namespace = type.path.join("::");
-  let typeDef;
-  const aliasType = __privateGet(this, _alias)[lookupIndex] || getAliasPath(type);
-  try {
-    if (aliasType) {
-      typeDef = __privateMethod(this, _PortableRegistry_instances, extractAliasPath_fn).call(this, lookupIndex, aliasType);
-    } else {
-      switch (type.def.type) {
-        case "Array":
-          typeDef = __privateMethod(this, _PortableRegistry_instances, extractArray_fn).call(this, lookupIndex, type.def.asArray);
-          break;
-        case "BitSequence":
-          typeDef = __privateMethod(this, _PortableRegistry_instances, extractBitSequence_fn).call(this, lookupIndex, type.def.asBitSequence);
-          break;
-        case "Compact":
-          typeDef = __privateMethod(this, _PortableRegistry_instances, extractCompact_fn).call(this, lookupIndex, type.def.asCompact);
-          break;
-        case "Composite":
-          typeDef = __privateMethod(this, _PortableRegistry_instances, extractComposite_fn).call(this, lookupIndex, type, type.def.asComposite);
-          break;
-        case "HistoricMetaCompat":
-          typeDef = __privateMethod(this, _PortableRegistry_instances, extractHistoric_fn).call(this, lookupIndex, type.def.asHistoricMetaCompat);
-          break;
-        case "Primitive":
-          typeDef = __privateMethod(this, _PortableRegistry_instances, extractPrimitive_fn).call(this, lookupIndex, type);
-          break;
-        case "Sequence":
-          typeDef = __privateMethod(this, _PortableRegistry_instances, extractSequence_fn).call(this, lookupIndex, type.def.asSequence);
-          break;
-        case "Tuple":
-          typeDef = __privateMethod(this, _PortableRegistry_instances, extractTuple_fn).call(this, lookupIndex, type.def.asTuple);
-          break;
-        case "Variant":
-          typeDef = __privateMethod(this, _PortableRegistry_instances, extractVariant_fn).call(this, lookupIndex, type, type.def.asVariant);
-          break;
-        default:
-          assertUnreachable(type.def.type);
-      }
-    }
-  } catch (error4) {
-    throw new Error(`PortableRegistry: ${lookupIndex}${namespace ? ` (${namespace})` : ""}: Error extracting ${stringify2(type)}: ${error4.message}`);
-  }
-  return objectSpread({
-    docs: sanitizeDocs(type.docs),
-    namespace
-  }, typeDef);
-};
-/** @internal Extracts a ScaleInfo Array into TypeDef.VecFixed */
-extractArray_fn = function(_, { len, type }) {
-  const length5 = len.toNumber();
-  if (length5 > 2048) {
-    throw new Error("Only support for [Type; <length>], where length <= 2048");
-  }
-  return withTypeString(this.registry, {
-    info: TypeDefInfo.VecFixed,
-    length: length5,
-    sub: __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, type)
-  });
-};
-/** @internal Extracts a ScaleInfo BitSequence into TypeDef.Plain */
-extractBitSequence_fn = function(_, { bitOrderType, bitStoreType }) {
-  const a = __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, bitOrderType);
-  const b = __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, bitStoreType);
-  const [bitOrder, bitStore] = BITVEC_NS.includes(a.namespace || "") ? [a, b] : [b, a];
-  if (!bitOrder.namespace || !BITVEC_NS.includes(bitOrder.namespace)) {
-    throw new Error(`Unexpected bitOrder found as ${bitOrder.namespace || "<unknown>"}`);
-  } else if (bitStore.info !== TypeDefInfo.Plain || bitStore.type !== "u8") {
-    throw new Error(`Only u8 bitStore is currently supported, found ${bitStore.type}`);
-  }
-  BITVEC_NS_LSB.includes(bitOrder.namespace);
-  return {
-    info: TypeDefInfo.Plain,
-    type: "BitVec"
-  };
-};
-/** @internal Extracts a ScaleInfo Compact into TypeDef.Compact */
-extractCompact_fn = function(_, { type }) {
-  return withTypeString(this.registry, {
-    info: TypeDefInfo.Compact,
-    sub: __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, type)
-  });
-};
-/** @internal Extracts a ScaleInfo Composite into TypeDef.{BTree*, Range*, Wrapper*} */
-extractComposite_fn = function(lookupIndex, { params, path: path4 }, { fields }) {
-  if (path4.length) {
-    const pathFirst = path4[0].toString();
-    const pathLast = path4[path4.length - 1].toString();
-    if (path4.length === 1 && pathFirst === "BTreeMap") {
-      if (params.length !== 2) {
-        throw new Error(`BTreeMap requires 2 parameters, found ${params.length}`);
-      }
-      return withTypeString(this.registry, {
-        info: TypeDefInfo.BTreeMap,
-        sub: params.map(({ type }) => __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, type.unwrap()))
-      });
-    } else if (path4.length === 1 && pathFirst === "BTreeSet") {
-      if (params.length !== 1) {
-        throw new Error(`BTreeSet requires 1 parameter, found ${params.length}`);
-      }
-      return withTypeString(this.registry, {
-        info: TypeDefInfo.BTreeSet,
-        sub: __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, params[0].type.unwrap())
-      });
-    } else if (["Range", "RangeInclusive"].includes(pathFirst)) {
-      if (params.length !== 1) {
-        throw new Error(`Range requires 1 parameter, found ${params.length}`);
-      }
-      return withTypeString(this.registry, {
-        info: pathFirst === "Range" ? TypeDefInfo.Range : TypeDefInfo.RangeInclusive,
-        sub: __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, params[0].type.unwrap()),
-        type: pathFirst
-      });
-    } else if (["WrapperKeepOpaque", "WrapperOpaque"].includes(pathLast)) {
-      if (params.length !== 1) {
-        throw new Error(`WrapperOpaque requires 1 parameter, found ${params.length}`);
-      }
-      return withTypeString(this.registry, {
-        info: pathLast === "WrapperKeepOpaque" ? TypeDefInfo.WrapperKeepOpaque : TypeDefInfo.WrapperOpaque,
-        sub: __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, params[0].type.unwrap()),
-        type: pathLast
-      });
-    }
-  }
-  return PATHS_SET.some((p) => matchParts(p, path4)) ? __privateMethod(this, _PortableRegistry_instances, extractCompositeSet_fn).call(this, lookupIndex, params, fields) : __privateMethod(this, _PortableRegistry_instances, extractFields_fn).call(this, lookupIndex, fields);
-};
-/** @internal Extracts a ScaleInfo CompositeSet into TypeDef.Set */
-extractCompositeSet_fn = function(_, params, fields) {
-  if (params.length !== 1 || fields.length !== 1) {
-    throw new Error("Set handling expects param/field as single entries");
-  }
-  return withTypeString(this.registry, {
-    info: TypeDefInfo.Set,
-    length: this.registry.createTypeUnsafe(this.registry.createLookupType(fields[0].type), []).bitLength(),
-    sub: this.getSiType(params[0].type.unwrap()).def.asVariant.variants.map(({ index, name }) => ({
-      // This will be an issue > 2^53 - 1 ... don't have those (yet)
-      index: index.toNumber(),
-      info: TypeDefInfo.Plain,
-      name: name.toString(),
-      type: "Null"
-    }))
-  });
-};
-/** @internal Extracts ScaleInfo enum/struct fields into TypeDef.{Struct, Tuple} */
-extractFields_fn = function(lookupIndex, fields) {
-  let isStruct = true;
-  let isTuple = true;
-  const count7 = fields.length;
-  for (let f = 0; f < count7; f++) {
-    const { name } = fields[f];
-    isStruct = isStruct && name.isSome;
-    isTuple = isTuple && name.isNone;
-  }
-  if (!isTuple && !isStruct) {
-    throw new Error("Invalid fields type detected, expected either Tuple (all unnamed) or Struct (all named)");
-  }
-  if (count7 === 0) {
-    return {
-      info: TypeDefInfo.Null,
-      type: "Null"
-    };
-  } else if (isTuple && count7 === 1) {
-    const typeDef = __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, fields[0].type);
-    return objectSpread({}, typeDef, lookupIndex === -1 ? null : {
+  /** @internal Creates a TypeDef based on an internal lookupId */
+  #createSiDef(lookupId) {
+    const typeDef = this.getTypeDef(lookupId);
+    const lookupIndex = lookupId.toNumber();
+    return [TypeDefInfo.DoNotConstruct, TypeDefInfo.Enum, TypeDefInfo.Struct].includes(typeDef.info) && typeDef.lookupName ? {
+      docs: typeDef.docs,
+      info: TypeDefInfo.Si,
       lookupIndex,
-      lookupName: __privateGet(this, _names)[lookupIndex],
-      lookupNameRoot: typeDef.lookupName
-    }, fields[0].typeName.isSome ? { typeName: sanitize(fields[0].typeName.unwrap()) } : null);
+      lookupName: this.#names[lookupIndex],
+      type: this.registry.createLookupType(lookupId)
+    } : typeDef;
   }
-  const [sub, alias2] = __privateMethod(this, _PortableRegistry_instances, extractFieldsAlias_fn).call(this, fields);
-  return withTypeString(this.registry, objectSpread({
-    info: isTuple ? TypeDefInfo.Tuple : TypeDefInfo.Struct,
-    sub
-  }, alias2.size ? { alias: alias2 } : null, lookupIndex === -1 ? null : {
-    lookupIndex,
-    lookupName: __privateGet(this, _names)[lookupIndex]
-  }));
-};
-/** @internal Apply field aliassed (with no JS conflicts) */
-extractFieldsAlias_fn = function(fields) {
-  const alias2 = /* @__PURE__ */ new Map();
-  const count7 = fields.length;
-  const sub = new Array(count7);
-  for (let i = 0; i < count7; i++) {
-    const { docs, name, type, typeName } = fields[i];
-    const typeDef = __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, type);
-    if (name.isNone) {
-      sub[i] = typeDef;
-    } else {
-      const [nameField, nameOrig] = this.sanitizeField(name);
-      if (nameField && nameOrig) {
-        alias2.set(nameField, nameOrig);
+  /** @internal Converts a lookupId input to the actual lookup index */
+  #getLookupId(lookupId) {
+    if (isString2(lookupId)) {
+      if (!this.registry.isLookupType(lookupId)) {
+        throw new Error(`PortableRegistry: Expected a lookup string type, found ${lookupId}`);
       }
-      sub[i] = objectSpread({
-        docs: sanitizeDocs(docs),
-        name: nameField
-      }, typeDef, typeName.isSome ? { typeName: sanitize(typeName.unwrap()) } : null);
+      return parseInt(lookupId.replace("Lookup", ""), 10);
+    } else if (isNumber2(lookupId)) {
+      return lookupId;
     }
+    return lookupId.toNumber();
   }
-  return [sub, alias2];
-};
-/** @internal Extracts an internal Historic (pre V14) type  */
-extractHistoric_fn = function(_, type) {
-  return objectSpread({
-    displayName: type.toString(),
-    isFromSi: true
-  }, getTypeDef(type));
-};
-/** @internal Extracts a ScaleInfo Primitive into TypeDef.Plain */
-extractPrimitive_fn = function(_, type) {
-  const typeStr = type.def.asPrimitive.type.toString();
-  return {
-    info: TypeDefInfo.Plain,
-    type: PRIMITIVE_ALIAS[typeStr] || typeStr.toLowerCase()
-  };
-};
-/** @internal Applies an alias path onto the TypeDef */
-extractAliasPath_fn = function(_, type) {
-  return {
-    info: TypeDefInfo.Plain,
-    type
-  };
-};
-/** @internal Extracts a ScaleInfo Sequence into TypeDef.Vec (with Bytes shortcut) */
-extractSequence_fn = function(lookupIndex, { type }) {
-  const sub = __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, type);
-  if (sub.type === "u8") {
+  /** @internal Converts a type into a TypeDef for Codec usage */
+  #extract(type, lookupIndex) {
+    const namespace = type.path.join("::");
+    let typeDef;
+    const aliasType = this.#alias[lookupIndex] || getAliasPath(type);
+    try {
+      if (aliasType) {
+        typeDef = this.#extractAliasPath(lookupIndex, aliasType);
+      } else {
+        switch (type.def.type) {
+          case "Array":
+            typeDef = this.#extractArray(lookupIndex, type.def.asArray);
+            break;
+          case "BitSequence":
+            typeDef = this.#extractBitSequence(lookupIndex, type.def.asBitSequence);
+            break;
+          case "Compact":
+            typeDef = this.#extractCompact(lookupIndex, type.def.asCompact);
+            break;
+          case "Composite":
+            typeDef = this.#extractComposite(lookupIndex, type, type.def.asComposite);
+            break;
+          case "HistoricMetaCompat":
+            typeDef = this.#extractHistoric(lookupIndex, type.def.asHistoricMetaCompat);
+            break;
+          case "Primitive":
+            typeDef = this.#extractPrimitive(lookupIndex, type);
+            break;
+          case "Sequence":
+            typeDef = this.#extractSequence(lookupIndex, type.def.asSequence);
+            break;
+          case "Tuple":
+            typeDef = this.#extractTuple(lookupIndex, type.def.asTuple);
+            break;
+          case "Variant":
+            typeDef = this.#extractVariant(lookupIndex, type, type.def.asVariant);
+            break;
+          default:
+            assertUnreachable(type.def.type);
+        }
+      }
+    } catch (error4) {
+      throw new Error(`PortableRegistry: ${lookupIndex}${namespace ? ` (${namespace})` : ""}: Error extracting ${stringify2(type)}: ${error4.message}`);
+    }
+    return objectSpread({
+      docs: sanitizeDocs(type.docs),
+      namespace
+    }, typeDef);
+  }
+  /** @internal Extracts a ScaleInfo Array into TypeDef.VecFixed */
+  #extractArray(_, { len, type }) {
+    const length5 = len.toNumber();
+    if (length5 > 2048) {
+      throw new Error("Only support for [Type; <length>], where length <= 2048");
+    }
+    return withTypeString(this.registry, {
+      info: TypeDefInfo.VecFixed,
+      length: length5,
+      sub: this.#createSiDef(type)
+    });
+  }
+  /** @internal Extracts a ScaleInfo BitSequence into TypeDef.Plain */
+  #extractBitSequence(_, { bitOrderType, bitStoreType }) {
+    const a = this.#createSiDef(bitOrderType);
+    const b = this.#createSiDef(bitStoreType);
+    const [bitOrder, bitStore] = BITVEC_NS.includes(a.namespace || "") ? [a, b] : [b, a];
+    if (!bitOrder.namespace || !BITVEC_NS.includes(bitOrder.namespace)) {
+      throw new Error(`Unexpected bitOrder found as ${bitOrder.namespace || "<unknown>"}`);
+    } else if (bitStore.info !== TypeDefInfo.Plain || bitStore.type !== "u8") {
+      throw new Error(`Only u8 bitStore is currently supported, found ${bitStore.type}`);
+    }
+    BITVEC_NS_LSB.includes(bitOrder.namespace);
     return {
       info: TypeDefInfo.Plain,
-      type: "Bytes"
+      type: "BitVec"
     };
   }
-  return withTypeString(this.registry, {
-    info: TypeDefInfo.Vec,
-    lookupIndex,
-    lookupName: __privateGet(this, _names)[lookupIndex],
-    sub
-  });
-};
-/** @internal Extracts a ScaleInfo Tuple into TypeDef.Tuple */
-extractTuple_fn = function(lookupIndex, ids3) {
-  if (ids3.length === 0) {
-    return {
-      info: TypeDefInfo.Null,
-      type: "Null"
-    };
-  } else if (ids3.length === 1) {
-    return this.getTypeDef(ids3[0]);
+  /** @internal Extracts a ScaleInfo Compact into TypeDef.Compact */
+  #extractCompact(_, { type }) {
+    return withTypeString(this.registry, {
+      info: TypeDefInfo.Compact,
+      sub: this.#createSiDef(type)
+    });
   }
-  const sub = ids3.map((t) => __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, t));
-  return withTypeString(this.registry, {
-    info: TypeDefInfo.Tuple,
-    lookupIndex,
-    lookupName: __privateGet(this, _names)[lookupIndex],
-    sub
-  });
-};
-/** @internal Extracts a ScaleInfo Variant into TypeDef.{Option, Result, Enum} */
-extractVariant_fn = function(lookupIndex, { params, path: path4 }, { variants }) {
-  if (path4.length) {
-    const specialVariant = path4[0].toString();
-    if (specialVariant === "Option") {
-      if (params.length !== 1) {
-        throw new Error(`Option requires 1 parameter, found ${params.length}`);
+  /** @internal Extracts a ScaleInfo Composite into TypeDef.{BTree*, Range*, Wrapper*} */
+  #extractComposite(lookupIndex, { params, path: path4 }, { fields }) {
+    if (path4.length) {
+      const pathFirst = path4[0].toString();
+      const pathLast = path4[path4.length - 1].toString();
+      if (path4.length === 1 && pathFirst === "BTreeMap") {
+        if (params.length !== 2) {
+          throw new Error(`BTreeMap requires 2 parameters, found ${params.length}`);
+        }
+        return withTypeString(this.registry, {
+          info: TypeDefInfo.BTreeMap,
+          sub: params.map(({ type }) => this.#createSiDef(type.unwrap()))
+        });
+      } else if (path4.length === 1 && pathFirst === "BTreeSet") {
+        if (params.length !== 1) {
+          throw new Error(`BTreeSet requires 1 parameter, found ${params.length}`);
+        }
+        return withTypeString(this.registry, {
+          info: TypeDefInfo.BTreeSet,
+          sub: this.#createSiDef(params[0].type.unwrap())
+        });
+      } else if (["Range", "RangeInclusive"].includes(pathFirst)) {
+        if (params.length !== 1) {
+          throw new Error(`Range requires 1 parameter, found ${params.length}`);
+        }
+        return withTypeString(this.registry, {
+          info: pathFirst === "Range" ? TypeDefInfo.Range : TypeDefInfo.RangeInclusive,
+          sub: this.#createSiDef(params[0].type.unwrap()),
+          type: pathFirst
+        });
+      } else if (["WrapperKeepOpaque", "WrapperOpaque"].includes(pathLast)) {
+        if (params.length !== 1) {
+          throw new Error(`WrapperOpaque requires 1 parameter, found ${params.length}`);
+        }
+        return withTypeString(this.registry, {
+          info: pathLast === "WrapperKeepOpaque" ? TypeDefInfo.WrapperKeepOpaque : TypeDefInfo.WrapperOpaque,
+          sub: this.#createSiDef(params[0].type.unwrap()),
+          type: pathLast
+        });
       }
-      return withTypeString(this.registry, {
-        info: TypeDefInfo.Option,
-        sub: __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, params[0].type.unwrap())
-      });
-    } else if (specialVariant === "Result") {
-      if (params.length !== 2) {
-        throw new Error(`Result requires 2 parameters, found ${params.length}`);
-      }
-      return withTypeString(this.registry, {
-        info: TypeDefInfo.Result,
-        sub: params.map(({ type }, index) => objectSpread({
-          name: ["Ok", "Error"][index]
-        }, __privateMethod(this, _PortableRegistry_instances, createSiDef_fn).call(this, type.unwrap())))
-      });
     }
+    return PATHS_SET.some((p) => matchParts(p, path4)) ? this.#extractCompositeSet(lookupIndex, params, fields) : this.#extractFields(lookupIndex, fields);
   }
-  if (variants.length === 0) {
-    return {
-      info: TypeDefInfo.Null,
-      type: "Null"
-    };
-  }
-  return __privateMethod(this, _PortableRegistry_instances, extractVariantEnum_fn).call(this, lookupIndex, variants);
-};
-/** @internal Extracts a ScaleInfo Variant into TypeDef.Enum */
-extractVariantEnum_fn = function(lookupIndex, variants) {
-  const sub = [];
-  variants.slice().sort((a, b) => a.index.cmp(b.index)).forEach(({ fields, index: bnIndex, name }) => {
-    const index = bnIndex.toNumber();
-    while (sub.length !== index) {
-      sub.push({
-        index: sub.length,
-        info: TypeDefInfo.Null,
-        name: `__Unused${sub.length}`,
+  /** @internal Extracts a ScaleInfo CompositeSet into TypeDef.Set */
+  #extractCompositeSet(_, params, fields) {
+    if (params.length !== 1 || fields.length !== 1) {
+      throw new Error("Set handling expects param/field as single entries");
+    }
+    return withTypeString(this.registry, {
+      info: TypeDefInfo.Set,
+      length: this.registry.createTypeUnsafe(this.registry.createLookupType(fields[0].type), []).bitLength(),
+      sub: this.getSiType(params[0].type.unwrap()).def.asVariant.variants.map(({ index, name }) => ({
+        // This will be an issue > 2^53 - 1 ... don't have those (yet)
+        index: index.toNumber(),
+        info: TypeDefInfo.Plain,
+        name: name.toString(),
         type: "Null"
-      });
+      }))
+    });
+  }
+  /** @internal Extracts ScaleInfo enum/struct fields into TypeDef.{Struct, Tuple} */
+  #extractFields(lookupIndex, fields) {
+    let isStruct = true;
+    let isTuple = true;
+    const count7 = fields.length;
+    for (let f = 0; f < count7; f++) {
+      const { name } = fields[f];
+      isStruct = isStruct && name.isSome;
+      isTuple = isTuple && name.isNone;
     }
-    sub.push(objectSpread(__privateMethod(this, _PortableRegistry_instances, extractFields_fn).call(this, -1, fields), {
-      index,
-      name: name.toString()
+    if (!isTuple && !isStruct) {
+      throw new Error("Invalid fields type detected, expected either Tuple (all unnamed) or Struct (all named)");
+    }
+    if (count7 === 0) {
+      return {
+        info: TypeDefInfo.Null,
+        type: "Null"
+      };
+    } else if (isTuple && count7 === 1) {
+      const typeDef = this.#createSiDef(fields[0].type);
+      return objectSpread({}, typeDef, lookupIndex === -1 ? null : {
+        lookupIndex,
+        lookupName: this.#names[lookupIndex],
+        lookupNameRoot: typeDef.lookupName
+      }, fields[0].typeName.isSome ? { typeName: sanitize(fields[0].typeName.unwrap()) } : null);
+    }
+    const [sub, alias2] = this.#extractFieldsAlias(fields);
+    return withTypeString(this.registry, objectSpread({
+      info: isTuple ? TypeDefInfo.Tuple : TypeDefInfo.Struct,
+      sub
+    }, alias2.size ? { alias: alias2 } : null, lookupIndex === -1 ? null : {
+      lookupIndex,
+      lookupName: this.#names[lookupIndex]
     }));
-  });
-  return withTypeString(this.registry, {
-    info: TypeDefInfo.Enum,
-    lookupIndex,
-    lookupName: __privateGet(this, _names)[lookupIndex],
-    sub
-  });
+  }
+  /** @internal Apply field aliassed (with no JS conflicts) */
+  #extractFieldsAlias(fields) {
+    const alias2 = /* @__PURE__ */ new Map();
+    const count7 = fields.length;
+    const sub = new Array(count7);
+    for (let i = 0; i < count7; i++) {
+      const { docs, name, type, typeName } = fields[i];
+      const typeDef = this.#createSiDef(type);
+      if (name.isNone) {
+        sub[i] = typeDef;
+      } else {
+        const [nameField, nameOrig] = this.sanitizeField(name);
+        if (nameField && nameOrig) {
+          alias2.set(nameField, nameOrig);
+        }
+        sub[i] = objectSpread({
+          docs: sanitizeDocs(docs),
+          name: nameField
+        }, typeDef, typeName.isSome ? { typeName: sanitize(typeName.unwrap()) } : null);
+      }
+    }
+    return [sub, alias2];
+  }
+  /** @internal Extracts an internal Historic (pre V14) type  */
+  #extractHistoric(_, type) {
+    return objectSpread({
+      displayName: type.toString(),
+      isFromSi: true
+    }, getTypeDef(type));
+  }
+  /** @internal Extracts a ScaleInfo Primitive into TypeDef.Plain */
+  #extractPrimitive(_, type) {
+    const typeStr = type.def.asPrimitive.type.toString();
+    return {
+      info: TypeDefInfo.Plain,
+      type: PRIMITIVE_ALIAS[typeStr] || typeStr.toLowerCase()
+    };
+  }
+  /** @internal Applies an alias path onto the TypeDef */
+  #extractAliasPath(_, type) {
+    return {
+      info: TypeDefInfo.Plain,
+      type
+    };
+  }
+  /** @internal Extracts a ScaleInfo Sequence into TypeDef.Vec (with Bytes shortcut) */
+  #extractSequence(lookupIndex, { type }) {
+    const sub = this.#createSiDef(type);
+    if (sub.type === "u8") {
+      return {
+        info: TypeDefInfo.Plain,
+        type: "Bytes"
+      };
+    }
+    return withTypeString(this.registry, {
+      info: TypeDefInfo.Vec,
+      lookupIndex,
+      lookupName: this.#names[lookupIndex],
+      sub
+    });
+  }
+  /** @internal Extracts a ScaleInfo Tuple into TypeDef.Tuple */
+  #extractTuple(lookupIndex, ids3) {
+    if (ids3.length === 0) {
+      return {
+        info: TypeDefInfo.Null,
+        type: "Null"
+      };
+    } else if (ids3.length === 1) {
+      return this.getTypeDef(ids3[0]);
+    }
+    const sub = ids3.map((t) => this.#createSiDef(t));
+    return withTypeString(this.registry, {
+      info: TypeDefInfo.Tuple,
+      lookupIndex,
+      lookupName: this.#names[lookupIndex],
+      sub
+    });
+  }
+  /** @internal Extracts a ScaleInfo Variant into TypeDef.{Option, Result, Enum} */
+  #extractVariant(lookupIndex, { params, path: path4 }, { variants }) {
+    if (path4.length) {
+      const specialVariant = path4[0].toString();
+      if (specialVariant === "Option") {
+        if (params.length !== 1) {
+          throw new Error(`Option requires 1 parameter, found ${params.length}`);
+        }
+        return withTypeString(this.registry, {
+          info: TypeDefInfo.Option,
+          sub: this.#createSiDef(params[0].type.unwrap())
+        });
+      } else if (specialVariant === "Result") {
+        if (params.length !== 2) {
+          throw new Error(`Result requires 2 parameters, found ${params.length}`);
+        }
+        return withTypeString(this.registry, {
+          info: TypeDefInfo.Result,
+          sub: params.map(({ type }, index) => objectSpread({
+            name: ["Ok", "Error"][index]
+          }, this.#createSiDef(type.unwrap())))
+        });
+      }
+    }
+    if (variants.length === 0) {
+      return {
+        info: TypeDefInfo.Null,
+        type: "Null"
+      };
+    }
+    return this.#extractVariantEnum(lookupIndex, variants);
+  }
+  /** @internal Extracts a ScaleInfo Variant into TypeDef.Enum */
+  #extractVariantEnum(lookupIndex, variants) {
+    const sub = [];
+    variants.slice().sort((a, b) => a.index.cmp(b.index)).forEach(({ fields, index: bnIndex, name }) => {
+      const index = bnIndex.toNumber();
+      while (sub.length !== index) {
+        sub.push({
+          index: sub.length,
+          info: TypeDefInfo.Null,
+          name: `__Unused${sub.length}`,
+          type: "Null"
+        });
+      }
+      sub.push(objectSpread(this.#extractFields(-1, fields), {
+        index,
+        name: name.toString()
+      }));
+    });
+    return withTypeString(this.registry, {
+      info: TypeDefInfo.Enum,
+      lookupIndex,
+      lookupName: this.#names[lookupIndex],
+      sub
+    });
+  }
 };
 
 // node_modules/@polkadot/types/metadata/util/flattenUniq.js
@@ -133512,23 +133053,22 @@ function decodeEvent(registry, value3) {
     }
   };
 }
-var _meta, _method, _names2, _section, _typeDef;
 var GenericEventData = class extends Tuple2 {
+  #meta;
+  #method;
+  #names = null;
+  #section;
+  #typeDef;
   constructor(registry, value3, meta, section2 = "<unknown>", method = "<unknown>") {
     const fields = meta?.fields || [];
     super(registry, fields.map(({ type }) => registry.createLookupType(type)), value3);
-    __privateAdd(this, _meta);
-    __privateAdd(this, _method);
-    __privateAdd(this, _names2, null);
-    __privateAdd(this, _section);
-    __privateAdd(this, _typeDef);
-    __privateSet(this, _meta, meta);
-    __privateSet(this, _method, method);
-    __privateSet(this, _section, section2);
-    __privateSet(this, _typeDef, fields.map(({ type }) => registry.lookup.getTypeDef(type)));
+    this.#meta = meta;
+    this.#method = method;
+    this.#section = section2;
+    this.#typeDef = fields.map(({ type }) => registry.lookup.getTypeDef(type));
     const names = fields.map(({ name }) => registry.lookup.sanitizeField(name)[0]).filter((n) => !!n);
     if (names.length === fields.length) {
-      __privateSet(this, _names2, names);
+      this.#names = names;
       objectProperties(this, names, (_, i) => this[i]);
     }
   }
@@ -133536,56 +133076,51 @@ var GenericEventData = class extends Tuple2 {
    * @description The wrapped [[EventMetadata]]
    */
   get meta() {
-    return __privateGet(this, _meta);
+    return this.#meta;
   }
   /**
    * @description The method as a string
    */
   get method() {
-    return __privateGet(this, _method);
+    return this.#method;
   }
   /**
    * @description The field names (as available)
    */
   get names() {
-    return __privateGet(this, _names2);
+    return this.#names;
   }
   /**
    * @description The section as a string
    */
   get section() {
-    return __privateGet(this, _section);
+    return this.#section;
   }
   /**
    * @description The [[TypeDef]] for this event
    */
   get typeDef() {
-    return __privateGet(this, _typeDef);
+    return this.#typeDef;
   }
   /**
    * @description Converts the Object to to a human-friendly JSON, with additional fields, expansion and formatting of information
    */
   toHuman(isExtended, disableAscii) {
-    if (__privateGet(this, _names2) !== null) {
+    if (this.#names !== null) {
       const json3 = {};
-      for (let i = 0, count7 = __privateGet(this, _names2).length; i < count7; i++) {
-        json3[__privateGet(this, _names2)[i]] = this[i].toHuman(isExtended, disableAscii);
+      for (let i = 0, count7 = this.#names.length; i < count7; i++) {
+        json3[this.#names[i]] = this[i].toHuman(isExtended, disableAscii);
       }
       return json3;
     }
     return super.toHuman(isExtended);
   }
 };
-_meta = new WeakMap();
-_method = new WeakMap();
-_names2 = new WeakMap();
-_section = new WeakMap();
-_typeDef = new WeakMap();
 var GenericEvent = class extends Struct2 {
   // Currently we _only_ decode from Uint8Array, since we expect it to
   // be used via EventRecord
-  constructor(registry, _value2) {
-    const { DataType, value: value3 } = decodeEvent(registry, _value2);
+  constructor(registry, _value) {
+    const { DataType, value: value3 } = decodeEvent(registry, _value);
     super(registry, {
       index: "EventId",
       // eslint-disable-next-line sort-keys
@@ -133787,11 +133322,10 @@ function decodeU8a3(registry, value3, version3, preamble) {
     return newFromValue(registry, data.subarray(1), data[0], preambleUnMask[`${unmaskedPreamble}`] || preamble);
   }
 }
-var _preamble;
 var ExtrinsicBase = class extends AbstractBase {
+  #preamble;
   constructor(registry, value3, initialU8aLength, preamble) {
     super(registry, value3, initialU8aLength);
-    __privateAdd(this, _preamble);
     const signKeys = Object.keys(registry.getSignedExtensionTypes());
     if (this.version === 5 && preamble !== "general") {
       const getter = (key) => this.inner.signature[key];
@@ -133800,10 +133334,10 @@ var ExtrinsicBase = class extends AbstractBase {
       }
     }
     const unmaskedPreamble = this.type & TYPE_MASK;
-    __privateSet(this, _preamble, preamble || preambleUnMask[`${unmaskedPreamble}`]);
+    this.#preamble = preamble || preambleUnMask[`${unmaskedPreamble}`];
   }
   isGeneral() {
-    return __privateGet(this, _preamble) === "general";
+    return this.#preamble === "general";
   }
   /**
    * @description The arguments passed to for the call, exposes args so it is compatible with [[Call]]
@@ -133945,30 +133479,29 @@ var ExtrinsicBase = class extends AbstractBase {
     return super.unwrap();
   }
 };
-_preamble = new WeakMap();
-var _hashCache;
 var GenericExtrinsic = class extends ExtrinsicBase {
+  #hashCache;
+  static LATEST_EXTRINSIC_VERSION = LATEST_EXTRINSIC_VERSION;
   constructor(registry, value3, { preamble, version: version3 } = {}) {
     const versionsLength = registry.metadata.extrinsic.versions.length;
     const supportedVersion = versionsLength ? registry.metadata.extrinsic.versions[0] : void 0;
     super(registry, decodeExtrinsic(registry, value3, version3 || supportedVersion, preamble), void 0, preamble);
-    __privateAdd(this, _hashCache);
   }
   /**
    * @description returns a hash of the contents
    */
   get hash() {
-    if (!__privateGet(this, _hashCache)) {
-      __privateSet(this, _hashCache, super.hash);
+    if (!this.#hashCache) {
+      this.#hashCache = super.hash;
     }
-    return __privateGet(this, _hashCache);
+    return this.#hashCache;
   }
   /**
    * @description Injects an already-generated signature into the extrinsic
    */
   addSignature(signer, signature, payload) {
     this.inner.addSignature(signer, signature, payload);
-    __privateSet(this, _hashCache, void 0);
+    this.#hashCache = void 0;
     return this;
   }
   /**
@@ -133986,7 +133519,7 @@ var GenericExtrinsic = class extends ExtrinsicBase {
    */
   sign(account3, options5) {
     this.inner.sign(account3, options5);
-    __privateSet(this, _hashCache, void 0);
+    this.#hashCache = void 0;
     return this;
   }
   /**
@@ -133994,7 +133527,7 @@ var GenericExtrinsic = class extends ExtrinsicBase {
    */
   signFake(signer, options5) {
     this.inner.signFake(signer, options5);
-    __privateSet(this, _hashCache, void 0);
+    this.#hashCache = void 0;
     return this;
   }
   /**
@@ -134048,8 +133581,6 @@ var GenericExtrinsic = class extends ExtrinsicBase {
     ];
   }
 };
-_hashCache = new WeakMap();
-__publicField(GenericExtrinsic, "LATEST_EXTRINSIC_VERSION", LATEST_EXTRINSIC_VERSION);
 
 // node_modules/@polkadot/types/extrinsic/ExtrinsicEra.js
 function getTrailingZeros(period) {
@@ -134112,7 +133643,7 @@ function decodeExtrinsicEra(value3 = new Uint8Array()) {
   throw new Error("Invalid data passed to Era");
 }
 var ImmortalEra = class extends Raw {
-  constructor(registry, _value2) {
+  constructor(registry, _value) {
     super(registry, IMMORTAL_ERA);
   }
 };
@@ -134390,7 +133921,7 @@ var GenericExtrinsicPayload = class extends AbstractBase {
 
 // node_modules/@polkadot/types/extrinsic/ExtrinsicPayloadUnknown.js
 var GenericExtrinsicPayloadUnknown = class extends Struct2 {
-  constructor(registry, _value2, { version: version3 = 0 } = {}) {
+  constructor(registry, _value, { version: version3 = 0 } = {}) {
     super(registry, {});
     throw new Error(`Unsupported extrinsic payload version ${version3}`);
   }
@@ -134398,7 +133929,7 @@ var GenericExtrinsicPayloadUnknown = class extends Struct2 {
 
 // node_modules/@polkadot/types/extrinsic/ExtrinsicUnknown.js
 var GenericExtrinsicUnknown = class extends Struct2 {
-  constructor(registry, _value2, { isSigned = false, version: version3 = 0 } = {}) {
+  constructor(registry, _value, { isSigned = false, version: version3 = 0 } = {}) {
     super(registry, {});
     throw new Error(`Unsupported ${isSigned ? "" : "un"}signed extrinsic version ${version3 & UNMASK_VERSION}`);
   }
@@ -134421,17 +133952,16 @@ var knownTypes = {
   tip: "Compact<Balance>",
   version: "u8"
 };
-var _extraTypes;
 var GenericSignerPayload = class extends Struct2 {
+  #extraTypes;
   constructor(registry, value3) {
     const extensionTypes = objectSpread({}, registry.getSignedExtensionTypes(), registry.getSignedExtensionExtra());
     super(registry, objectSpread({}, extensionTypes, knownTypes, { withSignedTransaction: "bool" }), value3);
-    __privateAdd(this, _extraTypes);
-    __privateSet(this, _extraTypes, {});
+    this.#extraTypes = {};
     const getter = (key) => this.get(key);
     for (const [key, type] of Object.entries(extensionTypes)) {
       if (!knownTypes[key]) {
-        __privateGet(this, _extraTypes)[key] = type;
+        this.#extraTypes[key] = type;
       }
       objectProperty(this, key, getter);
     }
@@ -134487,7 +134017,7 @@ var GenericSignerPayload = class extends Struct2 {
    */
   toPayload() {
     const result2 = {};
-    const keys7 = Object.keys(__privateGet(this, _extraTypes));
+    const keys7 = Object.keys(this.#extraTypes);
     for (let i = 0, count7 = keys7.length; i < count7; i++) {
       const key = keys7[i];
       const value3 = this.getT(key);
@@ -134529,7 +134059,6 @@ var GenericSignerPayload = class extends Struct2 {
     };
   }
 };
-_extraTypes = new WeakMap();
 
 // node_modules/@polkadot/types/extrinsic/v4/Extrinsic.js
 var EXTRINSIC_VERSION = 4;
@@ -134605,20 +134134,19 @@ var GenericExtrinsicV4 = class _GenericExtrinsicV4 extends Struct2 {
 };
 
 // node_modules/@polkadot/types/extrinsic/util.js
-function sign3(_registry2, signerPair, u8a, options5) {
+function sign3(_registry, signerPair, u8a, options5) {
   const encoded = u8a.length > 256 ? blake2AsU8a(u8a) : u8a;
   return signerPair.sign(encoded, options5);
 }
 
 // node_modules/@polkadot/types/extrinsic/v4/ExtrinsicPayload.js
-var _signOptions;
 var GenericExtrinsicPayloadV4 = class extends Struct2 {
+  #signOptions;
   constructor(registry, value3) {
     super(registry, objectSpread({ method: "Bytes" }, registry.getSignedExtensionTypes(), registry.getSignedExtensionExtra()), decodeAssetId(registry, value3));
-    __privateAdd(this, _signOptions);
-    __privateSet(this, _signOptions, {
+    this.#signOptions = {
       withType: registry.createTypeUnsafe("ExtrinsicSignature", []) instanceof Enum
-    });
+    };
   }
   /**
    * @description Returns a breakdown of the hex encoding for this Codec
@@ -134690,18 +134218,17 @@ var GenericExtrinsicPayloadV4 = class extends Struct2 {
    * @description Sign the payload with the keypair
    */
   sign(signerPair) {
-    return sign3(this.registry, signerPair, this.toU8a({ method: true }), __privateGet(this, _signOptions));
+    return sign3(this.registry, signerPair, this.toU8a({ method: true }), this.#signOptions);
   }
 };
-_signOptions = new WeakMap();
 
 // node_modules/@polkadot/types/extrinsic/v4/ExtrinsicSignature.js
 var FAKE_SIGNATURE = new Uint8Array(256).fill(1);
 function toAddress(registry, address) {
   return registry.createTypeUnsafe("Address", [isU8a(address) ? u8aToHex(address) : address]);
 }
-var _signKeys;
-var _GenericExtrinsicSignatureV4 = class _GenericExtrinsicSignatureV4 extends Struct2 {
+var GenericExtrinsicSignatureV4 = class _GenericExtrinsicSignatureV4 extends Struct2 {
+  #signKeys;
   constructor(registry, value3, { isSigned } = {}) {
     const signTypes = registry.getSignedExtensionTypes();
     super(registry, objectSpread(
@@ -134709,9 +134236,8 @@ var _GenericExtrinsicSignatureV4 = class _GenericExtrinsicSignatureV4 extends St
       { signer: "Address", signature: "ExtrinsicSignature" },
       signTypes
     ), _GenericExtrinsicSignatureV4.decodeExtrinsicSignature(value3, isSigned));
-    __privateAdd(this, _signKeys);
-    __privateSet(this, _signKeys, Object.keys(signTypes));
-    objectProperties(this, __privateGet(this, _signKeys), (k) => this.get(k));
+    this.#signKeys = Object.keys(signTypes);
+    objectProperties(this, this.#signKeys, (k) => this.get(k));
   }
   /** @internal */
   static decodeExtrinsicSignature(value3, isSigned = false) {
@@ -134789,8 +134315,8 @@ var _GenericExtrinsicSignatureV4 = class _GenericExtrinsicSignatureV4 extends St
     return this.getT("metadataHash");
   }
   _injectSignature(signer, signature, payload) {
-    for (let i = 0, count7 = __privateGet(this, _signKeys).length; i < count7; i++) {
-      const k = __privateGet(this, _signKeys)[i];
+    for (let i = 0, count7 = this.#signKeys.length; i < count7; i++) {
+      const k = this.#signKeys[i];
       const v = payload.get(k);
       if (!isUndefined2(v)) {
         this.set(k, v);
@@ -134846,8 +134372,6 @@ var _GenericExtrinsicSignatureV4 = class _GenericExtrinsicSignatureV4 extends St
     return this.isSigned ? super.toU8a(isBare) : EMPTY_U8A;
   }
 };
-_signKeys = new WeakMap();
-var GenericExtrinsicSignatureV4 = _GenericExtrinsicSignatureV4;
 
 // node_modules/@polkadot/types/extrinsic/v5/Extrinsic.js
 var EXTRINSIC_VERSION2 = 5;
@@ -135013,8 +134537,8 @@ var GenericExtrinsicPayloadV5 = class extends Struct2 {
 };
 
 // node_modules/@polkadot/types/extrinsic/v5/ExtrinsicSignature.js
-var _signKeys2;
-var _GenericExtrinsicSignatureV5 = class _GenericExtrinsicSignatureV5 extends Struct2 {
+var GenericExtrinsicSignatureV5 = class _GenericExtrinsicSignatureV5 extends Struct2 {
+  #signKeys;
   constructor(registry, value3, { isSigned } = {}) {
     const signTypes = registry.getSignedExtensionTypes();
     super(registry, objectSpread(
@@ -135022,9 +134546,8 @@ var _GenericExtrinsicSignatureV5 = class _GenericExtrinsicSignatureV5 extends St
       { signer: "Address", signature: "ExtrinsicSignature", transactionExtensionVersion: "u8" },
       signTypes
     ), _GenericExtrinsicSignatureV5.decodeExtrinsicSignature(value3, isSigned));
-    __privateAdd(this, _signKeys2);
-    __privateSet(this, _signKeys2, Object.keys(signTypes));
-    objectProperties(this, __privateGet(this, _signKeys2), (k) => this.get(k));
+    this.#signKeys = Object.keys(signTypes);
+    objectProperties(this, this.#signKeys, (k) => this.get(k));
   }
   /** @internal */
   static decodeExtrinsicSignature(value3, isSigned = false) {
@@ -135138,7 +134661,7 @@ var _GenericExtrinsicSignatureV5 = class _GenericExtrinsicSignatureV5 extends St
    *
    * [Disabled for ExtrinsicV5]
    */
-  sign(_method3, _account, _options) {
+  sign(_method, _account, _options) {
     throw new Error("Extrinsic: ExtrinsicV5 does not include signing support");
   }
   /**
@@ -135146,7 +134669,7 @@ var _GenericExtrinsicSignatureV5 = class _GenericExtrinsicSignatureV5 extends St
    *
    * [Disabled for ExtrinsicV5]
    */
-  signFake(_method3, _address, _options) {
+  signFake(_method, _address, _options) {
     throw new Error("Extrinsic: ExtrinsicV5 does not include signing support");
   }
   /**
@@ -135157,8 +134680,6 @@ var _GenericExtrinsicSignatureV5 = class _GenericExtrinsicSignatureV5 extends St
     return this.isSigned ? super.toU8a(isBare) : EMPTY_U8A;
   }
 };
-_signKeys2 = new WeakMap();
-var GenericExtrinsicSignatureV5 = _GenericExtrinsicSignatureV5;
 
 // node_modules/@polkadot/types/extrinsic/v5/GeneralExtrinsic.js
 function decodeU8a4(u8a) {
@@ -135176,8 +134697,9 @@ function decodeU8a4(u8a) {
   }
   return data.subarray(1);
 }
-var _version2, _preamble2;
-var _GeneralExtrinsic = class _GeneralExtrinsic extends Struct2 {
+var GeneralExtrinsic = class _GeneralExtrinsic extends Struct2 {
+  #version;
+  #preamble;
   constructor(registry, value3, opt) {
     const extTypes = registry.getSignedExtensionTypes();
     super(registry, objectSpread({
@@ -135185,10 +134707,8 @@ var _GeneralExtrinsic = class _GeneralExtrinsic extends Struct2 {
     }, extTypes, {
       method: "Call"
     }), _GeneralExtrinsic.decodeExtrinsic(registry, value3));
-    __privateAdd(this, _version2);
-    __privateAdd(this, _preamble2);
-    __privateSet(this, _version2, opt?.version || 5);
-    __privateSet(this, _preamble2, 64);
+    this.#version = opt?.version || 5;
+    this.#preamble = 64;
   }
   static decodeExtrinsic(registry, value3) {
     if (!value3) {
@@ -135263,13 +134783,13 @@ var _GeneralExtrinsic = class _GeneralExtrinsic extends Struct2 {
    * @description The extrinsic's version
    */
   get version() {
-    return __privateGet(this, _version2);
+    return this.#version;
   }
   /**
    * @description The [[Preamble]] for the extrinsic
    */
   get preamble() {
-    return __privateGet(this, _preamble2);
+    return this.#preamble;
   }
   toHex(isBare) {
     return u8aToHex(this.toU8a(isBare));
@@ -135300,9 +134820,6 @@ var _GeneralExtrinsic = class _GeneralExtrinsic extends Struct2 {
     throw new Error("Extrinsic: Type GeneralExtrinsic does not have the signature getter");
   }
 };
-_version2 = new WeakMap();
-_preamble2 = new WeakMap();
-var GeneralExtrinsic = _GeneralExtrinsic;
 
 // node_modules/@polkadot/types/generic/AccountId.js
 function decodeAccountId(value3) {
@@ -135394,8 +134911,8 @@ var GenericAccountIndex = class _GenericAccountIndex extends u325 {
   constructor(registry, value3 = new import_bn.default(0)) {
     super(registry, decodeAccountIndex(value3));
   }
-  static calcLength(_value2) {
-    const value3 = bnToBn(_value2);
+  static calcLength(_value) {
+    const value3 = bnToBn(_value);
     if (value3.lte(MAX_1BYTE)) {
       return 1;
     } else if (value3.lt(MAX_2BYTE)) {
@@ -135512,10 +135029,10 @@ function getArgsDef(registry, meta) {
     return result2;
   }, {});
 }
-function decodeCallViaObject(registry, value3, _meta3) {
+function decodeCallViaObject(registry, value3, _meta) {
   const { args: args2, callIndex } = value3;
   const lookupIndex = callIndex instanceof GenericCallIndex ? callIndex.toU8a() : callIndex;
-  const meta = _meta3 || registry.findMetaCall(lookupIndex).meta;
+  const meta = _meta || registry.findMetaCall(lookupIndex).meta;
   return {
     args: args2,
     argsDef: getArgsDef(registry, meta),
@@ -135523,10 +135040,10 @@ function decodeCallViaObject(registry, value3, _meta3) {
     meta
   };
 }
-function decodeCallViaU8a(registry, value3, _meta3) {
+function decodeCallViaU8a(registry, value3, _meta) {
   const callIndex = registry.firstCallIndex.slice();
   callIndex.set(value3.subarray(0, 2), 0);
-  const meta = _meta3 || registry.findMetaCall(callIndex).meta;
+  const meta = _meta || registry.findMetaCall(callIndex).meta;
   return {
     args: value3.subarray(2),
     argsDef: getArgsDef(registry, meta),
@@ -135534,11 +135051,11 @@ function decodeCallViaU8a(registry, value3, _meta3) {
     meta
   };
 }
-function decodeCall(registry, value3 = new Uint8Array(), _meta3) {
+function decodeCall(registry, value3 = new Uint8Array(), _meta) {
   if (isU8a(value3) || isHex(value3)) {
-    return decodeCallViaU8a(registry, u8aToU8a(value3), _meta3);
+    return decodeCallViaU8a(registry, u8aToU8a(value3), _meta);
   } else if (isObject4(value3) && value3.callIndex && value3.args) {
-    return decodeCallViaObject(registry, value3, _meta3);
+    return decodeCallViaObject(registry, value3, _meta);
   }
   throw new Error(`Call: Cannot decode value '${value3}' of type ${typeof value3}`);
 }
@@ -135554,15 +135071,11 @@ var GenericCallIndex = class extends U8aFixed {
   }
 };
 var GenericCall = class extends Struct2 {
+  _meta;
   constructor(registry, value3, meta) {
-    var __super = (...args) => {
-      super(...args);
-      __publicField(this, "_meta");
-      return this;
-    };
     const decoded = decodeCall(registry, value3, meta);
     try {
-      __super(registry, {
+      super(registry, {
         callIndex: GenericCallIndex,
         // eslint-disable-next-line sort-keys
         args: Struct2.with(decoded.argsDef)
@@ -135948,27 +135461,26 @@ function decodeVote(registry, value3) {
   }
   return decodeVoteType(registry, value3);
 }
-var _aye, _conviction;
 var GenericVote = class extends U8aFixed {
+  #aye;
+  #conviction;
   constructor(registry, value3) {
     const decoded = decodeVote(registry, value3);
     super(registry, decoded, 8);
-    __privateAdd(this, _aye);
-    __privateAdd(this, _conviction);
-    __privateSet(this, _aye, (decoded[0] & AYE_BITS) === AYE_BITS);
-    __privateSet(this, _conviction, this.registry.createTypeUnsafe("Conviction", [decoded[0] & CON_MASK]));
+    this.#aye = (decoded[0] & AYE_BITS) === AYE_BITS;
+    this.#conviction = this.registry.createTypeUnsafe("Conviction", [decoded[0] & CON_MASK]);
   }
   /**
    * @description returns a V2 conviction
    */
   get conviction() {
-    return __privateGet(this, _conviction);
+    return this.#conviction;
   }
   /**
    * @description true if the wrapped value is a positive vote
    */
   get isAye() {
-    return __privateGet(this, _aye);
+    return this.#aye;
   }
   /**
    * @description true if the wrapped value is a negative vote
@@ -136001,8 +135513,6 @@ var GenericVote = class extends U8aFixed {
     return "Vote";
   }
 };
-_aye = new WeakMap();
-_conviction = new WeakMap();
 
 // node_modules/@polkadot/types/ethereum/AccountId.js
 function decodeAccountId2(value3) {
@@ -136312,50 +135822,49 @@ function getType(registry, value3) {
   }
   return "Raw";
 }
-var _args, _meta2, _outputType, _method2, _section2;
 var StorageKey = class extends Bytes {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore This is assigned via this.decodeArgsFromMeta()
+  #args;
+  #meta;
+  #outputType;
+  #method;
+  #section;
   constructor(registry, value3, override = {}) {
     const { key, method, section: section2 } = decodeStorageKey(value3);
     super(registry, key);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore This is assigned via this.decodeArgsFromMeta()
-    __privateAdd(this, _args);
-    __privateAdd(this, _meta2);
-    __privateAdd(this, _outputType);
-    __privateAdd(this, _method2);
-    __privateAdd(this, _section2);
-    __privateSet(this, _outputType, getType(registry, value3));
+    this.#outputType = getType(registry, value3);
     this.setMeta(getMeta(value3), override.section || section2, override.method || method);
   }
   /**
    * @description Return the decoded arguments (applicable to map with decodable values)
    */
   get args() {
-    return __privateGet(this, _args);
+    return this.#args;
   }
   /**
    * @description The metadata or `undefined` when not available
    */
   get meta() {
-    return __privateGet(this, _meta2);
+    return this.#meta;
   }
   /**
    * @description The key method or `undefined` when not specified
    */
   get method() {
-    return __privateGet(this, _method2);
+    return this.#method;
   }
   /**
    * @description The output type
    */
   get outputType() {
-    return __privateGet(this, _outputType);
+    return this.#outputType;
   }
   /**
    * @description The key section or `undefined` when not specified
    */
   get section() {
-    return __privateGet(this, _section2);
+    return this.#section;
   }
   is(key) {
     return key.section === this.section && key.method === this.method;
@@ -136364,14 +135873,14 @@ var StorageKey = class extends Bytes {
    * @description Sets the meta for this key
    */
   setMeta(meta, section2, method) {
-    __privateSet(this, _meta2, meta);
-    __privateSet(this, _method2, method || __privateGet(this, _method2));
-    __privateSet(this, _section2, section2 || __privateGet(this, _section2));
+    this.#meta = meta;
+    this.#method = method || this.#method;
+    this.#section = section2 || this.#section;
     if (meta) {
-      __privateSet(this, _outputType, unwrapStorageType(this.registry, meta.type));
+      this.#outputType = unwrapStorageType(this.registry, meta.type);
     }
     try {
-      __privateSet(this, _args, decodeArgsFromMeta(this.registry, this.toU8a(true), meta));
+      this.#args = decodeArgsFromMeta(this.registry, this.toU8a(true), meta);
     } catch {
     }
     return this;
@@ -136380,7 +135889,7 @@ var StorageKey = class extends Bytes {
    * @description Returns the Human representation for this type
    */
   toHuman(_isExtended, disableAscii) {
-    return __privateGet(this, _args).length ? __privateGet(this, _args).map((a) => a.toHuman(void 0, disableAscii)) : super.toHuman(void 0, disableAscii);
+    return this.#args.length ? this.#args.map((a) => a.toHuman(void 0, disableAscii)) : super.toHuman(void 0, disableAscii);
   }
   /**
    * @description Returns the raw type for this
@@ -136389,11 +135898,6 @@ var StorageKey = class extends Bytes {
     return "StorageKey";
   }
 };
-_args = new WeakMap();
-_meta2 = new WeakMap();
-_outputType = new WeakMap();
-_method2 = new WeakMap();
-_section2 = new WeakMap();
 
 // node_modules/@polkadot/types/metadata/decorate/util.js
 function convert(fn2) {
@@ -136626,8 +136130,8 @@ function getAliasTypes({ knownTypes: knownTypes2 }, section2) {
 
 // node_modules/@polkadot/types/metadata/v13/toV14.js
 var BOXES = [["<", ">"], ["<", ","], [",", ">"], ["(", ")"], ["(", ","], [",", ","], [",", ")"]];
-function compatType(specs, _type3) {
-  const type = _type3.toString();
+function compatType(specs, _type) {
+  const type = _type.toString();
   const index = specs.findIndex(({ def }) => def.HistoricMetaCompat === type);
   if (index !== -1) {
     return index;
@@ -136968,7 +136472,7 @@ function toV16(registry, v152, _) {
 }
 
 // node_modules/@polkadot/types/metadata/v16/toLatest.js
-function toLatest(_registry2, v162, _metaVersion) {
+function toLatest(_registry, v162, _metaVersion) {
   return v162;
 }
 
@@ -136989,38 +136493,37 @@ var LATEST_VERSION = KNOWN_VERSIONS[0];
 var TO_CALLS_VERSION = 14;
 
 // node_modules/@polkadot/types/metadata/MetadataVersioned.js
-var _converted, _assertVersion, _getVersion, _metadata;
-var _MetadataVersioned = class _MetadataVersioned extends Struct2 {
+var MetadataVersioned = class _MetadataVersioned extends Struct2 {
+  #converted = /* @__PURE__ */ new Map();
   constructor(registry, value3) {
     super(registry, {
       magicNumber: MagicNumber,
       metadata: "MetadataAll"
     }, value3);
-    __privateAdd(this, _converted, /* @__PURE__ */ new Map());
-    __privateAdd(this, _assertVersion, (version3) => {
-      if (this.version > version3) {
-        throw new Error(`Cannot convert metadata from version ${this.version} to ${version3}`);
-      }
-      return this.version === version3;
-    });
-    __privateAdd(this, _getVersion, (version3, fromPrev) => {
-      if (version3 !== "latest" && __privateGet(this, _assertVersion).call(this, version3)) {
-        const asCurr = `asV${version3}`;
-        return __privateGet(this, _metadata).call(this)[asCurr];
-      }
-      if (!__privateGet(this, _converted).has(version3)) {
-        const asPrev = version3 === "latest" ? `asV${LATEST_VERSION}` : `asV${version3 - 1}`;
-        __privateGet(this, _converted).set(version3, fromPrev(this.registry, this[asPrev], this.version));
-      }
-      return __privateGet(this, _converted).get(version3);
-    });
-    /**
-     * @description the metadata wrapped
-     */
-    __privateAdd(this, _metadata, () => {
-      return this.getT("metadata");
-    });
   }
+  #assertVersion = (version3) => {
+    if (this.version > version3) {
+      throw new Error(`Cannot convert metadata from version ${this.version} to ${version3}`);
+    }
+    return this.version === version3;
+  };
+  #getVersion = (version3, fromPrev) => {
+    if (version3 !== "latest" && this.#assertVersion(version3)) {
+      const asCurr = `asV${version3}`;
+      return this.#metadata()[asCurr];
+    }
+    if (!this.#converted.has(version3)) {
+      const asPrev = version3 === "latest" ? `asV${LATEST_VERSION}` : `asV${version3 - 1}`;
+      this.#converted.set(version3, fromPrev(this.registry, this[asPrev], this.version));
+    }
+    return this.#converted.get(version3);
+  };
+  /**
+   * @description the metadata wrapped
+   */
+  #metadata = () => {
+    return this.getT("metadata");
+  };
   /**
    * @description Returns the wrapped metadata as a limited calls-only (latest) version
    */
@@ -137034,56 +136537,56 @@ var _MetadataVersioned = class _MetadataVersioned extends Struct2 {
    * @description Returns the wrapped metadata as a V9 object
    */
   get asV9() {
-    __privateGet(this, _assertVersion).call(this, 9);
-    return __privateGet(this, _metadata).call(this).asV9;
+    this.#assertVersion(9);
+    return this.#metadata().asV9;
   }
   /**
    * @description Returns the wrapped values as a V10 object
    */
   get asV10() {
-    return __privateGet(this, _getVersion).call(this, 10, toV10);
+    return this.#getVersion(10, toV10);
   }
   /**
    * @description Returns the wrapped values as a V11 object
    */
   get asV11() {
-    return __privateGet(this, _getVersion).call(this, 11, toV11);
+    return this.#getVersion(11, toV11);
   }
   /**
    * @description Returns the wrapped values as a V12 object
    */
   get asV12() {
-    return __privateGet(this, _getVersion).call(this, 12, toV12);
+    return this.#getVersion(12, toV12);
   }
   /**
    * @description Returns the wrapped values as a V13 object
    */
   get asV13() {
-    return __privateGet(this, _getVersion).call(this, 13, toV13);
+    return this.#getVersion(13, toV13);
   }
   /**
    * @description Returns the wrapped values as a V14 object
    */
   get asV14() {
-    return __privateGet(this, _getVersion).call(this, 14, toV14);
+    return this.#getVersion(14, toV14);
   }
   /**
    * @description Returns the wrapped values as a V15 object
    */
   get asV15() {
-    return __privateGet(this, _getVersion).call(this, 15, toV15);
+    return this.#getVersion(15, toV15);
   }
   /**
   * @description Returns the wrapped values as a V16 object
   */
   get asV16() {
-    return __privateGet(this, _getVersion).call(this, 16, toV16);
+    return this.#getVersion(16, toV16);
   }
   /**
    * @description Returns the wrapped values as a latest version object
    */
   get asLatest() {
-    return __privateGet(this, _getVersion).call(this, "latest", toLatest);
+    return this.#getVersion("latest", toLatest);
   }
   /**
    * @description The magicNumber for the Metadata (known constant)
@@ -137095,7 +136598,7 @@ var _MetadataVersioned = class _MetadataVersioned extends Struct2 {
    * @description the metadata version this structure represents
    */
   get version() {
-    return __privateGet(this, _metadata).call(this).index;
+    return this.#metadata().index;
   }
   getUniqTypes(throwError) {
     return getUniqTypes(this.registry, this.asLatest, throwError);
@@ -137108,11 +136611,6 @@ var _MetadataVersioned = class _MetadataVersioned extends Struct2 {
     return super.toJSON();
   }
 };
-_converted = new WeakMap();
-_assertVersion = new WeakMap();
-_getVersion = new WeakMap();
-_metadata = new WeakMap();
-var MetadataVersioned = _MetadataVersioned;
 
 // node_modules/@polkadot/types/metadata/Metadata.js
 var EMPTY_METADATA = new Uint8Array([109, 101, 116, 97, 9]);
@@ -137136,7 +136634,7 @@ var Metadata = class extends MetadataVersioned {
 };
 
 // node_modules/@polkadot/types/metadata/decorate/constants/index.js
-function decorateConstants(registry, { pallets }, _version3) {
+function decorateConstants(registry, { pallets }, _version2) {
   const result2 = {};
   for (let i = 0, count7 = pallets.length; i < count7; i++) {
     const { constants, name } = pallets[i];
@@ -137566,68 +137064,32 @@ function extractProperties(registry, metadata) {
   const { isEthereum, tokenDecimals, tokenSymbol } = original || {};
   return registry.createTypeUnsafe("ChainProperties", [{ isEthereum, ss58Format, tokenDecimals, tokenSymbol }]);
 }
-var _chainProperties, _classes, _definitions, _firstCallIndex, _hasher, _knownTypes, _lookup, _metadata2, _metadataVersion, _signedExtensions, _unknownTypes, _userExtensions, _knownDefaults, _knownDefaultsEntries, _knownDefinitions, _metadataCalls, _metadataErrors, _metadataEvents, _moduleMap, _registerObject, _registerLookup;
 var TypeRegistry = class {
+  #chainProperties;
+  #classes = /* @__PURE__ */ new Map();
+  #definitions = /* @__PURE__ */ new Map();
+  #firstCallIndex = null;
+  #hasher = blake2AsU8a;
+  #knownTypes = {};
+  #lookup;
+  #metadata;
+  #metadataVersion = 0;
+  #signedExtensions = fallbackExtensions;
+  #unknownTypes = /* @__PURE__ */ new Map();
+  #userExtensions;
+  #knownDefaults;
+  #knownDefaultsEntries;
+  #knownDefinitions;
+  #metadataCalls = {};
+  #metadataErrors = {};
+  #metadataEvents = {};
+  #moduleMap = {};
+  createdAtHash;
   constructor(createdAtHash) {
-    __privateAdd(this, _chainProperties);
-    __privateAdd(this, _classes, /* @__PURE__ */ new Map());
-    __privateAdd(this, _definitions, /* @__PURE__ */ new Map());
-    __privateAdd(this, _firstCallIndex, null);
-    __privateAdd(this, _hasher, blake2AsU8a);
-    __privateAdd(this, _knownTypes, {});
-    __privateAdd(this, _lookup);
-    __privateAdd(this, _metadata2);
-    __privateAdd(this, _metadataVersion, 0);
-    __privateAdd(this, _signedExtensions, fallbackExtensions);
-    __privateAdd(this, _unknownTypes, /* @__PURE__ */ new Map());
-    __privateAdd(this, _userExtensions);
-    __privateAdd(this, _knownDefaults);
-    __privateAdd(this, _knownDefaultsEntries);
-    __privateAdd(this, _knownDefinitions);
-    __privateAdd(this, _metadataCalls, {});
-    __privateAdd(this, _metadataErrors, {});
-    __privateAdd(this, _metadataEvents, {});
-    __privateAdd(this, _moduleMap, {});
-    __publicField(this, "createdAtHash");
-    __privateAdd(this, _registerObject, (obj) => {
-      const entries3 = Object.entries(obj);
-      for (let e = 0, count7 = entries3.length; e < count7; e++) {
-        const [name, type] = entries3[e];
-        if (isFunction3(type)) {
-          __privateGet(this, _classes).set(name, type);
-        } else {
-          const def = isString2(type) ? type : stringify2(type);
-          if (name === def) {
-            throw new Error(`Unable to register circular ${name} === ${def}`);
-          }
-          if (__privateGet(this, _classes).has(name)) {
-            __privateGet(this, _classes).delete(name);
-          }
-          __privateGet(this, _definitions).set(name, def);
-        }
-      }
-    });
-    // register alias types alongside the portable/lookup setup
-    // (we don't combine this into setLookup since that would/could
-    // affect stand-along lookups, such as ABIs which don't have
-    // actual on-chain metadata)
-    __privateAdd(this, _registerLookup, (lookup) => {
-      this.setLookup(lookup);
-      let Weight = null;
-      if (this.hasType("SpWeightsWeightV2Weight")) {
-        const weightv2 = this.createType("SpWeightsWeightV2Weight");
-        Weight = weightv2.refTime && weightv2.proofSize ? "SpWeightsWeightV2Weight" : "WeightV1";
-      } else if (!isBn(this.createType("Weight"))) {
-        Weight = "WeightV1";
-      }
-      if (Weight) {
-        this.register({ Weight });
-      }
-    });
-    __privateSet(this, _knownDefaults, new Map(Object.entries({ Json, Metadata, PortableRegistry, Raw, ...index_types_exports })));
-    __privateSet(this, _knownDefaultsEntries, Array.from(__privateGet(this, _knownDefaults).entries()));
-    __privateSet(this, _knownDefinitions, definitions_exports);
-    const allKnown = Object.values(__privateGet(this, _knownDefinitions));
+    this.#knownDefaults = new Map(Object.entries({ Json, Metadata, PortableRegistry, Raw, ...index_types_exports }));
+    this.#knownDefaultsEntries = Array.from(this.#knownDefaults.entries());
+    this.#knownDefinitions = definitions_exports;
+    const allKnown = Object.values(this.#knownDefinitions);
     for (let i = 0, count7 = allKnown.length; i < count7; i++) {
       this.register(allKnown[i].types);
     }
@@ -137636,8 +137098,8 @@ var TypeRegistry = class {
     }
   }
   get chainDecimals() {
-    if (__privateGet(this, _chainProperties)?.tokenDecimals.isSome) {
-      const allDecimals = __privateGet(this, _chainProperties).tokenDecimals.unwrap();
+    if (this.#chainProperties?.tokenDecimals.isSome) {
+      const allDecimals = this.#chainProperties.tokenDecimals.unwrap();
       if (allDecimals.length) {
         return allDecimals.map((b) => b.toNumber());
       }
@@ -137645,14 +137107,14 @@ var TypeRegistry = class {
     return [12];
   }
   get chainIsEthereum() {
-    return __privateGet(this, _chainProperties)?.isEthereum.isTrue || false;
+    return this.#chainProperties?.isEthereum.isTrue || false;
   }
   get chainSS58() {
-    return __privateGet(this, _chainProperties)?.ss58Format.isSome ? __privateGet(this, _chainProperties).ss58Format.unwrap().toNumber() : void 0;
+    return this.#chainProperties?.ss58Format.isSome ? this.#chainProperties.ss58Format.unwrap().toNumber() : void 0;
   }
   get chainTokens() {
-    if (__privateGet(this, _chainProperties)?.tokenSymbol.isSome) {
-      const allTokens = __privateGet(this, _chainProperties).tokenSymbol.unwrap();
+    if (this.#chainProperties?.tokenSymbol.isSome) {
+      const allTokens = this.#chainProperties.tokenSymbol.unwrap();
       if (allTokens.length) {
         return allTokens.map(valueToString);
       }
@@ -137660,7 +137122,7 @@ var TypeRegistry = class {
     return [formatBalance.getDefaults().unit];
   }
   get firstCallIndex() {
-    return __privateGet(this, _firstCallIndex) || DEFAULT_FIRST_CALL_IDX;
+    return this.#firstCallIndex || DEFAULT_FIRST_CALL_IDX;
   }
   /**
    * @description Returns true if the type is in a Compat format
@@ -137675,22 +137137,22 @@ var TypeRegistry = class {
     return `Lookup${typeof lookupId === "number" ? lookupId : lookupId.toNumber()}`;
   }
   get knownTypes() {
-    return __privateGet(this, _knownTypes);
+    return this.#knownTypes;
   }
   get lookup() {
-    return assertReturn(__privateGet(this, _lookup), "PortableRegistry has not been set on this registry");
+    return assertReturn(this.#lookup, "PortableRegistry has not been set on this registry");
   }
   get metadata() {
-    return assertReturn(__privateGet(this, _metadata2), "Metadata has not been set on this registry");
+    return assertReturn(this.#metadata, "Metadata has not been set on this registry");
   }
   get unknownTypes() {
-    return [...__privateGet(this, _unknownTypes).keys()];
+    return [...this.#unknownTypes.keys()];
   }
   get signedExtensions() {
-    return __privateGet(this, _signedExtensions);
+    return this.#signedExtensions;
   }
   clearCache() {
-    __privateSet(this, _classes, /* @__PURE__ */ new Map());
+    this.#classes = /* @__PURE__ */ new Map();
   }
   /**
    * @describe Creates an instance of the class
@@ -137719,7 +137181,7 @@ var TypeRegistry = class {
   // find a specific call
   findMetaCall(callIndex) {
     const [section2, method] = [callIndex[0], callIndex[1]];
-    return assertReturn(__privateGet(this, _metadataCalls)[`${section2}`] && __privateGet(this, _metadataCalls)[`${section2}`][`${method}`], () => `findMetaCall: Unable to find Call with index [${section2}, ${method}]/[${callIndex.toString()}]`);
+    return assertReturn(this.#metadataCalls[`${section2}`] && this.#metadataCalls[`${section2}`][`${method}`], () => `findMetaCall: Unable to find Call with index [${section2}, ${method}]/[${callIndex.toString()}]`);
   }
   // finds an error
   findMetaError(errorIndex) {
@@ -137727,19 +137189,19 @@ var TypeRegistry = class {
       errorIndex.index.toNumber(),
       isU8a(errorIndex.error) ? errorIndex.error[0] : errorIndex.error.toNumber()
     ];
-    return assertReturn(__privateGet(this, _metadataErrors)[`${section2}`] && __privateGet(this, _metadataErrors)[`${section2}`][`${method}`], () => `findMetaError: Unable to find Error with index [${section2}, ${method}]/[${errorIndex.toString()}]`);
+    return assertReturn(this.#metadataErrors[`${section2}`] && this.#metadataErrors[`${section2}`][`${method}`], () => `findMetaError: Unable to find Error with index [${section2}, ${method}]/[${errorIndex.toString()}]`);
   }
   findMetaEvent(eventIndex) {
     const [section2, method] = [eventIndex[0], eventIndex[1]];
-    return assertReturn(__privateGet(this, _metadataEvents)[`${section2}`] && __privateGet(this, _metadataEvents)[`${section2}`][`${method}`], () => `findMetaEvent: Unable to find Event with index [${section2}, ${method}]/[${eventIndex.toString()}]`);
+    return assertReturn(this.#metadataEvents[`${section2}`] && this.#metadataEvents[`${section2}`][`${method}`], () => `findMetaEvent: Unable to find Event with index [${section2}, ${method}]/[${eventIndex.toString()}]`);
   }
   get(name, withUnknown, knownTypeDef) {
     return this.getUnsafe(name, withUnknown, knownTypeDef);
   }
   getUnsafe(name, withUnknown, knownTypeDef) {
-    let Type4 = __privateGet(this, _classes).get(name) || __privateGet(this, _knownDefaults).get(name);
+    let Type4 = this.#classes.get(name) || this.#knownDefaults.get(name);
     if (!Type4) {
-      const definition = __privateGet(this, _definitions).get(name);
+      const definition = this.#definitions.get(name);
       let BaseType;
       if (definition) {
         BaseType = createClassUnsafe(this, definition);
@@ -137747,31 +137209,31 @@ var TypeRegistry = class {
         BaseType = constructTypeClass(this, knownTypeDef);
       } else if (withUnknown) {
         l8.warn(`Unable to resolve type ${name}, it will fail on construction`);
-        __privateGet(this, _unknownTypes).set(name, true);
+        this.#unknownTypes.set(name, true);
         BaseType = DoNotConstruct.with(name);
       }
       if (BaseType) {
         Type4 = class extends BaseType {
         };
-        __privateGet(this, _classes).set(name, Type4);
+        this.#classes.set(name, Type4);
         if (knownTypeDef && isNumber2(knownTypeDef.lookupIndex)) {
-          __privateGet(this, _classes).set(this.createLookupType(knownTypeDef.lookupIndex), Type4);
+          this.#classes.set(this.createLookupType(knownTypeDef.lookupIndex), Type4);
         }
       }
     }
     return Type4;
   }
   getChainProperties() {
-    return __privateGet(this, _chainProperties);
+    return this.#chainProperties;
   }
   getClassName(Type4) {
     const names = [];
-    for (const [name, Clazz] of __privateGet(this, _knownDefaultsEntries)) {
+    for (const [name, Clazz] of this.#knownDefaultsEntries) {
       if (Type4 === Clazz) {
         names.push(name);
       }
     }
-    for (const [name, Clazz] of __privateGet(this, _classes).entries()) {
+    for (const [name, Clazz] of this.#classes.entries()) {
       if (Type4 === Clazz) {
         names.push(name);
       }
@@ -137779,10 +137241,10 @@ var TypeRegistry = class {
     return names.length ? names.sort().reverse()[0] : void 0;
   }
   getDefinition(typeName) {
-    return __privateGet(this, _definitions).get(typeName);
+    return this.#definitions.get(typeName);
   }
   getModuleInstances(specName, moduleName) {
-    return __privateGet(this, _knownTypes)?.typesBundle?.spec?.[specName.toString()]?.instances?.[moduleName] || __privateGet(this, _moduleMap)[moduleName];
+    return this.#knownTypes?.typesBundle?.spec?.[specName.toString()]?.instances?.[moduleName] || this.#moduleMap[moduleName];
   }
   getOrThrow(name) {
     const Clazz = this.get(name);
@@ -137799,106 +137261,120 @@ var TypeRegistry = class {
     return 0;
   }
   getSignedExtensionExtra() {
-    return expandExtensionTypes(__privateGet(this, _signedExtensions), "payload", __privateGet(this, _userExtensions));
+    return expandExtensionTypes(this.#signedExtensions, "payload", this.#userExtensions);
   }
   getSignedExtensionTypes() {
-    return expandExtensionTypes(__privateGet(this, _signedExtensions), "extrinsic", __privateGet(this, _userExtensions));
+    return expandExtensionTypes(this.#signedExtensions, "extrinsic", this.#userExtensions);
   }
   hasClass(name) {
-    return __privateGet(this, _classes).has(name) || !!__privateGet(this, _knownDefaults).has(name);
+    return this.#classes.has(name) || !!this.#knownDefaults.has(name);
   }
   hasDef(name) {
-    return __privateGet(this, _definitions).has(name);
+    return this.#definitions.has(name);
   }
   hasType(name) {
-    return !__privateGet(this, _unknownTypes).get(name) && (this.hasClass(name) || this.hasDef(name));
+    return !this.#unknownTypes.get(name) && (this.hasClass(name) || this.hasDef(name));
   }
   hash(data) {
-    return this.createType("CodecHash", __privateGet(this, _hasher).call(this, data));
+    return this.createType("CodecHash", this.#hasher(data));
   }
   // eslint-disable-next-line no-dupe-class-members
   register(arg1, arg2) {
     if (isFunction3(arg1)) {
-      __privateGet(this, _classes).set(arg1.name, arg1);
+      this.#classes.set(arg1.name, arg1);
     } else if (isString2(arg1)) {
       if (!isFunction3(arg2)) {
         throw new Error(`Expected class definition passed to '${arg1}' registration`);
       } else if (arg1 === arg2.toString()) {
         throw new Error(`Unable to register circular ${arg1} === ${arg1}`);
       }
-      __privateGet(this, _classes).set(arg1, arg2);
+      this.#classes.set(arg1, arg2);
     } else {
-      __privateGet(this, _registerObject).call(this, arg1);
+      this.#registerObject(arg1);
     }
   }
+  #registerObject = (obj) => {
+    const entries3 = Object.entries(obj);
+    for (let e = 0, count7 = entries3.length; e < count7; e++) {
+      const [name, type] = entries3[e];
+      if (isFunction3(type)) {
+        this.#classes.set(name, type);
+      } else {
+        const def = isString2(type) ? type : stringify2(type);
+        if (name === def) {
+          throw new Error(`Unable to register circular ${name} === ${def}`);
+        }
+        if (this.#classes.has(name)) {
+          this.#classes.delete(name);
+        }
+        this.#definitions.set(name, def);
+      }
+    }
+  };
   // sets the chain properties
   setChainProperties(properties) {
     if (properties) {
-      __privateSet(this, _chainProperties, properties);
+      this.#chainProperties = properties;
     }
   }
   setHasher(hasher) {
-    __privateSet(this, _hasher, hasher || blake2AsU8a);
+    this.#hasher = hasher || blake2AsU8a;
   }
   setKnownTypes(knownTypes2) {
-    __privateSet(this, _knownTypes, knownTypes2);
+    this.#knownTypes = knownTypes2;
   }
   setLookup(lookup) {
-    __privateSet(this, _lookup, lookup);
+    this.#lookup = lookup;
     lookup.register();
   }
+  // register alias types alongside the portable/lookup setup
+  // (we don't combine this into setLookup since that would/could
+  // affect stand-along lookups, such as ABIs which don't have
+  // actual on-chain metadata)
+  #registerLookup = (lookup) => {
+    this.setLookup(lookup);
+    let Weight = null;
+    if (this.hasType("SpWeightsWeightV2Weight")) {
+      const weightv2 = this.createType("SpWeightsWeightV2Weight");
+      Weight = weightv2.refTime && weightv2.proofSize ? "SpWeightsWeightV2Weight" : "WeightV1";
+    } else if (!isBn(this.createType("Weight"))) {
+      Weight = "WeightV1";
+    }
+    if (Weight) {
+      this.register({ Weight });
+    }
+  };
   // sets the metadata
   setMetadata(metadata, signedExtensions, userExtensions, noInitWarn) {
-    __privateSet(this, _metadata2, metadata.asLatest);
-    __privateSet(this, _metadataVersion, metadata.version);
-    __privateSet(this, _firstCallIndex, null);
-    __privateGet(this, _registerLookup).call(this, __privateGet(this, _metadata2).lookup);
-    injectExtrinsics(this, __privateGet(this, _metadata2), __privateGet(this, _metadataVersion), __privateGet(this, _metadataCalls), __privateGet(this, _moduleMap));
-    injectErrors(this, __privateGet(this, _metadata2), __privateGet(this, _metadataVersion), __privateGet(this, _metadataErrors));
-    injectEvents(this, __privateGet(this, _metadata2), __privateGet(this, _metadataVersion), __privateGet(this, _metadataEvents));
-    const [defSection] = Object.keys(__privateGet(this, _metadataCalls)).sort(sortDecimalStrings);
+    this.#metadata = metadata.asLatest;
+    this.#metadataVersion = metadata.version;
+    this.#firstCallIndex = null;
+    this.#registerLookup(this.#metadata.lookup);
+    injectExtrinsics(this, this.#metadata, this.#metadataVersion, this.#metadataCalls, this.#moduleMap);
+    injectErrors(this, this.#metadata, this.#metadataVersion, this.#metadataErrors);
+    injectEvents(this, this.#metadata, this.#metadataVersion, this.#metadataEvents);
+    const [defSection] = Object.keys(this.#metadataCalls).sort(sortDecimalStrings);
     if (defSection) {
-      const [defMethod] = Object.keys(__privateGet(this, _metadataCalls)[defSection]).sort(sortDecimalStrings);
+      const [defMethod] = Object.keys(this.#metadataCalls[defSection]).sort(sortDecimalStrings);
       if (defMethod) {
-        __privateSet(this, _firstCallIndex, new Uint8Array([parseInt(defSection, 10), parseInt(defMethod, 10)]));
+        this.#firstCallIndex = new Uint8Array([parseInt(defSection, 10), parseInt(defMethod, 10)]);
       }
     }
-    this.setSignedExtensions(signedExtensions || (__privateGet(this, _metadata2).extrinsic.versions.length > 0 && __privateGet(this, _metadata2).extrinsic.versions.every((value3) => value3 > 0) ? __privateGet(this, _metadata2).extrinsic.transactionExtensions.map(({ identifier: identifier2 }) => identifier2.toString()) : fallbackExtensions), userExtensions, noInitWarn);
+    this.setSignedExtensions(signedExtensions || (this.#metadata.extrinsic.versions.length > 0 && this.#metadata.extrinsic.versions.every((value3) => value3 > 0) ? this.#metadata.extrinsic.transactionExtensions.map(({ identifier: identifier2 }) => identifier2.toString()) : fallbackExtensions), userExtensions, noInitWarn);
     this.setChainProperties(extractProperties(this, metadata));
   }
   // sets the available signed extensions
   setSignedExtensions(signedExtensions = fallbackExtensions, userExtensions, noInitWarn) {
-    __privateSet(this, _signedExtensions, signedExtensions);
-    __privateSet(this, _userExtensions, userExtensions);
+    this.#signedExtensions = signedExtensions;
+    this.#userExtensions = userExtensions;
     if (!noInitWarn) {
-      const unknown = findUnknownExtensions(__privateGet(this, _signedExtensions), __privateGet(this, _userExtensions));
+      const unknown = findUnknownExtensions(this.#signedExtensions, this.#userExtensions);
       if (unknown.length) {
         l8.warn(`Unknown signed extensions ${unknown.join(", ")} found, treating them as no-effect`);
       }
     }
   }
 };
-_chainProperties = new WeakMap();
-_classes = new WeakMap();
-_definitions = new WeakMap();
-_firstCallIndex = new WeakMap();
-_hasher = new WeakMap();
-_knownTypes = new WeakMap();
-_lookup = new WeakMap();
-_metadata2 = new WeakMap();
-_metadataVersion = new WeakMap();
-_signedExtensions = new WeakMap();
-_unknownTypes = new WeakMap();
-_userExtensions = new WeakMap();
-_knownDefaults = new WeakMap();
-_knownDefaultsEntries = new WeakMap();
-_knownDefinitions = new WeakMap();
-_metadataCalls = new WeakMap();
-_metadataErrors = new WeakMap();
-_metadataEvents = new WeakMap();
-_moduleMap = new WeakMap();
-_registerObject = new WeakMap();
-_registerLookup = new WeakMap();
 
 // node_modules/@polkadot/rpc-core/util/drr.js
 var import_rxjs3 = __toESM(require_cjs(), 1);
@@ -137989,8 +137465,17 @@ function logErrorMessage(method, { noErrorLog, params, type }, error4) {
 function isTreatAsHex(key) {
   return ["0x3a636f6465"].includes(key.toHex());
 }
-var _instanceId, _isPedantic, _registryDefault, _storageCache, _storageCacheHits, _getBlockRegistry, _getBlockHash;
 var RpcCore = class {
+  #instanceId;
+  #isPedantic;
+  #registryDefault;
+  #storageCache;
+  #storageCacheHits = 0;
+  #getBlockRegistry;
+  #getBlockHash;
+  mapping = /* @__PURE__ */ new Map();
+  provider;
+  sections = [];
   /**
    * @constructor
    * Default constructor for the core RPC handler
@@ -137999,26 +137484,16 @@ var RpcCore = class {
    * @param {number} [options.rpcCacheCapacity] Custom size of the rpc LRUCache capacity. Defaults to `RPC_CORE_DEFAULT_CAPACITY` (1024 * 10 * 10)
    */
   constructor(instanceId, registry, { isPedantic = true, provider, rpcCacheCapacity, ttl, userRpc = {} }) {
-    __privateAdd(this, _instanceId);
-    __privateAdd(this, _isPedantic);
-    __privateAdd(this, _registryDefault);
-    __privateAdd(this, _storageCache);
-    __privateAdd(this, _storageCacheHits, 0);
-    __privateAdd(this, _getBlockRegistry);
-    __privateAdd(this, _getBlockHash);
-    __publicField(this, "mapping", /* @__PURE__ */ new Map());
-    __publicField(this, "provider");
-    __publicField(this, "sections", []);
     if (!provider || !isFunction3(provider.send)) {
       throw new Error("Expected Provider to API create");
     }
-    __privateSet(this, _instanceId, instanceId);
-    __privateSet(this, _isPedantic, isPedantic);
-    __privateSet(this, _registryDefault, registry);
+    this.#instanceId = instanceId;
+    this.#isPedantic = isPedantic;
+    this.#registryDefault = registry;
     this.provider = provider;
     const sectionNames = Object.keys(jsonrpc_default);
     this.sections.push(...sectionNames);
-    __privateSet(this, _storageCache, new LRUCache(rpcCacheCapacity || RPC_CORE_DEFAULT_CAPACITY, ttl));
+    this.#storageCache = new LRUCache(rpcCacheCapacity || RPC_CORE_DEFAULT_CAPACITY, ttl);
     this.addUserInterfaces(userRpc);
   }
   /**
@@ -138047,8 +137522,8 @@ var RpcCore = class {
     return stats ? {
       ...stats,
       core: {
-        cacheHits: __privateGet(this, _storageCacheHits),
-        cacheSize: __privateGet(this, _storageCache).length
+        cacheHits: this.#storageCacheHits,
+        cacheSize: this.#storageCache.length
       }
     } : void 0;
   }
@@ -138056,17 +137531,17 @@ var RpcCore = class {
    * @description Sets a registry swap (typically from Api)
    */
   setRegistrySwap(registrySwap) {
-    __privateSet(this, _getBlockRegistry, memoize4(registrySwap, {
-      getInstanceId: () => __privateGet(this, _instanceId)
-    }));
+    this.#getBlockRegistry = memoize4(registrySwap, {
+      getInstanceId: () => this.#instanceId
+    });
   }
   /**
    * @description Sets a function to resolve block hash from block number
    */
   setResolveBlockHash(resolveBlockHash) {
-    __privateSet(this, _getBlockHash, memoize4(resolveBlockHash, {
-      getInstanceId: () => __privateGet(this, _instanceId)
-    }));
+    this.#getBlockHash = memoize4(resolveBlockHash, {
+      getInstanceId: () => this.#instanceId
+    });
   }
   addUserInterfaces(userRpc) {
     this.sections.push(...Object.keys(userRpc).filter((k) => !this.sections.includes(k)));
@@ -138090,7 +137565,7 @@ var RpcCore = class {
     }
   }
   _memomize(creator, def) {
-    const memoOpts = { getInstanceId: () => __privateGet(this, _instanceId) };
+    const memoOpts = { getInstanceId: () => this.#instanceId };
     const memoized3 = memoize4(creator(true), memoOpts);
     memoized3.raw = memoize4(creator(false), memoOpts);
     memoized3.meta = def;
@@ -138104,10 +137579,9 @@ var RpcCore = class {
     const hashIndex = def.params.findIndex(({ isHistoric }) => isHistoric);
     let memoized3 = null;
     const callWithRegistry = async (isScale, values7) => {
-      var _a91;
       const blockId = hashIndex === -1 ? null : values7[hashIndex];
-      const blockHash = blockId && def.params[hashIndex].type === "BlockNumber" ? await ((_a91 = __privateGet(this, _getBlockHash)) == null ? void 0 : _a91.call(this, blockId)) : blockId;
-      const { registry } = isScale && blockHash && __privateGet(this, _getBlockRegistry) ? await __privateGet(this, _getBlockRegistry).call(this, u8aToU8a(blockHash)) : { registry: __privateGet(this, _registryDefault) };
+      const blockHash = blockId && def.params[hashIndex].type === "BlockNumber" ? await this.#getBlockHash?.(blockId) : blockId;
+      const { registry } = isScale && blockHash && this.#getBlockRegistry ? await this.#getBlockRegistry(u8aToU8a(blockHash)) : { registry: this.#registryDefault };
       const params = this._formatParams(registry, null, def, values7);
       const result2 = await this.provider.send(rpcName, params.map((p) => p.toJSON()), !!blockHash);
       return this._formatResult(isScale, registry, blockHash, method, def, params, result2);
@@ -138158,7 +137632,7 @@ var RpcCore = class {
     const creator = (isScale) => (...values7) => {
       return new import_rxjs5.Observable((observer) => {
         let subscriptionPromise = Promise.resolve(null);
-        const registry = __privateGet(this, _registryDefault);
+        const registry = this.#registryDefault;
         const errorHandler = (error4) => {
           logErrorMessage(method, def, error4);
           observer.error(error4);
@@ -138246,9 +137720,9 @@ var RpcCore = class {
     const found = changes3.find(([key2]) => key2 === hexKey);
     const isNotFound = isUndefined2(found);
     if (isNotFound && withCache) {
-      const cached4 = __privateGet(this, _storageCache).get(hexKey);
+      const cached4 = this.#storageCache.get(hexKey);
       if (cached4) {
-        __privateWrapper(this, _storageCacheHits)._++;
+        this.#storageCacheHits++;
         return cached4;
       }
     }
@@ -138260,7 +137734,7 @@ var RpcCore = class {
     return codec;
   }
   _setToCache(key, value3) {
-    __privateGet(this, _storageCache).set(key, value3);
+    this.#storageCache.set(key, value3);
   }
   _newType(registry, blockHash, key, input, isEmpty19, entryIndex = -1) {
     const type = key.meta ? registry.createLookupType(unwrapStorageSi(key.meta.type)) : key.outputType || "Raw";
@@ -138268,20 +137742,13 @@ var RpcCore = class {
     const entryNum = entryIndex === -1 ? "" : ` entry ${entryIndex}:`;
     try {
       return registry.createTypeUnsafe(type, [
-        isEmpty19 ? meta.fallback ? type.includes("Linkage<") ? u8aConcat(hexToU8a(meta.fallback.toHex()), new Uint8Array(2)) : hexToU8a(meta.fallback.toHex()) : void 0 : meta.modifier.isOptional ? registry.createTypeUnsafe(type, [input], { blockHash, isPedantic: __privateGet(this, _isPedantic) }) : input
-      ], { blockHash, isFallback: isEmpty19 && !!meta.fallback, isOptional: meta.modifier.isOptional, isPedantic: __privateGet(this, _isPedantic) && !meta.modifier.isOptional });
+        isEmpty19 ? meta.fallback ? type.includes("Linkage<") ? u8aConcat(hexToU8a(meta.fallback.toHex()), new Uint8Array(2)) : hexToU8a(meta.fallback.toHex()) : void 0 : meta.modifier.isOptional ? registry.createTypeUnsafe(type, [input], { blockHash, isPedantic: this.#isPedantic }) : input
+      ], { blockHash, isFallback: isEmpty19 && !!meta.fallback, isOptional: meta.modifier.isOptional, isPedantic: this.#isPedantic && !meta.modifier.isOptional });
     } catch (error4) {
       throw new Error(`Unable to decode storage ${key.section || "unknown"}.${key.method || "unknown"}:${entryNum}: ${error4.message}`);
     }
   }
 };
-_instanceId = new WeakMap();
-_isPedantic = new WeakMap();
-_registryDefault = new WeakMap();
-_storageCache = new WeakMap();
-_storageCacheHits = new WeakMap();
-_getBlockRegistry = new WeakMap();
-_getBlockHash = new WeakMap();
 
 // node_modules/@polkadot/api-derive/util/blockNumber.js
 function unwrapBlockNumber(hdr) {
@@ -138414,9 +137881,9 @@ function dataAsString(data) {
   return data.isRaw ? u8aToString(data.asRaw.toU8a(true)) : data.isNone ? void 0 : data.toHex();
 }
 function extractOther(additional) {
-  return additional.reduce((other, [_key, _value2]) => {
+  return additional.reduce((other, [_key, _value]) => {
     const key = dataAsString(_key);
-    const value3 = dataAsString(_value2);
+    const value3 = dataAsString(_value);
     if (key && value3) {
       other[key] = value3;
     }
@@ -139112,23 +138579,21 @@ function extractAuthor(digest, sessionValidators) {
 
 // node_modules/@polkadot/api-derive/type/HeaderExtended.js
 function createHeaderExtended(registry, header, validators2, author) {
-  var _author;
   const HeaderBase = registry.createClass("Header");
   class Implementation extends HeaderBase {
+    #author;
     constructor(registry2, header2, validators3, author2) {
       super(registry2, header2);
-      __privateAdd(this, _author);
-      __privateSet(this, _author, author2 || extractAuthor(this.digest, validators3 || []));
+      this.#author = author2 || extractAuthor(this.digest, validators3 || []);
       this.createdAtHash = header2?.createdAtHash;
     }
     /**
      * @description Convenience method, returns the author for the block
      */
     get author() {
-      return __privateGet(this, _author);
+      return this.#author;
     }
   }
-  _author = new WeakMap();
   return new Implementation(registry, header, validators2, author);
 }
 
@@ -139152,41 +138617,37 @@ function mapExtrinsics(extrinsics, records) {
   });
 }
 function createSignedBlockExtended(registry, block2, events2, validators2, author) {
-  var _author, _events, _extrinsics;
   const SignedBlockBase = registry.createClass("SignedBlock");
   class Implementation extends SignedBlockBase {
+    #author;
+    #events;
+    #extrinsics;
     constructor(registry2, block3, events3, validators3, author2) {
       super(registry2, block3);
-      __privateAdd(this, _author);
-      __privateAdd(this, _events);
-      __privateAdd(this, _extrinsics);
-      __privateSet(this, _author, author2 || extractAuthor(this.block.header.digest, validators3 || []));
-      __privateSet(this, _events, events3 || []);
-      __privateSet(this, _extrinsics, mapExtrinsics(this.block.extrinsics, __privateGet(this, _events)));
+      this.#author = author2 || extractAuthor(this.block.header.digest, validators3 || []);
+      this.#events = events3 || [];
+      this.#extrinsics = mapExtrinsics(this.block.extrinsics, this.#events);
       this.createdAtHash = block3?.createdAtHash;
     }
     /**
      * @description Convenience method, returns the author for the block
      */
     get author() {
-      return __privateGet(this, _author);
+      return this.#author;
     }
     /**
      * @description Convenience method, returns the events associated with the block
      */
     get events() {
-      return __privateGet(this, _events);
+      return this.#events;
     }
     /**
      * @description Returns the extrinsics and their events, mapped
      */
     get extrinsics() {
-      return __privateGet(this, _extrinsics);
+      return this.#extrinsics;
     }
   }
-  _author = new WeakMap();
-  _events = new WeakMap();
-  _extrinsics = new WeakMap();
   return new Implementation(registry, block2, events2, validators2, author);
 }
 
@@ -141344,7 +140805,7 @@ function babeOrAuraPeriod(api) {
   api.consts["aura"]?.["slotDuration"] || api.consts.timestamp?.minimumPeriod.muln(2);
   return period && period.isZero && !period.isZero() ? period : void 0;
 }
-function signingInfo(_instanceId3, api) {
+function signingInfo(_instanceId, api) {
   return (address, nonce, era) => (0, import_rxjs88.combineLatest)([
     // retrieve nonce if none was specified
     isUndefined2(nonce) ? latestNonce(api, address) : nonce === -1 ? nextNonce(api, address) : (0, import_rxjs88.of)(api.registry.createType("Index", nonce)),
@@ -141484,15 +140945,15 @@ function extractInfo(events2 = []) {
   return filterAndApply(events2, "system", ["ExtrinsicFailed", "ExtrinsicSuccess"], getDispatchInfo)[0];
 }
 var SubmittableResult = class {
+  dispatchError;
+  dispatchInfo;
+  internalError;
+  events;
+  status;
+  txHash;
+  txIndex;
+  blockNumber;
   constructor({ blockNumber, dispatchError, dispatchInfo, events: events2, internalError, status: status3, txHash, txIndex }) {
-    __publicField(this, "dispatchError");
-    __publicField(this, "dispatchInfo");
-    __publicField(this, "internalError");
-    __publicField(this, "events");
-    __publicField(this, "status");
-    __publicField(this, "txHash");
-    __publicField(this, "txIndex");
-    __publicField(this, "blockNumber");
     this.dispatchError = dispatchError || extractError(events2);
     this.dispatchInfo = dispatchInfo || extractInfo(events2);
     this.events = events2 || [];
@@ -141580,136 +141041,14 @@ function optionsOrNonce(partialOptions = {}) {
   return isBn(partialOptions) || isNumber2(partialOptions) ? { nonce: partialOptions } : partialOptions;
 }
 function createClass({ api, apiType, blockHash, decorateMethod }) {
-  var _ignoreStatusCb, _transformResult, _observeSign, _observeStatus, _observeSend, _observeSubscribe, _signViaSigner, _updateSigner, _validateSignedTransaction;
   const ExtrinsicBase2 = api.registry.createClass("Extrinsic");
   const extrinsicInfoMap = /* @__PURE__ */ new WeakMap();
-  const _Submittable = class _Submittable extends ExtrinsicBase2 {
+  class Submittable extends ExtrinsicBase2 {
+    #ignoreStatusCb;
+    #transformResult = identity6;
     constructor(registry, extrinsic) {
       super(registry, extrinsic, { version: api.extrinsicType });
-      __privateAdd(this, _ignoreStatusCb);
-      __privateAdd(this, _transformResult, identity6);
-      __privateAdd(this, _observeSign, (account3, partialOptions) => {
-        const address = isKeyringPair(account3) ? account3.address : account3.toString();
-        const options5 = optionsOrNonce(partialOptions);
-        return api.derive.tx.signingInfo(address, options5.nonce, options5.era).pipe((0, import_rxjs89.first)(), (0, import_rxjs89.mergeMap)(async (signingInfo2) => {
-          const eraOptions = makeEraOptions(api, this.registry, options5, signingInfo2);
-          let updateId = -1;
-          let signedTx = null;
-          if (isKeyringPair(account3)) {
-            this.sign(account3, eraOptions);
-          } else {
-            const result2 = await __privateGet(this, _signViaSigner).call(this, address, eraOptions, signingInfo2.header);
-            updateId = result2.id;
-            if (result2.signedTransaction) {
-              signedTx = result2.signedTransaction;
-            }
-          }
-          return { options: eraOptions, signedTransaction: signedTx, updateId };
-        }));
-      });
-      __privateAdd(this, _observeStatus, (txHash, status3) => {
-        if (!status3.isFinalized && !status3.isInBlock) {
-          return (0, import_rxjs89.of)(__privateGet(this, _transformResult).call(this, new SubmittableResult({
-            status: status3,
-            txHash
-          })));
-        }
-        const blockHash2 = status3.isInBlock ? status3.asInBlock : status3.asFinalized;
-        return api.derive.tx.events(blockHash2).pipe((0, import_rxjs89.map)(({ block: block2, events: events2 }) => __privateGet(this, _transformResult).call(this, new SubmittableResult({
-          ...filterEvents(txHash, block2, events2, status3),
-          status: status3,
-          txHash
-        }))), (0, import_rxjs89.catchError)((internalError) => (0, import_rxjs89.of)(__privateGet(this, _transformResult).call(this, new SubmittableResult({
-          internalError,
-          status: status3,
-          txHash
-        })))));
-      });
-      __privateAdd(this, _observeSend, (info8) => {
-        return api.rpc.author.submitExtrinsic(info8?.signedTransaction || this).pipe((0, import_rxjs89.tap)((hash3) => {
-          __privateGet(this, _updateSigner).call(this, hash3, info8);
-        }));
-      });
-      __privateAdd(this, _observeSubscribe, (info8) => {
-        const txHash = this.hash;
-        return api.rpc.author.submitAndWatchExtrinsic(info8?.signedTransaction || this).pipe((0, import_rxjs89.switchMap)((status3) => __privateGet(this, _observeStatus).call(this, txHash, status3)), (0, import_rxjs89.tap)((status3) => {
-          __privateGet(this, _updateSigner).call(this, status3, info8);
-        }));
-      });
-      __privateAdd(this, _signViaSigner, async (address, options5, header) => {
-        const signer = options5.signer || api.signer;
-        const allowCallDataAlteration = options5.allowCallDataAlteration ?? true;
-        if (!signer) {
-          throw new Error("No signer specified, either via api.setSigner or via sign options. You possibly need to pass through an explicit keypair for the origin so it can be used for signing.");
-        }
-        const payload = this.registry.createTypeUnsafe("SignerPayload", [objectSpread({}, options5, {
-          address,
-          blockNumber: header ? header.number : 0,
-          method: this.method
-        })]);
-        let result2;
-        if (isFunction3(signer.signPayload)) {
-          result2 = await signer.signPayload(payload.toPayload());
-          if (result2.signedTransaction && !options5.withSignedTransaction) {
-            throw new Error("The `signedTransaction` field may not be submitted when `withSignedTransaction` is disabled");
-          }
-          if (result2.signedTransaction && options5.withSignedTransaction) {
-            const ext = this.registry.createTypeUnsafe("Extrinsic", [result2.signedTransaction]);
-            const newSignerPayload = this.registry.createTypeUnsafe("SignerPayload", [objectSpread({}, {
-              address,
-              assetId: ext.assetId && ext.assetId.isSome ? ext.assetId.toHex() : null,
-              blockHash: payload.blockHash,
-              blockNumber: header ? header.number : 0,
-              era: ext.era.toHex(),
-              genesisHash: payload.genesisHash,
-              metadataHash: ext.metadataHash ? ext.metadataHash.toHex() : null,
-              method: ext.method.toHex(),
-              mode: ext.mode ? ext.mode.toHex() : null,
-              nonce: ext.nonce.toHex(),
-              runtimeVersion: payload.runtimeVersion,
-              signedExtensions: payload.signedExtensions,
-              tip: ext.tip ? ext.tip.toHex() : null,
-              version: payload.version
-            })]);
-            if (!ext.isSigned) {
-              throw new Error(`When using the signedTransaction field, the transaction must be signed. Recieved isSigned: ${ext.isSigned}`);
-            }
-            if (!allowCallDataAlteration) {
-              __privateGet(this, _validateSignedTransaction).call(this, payload, ext);
-            }
-            super.addSignature(address, result2.signature, newSignerPayload.toPayload());
-            return { id: result2.id, signedTransaction: result2.signedTransaction };
-          }
-        } else if (isFunction3(signer.signRaw)) {
-          result2 = await signer.signRaw(payload.toRaw());
-        } else {
-          throw new Error("Invalid signer interface, it should implement either signPayload or signRaw (or both)");
-        }
-        super.addSignature(address, result2.signature, payload.toPayload());
-        return { id: result2.id };
-      });
-      __privateAdd(this, _updateSigner, (status3, info8) => {
-        if (info8 && info8.updateId !== -1) {
-          const { options: options5, updateId } = info8;
-          const signer = options5.signer || api.signer;
-          if (signer && isFunction3(signer.update)) {
-            signer.update(updateId, status3);
-          }
-        }
-      });
-      /**
-       * When a signer includes `signedTransaction` within the SignerResult this will validate
-       * specific fields within the signed extrinsic against the original payload that was passed
-       * to the signer.
-       */
-      __privateAdd(this, _validateSignedTransaction, (signerPayload, signedExt) => {
-        const payload = signerPayload.toPayload();
-        const errMsg = (field) => `signAndSend: ${field} does not match the original payload`;
-        if (payload.method !== signedExt.method.toHex()) {
-          throw new Error(errMsg("call data"));
-        }
-      });
-      __privateSet(this, _ignoreStatusCb, apiType === "rxjs");
+      this.#ignoreStatusCb = apiType === "rxjs";
     }
     get hasDryRun() {
       return isFunction3(api.rpc.system?.dryRun);
@@ -141725,7 +141064,7 @@ function createClass({ api, apiType, blockHash, decorateMethod }) {
       if (blockHash || isString2(optionsOrHash) || isU8a(optionsOrHash)) {
         return decorateMethod(() => api.rpc.system.dryRun(this.toHex(), blockHash || optionsOrHash));
       }
-      return decorateMethod(() => __privateGet(this, _observeSign).call(this, account3, optionsOrHash).pipe((0, import_rxjs89.switchMap)(() => api.rpc.system.dryRun(this.toHex()))))();
+      return decorateMethod(() => this.#observeSign(account3, optionsOrHash).pipe((0, import_rxjs89.switchMap)(() => api.rpc.system.dryRun(this.toHex()))))();
     }
     // calculate the payment info for this transaction (if signed and submitted)
     paymentInfo(account3, optionsOrHash) {
@@ -141749,18 +141088,18 @@ function createClass({ api, apiType, blockHash, decorateMethod }) {
     }
     // send implementation for both immediate Hash and statusCb variants
     send(statusCb) {
-      const isSubscription = api.hasSubscriptions && (__privateGet(this, _ignoreStatusCb) || !!statusCb);
+      const isSubscription = api.hasSubscriptions && (this.#ignoreStatusCb || !!statusCb);
       const updatedInfo = extrinsicInfoMap.get(this);
       extrinsicInfoMap.delete(this);
-      return decorateMethod(isSubscription ? () => __privateGet(this, _observeSubscribe).call(this, updatedInfo) : () => __privateGet(this, _observeSend).call(this, updatedInfo))(statusCb);
+      return decorateMethod(isSubscription ? () => this.#observeSubscribe(updatedInfo) : () => this.#observeSend(updatedInfo))(statusCb);
     }
     /**
      * @description Signs a transaction, returning `this` to allow chaining. E.g.: `signAsync(...).send()`. Like `.signAndSend` this will retrieve the nonce and blockHash to send the tx with.
     */
     signAsync(account3, partialOptions) {
-      return decorateMethod(() => __privateGet(this, _observeSign).call(this, account3, partialOptions).pipe((0, import_rxjs89.map)((info8) => {
+      return decorateMethod(() => this.#observeSign(account3, partialOptions).pipe((0, import_rxjs89.map)((info8) => {
         if (info8.signedTransaction) {
-          const extrinsic = new _Submittable(api.registry, info8.signedTransaction);
+          const extrinsic = new Submittable(api.registry, info8.signedTransaction);
           extrinsicInfoMap.set(this, info8);
           return extrinsic;
         }
@@ -141770,28 +141109,139 @@ function createClass({ api, apiType, blockHash, decorateMethod }) {
     // signAndSend implementation for all 3 cases above
     signAndSend(account3, partialOptions, optionalStatusCb) {
       const [options5, statusCb] = makeSignAndSendOptions(partialOptions, optionalStatusCb);
-      const isSubscription = api.hasSubscriptions && (__privateGet(this, _ignoreStatusCb) || !!statusCb);
+      const isSubscription = api.hasSubscriptions && (this.#ignoreStatusCb || !!statusCb);
       return decorateMethod(
-        () => __privateGet(this, _observeSign).call(this, account3, options5).pipe((0, import_rxjs89.switchMap)((info8) => isSubscription ? __privateGet(this, _observeSubscribe).call(this, info8) : __privateGet(this, _observeSend).call(this, info8)))
+        () => this.#observeSign(account3, options5).pipe((0, import_rxjs89.switchMap)((info8) => isSubscription ? this.#observeSubscribe(info8) : this.#observeSend(info8)))
         // FIXME This is wrong, SubmittableResult is _not_ a codec
       )(statusCb);
     }
     // adds a transform to the result, applied before result is returned
     withResultTransform(transform5) {
-      __privateSet(this, _transformResult, transform5);
+      this.#transformResult = transform5;
       return this;
     }
-  };
-  _ignoreStatusCb = new WeakMap();
-  _transformResult = new WeakMap();
-  _observeSign = new WeakMap();
-  _observeStatus = new WeakMap();
-  _observeSend = new WeakMap();
-  _observeSubscribe = new WeakMap();
-  _signViaSigner = new WeakMap();
-  _updateSigner = new WeakMap();
-  _validateSignedTransaction = new WeakMap();
-  let Submittable = _Submittable;
+    #observeSign = (account3, partialOptions) => {
+      const address = isKeyringPair(account3) ? account3.address : account3.toString();
+      const options5 = optionsOrNonce(partialOptions);
+      return api.derive.tx.signingInfo(address, options5.nonce, options5.era).pipe((0, import_rxjs89.first)(), (0, import_rxjs89.mergeMap)(async (signingInfo2) => {
+        const eraOptions = makeEraOptions(api, this.registry, options5, signingInfo2);
+        let updateId = -1;
+        let signedTx = null;
+        if (isKeyringPair(account3)) {
+          this.sign(account3, eraOptions);
+        } else {
+          const result2 = await this.#signViaSigner(address, eraOptions, signingInfo2.header);
+          updateId = result2.id;
+          if (result2.signedTransaction) {
+            signedTx = result2.signedTransaction;
+          }
+        }
+        return { options: eraOptions, signedTransaction: signedTx, updateId };
+      }));
+    };
+    #observeStatus = (txHash, status3) => {
+      if (!status3.isFinalized && !status3.isInBlock) {
+        return (0, import_rxjs89.of)(this.#transformResult(new SubmittableResult({
+          status: status3,
+          txHash
+        })));
+      }
+      const blockHash2 = status3.isInBlock ? status3.asInBlock : status3.asFinalized;
+      return api.derive.tx.events(blockHash2).pipe((0, import_rxjs89.map)(({ block: block2, events: events2 }) => this.#transformResult(new SubmittableResult({
+        ...filterEvents(txHash, block2, events2, status3),
+        status: status3,
+        txHash
+      }))), (0, import_rxjs89.catchError)((internalError) => (0, import_rxjs89.of)(this.#transformResult(new SubmittableResult({
+        internalError,
+        status: status3,
+        txHash
+      })))));
+    };
+    #observeSend = (info8) => {
+      return api.rpc.author.submitExtrinsic(info8?.signedTransaction || this).pipe((0, import_rxjs89.tap)((hash3) => {
+        this.#updateSigner(hash3, info8);
+      }));
+    };
+    #observeSubscribe = (info8) => {
+      const txHash = this.hash;
+      return api.rpc.author.submitAndWatchExtrinsic(info8?.signedTransaction || this).pipe((0, import_rxjs89.switchMap)((status3) => this.#observeStatus(txHash, status3)), (0, import_rxjs89.tap)((status3) => {
+        this.#updateSigner(status3, info8);
+      }));
+    };
+    #signViaSigner = async (address, options5, header) => {
+      const signer = options5.signer || api.signer;
+      const allowCallDataAlteration = options5.allowCallDataAlteration ?? true;
+      if (!signer) {
+        throw new Error("No signer specified, either via api.setSigner or via sign options. You possibly need to pass through an explicit keypair for the origin so it can be used for signing.");
+      }
+      const payload = this.registry.createTypeUnsafe("SignerPayload", [objectSpread({}, options5, {
+        address,
+        blockNumber: header ? header.number : 0,
+        method: this.method
+      })]);
+      let result2;
+      if (isFunction3(signer.signPayload)) {
+        result2 = await signer.signPayload(payload.toPayload());
+        if (result2.signedTransaction && !options5.withSignedTransaction) {
+          throw new Error("The `signedTransaction` field may not be submitted when `withSignedTransaction` is disabled");
+        }
+        if (result2.signedTransaction && options5.withSignedTransaction) {
+          const ext = this.registry.createTypeUnsafe("Extrinsic", [result2.signedTransaction]);
+          const newSignerPayload = this.registry.createTypeUnsafe("SignerPayload", [objectSpread({}, {
+            address,
+            assetId: ext.assetId && ext.assetId.isSome ? ext.assetId.toHex() : null,
+            blockHash: payload.blockHash,
+            blockNumber: header ? header.number : 0,
+            era: ext.era.toHex(),
+            genesisHash: payload.genesisHash,
+            metadataHash: ext.metadataHash ? ext.metadataHash.toHex() : null,
+            method: ext.method.toHex(),
+            mode: ext.mode ? ext.mode.toHex() : null,
+            nonce: ext.nonce.toHex(),
+            runtimeVersion: payload.runtimeVersion,
+            signedExtensions: payload.signedExtensions,
+            tip: ext.tip ? ext.tip.toHex() : null,
+            version: payload.version
+          })]);
+          if (!ext.isSigned) {
+            throw new Error(`When using the signedTransaction field, the transaction must be signed. Recieved isSigned: ${ext.isSigned}`);
+          }
+          if (!allowCallDataAlteration) {
+            this.#validateSignedTransaction(payload, ext);
+          }
+          super.addSignature(address, result2.signature, newSignerPayload.toPayload());
+          return { id: result2.id, signedTransaction: result2.signedTransaction };
+        }
+      } else if (isFunction3(signer.signRaw)) {
+        result2 = await signer.signRaw(payload.toRaw());
+      } else {
+        throw new Error("Invalid signer interface, it should implement either signPayload or signRaw (or both)");
+      }
+      super.addSignature(address, result2.signature, payload.toPayload());
+      return { id: result2.id };
+    };
+    #updateSigner = (status3, info8) => {
+      if (info8 && info8.updateId !== -1) {
+        const { options: options5, updateId } = info8;
+        const signer = options5.signer || api.signer;
+        if (signer && isFunction3(signer.update)) {
+          signer.update(updateId, status3);
+        }
+      }
+    };
+    /**
+     * When a signer includes `signedTransaction` within the SignerResult this will validate
+     * specific fields within the signed extrinsic against the original payload that was passed
+     * to the signer.
+     */
+    #validateSignedTransaction = (signerPayload, signedExt) => {
+      const payload = signerPayload.toPayload();
+      const errMsg = (field) => `signAndSend: ${field} does not match the original payload`;
+      if (payload.method !== signedExt.method.toHex()) {
+        throw new Error(errMsg("call data"));
+      }
+    };
+  }
   return Submittable;
 }
 
@@ -158339,8 +157789,8 @@ function augmentObject(prefix2, src, dst, fromEmpty = false) {
 function sig({ lookup }, { method, section: section2 }, args2) {
   return `${section2}.${method}(${args2.map((a) => lookup.getTypeDef(a).type).join(", ")})`;
 }
-function extractStorageArgs(registry, creator, _args2) {
-  const args2 = _args2.filter((a) => !isUndefined2(a));
+function extractStorageArgs(registry, creator, _args) {
+  const args2 = _args.filter((a) => !isUndefined2(a));
   if (creator.meta.type.isPlain) {
     if (args2.length !== 0) {
       throw new Error(`${sig(registry, creator, [])} does not take any arguments, ${args2.length} found`);
@@ -158356,13 +157806,10 @@ function extractStorageArgs(registry, creator, _args2) {
 }
 
 // node_modules/@polkadot/api/base/Events.js
-var _eventemitter2;
 var Events = class {
-  constructor() {
-    __privateAdd(this, _eventemitter2, new import_index.default());
-  }
+  #eventemitter = new import_index.default();
   emit(type, ...args2) {
-    return __privateGet(this, _eventemitter2).emit(type, ...args2);
+    return this.#eventemitter.emit(type, ...args2);
   }
   /**
    * @description Attach an eventemitter handler to listen to a specific event
@@ -158384,7 +157831,7 @@ var Events = class {
    * ```
    */
   on(type, handler) {
-    __privateGet(this, _eventemitter2).on(type, handler);
+    this.#eventemitter.on(type, handler);
     return this;
   }
   /**
@@ -158409,7 +157856,7 @@ var Events = class {
    * ```
    */
   off(type, handler) {
-    __privateGet(this, _eventemitter2).removeListener(type, handler);
+    this.#eventemitter.removeListener(type, handler);
     return this;
   }
   /**
@@ -158432,11 +157879,10 @@ var Events = class {
    * ```
    */
   once(type, handler) {
-    __privateGet(this, _eventemitter2).once(type, handler);
+    this.#eventemitter.once(type, handler);
     return this;
   }
 };
-_eventemitter2 = new WeakMap();
 
 // node_modules/@polkadot/api/base/Decorate.js
 var PAGE_SIZE_K2 = 1e3;
@@ -158447,8 +157893,52 @@ var instanceCounter = 0;
 function getAtQueryFn(api, { method, section: section2 }) {
   return assertReturn(api.rx.query[section2] && api.rx.query[section2][method], () => `query.${section2}.${method} is not available in this version of the metadata`);
 }
-var _instanceId2, _runtimeLog, _registry, _storageGetQ, _storageSubQ;
 var Decorate = class extends Events {
+  #instanceId;
+  #runtimeLog = {};
+  #registry;
+  #storageGetQ = [];
+  #storageSubQ = [];
+  // HACK Use BN import so decorateDerive works... yes, wtf.
+  __phantom = new import_bn.default(0);
+  _type;
+  _call = {};
+  _consts = {};
+  _derive;
+  _errors = {};
+  _events = {};
+  _extrinsics;
+  _extrinsicType = GenericExtrinsic.LATEST_EXTRINSIC_VERSION;
+  _genesisHash;
+  _isConnected;
+  _isReady = false;
+  _query = {};
+  _queryMulti;
+  _rpc;
+  _rpcCore;
+  _runtimeMap = {};
+  _runtimeChain;
+  _runtimeMetadata;
+  _runtimeVersion;
+  _rx = { call: {}, consts: {}, query: {}, tx: {} };
+  _options;
+  /**
+   * This is the one and only method concrete children classes need to implement.
+   * It's a higher-order function, which takes one argument
+   * `method: Method extends (...args: any[]) => Observable<any>`
+   * (and one optional `options`), and should return the user facing method.
+   * For example:
+   * - For ApiRx, `decorateMethod` should just be identity, because the input
+   * function is already an Observable
+   * - For ApiPromise, `decorateMethod` should return a function that takes all
+   * the parameters from `method`, adds an optional `callback` argument, and
+   * returns a Promise.
+   *
+   * We could easily imagine other user-facing interfaces, which are simply
+   * implemented by transforming the Observable to Stream/Iterator/Kefir/Bacon
+   * via `decorateMethod`.
+   */
+  _decorateMethod;
   /**
    * @description Create an instance of the class
    *
@@ -158469,68 +157959,16 @@ var Decorate = class extends Events {
    */
   constructor(options5, type, decorateMethod) {
     super();
-    __privateAdd(this, _instanceId2);
-    __privateAdd(this, _runtimeLog, {});
-    __privateAdd(this, _registry);
-    __privateAdd(this, _storageGetQ, []);
-    __privateAdd(this, _storageSubQ, []);
-    // HACK Use BN import so decorateDerive works... yes, wtf.
-    __publicField(this, "__phantom", new import_bn.default(0));
-    __publicField(this, "_type");
-    __publicField(this, "_call", {});
-    __publicField(this, "_consts", {});
-    __publicField(this, "_derive");
-    __publicField(this, "_errors", {});
-    __publicField(this, "_events", {});
-    __publicField(this, "_extrinsics");
-    __publicField(this, "_extrinsicType", GenericExtrinsic.LATEST_EXTRINSIC_VERSION);
-    __publicField(this, "_genesisHash");
-    __publicField(this, "_isConnected");
-    __publicField(this, "_isReady", false);
-    __publicField(this, "_query", {});
-    __publicField(this, "_queryMulti");
-    __publicField(this, "_rpc");
-    __publicField(this, "_rpcCore");
-    __publicField(this, "_runtimeMap", {});
-    __publicField(this, "_runtimeChain");
-    __publicField(this, "_runtimeMetadata");
-    __publicField(this, "_runtimeVersion");
-    __publicField(this, "_rx", { call: {}, consts: {}, query: {}, tx: {} });
-    __publicField(this, "_options");
-    /**
-     * This is the one and only method concrete children classes need to implement.
-     * It's a higher-order function, which takes one argument
-     * `method: Method extends (...args: any[]) => Observable<any>`
-     * (and one optional `options`), and should return the user facing method.
-     * For example:
-     * - For ApiRx, `decorateMethod` should just be identity, because the input
-     * function is already an Observable
-     * - For ApiPromise, `decorateMethod` should return a function that takes all
-     * the parameters from `method`, adds an optional `callback` argument, and
-     * returns a Promise.
-     *
-     * We could easily imagine other user-facing interfaces, which are simply
-     * implemented by transforming the Observable to Stream/Iterator/Kefir/Bacon
-     * via `decorateMethod`.
-     */
-    __publicField(this, "_decorateMethod");
-    /**
-     * Put the `this.onCall` function of ApiRx here, because it is needed by
-     * `api._rx`.
-     */
-    __publicField(this, "_rxDecorateMethod", (method) => {
-      return method;
-    });
-    __privateSet(this, _instanceId2, `${++instanceCounter}`);
-    __privateSet(this, _registry, options5.source?.registry || options5.registry || new TypeRegistry());
+    this.#instanceId = `${++instanceCounter}`;
+    this.#registry = options5.source?.registry || options5.registry || new TypeRegistry();
     this._rx.callAt = (blockHash, knownVersion) => (0, import_rxjs90.from)(this.at(blockHash, knownVersion)).pipe((0, import_rxjs90.map)((a) => a.rx.call));
     this._rx.queryAt = (blockHash, knownVersion) => (0, import_rxjs90.from)(this.at(blockHash, knownVersion)).pipe((0, import_rxjs90.map)((a) => a.rx.query));
-    this._rx.registry = __privateGet(this, _registry);
+    this._rx.registry = this.#registry;
     this._decorateMethod = decorateMethod;
     this._options = options5;
     this._type = type;
     const provider = options5.source ? options5.source._rpcCore.provider.isClonable ? options5.source._rpcCore.provider.clone() : options5.source._rpcCore.provider : options5.provider || new WsProvider();
-    this._rpcCore = new RpcCore(__privateGet(this, _instanceId2), __privateGet(this, _registry), {
+    this._rpcCore = new RpcCore(this.#instanceId, this.#registry, {
       isPedantic: this._options.isPedantic,
       provider,
       rpcCacheCapacity: this._options.rpcCacheCapacity,
@@ -158544,19 +157982,19 @@ var Decorate = class extends Events {
    * @description Return the current used registry
    */
   get registry() {
-    return __privateGet(this, _registry);
+    return this.#registry;
   }
   /**
    * @description Creates an instance of a type as registered
    */
   createType(type, ...params) {
-    return __privateGet(this, _registry).createType(type, ...params);
+    return this.#registry.createType(type, ...params);
   }
   /**
    * @description Register additional user-defined of chain-specific types in the type registry
    */
   registerTypes(types2) {
-    types2 && __privateGet(this, _registry).register(types2);
+    types2 && this.#registry.register(types2);
   }
   /**
    * @returns `true` if the API operates with subscriptions
@@ -158642,7 +158080,7 @@ var Decorate = class extends Events {
    * backwards compatible endpoint for metadata injection, may be removed in the future (However, it is still useful for testing injection)
    */
   injectMetadata(metadata, fromEmpty, registry) {
-    this._injectMetadata({ counter: 0, metadata, registry: registry || __privateGet(this, _registry), runtimeVersion: __privateGet(this, _registry).createType("RuntimeVersionPartial") }, fromEmpty);
+    this._injectMetadata({ counter: 0, metadata, registry: registry || this.#registry, runtimeVersion: this.#registry.createType("RuntimeVersionPartial") }, fromEmpty);
   }
   _decorateFunctionMeta(input, output) {
     output.meta = input.meta;
@@ -158818,48 +158256,48 @@ var Decorate = class extends Events {
     const sections = isApiInMetadata ? this._getRuntimeDefsViaMetadata(registry) : this._getRuntimeDefs(registry, specName, this._runtimeChain);
     const older = [];
     const implName = `${specName.toString()}/${specVersion.toString()}`;
-    const hasLogged = __privateGet(this, _runtimeLog)[implName] || false;
-    __privateGet(this, _runtimeLog)[implName] = true;
+    const hasLogged = this.#runtimeLog[implName] || false;
+    this.#runtimeLog[implName] = true;
     if (isApiInMetadata) {
       for (let i = 0, scount = sections.length; i < scount; i++) {
-        const [_section3, secs] = sections[i];
+        const [_section, secs] = sections[i];
         const sec = secs[0];
-        const sectionHash = blake2AsHex(_section3, 64);
-        const section2 = stringCamelCase(_section3);
+        const sectionHash = blake2AsHex(_section, 64);
+        const section2 = stringCamelCase(_section);
         const methods = Object.entries(sec.methods);
         if (!named[section2]) {
           named[section2] = {};
         }
         for (let m = 0, mcount = methods.length; m < mcount; m++) {
-          const [_method3, def] = methods[m];
-          const method = stringCamelCase(_method3);
-          named[section2][method] = objectSpread({ method, name: `${_section3}_${_method3}`, section: section2, sectionHash }, def);
+          const [_method, def] = methods[m];
+          const method = stringCamelCase(_method);
+          named[section2][method] = objectSpread({ method, name: `${_section}_${_method}`, section: section2, sectionHash }, def);
         }
       }
     } else {
       for (let i = 0, scount = sections.length; i < scount; i++) {
-        const [_section3, secs] = sections[i];
-        const sectionHash = blake2AsHex(_section3, 64);
+        const [_section, secs] = sections[i];
+        const sectionHash = blake2AsHex(_section, 64);
         const rtApi = apis.find(([a]) => a.eq(sectionHash));
         hashes[sectionHash] = true;
         if (rtApi) {
           const all15 = secs.map(({ version: version3 }) => version3).sort();
           const sec = secs.find(({ version: version3 }) => rtApi[1].eq(version3));
           if (sec) {
-            const section2 = stringCamelCase(_section3);
+            const section2 = stringCamelCase(_section);
             const methods = Object.entries(sec.methods);
             if (methods.length) {
               if (!named[section2]) {
                 named[section2] = {};
               }
               for (let m = 0, mcount = methods.length; m < mcount; m++) {
-                const [_method3, def] = methods[m];
-                const method = stringCamelCase(_method3);
-                named[section2][method] = objectSpread({ method, name: `${_section3}_${_method3}`, section: section2, sectionHash }, def);
+                const [_method, def] = methods[m];
+                const method = stringCamelCase(_method);
+                named[section2][method] = objectSpread({ method, name: `${_section}_${_method}`, section: section2, sectionHash }, def);
               }
             }
           } else {
-            older.push(`${_section3}/${rtApi[1].toString()} (${all15.join("/")} known)`);
+            older.push(`${_section}/${rtApi[1].toString()} (${all15.join("/")} known)`);
           }
         }
       }
@@ -158929,7 +158367,7 @@ var Decorate = class extends Events {
     return result2;
   }
   _decorateStorageEntry(creator, decorateMethod) {
-    const getArgs = (args2, registry) => extractStorageArgs(registry || __privateGet(this, _registry), creator, args2);
+    const getArgs = (args2, registry) => extractStorageArgs(registry || this.#registry, creator, args2);
     const getQueryAt = (blockHash) => (0, import_rxjs90.from)(this.at(blockHash)).pipe((0, import_rxjs90.map)((api) => getAtQueryFn(api, creator)));
     const decorated = this._decorateStorageCall(creator, decorateMethod);
     decorated.creator = creator;
@@ -158941,12 +158379,12 @@ var Decorate = class extends Events {
     decorated.size = decorateMethod((...args2) => this._rpcCore.state.getStorageSize(getArgs(args2)));
     decorated.sizeAt = decorateMethod((blockHash, ...args2) => getQueryAt(blockHash).pipe((0, import_rxjs90.switchMap)((q) => this._rpcCore.state.getStorageSize(getArgs(args2, q.creator.meta.registry), blockHash))));
     if (creator.iterKey && creator.meta.type.isMap) {
-      decorated.entries = decorateMethod(memo2(__privateGet(this, _instanceId2), (...args2) => this._retrieveMapEntries(creator, null, args2)));
-      decorated.entriesAt = decorateMethod(memo2(__privateGet(this, _instanceId2), (blockHash, ...args2) => getQueryAt(blockHash).pipe((0, import_rxjs90.switchMap)((q) => this._retrieveMapEntries(q.creator, blockHash, args2)))));
-      decorated.entriesPaged = decorateMethod(memo2(__privateGet(this, _instanceId2), (opts) => this._retrieveMapEntriesPaged(creator, void 0, opts)));
-      decorated.keys = decorateMethod(memo2(__privateGet(this, _instanceId2), (...args2) => this._retrieveMapKeys(creator, null, args2)));
-      decorated.keysAt = decorateMethod(memo2(__privateGet(this, _instanceId2), (blockHash, ...args2) => getQueryAt(blockHash).pipe((0, import_rxjs90.switchMap)((q) => this._retrieveMapKeys(q.creator, blockHash, args2)))));
-      decorated.keysPaged = decorateMethod(memo2(__privateGet(this, _instanceId2), (opts) => this._retrieveMapKeysPaged(creator, void 0, opts)));
+      decorated.entries = decorateMethod(memo2(this.#instanceId, (...args2) => this._retrieveMapEntries(creator, null, args2)));
+      decorated.entriesAt = decorateMethod(memo2(this.#instanceId, (blockHash, ...args2) => getQueryAt(blockHash).pipe((0, import_rxjs90.switchMap)((q) => this._retrieveMapEntries(q.creator, blockHash, args2)))));
+      decorated.entriesPaged = decorateMethod(memo2(this.#instanceId, (opts) => this._retrieveMapEntriesPaged(creator, void 0, opts)));
+      decorated.keys = decorateMethod(memo2(this.#instanceId, (...args2) => this._retrieveMapKeys(creator, null, args2)));
+      decorated.keysAt = decorateMethod(memo2(this.#instanceId, (blockHash, ...args2) => getQueryAt(blockHash).pipe((0, import_rxjs90.switchMap)((q) => this._retrieveMapKeys(q.creator, blockHash, args2)))));
+      decorated.keysPaged = decorateMethod(memo2(this.#instanceId, (opts) => this._retrieveMapKeysPaged(creator, void 0, opts)));
     }
     if (this.supportMulti && creator.meta.type.isMap) {
       decorated.multi = decorateMethod((args2) => creator.meta.type.asMap.hashers.length === 1 ? this._retrieveMulti(args2.map((a) => [creator, [a]])) : this._retrieveMulti(args2.map((a) => [creator, a])));
@@ -158963,10 +158401,10 @@ var Decorate = class extends Events {
     decorated.keyPrefix = (...keys7) => u8aToHex(creator.keyPrefix(...keys7));
     decorated.size = decorateMethod((...args2) => this._rpcCore.state.getStorageSize(getArgs(args2), blockHash));
     if (creator.iterKey && creator.meta.type.isMap) {
-      decorated.entries = decorateMethod(memo2(__privateGet(this, _instanceId2), (...args2) => this._retrieveMapEntries(creator, blockHash, args2)));
-      decorated.entriesPaged = decorateMethod(memo2(__privateGet(this, _instanceId2), (opts) => this._retrieveMapEntriesPaged(creator, blockHash, opts)));
-      decorated.keys = decorateMethod(memo2(__privateGet(this, _instanceId2), (...args2) => this._retrieveMapKeys(creator, blockHash, args2)));
-      decorated.keysPaged = decorateMethod(memo2(__privateGet(this, _instanceId2), (opts) => this._retrieveMapKeysPaged(creator, blockHash, opts)));
+      decorated.entries = decorateMethod(memo2(this.#instanceId, (...args2) => this._retrieveMapEntries(creator, blockHash, args2)));
+      decorated.entriesPaged = decorateMethod(memo2(this.#instanceId, (opts) => this._retrieveMapEntriesPaged(creator, blockHash, opts)));
+      decorated.keys = decorateMethod(memo2(this.#instanceId, (...args2) => this._retrieveMapKeys(creator, blockHash, args2)));
+      decorated.keysPaged = decorateMethod(memo2(this.#instanceId, (opts) => this._retrieveMapKeysPaged(creator, blockHash, opts)));
     }
     if (this.supportMulti && creator.meta.type.isMap) {
       decorated.multi = decorateMethod((args2) => creator.meta.type.asMap.hashers.length === 1 ? this._retrieveMulti(args2.map((a) => [creator, [a]]), blockHash) : this._retrieveMulti(args2.map((a) => [creator, a]), blockHash));
@@ -158974,7 +158412,7 @@ var Decorate = class extends Events {
     return this._decorateFunctionMeta(creator, decorated);
   }
   _queueStorage(call, queue) {
-    const query2 = queue === __privateGet(this, _storageSubQ) ? this._rpcCore.state.subscribeStorage : this._rpcCore.state.queryStorageAt;
+    const query2 = queue === this.#storageSubQ ? this._rpcCore.state.subscribeStorage : this._rpcCore.state.queryStorageAt;
     let queueIdx = queue.length - 1;
     let valueIdx = 0;
     let valueObs;
@@ -159006,16 +158444,16 @@ var Decorate = class extends Events {
   // Decorate the base storage call. In the case or rxjs or promise-without-callback (await)
   // we make a subscription, alternatively we push this through a single-shot query
   _decorateStorageCall(creator, decorateMethod) {
-    const memoed = memo2(__privateGet(this, _instanceId2), (...args2) => {
-      const call = extractStorageArgs(__privateGet(this, _registry), creator, args2);
+    const memoed = memo2(this.#instanceId, (...args2) => {
+      const call = extractStorageArgs(this.#registry, creator, args2);
       if (!this.hasSubscriptions) {
         return this._rpcCore.state.getStorage(call);
       }
-      return this._queueStorage(call, __privateGet(this, _storageSubQ));
+      return this._queueStorage(call, this.#storageSubQ);
     });
     return decorateMethod(memoed, {
       methodName: creator.method,
-      overrideNoSub: (...args2) => this._queueStorage(extractStorageArgs(__privateGet(this, _registry), creator, args2), __privateGet(this, _storageGetQ))
+      overrideNoSub: (...args2) => this._queueStorage(extractStorageArgs(this.#registry, creator, args2), this.#storageGetQ)
     });
   }
   // retrieve a set of values for a specific set of keys - here we chunk the keys into PAGE_SIZE sizes
@@ -159066,18 +158504,20 @@ var Decorate = class extends Events {
   }
   _decorateDeriveRx(decorateMethod) {
     const specName = this._runtimeVersion?.specName.toString();
-    const available = getAvailableDerives(__privateGet(this, _instanceId2), this._rx, objectSpread({}, this._options.derives, this._options.typesBundle?.spec?.[specName || ""]?.derives));
+    const available = getAvailableDerives(this.#instanceId, this._rx, objectSpread({}, this._options.derives, this._options.typesBundle?.spec?.[specName || ""]?.derives));
     return decorateDeriveSections(decorateMethod, available);
   }
   _decorateDerive(decorateMethod) {
     return decorateDeriveSections(decorateMethod, this._rx.derive);
   }
+  /**
+   * Put the `this.onCall` function of ApiRx here, because it is needed by
+   * `api._rx`.
+   */
+  _rxDecorateMethod = (method) => {
+    return method;
+  };
 };
-_instanceId2 = new WeakMap();
-_runtimeLog = new WeakMap();
-_registry = new WeakMap();
-_storageGetQ = new WeakMap();
-_storageSubQ = new WeakMap();
 
 // node_modules/@polkadot/api/base/Init.js
 var KEEPALIVE_INTERVAL = 1e4;
@@ -159086,21 +158526,19 @@ var l12 = logger("api/init");
 function textToString(t) {
   return t.toString();
 }
-var _atLast, _healthTimer, _registries, _updateSub, _waitingRegistries, _Init_instances, onProviderConnect_fn, onProviderDisconnect_fn, onProviderError_fn;
 var Init = class extends Decorate {
+  #atLast = null;
+  #healthTimer = null;
+  #registries = [];
+  #updateSub = null;
+  #waitingRegistries = {};
   constructor(options5, type, decorateMethod) {
     super(options5, type, decorateMethod);
-    __privateAdd(this, _Init_instances);
-    __privateAdd(this, _atLast, null);
-    __privateAdd(this, _healthTimer, null);
-    __privateAdd(this, _registries, []);
-    __privateAdd(this, _updateSub, null);
-    __privateAdd(this, _waitingRegistries, {});
     this.registry.setKnownTypes(options5);
     if (!options5.source) {
       this.registerTypes(options5.types);
     } else {
-      __privateSet(this, _registries, __privateGet(options5.source, _registries));
+      this.#registries = options5.source.#registries;
     }
     this._rpc = this._decorateRpc(this._rpcCore, this._decorateMethod);
     this._rx.rpc = this._decorateRpc(this._rpcCore, this._rxDecorateMethod);
@@ -159112,14 +158550,14 @@ var Init = class extends Decorate {
     this._rpcCore.setRegistrySwap((blockHash) => this.getBlockRegistry(blockHash));
     this._rpcCore.setResolveBlockHash((blockNumber) => (0, import_rxjs91.firstValueFrom)(this._rpcCore.chain.getBlockHash(blockNumber)));
     if (this.hasSubscriptions) {
-      this._rpcCore.provider.on("disconnected", () => __privateMethod(this, _Init_instances, onProviderDisconnect_fn).call(this));
-      this._rpcCore.provider.on("error", (e) => __privateMethod(this, _Init_instances, onProviderError_fn).call(this, e));
-      this._rpcCore.provider.on("connected", () => __privateMethod(this, _Init_instances, onProviderConnect_fn).call(this));
+      this._rpcCore.provider.on("disconnected", () => this.#onProviderDisconnect());
+      this._rpcCore.provider.on("error", (e) => this.#onProviderError(e));
+      this._rpcCore.provider.on("connected", () => this.#onProviderConnect());
     } else if (!this._options.noInitWarn) {
       l12.warn("Api will be available in a limited mode since the provider does not support subscriptions");
     }
     if (this._rpcCore.provider.isConnected) {
-      __privateMethod(this, _Init_instances, onProviderConnect_fn).call(this).catch(noop);
+      this.#onProviderConnect().catch(noop);
     }
   }
   /**
@@ -159140,7 +158578,7 @@ var Init = class extends Decorate {
    * @description Returns the default versioned registry
    */
   _getDefaultRegistry() {
-    return assertReturn(__privateGet(this, _registries).find(({ isDefault }) => isDefault), "Initialization error, cannot find the default registry");
+    return assertReturn(this.#registries.find(({ isDefault }) => isDefault), "Initialization error, cannot find the default registry");
   }
   /**
    * @description Returns a decorated API instance at a specific point in time
@@ -159149,10 +158587,10 @@ var Init = class extends Decorate {
     const u8aHash = u8aToU8a(blockHash);
     const u8aHex = u8aToHex(u8aHash);
     const registry = await this.getBlockRegistry(u8aHash, knownVersion);
-    if (!__privateGet(this, _atLast) || __privateGet(this, _atLast)[0] !== u8aHex) {
-      __privateSet(this, _atLast, [u8aHex, this._createDecorated(registry, true, null, u8aHash).decoratedApi]);
+    if (!this.#atLast || this.#atLast[0] !== u8aHex) {
+      this.#atLast = [u8aHex, this._createDecorated(registry, true, null, u8aHash).decoratedApi];
     }
-    return __privateGet(this, _atLast)[1];
+    return this.#atLast[1];
   }
   async _createBlockRegistry(blockHash, header, version3) {
     const registry = new TypeRegistry(blockHash);
@@ -159163,18 +158601,18 @@ var Init = class extends Decorate {
     }
     this._initRegistry(registry, runtimeChain, version3, metadata);
     const result2 = { counter: 0, lastBlockHash: blockHash, metadata, registry, runtimeVersion: version3 };
-    __privateGet(this, _registries).push(result2);
+    this.#registries.push(result2);
     return result2;
   }
   _cacheBlockRegistryProgress(key, creator) {
-    let waiting = __privateGet(this, _waitingRegistries)[key];
+    let waiting = this.#waitingRegistries[key];
     if (isUndefined2(waiting)) {
-      waiting = __privateGet(this, _waitingRegistries)[key] = new Promise((resolve, reject) => {
+      waiting = this.#waitingRegistries[key] = new Promise((resolve, reject) => {
         creator().then((registry) => {
-          delete __privateGet(this, _waitingRegistries)[key];
+          delete this.#waitingRegistries[key];
           resolve(registry);
         }).catch((error4) => {
-          delete __privateGet(this, _waitingRegistries)[key];
+          delete this.#waitingRegistries[key];
           reject(error4);
         });
       });
@@ -159183,7 +158621,7 @@ var Init = class extends Decorate {
   }
   _getBlockRegistryViaVersion(blockHash, version3) {
     if (version3) {
-      const existingViaVersion = __privateGet(this, _registries).find(({ runtimeVersion: { specName, specVersion } }) => specName.eq(version3.specName) && specVersion.eq(version3.specVersion));
+      const existingViaVersion = this.#registries.find(({ runtimeVersion: { specName, specVersion } }) => specName.eq(version3.specName) && specVersion.eq(version3.specVersion));
       if (existingViaVersion) {
         existingViaVersion.counter++;
         existingViaVersion.lastBlockHash = blockHash;
@@ -159215,7 +158653,7 @@ var Init = class extends Decorate {
   async getBlockRegistry(blockHash, knownVersion) {
     return (
       // try to find via blockHash
-      __privateGet(this, _registries).find(({ lastBlockHash }) => lastBlockHash && u8aEq(lastBlockHash, blockHash)) || // try to find via version
+      this.#registries.find(({ lastBlockHash }) => lastBlockHash && u8aEq(lastBlockHash, blockHash)) || // try to find via version
       this._getBlockRegistryViaVersion(blockHash, knownVersion) || // return new or in-flight result
       await this._cacheBlockRegistryProgress(u8aToHex(blockHash), () => this._getBlockRegistryViaHash(blockHash))
     );
@@ -159250,10 +158688,10 @@ var Init = class extends Decorate {
   }
   // subscribe to metadata updates, inject the types on changes
   _subscribeUpdates() {
-    if (__privateGet(this, _updateSub) || !this.hasSubscriptions) {
+    if (this.#updateSub || !this.hasSubscriptions) {
       return;
     }
-    __privateSet(this, _updateSub, this._rpcCore.state.subscribeRuntimeVersion().pipe((0, import_rxjs91.switchMap)((version3) => (
+    this.#updateSub = this._rpcCore.state.subscribeRuntimeVersion().pipe((0, import_rxjs91.switchMap)((version3) => (
       // only retrieve the metadata when the on-chain version has been changed
       this._runtimeVersion?.specVersion.eq(version3.specVersion) ? (0, import_rxjs91.of)(false) : this._rpcCore.state.getMetadata().pipe((0, import_rxjs91.map)((metadata) => {
         l12.log(`Runtime version updated to spec=${version3.specVersion.toString()}, tx=${version3.transactionVersion.toString()}`);
@@ -159271,7 +158709,7 @@ var Init = class extends Decorate {
         this._injectMetadata(thisRegistry, true);
         return true;
       }))
-    ))).subscribe());
+    ))).subscribe();
   }
   async _metaFromChain(optMetadata) {
     const [genesisHash, runtimeVersion, chain3, chainProps, rpcMethods] = await Promise.all([
@@ -159289,8 +158727,8 @@ var Init = class extends Decorate {
     this._initRegistry(this.registry, chain3, runtimeVersion, metadata, chainProps);
     this._filterRpc(rpcMethods.methods.map(textToString), getSpecRpc(this.registry, chain3, runtimeVersion.specName));
     this._subscribeUpdates();
-    if (!__privateGet(this, _registries).length) {
-      __privateGet(this, _registries).push({ counter: 0, isDefault: true, metadata, registry: this.registry, runtimeVersion });
+    if (!this.#registries.length) {
+      this.#registries.push({ counter: 0, isDefault: true, metadata, registry: this.registry, runtimeVersion });
     }
     metadata.getUniqTypes(this._options.throwOnUnknown || false);
     return [genesisHash, metadata];
@@ -159351,57 +158789,51 @@ var Init = class extends Decorate {
   }
   _subscribeHealth() {
     this._unsubscribeHealth();
-    __privateSet(this, _healthTimer, this.hasSubscriptions ? setInterval(() => {
+    this.#healthTimer = this.hasSubscriptions ? setInterval(() => {
       (0, import_rxjs91.firstValueFrom)(this._rpcCore.system.health.raw()).catch(noop);
-    }, KEEPALIVE_INTERVAL) : null);
+    }, KEEPALIVE_INTERVAL) : null;
   }
   _unsubscribeHealth() {
-    if (__privateGet(this, _healthTimer)) {
-      clearInterval(__privateGet(this, _healthTimer));
-      __privateSet(this, _healthTimer, null);
+    if (this.#healthTimer) {
+      clearInterval(this.#healthTimer);
+      this.#healthTimer = null;
     }
   }
   _unsubscribeUpdates() {
-    if (__privateGet(this, _updateSub)) {
-      __privateGet(this, _updateSub).unsubscribe();
-      __privateSet(this, _updateSub, null);
+    if (this.#updateSub) {
+      this.#updateSub.unsubscribe();
+      this.#updateSub = null;
     }
   }
   _unsubscribe() {
     this._unsubscribeHealth();
     this._unsubscribeUpdates();
   }
-};
-_atLast = new WeakMap();
-_healthTimer = new WeakMap();
-_registries = new WeakMap();
-_updateSub = new WeakMap();
-_waitingRegistries = new WeakMap();
-_Init_instances = new WeakSet();
-onProviderConnect_fn = async function() {
-  this._isConnected.next(true);
-  this.emit("connected");
-  try {
-    const cryptoReady = this._options.initWasm === false ? true : await cryptoWaitReady();
-    const hasMeta = await this._loadMeta();
-    this._subscribeHealth();
-    if (hasMeta && !this._isReady && cryptoReady) {
-      this._isReady = true;
-      this.emit("ready", this);
+  async #onProviderConnect() {
+    this._isConnected.next(true);
+    this.emit("connected");
+    try {
+      const cryptoReady = this._options.initWasm === false ? true : await cryptoWaitReady();
+      const hasMeta = await this._loadMeta();
+      this._subscribeHealth();
+      if (hasMeta && !this._isReady && cryptoReady) {
+        this._isReady = true;
+        this.emit("ready", this);
+      }
+    } catch (_error) {
+      const error4 = new Error(`FATAL: Unable to initialize the API: ${_error.message}`);
+      l12.error(error4);
+      this.emit("error", error4);
     }
-  } catch (_error) {
-    const error4 = new Error(`FATAL: Unable to initialize the API: ${_error.message}`);
-    l12.error(error4);
+  }
+  #onProviderDisconnect() {
+    this._isConnected.next(false);
+    this._unsubscribe();
+    this.emit("disconnected");
+  }
+  #onProviderError(error4) {
     this.emit("error", error4);
   }
-};
-onProviderDisconnect_fn = function() {
-  this._isConnected.next(false);
-  this._unsubscribe();
-  this.emit("disconnected");
-};
-onProviderError_fn = function(error4) {
-  this.emit("error", error4);
 };
 
 // node_modules/@polkadot/api/base/Getters.js
@@ -159668,50 +159100,49 @@ var ApiBase = class extends Getters {
 };
 
 // node_modules/@polkadot/api/promise/Combinator.js
-var _allHasFired, _callback, _fired, _fns, _isActive, _results, _subscriptions2;
 var Combinator = class {
+  #allHasFired = false;
+  #callback;
+  #fired = [];
+  #fns = [];
+  #isActive = true;
+  #results = [];
+  #subscriptions = [];
   constructor(fns, callback) {
-    __privateAdd(this, _allHasFired, false);
-    __privateAdd(this, _callback);
-    __privateAdd(this, _fired, []);
-    __privateAdd(this, _fns, []);
-    __privateAdd(this, _isActive, true);
-    __privateAdd(this, _results, []);
-    __privateAdd(this, _subscriptions2, []);
-    __privateSet(this, _callback, callback);
-    __privateSet(this, _subscriptions2, fns.map(async (input, index) => {
+    this.#callback = callback;
+    this.#subscriptions = fns.map(async (input, index) => {
       const [fn2, ...args2] = Array.isArray(input) ? input : [input];
-      __privateGet(this, _fired).push(false);
-      __privateGet(this, _fns).push(fn2);
+      this.#fired.push(false);
+      this.#fns.push(fn2);
       return fn2(...args2, this._createCallback(index));
-    }));
+    });
   }
   _allHasFired() {
-    __privateGet(this, _allHasFired) || __privateSet(this, _allHasFired, __privateGet(this, _fired).filter((hasFired) => !hasFired).length === 0);
-    return __privateGet(this, _allHasFired);
+    this.#allHasFired ||= this.#fired.filter((hasFired) => !hasFired).length === 0;
+    return this.#allHasFired;
   }
   _createCallback(index) {
     return (value3) => {
-      __privateGet(this, _fired)[index] = true;
-      __privateGet(this, _results)[index] = value3;
+      this.#fired[index] = true;
+      this.#results[index] = value3;
       this._triggerUpdate();
     };
   }
   _triggerUpdate() {
-    if (!__privateGet(this, _isActive) || !isFunction3(__privateGet(this, _callback)) || !this._allHasFired()) {
+    if (!this.#isActive || !isFunction3(this.#callback) || !this._allHasFired()) {
       return;
     }
     try {
-      Promise.resolve(__privateGet(this, _callback).call(this, __privateGet(this, _results))).catch(noop);
+      Promise.resolve(this.#callback(this.#results)).catch(noop);
     } catch {
     }
   }
   unsubscribe() {
-    if (!__privateGet(this, _isActive)) {
+    if (!this.#isActive) {
       return;
     }
-    __privateSet(this, _isActive, false);
-    Promise.all(__privateGet(this, _subscriptions2).map(async (subscription) => {
+    this.#isActive = false;
+    Promise.all(this.#subscriptions.map(async (subscription) => {
       try {
         const unsubscribe = await subscription;
         if (isFunction3(unsubscribe)) {
@@ -159723,13 +159154,6 @@ var Combinator = class {
     });
   }
 };
-_allHasFired = new WeakMap();
-_callback = new WeakMap();
-_fired = new WeakMap();
-_fns = new WeakMap();
-_isActive = new WeakMap();
-_results = new WeakMap();
-_subscriptions2 = new WeakMap();
 
 // node_modules/@polkadot/api/promise/decorateMethod.js
 var import_rxjs92 = __toESM(require_cjs(), 1);
@@ -159785,8 +159209,9 @@ function toPromiseMethod(method, options5) {
 }
 
 // node_modules/@polkadot/api/promise/Api.js
-var _isReadyPromise2, _isReadyOrErrorPromise;
-var _ApiPromise = class _ApiPromise extends ApiBase {
+var ApiPromise = class _ApiPromise extends ApiBase {
+  #isReadyPromise;
+  #isReadyOrErrorPromise;
   /**
    * @description Creates an instance of the ApiPromise class
    * @param options Options to create an instance. This can be either [[ApiOptions]] or
@@ -159806,16 +159231,14 @@ var _ApiPromise = class _ApiPromise extends ApiBase {
    */
   constructor(options5) {
     super(options5, "promise", toPromiseMethod);
-    __privateAdd(this, _isReadyPromise2);
-    __privateAdd(this, _isReadyOrErrorPromise);
-    __privateSet(this, _isReadyPromise2, new Promise((resolve) => {
+    this.#isReadyPromise = new Promise((resolve) => {
       super.once("ready", () => resolve(this));
-    }));
-    __privateSet(this, _isReadyOrErrorPromise, new Promise((resolve, reject) => {
+    });
+    this.#isReadyOrErrorPromise = new Promise((resolve, reject) => {
       const tracker = promiseTracker(resolve, reject);
       super.once("ready", () => tracker.resolve(this));
       super.once("error", (error4) => tracker.reject(error4));
-    }));
+    });
   }
   /**
    * @description Creates an ApiPromise instance using the supplied provider. Returns an Promise containing the actual Api instance.
@@ -159846,13 +159269,13 @@ var _ApiPromise = class _ApiPromise extends ApiBase {
    * @description Promise that resolves the first time we are connected and loaded
    */
   get isReady() {
-    return __privateGet(this, _isReadyPromise2);
+    return this.#isReadyPromise;
   }
   /**
    * @description Promise that resolves if we can connect, or reject if there is an error
    */
   get isReadyOrError() {
-    return __privateGet(this, _isReadyOrErrorPromise);
+    return this.#isReadyOrErrorPromise;
   }
   /**
    * @description Returns a clone of this ApiPromise instance (new underlying provider connection)
@@ -159887,9 +159310,6 @@ var _ApiPromise = class _ApiPromise extends ApiBase {
     };
   }
 };
-_isReadyPromise2 = new WeakMap();
-_isReadyOrErrorPromise = new WeakMap();
-var ApiPromise = _ApiPromise;
 
 // node_modules/@midnight-ntwrk/wallet-sdk-node-client/dist/effect/PolkadotNodeClient.js
 var import_bn14 = __toESM(require_bn(), 1);
@@ -159901,84 +159321,7 @@ var makeConfig = (input) => ({
   ...DEFAULT_CONFIG,
   ...input
 });
-var _handleSubmissionResult;
-var _PolkadotNodeClient = class _PolkadotNodeClient {
-  constructor(config3, api) {
-    __publicField(this, "config");
-    __publicField(this, "api");
-    __privateAdd(this, _handleSubmissionResult, (serializedTransaction, emit2, unsubscribe) => {
-      const WithBNBlockNumber = Schema_exports.Struct({
-        blockNumber: Schema_exports.instanceOf(import_bn14.default)
-      });
-      const emitParseError = (error4) => emit2.fail(new ParseError3({
-        message: "Failed to parse result provided by node",
-        cause: error4
-      }));
-      const decodeBlockNumber = Schema_exports.decodeUnknownEither(WithBNBlockNumber, {
-        errors: "all",
-        onExcessProperty: "ignore"
-      });
-      return async (result2) => {
-        const status3 = result2.status;
-        if (status3.isReady || status3.isFuture || status3.isBroadcast || status3.isRetracted) {
-          await emit2.single(Submitted({ tx: serializedTransaction, txHash: result2.txHash.toString() }));
-        } else if (status3.isInBlock) {
-          await pipe(decodeBlockNumber(result2), Either_exports.match({
-            onLeft: emitParseError,
-            onRight: (parsed) => {
-              return emit2.single(InBlock({
-                tx: serializedTransaction,
-                blockHash: status3.asInBlock.toString(),
-                blockHeight: BigInt(parsed.blockNumber.toString(10)),
-                txHash: result2.txHash.toString()
-              }));
-            }
-          }));
-        } else if (status3.isFinalized) {
-          await pipe(decodeBlockNumber(result2), Either_exports.match({
-            onLeft: emitParseError,
-            onRight: (parsed) => {
-              return emit2.single(Finalized({
-                tx: serializedTransaction,
-                blockHash: status3.asFinalized.toString(),
-                blockHeight: BigInt(parsed.blockNumber.toString(10)),
-                txHash: result2.txHash.toString()
-              }));
-            }
-          }));
-          await emit2.end();
-          await unsubscribe();
-        } else if (status3.isFinalityTimeout) {
-          await emit2.fail(new TransactionProgressError({
-            message: "Transaction did not reach finality within expected time, likely consensus issues arised",
-            desiredStage: "Finalized",
-            txData: serializedTransaction
-          }));
-          await unsubscribe();
-        } else if (status3.isUsurped) {
-          await emit2.fail(new TransactionUsurpedError({
-            message: "Transaction got usurped (replaced by another one matching its discriminators like sender or nonce)",
-            txData: serializedTransaction
-          }));
-          await unsubscribe();
-        } else if (status3.isDropped) {
-          await emit2.fail(new TransactionDroppedError({
-            message: "Transaction got dropped, the mempool likely is full and network congested",
-            txData: serializedTransaction
-          }));
-          await unsubscribe();
-        } else if (status3.isInvalid) {
-          await emit2.fail(new TransactionInvalidError({
-            message: "Transaction is invalid and was rejected by the node",
-            txData: serializedTransaction
-          }));
-          await unsubscribe();
-        }
-      };
-    });
-    this.config = config3;
-    this.api = api;
-  }
+var PolkadotNodeClient = class _PolkadotNodeClient {
   static make(configInput) {
     const config3 = makeConfig(configInput);
     return Effect_exports.acquireRelease(Effect_exports.promise(async () => {
@@ -159994,6 +159337,12 @@ var _PolkadotNodeClient = class _PolkadotNodeClient {
   }
   static layer(configInput) {
     return Layer_exports.scoped(NodeClient, _PolkadotNodeClient.make(configInput));
+  }
+  config;
+  api;
+  constructor(config3, api) {
+    this.config = config3;
+    this.api = api;
   }
   ensureConnection() {
     return pipe(Effect_exports.promise(async () => {
@@ -160017,7 +159366,7 @@ var _PolkadotNodeClient = class _PolkadotNodeClient {
   sendMidnightTransaction(serializedTransaction) {
     const outputStream = Stream_exports.async((emit2) => {
       const callUnsubscribe = () => unsubscribeP.then((thunk) => thunk());
-      const unsubscribeP = this.api.tx.midnight.sendMnTransaction(u8aToHex(serializedTransaction)).send(__privateGet(this, _handleSubmissionResult).call(this, serializedTransaction, emit2, callUnsubscribe)).catch((err) => {
+      const unsubscribeP = this.api.tx.midnight.sendMnTransaction(u8aToHex(serializedTransaction)).send(this.#handleSubmissionResult(serializedTransaction, emit2, callUnsubscribe)).catch((err) => {
         return emit2.fail(new SubmissionError({
           message: "Transaction submission failed",
           txData: serializedTransaction,
@@ -160044,9 +159393,77 @@ var _PolkadotNodeClient = class _PolkadotNodeClient {
       Effect_exports.ensuring(Effect_exports.promise(() => this.api.disconnect()))
     );
   }
+  #handleSubmissionResult = (serializedTransaction, emit2, unsubscribe) => {
+    const WithBNBlockNumber = Schema_exports.Struct({
+      blockNumber: Schema_exports.instanceOf(import_bn14.default)
+    });
+    const emitParseError = (error4) => emit2.fail(new ParseError3({
+      message: "Failed to parse result provided by node",
+      cause: error4
+    }));
+    const decodeBlockNumber = Schema_exports.decodeUnknownEither(WithBNBlockNumber, {
+      errors: "all",
+      onExcessProperty: "ignore"
+    });
+    return async (result2) => {
+      const status3 = result2.status;
+      if (status3.isReady || status3.isFuture || status3.isBroadcast || status3.isRetracted) {
+        await emit2.single(Submitted({ tx: serializedTransaction, txHash: result2.txHash.toString() }));
+      } else if (status3.isInBlock) {
+        await pipe(decodeBlockNumber(result2), Either_exports.match({
+          onLeft: emitParseError,
+          onRight: (parsed) => {
+            return emit2.single(InBlock({
+              tx: serializedTransaction,
+              blockHash: status3.asInBlock.toString(),
+              blockHeight: BigInt(parsed.blockNumber.toString(10)),
+              txHash: result2.txHash.toString()
+            }));
+          }
+        }));
+      } else if (status3.isFinalized) {
+        await pipe(decodeBlockNumber(result2), Either_exports.match({
+          onLeft: emitParseError,
+          onRight: (parsed) => {
+            return emit2.single(Finalized({
+              tx: serializedTransaction,
+              blockHash: status3.asFinalized.toString(),
+              blockHeight: BigInt(parsed.blockNumber.toString(10)),
+              txHash: result2.txHash.toString()
+            }));
+          }
+        }));
+        await emit2.end();
+        await unsubscribe();
+      } else if (status3.isFinalityTimeout) {
+        await emit2.fail(new TransactionProgressError({
+          message: "Transaction did not reach finality within expected time, likely consensus issues arised",
+          desiredStage: "Finalized",
+          txData: serializedTransaction
+        }));
+        await unsubscribe();
+      } else if (status3.isUsurped) {
+        await emit2.fail(new TransactionUsurpedError({
+          message: "Transaction got usurped (replaced by another one matching its discriminators like sender or nonce)",
+          txData: serializedTransaction
+        }));
+        await unsubscribe();
+      } else if (status3.isDropped) {
+        await emit2.fail(new TransactionDroppedError({
+          message: "Transaction got dropped, the mempool likely is full and network congested",
+          txData: serializedTransaction
+        }));
+        await unsubscribe();
+      } else if (status3.isInvalid) {
+        await emit2.fail(new TransactionInvalidError({
+          message: "Transaction is invalid and was rejected by the node",
+          txData: serializedTransaction
+        }));
+        await unsubscribe();
+      }
+    };
+  };
 };
-_handleSubmissionResult = new WeakMap();
-var PolkadotNodeClient = _PolkadotNodeClient;
 
 // node_modules/@midnight-ntwrk/wallet-sdk-capabilities/dist/submission/submissionService.js
 var SubmissionError2 = class extends Data_exports.TaggedError("SubmissionError") {
@@ -160089,12 +159506,12 @@ var distributeFeeAcrossInputs = (inputs, fee) => inputs.reduce(({ result: result
   return { result: [...result2, { ...input, value: deduction }], remaining: remaining - deduction };
 }, { result: [], remaining: fee }).result;
 var TransactingCapabilityImplementation = class _TransactingCapabilityImplementation {
+  networkId;
+  costParams;
+  getCoinSelection;
+  getCoins;
+  getKeys;
   constructor(networkId, costParams, getCoinSelection, getCoins, getKeys) {
-    __publicField(this, "networkId");
-    __publicField(this, "costParams");
-    __publicField(this, "getCoinSelection");
-    __publicField(this, "getCoins");
-    __publicField(this, "getKeys");
     this.getCoins = getCoins;
     this.networkId = networkId;
     this.costParams = costParams;
@@ -160283,19 +159700,17 @@ var TransactingCapabilityImplementation = class _TransactingCapabilityImplementa
 };
 
 // node_modules/@midnight-ntwrk/wallet-sdk-dust-wallet/dist/v1/V1Builder.js
-var _buildState2, _V1Builder_instances, buildContextFromBuildState_fn;
-var _V1Builder = class _V1Builder {
+var V1Builder = class _V1Builder {
+  #buildState;
   constructor(buildState = {}) {
-    __privateAdd(this, _V1Builder_instances);
-    __privateAdd(this, _buildState2);
-    __privateSet(this, _buildState2, buildState);
+    this.#buildState = buildState;
   }
   withDefaults() {
     return this.withDefaultTransactionType().withSyncDefaults().withSerializationDefaults().withTransactingDefaults().withCoinsAndBalancesDefaults().withKeysDefaults().withCoinSelectionDefaults();
   }
   withTransactionType() {
     return new _V1Builder({
-      ...__privateGet(this, _buildState2),
+      ...this.#buildState,
       transactingCapability: void 0
     });
   }
@@ -160307,7 +159722,7 @@ var _V1Builder = class _V1Builder {
   }
   withSync(syncService, syncCapability) {
     return new _V1Builder({
-      ...__privateGet(this, _buildState2),
+      ...this.#buildState,
       syncService,
       syncCapability
     });
@@ -160317,7 +159732,7 @@ var _V1Builder = class _V1Builder {
   }
   withSerialization(serializationCapability) {
     return new _V1Builder({
-      ...__privateGet(this, _buildState2),
+      ...this.#buildState,
       serializationCapability
     });
   }
@@ -160326,13 +159741,13 @@ var _V1Builder = class _V1Builder {
   }
   withTransacting(transactingCapability) {
     return new _V1Builder({
-      ...__privateGet(this, _buildState2),
+      ...this.#buildState,
       transactingCapability
     });
   }
   withCoinSelection(coinSelection) {
     return new _V1Builder({
-      ...__privateGet(this, _buildState2),
+      ...this.#buildState,
       coinSelection
     });
   }
@@ -160344,7 +159759,7 @@ var _V1Builder = class _V1Builder {
   }
   withCoinsAndBalances(coinsAndBalancesCapability) {
     return new _V1Builder({
-      ...__privateGet(this, _buildState2),
+      ...this.#buildState,
       coinsAndBalancesCapability
     });
   }
@@ -160353,12 +159768,12 @@ var _V1Builder = class _V1Builder {
   }
   withKeys(keysCapability) {
     return new _V1Builder({
-      ...__privateGet(this, _buildState2),
+      ...this.#buildState,
       keysCapability
     });
   }
   build(configuration2) {
-    const v1Context = __privateMethod(this, _V1Builder_instances, buildContextFromBuildState_fn).call(this, configuration2);
+    const v1Context = this.#buildContextFromBuildState(configuration2);
     return {
       __polyTag__: V1Tag,
       coinsAndBalances: v1Context.coinsAndBalancesCapability,
@@ -160378,27 +159793,24 @@ var _V1Builder = class _V1Builder {
       }
     };
   }
-};
-_buildState2 = new WeakMap();
-_V1Builder_instances = new WeakSet();
-buildContextFromBuildState_fn = function(configuration2) {
-  if (!isBuildStateFull(__privateGet(this, _buildState2))) {
-    throw new Error("Not all components are configured in V1 Builder");
+  #buildContextFromBuildState(configuration2) {
+    if (!isBuildStateFull(this.#buildState)) {
+      throw new Error("Not all components are configured in V1 Builder");
+    }
+    const { syncCapability, syncService, transactingCapability, serializationCapability, coinSelection, coinsAndBalancesCapability, keysCapability } = this.#buildState;
+    const getContext = () => context10;
+    const context10 = {
+      serializationCapability: serializationCapability(configuration2, getContext),
+      syncCapability: syncCapability(configuration2, getContext),
+      syncService: syncService(configuration2, getContext),
+      transactingCapability: transactingCapability(configuration2, getContext),
+      coinsAndBalancesCapability: coinsAndBalancesCapability(configuration2, getContext),
+      keysCapability: keysCapability(configuration2, getContext),
+      coinSelection: coinSelection(configuration2, getContext)
+    };
+    return context10;
   }
-  const { syncCapability, syncService, transactingCapability, serializationCapability, coinSelection, coinsAndBalancesCapability, keysCapability } = __privateGet(this, _buildState2);
-  const getContext = () => context10;
-  const context10 = {
-    serializationCapability: serializationCapability(configuration2, getContext),
-    syncCapability: syncCapability(configuration2, getContext),
-    syncService: syncService(configuration2, getContext),
-    transactingCapability: transactingCapability(configuration2, getContext),
-    coinsAndBalancesCapability: coinsAndBalancesCapability(configuration2, getContext),
-    keysCapability: keysCapability(configuration2, getContext),
-    coinSelection: coinSelection(configuration2, getContext)
-  };
-  return context10;
 };
-var V1Builder = _V1Builder;
 var isBuildStateFull = (buildState) => {
   const allBuildStateKeys = [
     "syncService",
@@ -160413,15 +159825,13 @@ var isBuildStateFull = (buildState) => {
 };
 
 // node_modules/@midnight-ntwrk/wallet-sdk-dust-wallet/dist/DustWallet.js
-var _DustWalletState = class _DustWalletState {
-  constructor(state, capabilities) {
-    __publicField(this, "protocolVersion");
-    __publicField(this, "state");
-    __publicField(this, "capabilities");
-    this.protocolVersion = state.version;
-    this.state = state.state;
-    this.capabilities = capabilities;
-  }
+var DustWalletState = class _DustWalletState {
+  static mapState = (capabilities) => (state) => {
+    return new _DustWalletState(state, capabilities);
+  };
+  protocolVersion;
+  state;
+  capabilities;
   get totalCoins() {
     return this.capabilities.coinsAndBalances.getTotalCoins(this.state);
   }
@@ -160447,6 +159857,11 @@ var _DustWalletState = class _DustWalletState {
   get transactionHistory() {
     throw new Error("Transaction history is not yet implemented for DustWallet");
   }
+  constructor(state, capabilities) {
+    this.protocolVersion = state.version;
+    this.state = state.state;
+    this.capabilities = capabilities;
+  }
   balance(time3) {
     return this.capabilities.coinsAndBalances.getWalletBalance(this.state, time3);
   }
@@ -160460,18 +159875,9 @@ var _DustWalletState = class _DustWalletState {
     return this.capabilities.serialization.serialize(this.state);
   }
 };
-__publicField(_DustWalletState, "mapState", (capabilities) => (state) => {
-  return new _DustWalletState(state, capabilities);
-});
-var DustWalletState = _DustWalletState;
 function DustWallet(configuration2) {
   const BaseWallet = WalletBuilder.init().withVariant(ProtocolVersion_exports.MinSupportedVersion, new V1Builder().withDefaults()).build(configuration2);
   return class DustWalletImplementation extends BaseWallet {
-    constructor(runtime41, scope5) {
-      super(runtime41, scope5);
-      __publicField(this, "state");
-      this.state = this.rawState.pipe(rx2.map(DustWalletState.mapState(DustWalletImplementation.allVariantsRecord()[V1Tag].variant)), rx2.shareReplay({ refCount: true, bufferSize: 1 }));
-    }
     static startWithSeed(seed, dustParameters) {
       const dustSecretKey = DustSecretKey.fromSeed(seed);
       return DustWalletImplementation.startFirst(DustWalletImplementation, CoreWallet.initEmpty(dustParameters, dustSecretKey, configuration2.networkId));
@@ -160482,6 +159888,11 @@ function DustWallet(configuration2) {
     static restore(serializedState) {
       const deserialized = DustWalletImplementation.allVariantsRecord()[V1Tag].variant.deserializeState(serializedState).pipe(Either_exports.getOrThrow);
       return DustWalletImplementation.startFirst(DustWalletImplementation, deserialized);
+    }
+    state;
+    constructor(runtime41, scope5) {
+      super(runtime41, scope5);
+      this.state = this.rawState.pipe(rx2.map(DustWalletState.mapState(DustWalletImplementation.allVariantsRecord()[V1Tag].variant)), rx2.shareReplay({ refCount: true, bufferSize: 1 }));
     }
     start(secretKey) {
       return this.runtime.dispatch({ [V1Tag]: (v18) => v18.startSyncInBackground(secretKey) }).pipe(Effect_exports.runPromise);
@@ -160580,16 +159991,14 @@ var finalizedTransactionTrait = {
 
 // node_modules/@midnight-ntwrk/wallet-sdk-facade/dist/index.js
 var TokenKindsToBalance = new class {
-  constructor() {
-    __publicField(this, "allTokenKinds", ["shielded", "unshielded", "dust"]);
-    __publicField(this, "toFlags", (tokenKinds) => {
-      return pipe(tokenKinds, (kinds) => kinds === "all" ? this.allTokenKinds : kinds, (kinds) => ({
-        shouldBalanceUnshielded: kinds.includes("unshielded"),
-        shouldBalanceShielded: kinds.includes("shielded"),
-        shouldBalanceDust: kinds.includes("dust")
-      }));
-    });
-  }
+  allTokenKinds = ["shielded", "unshielded", "dust"];
+  toFlags = (tokenKinds) => {
+    return pipe(tokenKinds, (kinds) => kinds === "all" ? this.allTokenKinds : kinds, (kinds) => ({
+      shouldBalanceUnshielded: kinds.includes("unshielded"),
+      shouldBalanceShielded: kinds.includes("shielded"),
+      shouldBalanceDust: kinds.includes("dust")
+    }));
+  };
 }();
 var BalancingRecipe = {
   isRecipe: (value3) => {
@@ -160611,39 +160020,22 @@ var BalancingRecipe = {
   }
 };
 var FacadeState = class {
+  shielded;
+  unshielded;
+  dust;
+  pending;
+  get isSynced() {
+    return this.shielded.state.progress.isStrictlyComplete() && this.dust.state.progress.isStrictlyComplete() && this.unshielded.progress.isStrictlyComplete();
+  }
   constructor(shielded, unshielded, dust, pending3) {
-    __publicField(this, "shielded");
-    __publicField(this, "unshielded");
-    __publicField(this, "dust");
-    __publicField(this, "pending");
     this.shielded = shielded;
     this.unshielded = unshielded;
     this.dust = dust;
     this.pending = pending3;
   }
-  get isSynced() {
-    return this.shielded.state.progress.isStrictlyComplete() && this.dust.state.progress.isStrictlyComplete() && this.unshielded.progress.isStrictlyComplete();
-  }
 };
 var DEFAULT_TTL_MS = 60 * 60 * 1e3;
-var _pendingSubscription;
-var _WalletFacade = class _WalletFacade {
-  constructor(shieldedWallet, unshieldedWallet, dustWallet, submissionService, pendingTransactionsService, provingService) {
-    __publicField(this, "shielded");
-    __publicField(this, "unshielded");
-    __publicField(this, "dust");
-    __publicField(this, "submissionService");
-    __publicField(this, "pendingTransactionsService");
-    __publicField(this, "provingService");
-    __privateAdd(this, _pendingSubscription);
-    this.shielded = shieldedWallet;
-    this.unshielded = unshieldedWallet;
-    this.dust = dustWallet;
-    this.submissionService = submissionService;
-    this.pendingTransactionsService = pendingTransactionsService;
-    this.provingService = provingService;
-    __privateSet(this, _pendingSubscription, this.pendingTransactionsService.state().pipe((0, import_rxjs93.concatMap)((pending3) => pendingTransactions_exports.allFailed(pending3)), (0, import_rxjs93.concatMap)((item) => this.revert(item.tx))).subscribe());
-  }
+var WalletFacade = class _WalletFacade {
   static makeDefaultSubmissionService(config3) {
     return makeDefaultSubmissionService(config3);
   }
@@ -160696,6 +160088,22 @@ var _WalletFacade = class _WalletFacade {
     const unshielded = await Promise.resolve(initParams.unshielded(initParams.configuration));
     const dust = await Promise.resolve(initParams.dust(initParams.configuration));
     return new _WalletFacade(shielded, unshielded, dust, submissionService, pendingTransactionsService, provingService);
+  }
+  shielded;
+  unshielded;
+  dust;
+  submissionService;
+  pendingTransactionsService;
+  provingService;
+  #pendingSubscription;
+  constructor(shieldedWallet, unshieldedWallet, dustWallet, submissionService, pendingTransactionsService, provingService) {
+    this.shielded = shieldedWallet;
+    this.unshielded = unshieldedWallet;
+    this.dust = dustWallet;
+    this.submissionService = submissionService;
+    this.pendingTransactionsService = pendingTransactionsService;
+    this.provingService = provingService;
+    this.#pendingSubscription = this.pendingTransactionsService.state().pipe((0, import_rxjs93.concatMap)((pending3) => pendingTransactions_exports.allFailed(pending3)), (0, import_rxjs93.concatMap)((item) => this.revert(item.tx))).subscribe();
   }
   defaultTtl() {
     return new Date(Date.now() + DEFAULT_TTL_MS);
@@ -160986,12 +160394,10 @@ var _WalletFacade = class _WalletFacade {
       this.dust.stop(),
       this.submissionService.close(),
       this.pendingTransactionsService.stop(),
-      Promise.resolve(__privateGet(this, _pendingSubscription)?.unsubscribe())
+      Promise.resolve(this.#pendingSubscription?.unsubscribe())
     ]);
   }
 };
-_pendingSubscription = new WeakMap();
-var WalletFacade = _WalletFacade;
 
 // node_modules/@scure/bip32/node_modules/@noble/hashes/utils.js
 function isBytes4(a) {
@@ -161136,18 +160542,18 @@ function Maj2(a, b, c) {
   return a & b ^ a & c ^ b & c;
 }
 var HashMD2 = class {
+  blockLen;
+  outputLen;
+  padOffset;
+  isLE;
+  // For partial updates less than block size
+  buffer;
+  view;
+  finished = false;
+  length = 0;
+  pos = 0;
+  destroyed = false;
   constructor(blockLen, outputLen, padOffset, isLE2) {
-    __publicField(this, "blockLen");
-    __publicField(this, "outputLen");
-    __publicField(this, "padOffset");
-    __publicField(this, "isLE");
-    // For partial updates less than block size
-    __publicField(this, "buffer");
-    __publicField(this, "view");
-    __publicField(this, "finished", false);
-    __publicField(this, "length", 0);
-    __publicField(this, "pos", 0);
-    __publicField(this, "destroyed", false);
     this.blockLen = blockLen;
     this.outputLen = outputLen;
     this.padOffset = padOffset;
@@ -161215,7 +160621,7 @@ var HashMD2 = class {
     return res;
   }
   _cloneInto(to) {
-    to || (to = new this.constructor());
+    to ||= new this.constructor();
     to.set(...this.get());
     const { blockLen, buffer: buffer4, length: length5, finished, destroyed, pos } = this;
     to.destroyed = destroyed;
@@ -161425,18 +160831,18 @@ var SHA2_32B = class extends HashMD2 {
   }
 };
 var _SHA256 = class extends SHA2_32B {
+  // We cannot use array here since array allows indexing by variable
+  // which means optimizer/compiler cannot use registers.
+  A = SHA256_IV2[0] | 0;
+  B = SHA256_IV2[1] | 0;
+  C = SHA256_IV2[2] | 0;
+  D = SHA256_IV2[3] | 0;
+  E = SHA256_IV2[4] | 0;
+  F = SHA256_IV2[5] | 0;
+  G = SHA256_IV2[6] | 0;
+  H = SHA256_IV2[7] | 0;
   constructor() {
     super(32);
-    // We cannot use array here since array allows indexing by variable
-    // which means optimizer/compiler cannot use registers.
-    __publicField(this, "A", SHA256_IV2[0] | 0);
-    __publicField(this, "B", SHA256_IV2[1] | 0);
-    __publicField(this, "C", SHA256_IV2[2] | 0);
-    __publicField(this, "D", SHA256_IV2[3] | 0);
-    __publicField(this, "E", SHA256_IV2[4] | 0);
-    __publicField(this, "F", SHA256_IV2[5] | 0);
-    __publicField(this, "G", SHA256_IV2[6] | 0);
-    __publicField(this, "H", SHA256_IV2[7] | 0);
   }
 };
 var K512 = /* @__PURE__ */ (() => split7([
@@ -161621,24 +161027,24 @@ var SHA2_64B = class extends HashMD2 {
   }
 };
 var _SHA512 = class extends SHA2_64B {
+  Ah = SHA512_IV2[0] | 0;
+  Al = SHA512_IV2[1] | 0;
+  Bh = SHA512_IV2[2] | 0;
+  Bl = SHA512_IV2[3] | 0;
+  Ch = SHA512_IV2[4] | 0;
+  Cl = SHA512_IV2[5] | 0;
+  Dh = SHA512_IV2[6] | 0;
+  Dl = SHA512_IV2[7] | 0;
+  Eh = SHA512_IV2[8] | 0;
+  El = SHA512_IV2[9] | 0;
+  Fh = SHA512_IV2[10] | 0;
+  Fl = SHA512_IV2[11] | 0;
+  Gh = SHA512_IV2[12] | 0;
+  Gl = SHA512_IV2[13] | 0;
+  Hh = SHA512_IV2[14] | 0;
+  Hl = SHA512_IV2[15] | 0;
   constructor() {
     super(64);
-    __publicField(this, "Ah", SHA512_IV2[0] | 0);
-    __publicField(this, "Al", SHA512_IV2[1] | 0);
-    __publicField(this, "Bh", SHA512_IV2[2] | 0);
-    __publicField(this, "Bl", SHA512_IV2[3] | 0);
-    __publicField(this, "Ch", SHA512_IV2[4] | 0);
-    __publicField(this, "Cl", SHA512_IV2[5] | 0);
-    __publicField(this, "Dh", SHA512_IV2[6] | 0);
-    __publicField(this, "Dl", SHA512_IV2[7] | 0);
-    __publicField(this, "Eh", SHA512_IV2[8] | 0);
-    __publicField(this, "El", SHA512_IV2[9] | 0);
-    __publicField(this, "Fh", SHA512_IV2[10] | 0);
-    __publicField(this, "Fl", SHA512_IV2[11] | 0);
-    __publicField(this, "Gh", SHA512_IV2[12] | 0);
-    __publicField(this, "Gl", SHA512_IV2[13] | 0);
-    __publicField(this, "Hh", SHA512_IV2[14] | 0);
-    __publicField(this, "Hl", SHA512_IV2[15] | 0);
   }
 };
 var sha2562 = /* @__PURE__ */ createHasher2(
@@ -162016,17 +161422,17 @@ function nLength2(n, nBitLength) {
   return { nBitLength: _nBitLength, nByteLength };
 }
 var _Field = class {
+  ORDER;
+  BITS;
+  BYTES;
+  isLE;
+  ZERO = _0n8;
+  ONE = _1n8;
+  _lengths;
+  _sqrt;
+  // cached sqrt
+  _mod;
   constructor(ORDER, opts = {}) {
-    __publicField(this, "ORDER");
-    __publicField(this, "BITS");
-    __publicField(this, "BYTES");
-    __publicField(this, "isLE");
-    __publicField(this, "ZERO", _0n8);
-    __publicField(this, "ONE", _1n8);
-    __publicField(this, "_lengths");
-    __publicField(this, "_sqrt");
-    // cached sqrt
-    __publicField(this, "_mod");
     if (ORDER <= _0n8)
       throw new Error("invalid field: expected ORDER > 0, got " + ORDER);
     let _nbitLength = void 0;
@@ -162225,12 +161631,12 @@ function assert02(n) {
     throw new Error("invalid wNAF");
 }
 var wNAF2 = class {
+  BASE;
+  ZERO;
+  Fn;
+  bits;
   // Parametrized with a given Point class (not individual point)
   constructor(Point2, bits2) {
-    __publicField(this, "BASE");
-    __publicField(this, "ZERO");
-    __publicField(this, "Fn");
-    __publicField(this, "bits");
     this.BASE = Point2.BASE;
     this.ZERO = Point2.ZERO;
     this.Fn = Point2.Fn;
@@ -162392,8 +161798,8 @@ function createCurveFields(type, CURVE, curveOpts = {}, FpFnLE) {
   }
   const Fp = createField2(CURVE.p, curveOpts.Fp, FpFnLE);
   const Fn2 = createField2(CURVE.n, curveOpts.Fn, FpFnLE);
-  const _b37 = "b" ;
-  const params = ["Gx", "Gy", "a", _b37];
+  const _b = "b" ;
+  const params = ["Gx", "Gy", "a", _b];
   for (const p of params) {
     if (!Fp.isValid(CURVE[p]))
       throw new Error(`CURVE.${p} must be valid field element of CURVE.Fp`);
@@ -162410,13 +161816,13 @@ function createKeygen(randomSecretKey, getPublicKey) {
 
 // node_modules/@scure/bip32/node_modules/@noble/hashes/hmac.js
 var _HMAC = class {
+  oHash;
+  iHash;
+  blockLen;
+  outputLen;
+  finished = false;
+  destroyed = false;
   constructor(hash3, key) {
-    __publicField(this, "oHash");
-    __publicField(this, "iHash");
-    __publicField(this, "blockLen");
-    __publicField(this, "outputLen");
-    __publicField(this, "finished", false);
-    __publicField(this, "destroyed", false);
     ahash2(hash3);
     abytes2(key, void 0, "key");
     this.iHash = hash3.create();
@@ -162456,7 +161862,7 @@ var _HMAC = class {
     return out;
   }
   _cloneInto(to) {
-    to || (to = Object.create(Object.getPrototypeOf(this), {}));
+    to ||= Object.create(Object.getPrototypeOf(this), {});
     const { oHash, iHash, finished, destroyed, blockLen, outputLen } = this;
     to = to;
     to.finished = finished;
@@ -162649,7 +162055,7 @@ function weierstrass2(params, extraOpts = {}) {
     if (!Fp.isOdd)
       throw new Error("compression is not supported: Field does not have .isOdd()");
   }
-  function pointToBytes(_c8, point, isCompressed) {
+  function pointToBytes(_c, point, isCompressed) {
     const { x, y } = point.toAffine();
     const bx = Fp.toBytes(x);
     abool(isCompressed, "isCompressed");
@@ -162765,12 +162171,21 @@ function weierstrass2(params, extraOpts = {}) {
     k2p = negateCt2(k2neg, k2p);
     return k1p.add(k2p);
   }
-  const _Point = class _Point {
+  class Point2 {
+    // base / generator point
+    static BASE = new Point2(CURVE.Gx, CURVE.Gy, Fp.ONE);
+    // zero / infinity / identity point
+    static ZERO = new Point2(Fp.ZERO, Fp.ONE, Fp.ZERO);
+    // 0, 1, 0
+    // math field
+    static Fp = Fp;
+    // scalar field
+    static Fn = Fn2;
+    X;
+    Y;
+    Z;
     /** Does NOT validate if the point is valid. Use `.assertValidity()`. */
     constructor(X, Y, Z) {
-      __publicField(this, "X");
-      __publicField(this, "Y");
-      __publicField(this, "Z");
       this.X = acoord("x", X);
       this.Y = acoord("y", Y, true);
       this.Z = acoord("z", Z);
@@ -162784,19 +162199,19 @@ function weierstrass2(params, extraOpts = {}) {
       const { x, y } = p || {};
       if (!p || !Fp.isValid(x) || !Fp.isValid(y))
         throw new Error("invalid affine point");
-      if (p instanceof _Point)
+      if (p instanceof Point2)
         throw new Error("projective point not allowed");
       if (Fp.is0(x) && Fp.is0(y))
-        return _Point.ZERO;
-      return new _Point(x, y, Fp.ONE);
+        return Point2.ZERO;
+      return new Point2(x, y, Fp.ONE);
     }
     static fromBytes(bytes4) {
-      const P = _Point.fromAffine(decodePoint(abytes2(bytes4, void 0, "point")));
+      const P = Point2.fromAffine(decodePoint(abytes2(bytes4, void 0, "point")));
       P.assertValidity();
       return P;
     }
     static fromHex(hex2) {
-      return _Point.fromBytes(hexToBytes2(hex2));
+      return Point2.fromBytes(hexToBytes2(hex2));
     }
     get x() {
       return this.toAffine().x;
@@ -162838,7 +162253,7 @@ function weierstrass2(params, extraOpts = {}) {
     }
     /** Flips point to one corresponding to (x, -y) in Affine coordinates. */
     negate() {
-      return new _Point(this.X, Fp.neg(this.Y), this.Z);
+      return new Point2(this.X, Fp.neg(this.Y), this.Z);
     }
     // Renes-Costello-Batina exception-free doubling formula.
     // There is 30% faster Jacobian formula, but it is not complete.
@@ -162880,7 +162295,7 @@ function weierstrass2(params, extraOpts = {}) {
       Z3 = Fp.mul(t2, t1);
       Z3 = Fp.add(Z3, Z3);
       Z3 = Fp.add(Z3, Z3);
-      return new _Point(X3, Y3, Z3);
+      return new Point2(X3, Y3, Z3);
     }
     // Renes-Costello-Batina exception-free addition formula.
     // There is 30% faster Jacobian formula, but it is not complete.
@@ -162933,13 +162348,13 @@ function weierstrass2(params, extraOpts = {}) {
       t0 = Fp.mul(t3, t1);
       Z3 = Fp.mul(t5, Z3);
       Z3 = Fp.add(Z3, t0);
-      return new _Point(X3, Y3, Z3);
+      return new Point2(X3, Y3, Z3);
     }
     subtract(other) {
       return this.add(other.negate());
     }
     is0() {
-      return this.equals(_Point.ZERO);
+      return this.equals(Point2.ZERO);
     }
     /**
      * Constant time multiplication.
@@ -162955,7 +162370,7 @@ function weierstrass2(params, extraOpts = {}) {
       if (!Fn2.isValidNot0(scalar))
         throw new Error("invalid scalar: out of range");
       let point, fake;
-      const mul = (n) => wnaf.cached(this, n, (p) => normalizeZ2(_Point, p));
+      const mul = (n) => wnaf.cached(this, n, (p) => normalizeZ2(Point2, p));
       if (endo2) {
         const { k1neg, k1, k2neg, k2 } = splitEndoScalarN(scalar);
         const { p: k1p, f: k1f } = mul(k1);
@@ -162967,7 +162382,7 @@ function weierstrass2(params, extraOpts = {}) {
         point = p;
         fake = f;
       }
-      return normalizeZ2(_Point, [point, fake])[0];
+      return normalizeZ2(Point2, [point, fake])[0];
     }
     /**
      * Non-constant-time multiplication. Uses double-and-add algorithm.
@@ -162980,14 +162395,14 @@ function weierstrass2(params, extraOpts = {}) {
       if (!Fn2.isValid(sc))
         throw new Error("invalid scalar: out of range");
       if (sc === _0n10 || p.is0())
-        return _Point.ZERO;
+        return Point2.ZERO;
       if (sc === _1n10)
         return p;
       if (wnaf.hasCache(this))
         return this.multiply(sc);
       if (endo2) {
         const { k1neg, k1, k2neg, k2 } = splitEndoScalarN(sc);
-        const { p1, p2 } = mulEndoUnsafe2(_Point, p, k1, k2);
+        const { p1, p2 } = mulEndoUnsafe2(Point2, p, k1, k2);
         return finishEndo(endo2.beta, p1, p2, k1neg, k2neg);
       } else {
         return wnaf.unsafe(p, sc);
@@ -163009,7 +162424,7 @@ function weierstrass2(params, extraOpts = {}) {
       if (cofactor === _1n10)
         return true;
       if (isTorsionFree)
-        return isTorsionFree(_Point, this);
+        return isTorsionFree(Point2, this);
       return wnaf.unsafe(this, CURVE_ORDER).is0();
     }
     clearCofactor() {
@@ -163017,7 +162432,7 @@ function weierstrass2(params, extraOpts = {}) {
       if (cofactor === _1n10)
         return this;
       if (clearCofactor)
-        return clearCofactor(_Point, this);
+        return clearCofactor(Point2, this);
       return this.multiplyUnsafe(cofactor);
     }
     isSmallOrder() {
@@ -163026,7 +162441,7 @@ function weierstrass2(params, extraOpts = {}) {
     toBytes(isCompressed = true) {
       abool(isCompressed, "isCompressed");
       this.assertValidity();
-      return encodePoint(_Point, this, isCompressed);
+      return encodePoint(Point2, this, isCompressed);
     }
     toHex(isCompressed = true) {
       return bytesToHex3(this.toBytes(isCompressed));
@@ -163034,17 +162449,7 @@ function weierstrass2(params, extraOpts = {}) {
     toString() {
       return `<Point ${this.is0() ? "ZERO" : this.toHex()}>`;
     }
-  };
-  // base / generator point
-  __publicField(_Point, "BASE", new _Point(CURVE.Gx, CURVE.Gy, Fp.ONE));
-  // zero / infinity / identity point
-  __publicField(_Point, "ZERO", new _Point(Fp.ZERO, Fp.ONE, Fp.ZERO));
-  // 0, 1, 0
-  // math field
-  __publicField(_Point, "Fp", Fp);
-  // scalar field
-  __publicField(_Point, "Fn", Fn2);
-  let Point2 = _Point;
+  }
   const bits2 = Fn2.BITS;
   const wnaf = new wNAF2(Point2, extraOpts.endo ? Math.ceil(bits2 / 2) : bits2);
   Point2.BASE.precompute(8);
@@ -163161,10 +162566,10 @@ function ecdsa2(Point2, hash3, ecdsaOpts = {}) {
     return abytes2(bytes4, sizer);
   }
   class Signature {
+    r;
+    s;
+    recovery;
     constructor(r, s, recovery) {
-      __publicField(this, "r");
-      __publicField(this, "s");
-      __publicField(this, "recovery");
       this.r = validateRS("r", r);
       this.s = validateRS("s", s);
       if (recovery != null) {
@@ -163467,13 +162872,13 @@ function ripemd_f(group5, x, y, z) {
 }
 var BUF_160 = /* @__PURE__ */ new Uint32Array(16);
 var _RIPEMD160 = class extends HashMD2 {
+  h0 = 1732584193 | 0;
+  h1 = 4023233417 | 0;
+  h2 = 2562383102 | 0;
+  h3 = 271733878 | 0;
+  h4 = 3285377520 | 0;
   constructor() {
     super(64, 20, 8, true);
-    __publicField(this, "h0", 1732584193 | 0);
-    __publicField(this, "h1", 4023233417 | 0);
-    __publicField(this, "h2", 2562383102 | 0);
-    __publicField(this, "h3", 271733878 | 0);
-    __publicField(this, "h4", 3285377520 | 0);
   }
   get() {
     const { h0, h1, h2, h3, h4 } = this;
@@ -163535,46 +162940,6 @@ var toU32 = (n) => {
   return buf;
 };
 var HDKey = class _HDKey {
-  constructor(opt) {
-    __publicField(this, "versions");
-    __publicField(this, "depth", 0);
-    __publicField(this, "index", 0);
-    __publicField(this, "chainCode", null);
-    __publicField(this, "parentFingerprint", 0);
-    __publicField(this, "_privateKey");
-    __publicField(this, "_publicKey");
-    __publicField(this, "pubHash");
-    if (!opt || typeof opt !== "object") {
-      throw new Error("HDKey.constructor must not be called directly");
-    }
-    this.versions = opt.versions || BITCOIN_VERSIONS;
-    this.depth = opt.depth || 0;
-    this.chainCode = opt.chainCode || null;
-    this.index = opt.index || 0;
-    this.parentFingerprint = opt.parentFingerprint || 0;
-    if (!this.depth) {
-      if (this.parentFingerprint || this.index) {
-        throw new Error("HDKey: zero depth with non-zero index/parent fingerprint");
-      }
-    }
-    if (this.depth > 255) {
-      throw new Error("HDKey: depth exceeds the serializable value 255");
-    }
-    if (opt.publicKey && opt.privateKey) {
-      throw new Error("HDKey: publicKey and privateKey at same time.");
-    }
-    if (opt.privateKey) {
-      if (!secp256k12.utils.isValidSecretKey(opt.privateKey))
-        throw new Error("Invalid private key");
-      this._privateKey = opt.privateKey;
-      this._publicKey = secp256k12.getPublicKey(opt.privateKey, true);
-    } else if (opt.publicKey) {
-      this._publicKey = Point.fromBytes(opt.publicKey).toBytes(true);
-    } else {
-      throw new Error("HDKey: no public or private key provided");
-    }
-    this.pubHash = hash160(this._publicKey);
-  }
   get fingerprint() {
     if (!this.pubHash) {
       throw new Error("No publicKey set!");
@@ -163640,6 +163005,46 @@ var HDKey = class _HDKey {
   }
   static fromJSON(json3) {
     return _HDKey.fromExtendedKey(json3.xpriv);
+  }
+  versions;
+  depth = 0;
+  index = 0;
+  chainCode = null;
+  parentFingerprint = 0;
+  _privateKey;
+  _publicKey;
+  pubHash;
+  constructor(opt) {
+    if (!opt || typeof opt !== "object") {
+      throw new Error("HDKey.constructor must not be called directly");
+    }
+    this.versions = opt.versions || BITCOIN_VERSIONS;
+    this.depth = opt.depth || 0;
+    this.chainCode = opt.chainCode || null;
+    this.index = opt.index || 0;
+    this.parentFingerprint = opt.parentFingerprint || 0;
+    if (!this.depth) {
+      if (this.parentFingerprint || this.index) {
+        throw new Error("HDKey: zero depth with non-zero index/parent fingerprint");
+      }
+    }
+    if (this.depth > 255) {
+      throw new Error("HDKey: depth exceeds the serializable value 255");
+    }
+    if (opt.publicKey && opt.privateKey) {
+      throw new Error("HDKey: publicKey and privateKey at same time.");
+    }
+    if (opt.privateKey) {
+      if (!secp256k12.utils.isValidSecretKey(opt.privateKey))
+        throw new Error("Invalid private key");
+      this._privateKey = opt.privateKey;
+      this._publicKey = secp256k12.getPublicKey(opt.privateKey, true);
+    } else if (opt.publicKey) {
+      this._publicKey = Point.fromBytes(opt.publicKey).toBytes(true);
+    } else {
+      throw new Error("HDKey: no public or private key provided");
+    }
+    this.pubHash = hash160(this._publicKey);
   }
   derive(path4) {
     if (!/^[mM]'?/.test(path4)) {
@@ -163775,8 +163180,8 @@ var CompositeDerivationResult = {
   }
 };
 var HDWallet = class _HDWallet {
+  rootKey;
   constructor(key) {
-    __publicField(this, "rootKey");
     this.rootKey = key;
   }
   static fromSeed(seed) {
@@ -163799,9 +163204,9 @@ var HDWallet = class _HDWallet {
   }
 };
 var AccountKey = class {
+  rootKey;
+  account;
   constructor(rootKey, account3) {
-    __publicField(this, "rootKey");
-    __publicField(this, "account");
     this.account = account3;
     this.rootKey = rootKey;
   }
@@ -163814,10 +163219,10 @@ var AccountKey = class {
   }
 };
 var RoleKey = class {
+  rootKey;
+  account;
+  role;
   constructor(rootKey, account3, role) {
-    __publicField(this, "rootKey");
-    __publicField(this, "account");
-    __publicField(this, "role");
     this.role = role;
     this.account = account3;
     this.rootKey = rootKey;
@@ -163830,10 +163235,10 @@ var RoleKey = class {
   }
 };
 var CompositeRoleKey = class {
+  rootKey;
+  account;
+  roles;
   constructor(rootKey, account3, roles) {
-    __publicField(this, "rootKey");
-    __publicField(this, "account");
-    __publicField(this, "roles");
     this.roles = roles;
     this.rootKey = rootKey;
     this.account = account3;
@@ -163904,17 +163309,16 @@ var protocolVersionChange2 = (previous2, current2) => {
   ] : [];
 };
 var V1Tag2 = /* @__PURE__ */ Symbol("V1");
-var _scope3, _context2, _v1Context2;
 var RunningV1Variant2 = class {
+  __polyTag__ = V1Tag2;
+  #scope;
+  #context;
+  #v1Context;
+  state;
   constructor(scope5, context10, v1Context) {
-    __publicField(this, "__polyTag__", V1Tag2);
-    __privateAdd(this, _scope3);
-    __privateAdd(this, _context2);
-    __privateAdd(this, _v1Context2);
-    __publicField(this, "state");
-    __privateSet(this, _scope3, scope5);
-    __privateSet(this, _context2, context10);
-    __privateSet(this, _v1Context2, v1Context);
+    this.#scope = scope5;
+    this.#context = context10;
+    this.#v1Context = v1Context;
     this.state = Stream_exports.fromEffect(context10.stateRef.get).pipe(Stream_exports.flatMap((initialState) => context10.stateRef.changes.pipe(Stream_exports.mapAccum(initialState, (previous2, current2) => {
       return [current2, [previous2, current2]];
     }))), Stream_exports.mapConcat(([previous2, current2]) => {
@@ -163926,12 +163330,12 @@ var RunningV1Variant2 = class {
     }));
   }
   startSyncInBackground(startAux) {
-    return this.startSync(startAux).pipe(Stream_exports.runScoped(Sink_exports.drain), Effect_exports.forkScoped, Effect_exports.provideService(Scope_exports.Scope, __privateGet(this, _scope3)));
+    return this.startSync(startAux).pipe(Stream_exports.runScoped(Sink_exports.drain), Effect_exports.forkScoped, Effect_exports.provideService(Scope_exports.Scope, this.#scope));
   }
   startSync(startAux) {
-    return pipe(SubscriptionRef_exports.get(__privateGet(this, _context2).stateRef), Stream_exports.fromEffect, Stream_exports.flatMap((state) => __privateGet(this, _v1Context2).syncService.updates(state, startAux)), Stream_exports.mapEffect((update7) => {
-      return SubscriptionRef_exports.updateEffect(__privateGet(this, _context2).stateRef, (state) => Effect_exports.try({
-        try: () => __privateGet(this, _v1Context2).syncCapability.applyUpdate(state, update7),
+    return pipe(SubscriptionRef_exports.get(this.#context.stateRef), Stream_exports.fromEffect, Stream_exports.flatMap((state) => this.#v1Context.syncService.updates(state, startAux)), Stream_exports.mapEffect((update7) => {
+      return SubscriptionRef_exports.updateEffect(this.#context.stateRef, (state) => Effect_exports.try({
+        try: () => this.#v1Context.syncCapability.applyUpdate(state, update7),
         catch: (err) => new OtherWalletError2({
           message: "Error while applying sync update",
           cause: err
@@ -163945,32 +163349,29 @@ var RunningV1Variant2 = class {
     }))));
   }
   balanceTransaction(secretKeys, tx) {
-    return SubscriptionRef_exports.modifyEffect(__privateGet(this, _context2).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context2).transactingCapability.balanceTransaction(secretKeys, state, tx), EitherOps_exports.toEffect);
+    return SubscriptionRef_exports.modifyEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.transactingCapability.balanceTransaction(secretKeys, state, tx), EitherOps_exports.toEffect);
     });
   }
   transferTransaction(secretKeys, outputs) {
-    return SubscriptionRef_exports.modifyEffect(__privateGet(this, _context2).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context2).transactingCapability.makeTransfer(secretKeys, state, outputs), EitherOps_exports.toEffect);
+    return SubscriptionRef_exports.modifyEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.transactingCapability.makeTransfer(secretKeys, state, outputs), EitherOps_exports.toEffect);
     });
   }
   initSwap(secretKeys, desiredInputs, desiredOutputs) {
-    return SubscriptionRef_exports.modifyEffect(__privateGet(this, _context2).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context2).transactingCapability.initSwap(secretKeys, state, desiredInputs, desiredOutputs), EitherOps_exports.toEffect);
+    return SubscriptionRef_exports.modifyEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.transactingCapability.initSwap(secretKeys, state, desiredInputs, desiredOutputs), EitherOps_exports.toEffect);
     });
   }
   revertTransaction(transaction) {
-    return SubscriptionRef_exports.updateEffect(__privateGet(this, _context2).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context2).transactingCapability.revertTransaction(state, transaction), EitherOps_exports.toEffect);
+    return SubscriptionRef_exports.updateEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.transactingCapability.revertTransaction(state, transaction), EitherOps_exports.toEffect);
     });
   }
   serializeState(state) {
-    return __privateGet(this, _v1Context2).serializationCapability.serialize(state);
+    return this.#v1Context.serializationCapability.serialize(state);
   }
 };
-_scope3 = new WeakMap();
-_context2 = new WeakMap();
-_v1Context2 = new WeakMap();
 
 // node_modules/@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoreWallet.js
 var PublicKeys = {
@@ -164272,91 +163673,85 @@ var ShieldedCostModel = {
   outputFeeOverhead: 0n
 };
 var TransactionImbalances = new class {
-  constructor() {
-    __publicField(this, "empty", () => {
-      return {
-        guaranteed: Imbalances.empty(),
-        fallible: Imbalances.empty()
-      };
-    });
-    __publicField(this, "areBalanced", (imbalances) => {
-      const areFallibleAllZeroes = imbalances.fallible.entries().every(([, value3]) => value3 === 0n);
-      const areGuaranteedAllZeroes = imbalances.guaranteed.entries().every(([, value3]) => value3 === 0n);
-      return areFallibleAllZeroes && areGuaranteedAllZeroes;
-    });
-  }
+  empty = () => {
+    return {
+      guaranteed: Imbalances.empty(),
+      fallible: Imbalances.empty()
+    };
+  };
+  areBalanced = (imbalances) => {
+    const areFallibleAllZeroes = imbalances.fallible.entries().every(([, value3]) => value3 === 0n);
+    const areGuaranteedAllZeroes = imbalances.guaranteed.entries().every(([, value3]) => value3 === 0n);
+    return areFallibleAllZeroes && areGuaranteedAllZeroes;
+  };
 }();
 
 // node_modules/@midnight-ntwrk/wallet-sdk-shielded/dist/v1/TransactionOps.js
 var TransactionOps = new class {
-  constructor() {
-    __publicField(this, "default", {
-      getImbalances(tx) {
-        return TransactionOps.shared.getImbalances(tx);
-      },
-      id(tx) {
-        return tx.identifiers().at(0);
-      }
-    });
-    __publicField(this, "proofErased", {
-      getImbalances(tx) {
-        return TransactionOps.shared.getImbalances(tx);
-      },
-      id(tx) {
-        return tx.identifiers().at(0);
-      }
-    });
-    __publicField(this, "unproven", {
-      getImbalances(tx) {
-        return TransactionOps.shared.getImbalances(tx);
-      },
-      id(tx) {
-        return tx.identifiers().at(0);
-      }
-    });
-    __publicField(this, "shared", {
-      getImbalances(tx) {
-        const guaranteedImbalances = TransactionOps.shared.getGuaranteedImbalances(tx);
-        const fallibleImbalances = TransactionOps.shared.getFallibleImbalances(tx);
-        return pipe({
-          guaranteed: guaranteedImbalances,
-          fallible: fallibleImbalances,
-          fees: 0n
-        });
-      },
-      getGuaranteedImbalances: (tx) => {
-        const rawGuaranteedImbalances = tx.imbalances(0).entries().filter(([token]) => token.tag === "shielded").map(([token, value3]) => {
+  default = {
+    getImbalances(tx) {
+      return TransactionOps.shared.getImbalances(tx);
+    },
+    id(tx) {
+      return tx.identifiers().at(0);
+    }
+  };
+  proofErased = {
+    getImbalances(tx) {
+      return TransactionOps.shared.getImbalances(tx);
+    },
+    id(tx) {
+      return tx.identifiers().at(0);
+    }
+  };
+  unproven = {
+    getImbalances(tx) {
+      return TransactionOps.shared.getImbalances(tx);
+    },
+    id(tx) {
+      return tx.identifiers().at(0);
+    }
+  };
+  shared = {
+    getImbalances(tx) {
+      const guaranteedImbalances = TransactionOps.shared.getGuaranteedImbalances(tx);
+      const fallibleImbalances = TransactionOps.shared.getFallibleImbalances(tx);
+      return pipe({
+        guaranteed: guaranteedImbalances,
+        fallible: fallibleImbalances,
+        fees: 0n
+      });
+    },
+    getGuaranteedImbalances: (tx) => {
+      const rawGuaranteedImbalances = tx.imbalances(0).entries().filter(([token]) => token.tag === "shielded").map(([token, value3]) => {
+        return [token.raw.toString(), value3];
+      });
+      return Imbalances.fromEntries(rawGuaranteedImbalances);
+    },
+    getFallibleImbalances: (tx) => {
+      try {
+        const rawFallibleImbalances = tx.imbalances(1).entries().filter(([token]) => token.tag === "shielded").map(([token, value3]) => {
           return [token.raw.toString(), value3];
         });
-        return Imbalances.fromEntries(rawGuaranteedImbalances);
-      },
-      getFallibleImbalances: (tx) => {
-        try {
-          const rawFallibleImbalances = tx.imbalances(1).entries().filter(([token]) => token.tag === "shielded").map(([token, value3]) => {
-            return [token.raw.toString(), value3];
-          });
-          return Imbalances.fromEntries(rawFallibleImbalances);
-        } catch {
-          return Imbalances.empty();
-        }
+        return Imbalances.fromEntries(rawFallibleImbalances);
+      } catch {
+        return Imbalances.empty();
       }
-    });
-  }
+    }
+  };
 }();
 
 // node_modules/@midnight-ntwrk/wallet-sdk-shielded/dist/v1/Transacting.js
 var makeDefaultTransactingCapability2 = (config3, getContext) => {
   return new TransactingCapabilityImplementation2(config3.networkId, () => getContext().coinSelection, () => getContext().coinsAndBalancesCapability, () => getContext().keysCapability, TransactionOps.default);
 };
-var _TransactingCapabilityImplementation_instances, prepareOffer_fn, balanceGuaranteedSection_fn, processDesiredOutputs_fn, processDesiredOutputsPossiblyEmpty_fn;
 var TransactingCapabilityImplementation2 = class {
+  networkId;
+  getCoinSelection;
+  txOps;
+  getCoins;
+  getKeys;
   constructor(networkId, getCoinSelection, getCoins, getKeys, txOps) {
-    __privateAdd(this, _TransactingCapabilityImplementation_instances);
-    __publicField(this, "networkId");
-    __publicField(this, "getCoinSelection");
-    __publicField(this, "txOps");
-    __publicField(this, "getCoins");
-    __publicField(this, "getKeys");
     this.getCoins = getCoins;
     this.networkId = networkId;
     this.getCoinSelection = getCoinSelection;
@@ -164371,7 +163766,7 @@ var TransactingCapabilityImplementation2 = class {
         return [void 0, state];
       }
       const { newState: afterFallible, offer: maybeFallible } = yield* this.balanceFallibleSection(secretKeys, state, initialImbalances, coinSelection);
-      const { newState: afterGuaranteed, offer: guaranteed } = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances, balanceGuaranteedSection_fn).call(this, secretKeys, afterFallible, initialImbalances, coinSelection, Imbalances.empty());
+      const { newState: afterGuaranteed, offer: guaranteed } = yield* this.#balanceGuaranteedSection(secretKeys, afterFallible, initialImbalances, coinSelection, Imbalances.empty());
       return [Transaction.fromParts(this.networkId, guaranteed, maybeFallible), afterGuaranteed];
     });
   }
@@ -164384,11 +163779,11 @@ var TransactingCapabilityImplementation2 = class {
         onNonEmpty: (nonEmpty) => Either_exports.right(nonEmpty)
       }));
       const networkId = this.networkId;
-      const { initialOffersAndCoins, selfCoins } = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances, processDesiredOutputs_fn).call(this, state, positiveTransfers);
+      const { initialOffersAndCoins, selfCoins } = yield* this.#processDesiredOutputs(state, positiveTransfers);
       const offerToBalance = pipe(initialOffersAndCoins, Array_exports.map((o) => o.outputOffer), ArrayOps_exports.fold((a, b) => a.merge(b)));
       const unprovenTxToBalance = Transaction.fromParts(networkId, offerToBalance);
       const imbalances = TransactionOps.unproven.getImbalances(unprovenTxToBalance);
-      const { offer: offer6, newState } = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances, balanceGuaranteedSection_fn).call(this, secretKeys, state, imbalances, this.getCoinSelection(), Imbalances.empty());
+      const { offer: offer6, newState } = yield* this.#balanceGuaranteedSection(secretKeys, state, imbalances, this.getCoinSelection(), Imbalances.empty());
       const finalState = CoreWallet2.watchCoins(newState, secretKeys, selfCoins);
       const finalTx = unprovenTxToBalance.merge(Transaction.fromParts(networkId, offer6));
       return [finalTx, finalState];
@@ -164408,10 +163803,10 @@ var TransactingCapabilityImplementation2 = class {
           message: "The input amounts need to be positive"
         }));
       }
-      const outputsParseResult = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances, processDesiredOutputsPossiblyEmpty_fn).call(this, state, desiredOutputs);
+      const outputsParseResult = yield* this.#processDesiredOutputsPossiblyEmpty(state, desiredOutputs);
       const inputsParseResult = Imbalances.fromEntries(Record_exports.toEntries(desiredInputs));
       const networkId = this.networkId;
-      const { offer: offer6, newState } = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances, balanceGuaranteedSection_fn).call(this, secretKeys, state, TransactionImbalances.empty(), this.getCoinSelection(), inputsParseResult);
+      const { offer: offer6, newState } = yield* this.#balanceGuaranteedSection(secretKeys, state, TransactionImbalances.empty(), this.getCoinSelection(), inputsParseResult);
       const finalState = CoreWallet2.watchCoins(newState, secretKeys, outputsParseResult.selfCoins);
       const balancingTx = Transaction.fromParts(networkId, offer6);
       const finalTx = outputsParseResult.unprovenTxToBalance ? outputsParseResult.unprovenTxToBalance.merge(balancingTx) : balancingTx;
@@ -164431,6 +163826,18 @@ var TransactingCapabilityImplementation2 = class {
       }
     });
   }
+  #prepareOffer(secretKeys, state, recipe, segment) {
+    const [inputOffers, stateAfterSpends] = CoreWallet2.spendCoins(state, secretKeys, recipe.inputs, segment);
+    const stateAfterWatches = CoreWallet2.watchCoins(stateAfterSpends, secretKeys, recipe.outputs);
+    const outputOffers = recipe.outputs.map((coin) => {
+      const output = ZswapOutput.new(coin, segment, this.getKeys().getCoinPublicKey(state).toHexString(), this.getKeys().getEncryptionPublicKey(state).toHexString());
+      return ZswapOffer.fromOutput(output, coin.type, coin.value);
+    });
+    return pipe(Array_exports.appendAll(inputOffers, outputOffers), Array_exports.match({
+      onEmpty: () => Option_exports.none(),
+      onNonEmpty: (nonEmpty) => pipe(nonEmpty, ArrayOps_exports.fold((a, b) => a.merge(b)), Option_exports.some)
+    }), Option_exports.map((offer6) => ({ offer: offer6, newState: stateAfterWatches })));
+  }
   balanceFallibleSection(secretKeys, state, imbalances, coinSelection) {
     return Either_exports.try({
       try: () => {
@@ -164443,7 +163850,7 @@ var TransactingCapabilityImplementation2 = class {
           createOutput: (coin) => createShieldedCoinInfo(coin.type, coin.value),
           isCoinEqual: (a, b) => a.type === b.type && a.value === b.value
         });
-        return pipe(__privateMethod(this, _TransactingCapabilityImplementation_instances, prepareOffer_fn).call(this, secretKeys, state, fallibleBalanceRecipe, 1), Option_exports.match({
+        return pipe(this.#prepareOffer(secretKeys, state, fallibleBalanceRecipe, 1), Option_exports.match({
           onNone: () => ({
             newState: state,
             offer: void 0
@@ -164467,109 +163874,96 @@ var TransactingCapabilityImplementation2 = class {
       }
     });
   }
-};
-_TransactingCapabilityImplementation_instances = new WeakSet();
-prepareOffer_fn = function(secretKeys, state, recipe, segment) {
-  const [inputOffers, stateAfterSpends] = CoreWallet2.spendCoins(state, secretKeys, recipe.inputs, segment);
-  const stateAfterWatches = CoreWallet2.watchCoins(stateAfterSpends, secretKeys, recipe.outputs);
-  const outputOffers = recipe.outputs.map((coin) => {
-    const output = ZswapOutput.new(coin, segment, this.getKeys().getCoinPublicKey(state).toHexString(), this.getKeys().getEncryptionPublicKey(state).toHexString());
-    return ZswapOffer.fromOutput(output, coin.type, coin.value);
-  });
-  return pipe(Array_exports.appendAll(inputOffers, outputOffers), Array_exports.match({
-    onEmpty: () => Option_exports.none(),
-    onNonEmpty: (nonEmpty) => pipe(nonEmpty, ArrayOps_exports.fold((a, b) => a.merge(b)), Option_exports.some)
-  }), Option_exports.map((offer6) => ({ offer: offer6, newState: stateAfterWatches })));
-};
-balanceGuaranteedSection_fn = function(secretKeys, state, imbalances, coinSelection, targetImbalances) {
-  return Either_exports.gen(this, function* () {
-    const balanceRecipe = yield* Either_exports.try({
-      try: () => getBalanceRecipe({
-        coins: this.getCoins().getAvailableCoins(state).map((c) => c.coin),
-        initialImbalances: imbalances.guaranteed,
-        transactionCostModel: ShieldedCostModel,
-        feeTokenType: "",
-        coinSelection,
-        createOutput: (coin) => createShieldedCoinInfo(coin.type, coin.value),
-        isCoinEqual: (a, b) => a.nonce === b.nonce,
-        targetImbalances
-      }),
-      catch: (err) => {
-        if (err instanceof InsufficientFundsError2) {
-          return new InsufficientFundsError3({
-            message: "Insufficient funds",
-            tokenType: err.tokenType,
-            amount: imbalances.guaranteed.get(err.tokenType) ?? 0n
-          });
-        } else {
-          return new OtherWalletError2({
-            message: "Balancing guaranteed section failed",
-            cause: err
-          });
+  #balanceGuaranteedSection(secretKeys, state, imbalances, coinSelection, targetImbalances) {
+    return Either_exports.gen(this, function* () {
+      const balanceRecipe = yield* Either_exports.try({
+        try: () => getBalanceRecipe({
+          coins: this.getCoins().getAvailableCoins(state).map((c) => c.coin),
+          initialImbalances: imbalances.guaranteed,
+          transactionCostModel: ShieldedCostModel,
+          feeTokenType: "",
+          coinSelection,
+          createOutput: (coin) => createShieldedCoinInfo(coin.type, coin.value),
+          isCoinEqual: (a, b) => a.nonce === b.nonce,
+          targetImbalances
+        }),
+        catch: (err) => {
+          if (err instanceof InsufficientFundsError2) {
+            return new InsufficientFundsError3({
+              message: "Insufficient funds",
+              tokenType: err.tokenType,
+              amount: imbalances.guaranteed.get(err.tokenType) ?? 0n
+            });
+          } else {
+            return new OtherWalletError2({
+              message: "Balancing guaranteed section failed",
+              cause: err
+            });
+          }
         }
+      });
+      return yield* pipe(this.#prepareOffer(secretKeys, state, balanceRecipe, 0), Either_exports.fromOption(() => {
+        return new OtherWalletError2({
+          message: "Could not create a valid guaranteed offer"
+        });
+      }));
+    });
+  }
+  #processDesiredOutputs(state, transfers) {
+    return Either_exports.try({
+      try: () => {
+        const initialOffersAndCoins = pipe(transfers, Array_exports.map((transfer) => {
+          const { receiverAddress, type, amount } = transfer;
+          const coin = createShieldedCoinInfo(type, amount);
+          const output = ZswapOutput.new(coin, 0, receiverAddress.coinPublicKey.toHexString(), receiverAddress.encryptionPublicKey.toHexString());
+          const outputOffer = ZswapOffer.fromOutput(output, type, amount);
+          return {
+            coin,
+            outputOffer,
+            isForSelf: receiverAddress.coinPublicKey.equals(this.getKeys().getCoinPublicKey(state))
+          };
+        }));
+        const selfCoins = Array_exports.flatMap(initialOffersAndCoins, ({ coin, isForSelf }) => {
+          if (isForSelf) {
+            return [coin];
+          } else {
+            return [];
+          }
+        });
+        return { initialOffersAndCoins, selfCoins };
+      },
+      catch: (err) => {
+        return new OtherWalletError2({
+          message: "Failed to process desired outputs",
+          cause: err
+        });
       }
     });
-    return yield* pipe(__privateMethod(this, _TransactingCapabilityImplementation_instances, prepareOffer_fn).call(this, secretKeys, state, balanceRecipe, 0), Either_exports.fromOption(() => {
-      return new OtherWalletError2({
-        message: "Could not create a valid guaranteed offer"
-      });
+  }
+  #processDesiredOutputsPossiblyEmpty(state, desiredOutputs) {
+    return pipe(desiredOutputs, Array_exports.match({
+      onEmpty: () => {
+        return Either_exports.right({
+          imbalances: TransactionImbalances.empty(),
+          selfCoins: [],
+          unprovenTxToBalance: null
+        });
+      },
+      onNonEmpty: (desiredOutputs2) => {
+        return pipe(this.#processDesiredOutputs(state, desiredOutputs2), Either_exports.map(({ initialOffersAndCoins, selfCoins }) => {
+          const networkId = this.networkId;
+          const offerToBalance = pipe(initialOffersAndCoins, Array_exports.map((o) => o.outputOffer), ArrayOps_exports.fold((a, b) => a.merge(b)));
+          const unprovenTxToBalance = Transaction.fromParts(networkId, offerToBalance);
+          const imbalances = TransactionOps.unproven.getImbalances(unprovenTxToBalance);
+          return {
+            imbalances,
+            selfCoins,
+            unprovenTxToBalance
+          };
+        }));
+      }
     }));
-  });
-};
-processDesiredOutputs_fn = function(state, transfers) {
-  return Either_exports.try({
-    try: () => {
-      const initialOffersAndCoins = pipe(transfers, Array_exports.map((transfer) => {
-        const { receiverAddress, type, amount } = transfer;
-        const coin = createShieldedCoinInfo(type, amount);
-        const output = ZswapOutput.new(coin, 0, receiverAddress.coinPublicKey.toHexString(), receiverAddress.encryptionPublicKey.toHexString());
-        const outputOffer = ZswapOffer.fromOutput(output, type, amount);
-        return {
-          coin,
-          outputOffer,
-          isForSelf: receiverAddress.coinPublicKey.equals(this.getKeys().getCoinPublicKey(state))
-        };
-      }));
-      const selfCoins = Array_exports.flatMap(initialOffersAndCoins, ({ coin, isForSelf }) => {
-        if (isForSelf) {
-          return [coin];
-        } else {
-          return [];
-        }
-      });
-      return { initialOffersAndCoins, selfCoins };
-    },
-    catch: (err) => {
-      return new OtherWalletError2({
-        message: "Failed to process desired outputs",
-        cause: err
-      });
-    }
-  });
-};
-processDesiredOutputsPossiblyEmpty_fn = function(state, desiredOutputs) {
-  return pipe(desiredOutputs, Array_exports.match({
-    onEmpty: () => {
-      return Either_exports.right({
-        imbalances: TransactionImbalances.empty(),
-        selfCoins: [],
-        unprovenTxToBalance: null
-      });
-    },
-    onNonEmpty: (desiredOutputs2) => {
-      return pipe(__privateMethod(this, _TransactingCapabilityImplementation_instances, processDesiredOutputs_fn).call(this, state, desiredOutputs2), Either_exports.map(({ initialOffersAndCoins, selfCoins }) => {
-        const networkId = this.networkId;
-        const offerToBalance = pipe(initialOffersAndCoins, Array_exports.map((o) => o.outputOffer), ArrayOps_exports.fold((a, b) => a.merge(b)));
-        const unprovenTxToBalance = Transaction.fromParts(networkId, offerToBalance);
-        const imbalances = TransactionOps.unproven.getImbalances(unprovenTxToBalance);
-        return {
-          imbalances,
-          selfCoins,
-          unprovenTxToBalance
-        };
-      }));
-    }
-  }));
+  }
 };
 
 // node_modules/@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances.js
@@ -164641,26 +164035,24 @@ var makeDefaultTransactionHistoryCapability = () => {
     updateTxHistory: (state, newTxs) => {
       return newTxs.reduce((acc, tx) => CoreWallet2.addTransaction(acc, tx), state);
     },
-    transactionHistory: (_state2) => {
+    transactionHistory: (_state) => {
       return [];
     }
   };
 };
 
 // node_modules/@midnight-ntwrk/wallet-sdk-shielded/dist/v1/V1Builder.js
-var _buildState3, _V1Builder_instances2, buildContextFromBuildState_fn2;
-var _V1Builder2 = class _V1Builder2 {
+var V1Builder2 = class _V1Builder {
+  #buildState;
   constructor(buildState = {}) {
-    __privateAdd(this, _V1Builder_instances2);
-    __privateAdd(this, _buildState3);
-    __privateSet(this, _buildState3, buildState);
+    this.#buildState = buildState;
   }
   withDefaults() {
     return this.withDefaultTransactionType().withSyncDefaults().withSerializationDefaults().withTransactingDefaults().withCoinsAndBalancesDefaults().withTransactionHistoryDefaults().withKeysDefaults().withCoinSelectionDefaults();
   }
   withTransactionType() {
-    return new _V1Builder2({
-      ...__privateGet(this, _buildState3),
+    return new _V1Builder({
+      ...this.#buildState,
       transactingCapability: void 0,
       transactionHistoryCapability: void 0
     });
@@ -164672,8 +164064,8 @@ var _V1Builder2 = class _V1Builder2 {
     return this.withSync(makeEventsSyncService, makeEventsSyncCapability);
   }
   withSync(syncService, syncCapability) {
-    return new _V1Builder2({
-      ...__privateGet(this, _buildState3),
+    return new _V1Builder({
+      ...this.#buildState,
       syncService,
       syncCapability
     });
@@ -164682,8 +164074,8 @@ var _V1Builder2 = class _V1Builder2 {
     return this.withSerialization(makeDefaultV1SerializationCapability2);
   }
   withSerialization(serializationCapability) {
-    return new _V1Builder2({
-      ...__privateGet(this, _buildState3),
+    return new _V1Builder({
+      ...this.#buildState,
       serializationCapability
     });
   }
@@ -164691,14 +164083,14 @@ var _V1Builder2 = class _V1Builder2 {
     return this.withTransacting(makeDefaultTransactingCapability2);
   }
   withTransacting(transactingCapability) {
-    return new _V1Builder2({
-      ...__privateGet(this, _buildState3),
+    return new _V1Builder({
+      ...this.#buildState,
       transactingCapability
     });
   }
   withCoinSelection(coinSelection) {
-    return new _V1Builder2({
-      ...__privateGet(this, _buildState3),
+    return new _V1Builder({
+      ...this.#buildState,
       coinSelection
     });
   }
@@ -164709,8 +164101,8 @@ var _V1Builder2 = class _V1Builder2 {
     return this.withCoinsAndBalances(makeDefaultCoinsAndBalancesCapability2);
   }
   withCoinsAndBalances(coinsAndBalancesCapability) {
-    return new _V1Builder2({
-      ...__privateGet(this, _buildState3),
+    return new _V1Builder({
+      ...this.#buildState,
       coinsAndBalancesCapability
     });
   }
@@ -164718,8 +164110,8 @@ var _V1Builder2 = class _V1Builder2 {
     return this.withTransactionHistory(makeDefaultTransactionHistoryCapability);
   }
   withTransactionHistory(transactionHistoryCapability) {
-    return new _V1Builder2({
-      ...__privateGet(this, _buildState3),
+    return new _V1Builder({
+      ...this.#buildState,
       transactionHistoryCapability
     });
   }
@@ -164727,13 +164119,13 @@ var _V1Builder2 = class _V1Builder2 {
     return this.withKeys(makeDefaultKeysCapability2);
   }
   withKeys(keysCapability) {
-    return new _V1Builder2({
-      ...__privateGet(this, _buildState3),
+    return new _V1Builder({
+      ...this.#buildState,
       keysCapability
     });
   }
   build(configuration2) {
-    const v1Context = __privateMethod(this, _V1Builder_instances2, buildContextFromBuildState_fn2).call(this, configuration2);
+    const v1Context = this.#buildContextFromBuildState(configuration2);
     const { networkId } = configuration2;
     return {
       __polyTag__: V1Tag2,
@@ -164756,28 +164148,25 @@ var _V1Builder2 = class _V1Builder2 {
       }
     };
   }
-};
-_buildState3 = new WeakMap();
-_V1Builder_instances2 = new WeakSet();
-buildContextFromBuildState_fn2 = function(configuration2) {
-  if (!isBuildStateFull2(__privateGet(this, _buildState3))) {
-    throw new Error("Not all components are configured in V1 Builder");
+  #buildContextFromBuildState(configuration2) {
+    if (!isBuildStateFull2(this.#buildState)) {
+      throw new Error("Not all components are configured in V1 Builder");
+    }
+    const { syncCapability, syncService, transactingCapability, serializationCapability, coinSelection, coinsAndBalancesCapability, keysCapability, transactionHistoryCapability } = this.#buildState;
+    const getContext = () => context10;
+    const context10 = {
+      serializationCapability: serializationCapability(configuration2, getContext),
+      syncCapability: syncCapability(configuration2, getContext),
+      syncService: syncService(configuration2, getContext),
+      transactingCapability: transactingCapability(configuration2, getContext),
+      coinsAndBalancesCapability: coinsAndBalancesCapability(configuration2, getContext),
+      keysCapability: keysCapability(configuration2, getContext),
+      coinSelection: coinSelection(configuration2, getContext),
+      transactionHistoryCapability: transactionHistoryCapability(configuration2, getContext)
+    };
+    return context10;
   }
-  const { syncCapability, syncService, transactingCapability, serializationCapability, coinSelection, coinsAndBalancesCapability, keysCapability, transactionHistoryCapability } = __privateGet(this, _buildState3);
-  const getContext = () => context10;
-  const context10 = {
-    serializationCapability: serializationCapability(configuration2, getContext),
-    syncCapability: syncCapability(configuration2, getContext),
-    syncService: syncService(configuration2, getContext),
-    transactingCapability: transactingCapability(configuration2, getContext),
-    coinsAndBalancesCapability: coinsAndBalancesCapability(configuration2, getContext),
-    keysCapability: keysCapability(configuration2, getContext),
-    coinSelection: coinSelection(configuration2, getContext),
-    transactionHistoryCapability: transactionHistoryCapability(configuration2, getContext)
-  };
-  return context10;
 };
-var V1Builder2 = _V1Builder2;
 var isBuildStateFull2 = (buildState) => {
   const allBuildStateKeys = [
     "syncService",
@@ -164794,15 +164183,13 @@ var isBuildStateFull2 = (buildState) => {
 
 // node_modules/@midnight-ntwrk/wallet-sdk-shielded/dist/ShieldedWallet.js
 var rx3 = __toESM(require_cjs(), 1);
-var _ShieldedWalletState = class _ShieldedWalletState {
-  constructor(state, capabilities) {
-    __publicField(this, "protocolVersion");
-    __publicField(this, "state");
-    __publicField(this, "capabilities");
-    this.protocolVersion = state.version;
-    this.state = state.state;
-    this.capabilities = capabilities;
-  }
+var ShieldedWalletState = class _ShieldedWalletState {
+  static mapState = (capabilities) => (state) => {
+    return new _ShieldedWalletState(state, capabilities);
+  };
+  protocolVersion;
+  state;
+  capabilities;
   get balances() {
     return this.capabilities.coinsAndBalances.getAvailableBalances(this.state);
   }
@@ -164834,14 +164221,15 @@ var _ShieldedWalletState = class _ShieldedWalletState {
   get transactionHistory() {
     throw new Error("Transaction history is not yet implemented for ShieldedWallet");
   }
+  constructor(state, capabilities) {
+    this.protocolVersion = state.version;
+    this.state = state.state;
+    this.capabilities = capabilities;
+  }
   serialize() {
     return this.capabilities.serialization.serialize(this.state);
   }
 };
-__publicField(_ShieldedWalletState, "mapState", (capabilities) => (state) => {
-  return new _ShieldedWalletState(state, capabilities);
-});
-var ShieldedWalletState = _ShieldedWalletState;
 function ShieldedWallet(configuration2) {
   return CustomShieldedWallet(configuration2, new V1Builder2().withDefaults());
 }
@@ -164849,11 +164237,6 @@ function CustomShieldedWallet(configuration2, builder) {
   const buildArgs = [configuration2];
   const BaseWallet = WalletBuilder.init().withVariant(ProtocolVersion_exports.MinSupportedVersion, builder).build(...buildArgs);
   return class CustomShieldedWalletImplementation extends BaseWallet {
-    constructor(runtime41, scope5) {
-      super(runtime41, scope5);
-      __publicField(this, "state");
-      this.state = this.rawState.pipe(rx3.map(ShieldedWalletState.mapState(CustomShieldedWalletImplementation.allVariantsRecord()[V1Tag2].variant)), rx3.shareReplay({ refCount: true, bufferSize: 1 }));
-    }
     static startWithSecretKeys(secretKeys) {
       return CustomShieldedWalletImplementation.startFirst(CustomShieldedWalletImplementation, CoreWallet2.initEmpty(secretKeys, CustomShieldedWalletImplementation.configuration.networkId));
     }
@@ -164864,6 +164247,11 @@ function CustomShieldedWallet(configuration2, builder) {
     static restore(serializedState) {
       const deserialized = CustomShieldedWalletImplementation.allVariantsRecord()[V1Tag2].variant.deserializeState(serializedState).pipe(Either_exports.getOrThrow);
       return CustomShieldedWalletImplementation.startFirst(CustomShieldedWalletImplementation, deserialized);
+    }
+    state;
+    constructor(runtime41, scope5) {
+      super(runtime41, scope5);
+      this.state = this.rawState.pipe(rx3.map(ShieldedWalletState.mapState(CustomShieldedWalletImplementation.allVariantsRecord()[V1Tag2].variant)), rx3.shareReplay({ refCount: true, bufferSize: 1 }));
     }
     start(secretKeys) {
       return this.runtime.dispatch({ [V1Tag2]: (v18) => v18.startSyncInBackground(secretKeys) }).pipe(Effect_exports.runPromise);
@@ -164920,17 +164308,16 @@ var protocolVersionChange3 = (previous2, current2) => {
   ] : [];
 };
 var V1Tag3 = /* @__PURE__ */ Symbol("V1");
-var _scope4, _context3, _v1Context3;
 var RunningV1Variant3 = class {
+  __polyTag__ = V1Tag3;
+  #scope;
+  #context;
+  #v1Context;
+  state;
   constructor(scope5, context10, v1Context) {
-    __publicField(this, "__polyTag__", V1Tag3);
-    __privateAdd(this, _scope4);
-    __privateAdd(this, _context3);
-    __privateAdd(this, _v1Context3);
-    __publicField(this, "state");
-    __privateSet(this, _scope4, scope5);
-    __privateSet(this, _context3, context10);
-    __privateSet(this, _v1Context3, v1Context);
+    this.#scope = scope5;
+    this.#context = context10;
+    this.#v1Context = v1Context;
     this.state = Stream_exports.fromEffect(context10.stateRef.get).pipe(Stream_exports.flatMap((initialState) => context10.stateRef.changes.pipe(Stream_exports.mapAccum(initialState, (previous2, current2) => {
       return [current2, [previous2, current2]];
     }))), Stream_exports.mapConcat(([previous2, current2]) => {
@@ -164942,11 +164329,11 @@ var RunningV1Variant3 = class {
     }));
   }
   startSyncInBackground() {
-    return this.startSync().pipe(Stream_exports.runScoped(Sink_exports.drain), Effect_exports.forkScoped, Effect_exports.provideService(Scope_exports.Scope, __privateGet(this, _scope4)));
+    return this.startSync().pipe(Stream_exports.runScoped(Sink_exports.drain), Effect_exports.forkScoped, Effect_exports.provideService(Scope_exports.Scope, this.#scope));
   }
   startSync() {
-    return pipe(SubscriptionRef_exports.get(__privateGet(this, _context3).stateRef), Stream_exports.fromEffect, Stream_exports.flatMap((state) => __privateGet(this, _v1Context3).syncService.updates(state)), Stream_exports.mapEffect((update7) => {
-      return SubscriptionRef_exports.updateEffect(__privateGet(this, _context3).stateRef, (state) => pipe(__privateGet(this, _v1Context3).syncCapability.applyUpdate(state, update7), EitherOps_exports.toEffect));
+    return pipe(SubscriptionRef_exports.get(this.#context.stateRef), Stream_exports.fromEffect, Stream_exports.flatMap((state) => this.#v1Context.syncService.updates(state)), Stream_exports.mapEffect((update7) => {
+      return SubscriptionRef_exports.updateEffect(this.#context.stateRef, (state) => pipe(this.#v1Context.syncCapability.applyUpdate(state, update7), EitherOps_exports.toEffect));
     }), Stream_exports.tapError((error4) => Console_exports.error(error4)), Stream_exports.retry(pipe(Schedule_exports.exponential(Duration_exports.seconds(1), 2), Schedule_exports.map((delay3) => {
       const maxDelay = Duration_exports.minutes(2);
       const jitter = Duration_exports.millis(Math.floor(Math.random() * 1e3));
@@ -164955,48 +164342,45 @@ var RunningV1Variant3 = class {
     }))));
   }
   balanceFinalizedTransaction(tx) {
-    return SubscriptionRef_exports.modifyEffect(__privateGet(this, _context3).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context3).transactingCapability.balanceFinalizedTransaction(state, tx), EitherOps_exports.toEffect);
+    return SubscriptionRef_exports.modifyEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.transactingCapability.balanceFinalizedTransaction(state, tx), EitherOps_exports.toEffect);
     });
   }
   balanceUnboundTransaction(tx) {
-    return SubscriptionRef_exports.modifyEffect(__privateGet(this, _context3).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context3).transactingCapability.balanceUnboundTransaction(state, tx), EitherOps_exports.toEffect);
+    return SubscriptionRef_exports.modifyEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.transactingCapability.balanceUnboundTransaction(state, tx), EitherOps_exports.toEffect);
     });
   }
   balanceUnprovenTransaction(tx) {
-    return SubscriptionRef_exports.modifyEffect(__privateGet(this, _context3).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context3).transactingCapability.balanceUnprovenTransaction(state, tx), EitherOps_exports.toEffect);
+    return SubscriptionRef_exports.modifyEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.transactingCapability.balanceUnprovenTransaction(state, tx), EitherOps_exports.toEffect);
     });
   }
   transferTransaction(outputs, ttl) {
-    return SubscriptionRef_exports.modifyEffect(__privateGet(this, _context3).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context3).transactingCapability.makeTransfer(state, outputs, ttl), EitherOps_exports.toEffect, Effect_exports.map(({ transaction, newState }) => [transaction, newState]));
+    return SubscriptionRef_exports.modifyEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.transactingCapability.makeTransfer(state, outputs, ttl), EitherOps_exports.toEffect, Effect_exports.map(({ transaction, newState }) => [transaction, newState]));
     });
   }
   initSwap(desiredInputs, desiredOutputs, ttl) {
-    return SubscriptionRef_exports.modifyEffect(__privateGet(this, _context3).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context3).transactingCapability.initSwap(state, desiredInputs, desiredOutputs, ttl), Effect_exports.map(({ transaction, newState }) => [transaction, newState]));
+    return SubscriptionRef_exports.modifyEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.transactingCapability.initSwap(state, desiredInputs, desiredOutputs, ttl), Effect_exports.map(({ transaction, newState }) => [transaction, newState]));
     });
   }
   signUnprovenTransaction(transaction, signSegment) {
-    return __privateGet(this, _v1Context3).transactingCapability.signUnprovenTransaction(transaction, signSegment);
+    return this.#v1Context.transactingCapability.signUnprovenTransaction(transaction, signSegment);
   }
   signUnboundTransaction(transaction, signSegment) {
-    return __privateGet(this, _v1Context3).transactingCapability.signUnboundTransaction(transaction, signSegment);
+    return this.#v1Context.transactingCapability.signUnboundTransaction(transaction, signSegment);
   }
   revertTransaction(transaction) {
-    return SubscriptionRef_exports.updateEffect(__privateGet(this, _context3).stateRef, (state) => {
-      return pipe(__privateGet(this, _v1Context3).transactingCapability.revertTransaction(state, transaction), EitherOps_exports.toEffect);
+    return SubscriptionRef_exports.updateEffect(this.#context.stateRef, (state) => {
+      return pipe(this.#v1Context.transactingCapability.revertTransaction(state, transaction), EitherOps_exports.toEffect);
     });
   }
   serializeState(state) {
-    return __privateGet(this, _v1Context3).serializationCapability.serialize(state);
+    return this.#v1Context.serializationCapability.serialize(state);
   }
 };
-_scope4 = new WeakMap();
-_context3 = new WeakMap();
-_v1Context3 = new WeakMap();
 
 // node_modules/@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/WalletError.js
 var OtherWalletError3 = class extends Data_exports.TaggedError("Wallet.Other") {
@@ -165435,15 +164819,13 @@ var GUARANTEED_SEGMENT = 0;
 var makeDefaultTransactingCapability3 = (config3, getContext) => {
   return new TransactingCapabilityImplementation3(config3.networkId, () => getContext().coinSelection, () => getContext().coinsAndBalancesCapability, () => getContext().keysCapability, TransactionOps2);
 };
-var _TransactingCapabilityImplementation_instances2, signTransactionInternal_fn, balanceSegment_fn, prepareOffer_fn2, mergeOffers_fn, balanceUnboundishTransaction_fn;
 var TransactingCapabilityImplementation3 = class {
+  networkId;
+  getCoinSelection;
+  txOps;
+  getCoins;
+  getKeys;
   constructor(networkId, getCoinSelection, getCoins, getKeys, txOps) {
-    __privateAdd(this, _TransactingCapabilityImplementation_instances2);
-    __publicField(this, "networkId");
-    __publicField(this, "getCoinSelection");
-    __publicField(this, "txOps");
-    __publicField(this, "getCoins");
-    __publicField(this, "getKeys");
     this.getCoins = getCoins;
     this.networkId = networkId;
     this.getCoinSelection = getCoinSelection;
@@ -165458,7 +164840,7 @@ var TransactingCapabilityImplementation3 = class {
    * @returns The balanced transaction and the new wallet state if successful, otherwise an error
    */
   balanceUnboundTransaction(wallet, transaction) {
-    return __privateMethod(this, _TransactingCapabilityImplementation_instances2, balanceUnboundishTransaction_fn).call(this, wallet, transaction);
+    return this.#balanceUnboundishTransaction(wallet, transaction);
   }
   /**
    * Balances an unproven transaction
@@ -165468,7 +164850,7 @@ var TransactingCapabilityImplementation3 = class {
    * @returns The balanced transaction and the new wallet state if successful, otherwise an error
    */
   balanceUnprovenTransaction(wallet, transaction) {
-    return __privateMethod(this, _TransactingCapabilityImplementation_instances2, balanceUnboundishTransaction_fn).call(this, wallet, transaction);
+    return this.#balanceUnboundishTransaction(wallet, transaction);
   }
   /**
    * Balances a bound transaction
@@ -165493,8 +164875,8 @@ var TransactingCapabilityImplementation3 = class {
       if (imbalances.size === 0) {
         return [void 0, wallet];
       }
-      const recipe = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances2, balanceSegment_fn).call(this, wallet, imbalances, Imbalances.empty(), this.getCoinSelection());
-      const { newState, offer: offer6 } = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances2, prepareOffer_fn2).call(this, wallet, recipe);
+      const recipe = yield* this.#balanceSegment(wallet, imbalances, Imbalances.empty(), this.getCoinSelection());
+      const { newState, offer: offer6 } = yield* this.#prepareOffer(wallet, recipe);
       const balancingIntent = Intent.new(intent.ttl);
       balancingIntent.guaranteedUnshieldedOffer = offer6;
       return [Transaction.fromPartsRandomized(this.networkId, void 0, void 0, balancingIntent), newState];
@@ -165521,8 +164903,8 @@ var TransactingCapabilityImplementation3 = class {
           type: output.type
         };
       });
-      const recipe = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances2, balanceSegment_fn).call(this, wallet, Imbalances.empty(), Imbalances.fromEntries(ledgerOutputs.map((output) => [output.type, output.value])), this.getCoinSelection());
-      const { newState, offer: offer6 } = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances2, prepareOffer_fn2).call(this, wallet, {
+      const recipe = yield* this.#balanceSegment(wallet, Imbalances.empty(), Imbalances.fromEntries(ledgerOutputs.map((output) => [output.type, output.value])), this.getCoinSelection());
+      const { newState, offer: offer6 } = yield* this.#prepareOffer(wallet, {
         inputs: recipe.inputs,
         outputs: [...recipe.outputs, ...ledgerOutputs]
       });
@@ -165564,8 +164946,8 @@ var TransactingCapabilityImplementation3 = class {
         type: output.type
       }));
       const targetImbalances = Imbalances.fromEntries(Object.entries(desiredInputs));
-      const recipe = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances2, balanceSegment_fn).call(this, wallet, Imbalances.empty(), targetImbalances, this.getCoinSelection());
-      const { newState, offer: offer6 } = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances2, prepareOffer_fn2).call(this, wallet, {
+      const recipe = yield* this.#balanceSegment(wallet, Imbalances.empty(), targetImbalances, this.getCoinSelection());
+      const { newState, offer: offer6 } = yield* this.#prepareOffer(wallet, {
         inputs: recipe.inputs,
         outputs: [...recipe.outputs, ...ledgerOutputs]
       });
@@ -165579,10 +164961,30 @@ var TransactingCapabilityImplementation3 = class {
     });
   }
   signUnprovenTransaction(transaction, signSegment) {
-    return __privateMethod(this, _TransactingCapabilityImplementation_instances2, signTransactionInternal_fn).call(this, transaction, signSegment);
+    return this.#signTransactionInternal(transaction, signSegment);
   }
   signUnboundTransaction(transaction, signSegment) {
-    return __privateMethod(this, _TransactingCapabilityImplementation_instances2, signTransactionInternal_fn).call(this, transaction, signSegment);
+    return this.#signTransactionInternal(transaction, signSegment);
+  }
+  /**
+   * Internal method to sign either an unproven or unbound transaction
+   * @param transaction - The transaction to sign
+   * @param signSegment - The signing function
+   * @returns The signed transaction if successful, otherwise an error
+   */
+  #signTransactionInternal(transaction, signSegment) {
+    return Either_exports.gen(this, function* () {
+      const segments = this.txOps.getSegments(transaction);
+      if (!segments.length) {
+        throw new SignError({ message: "No segments found in the provided transaction" });
+      }
+      for (const segment of segments) {
+        const signedData = yield* this.txOps.getSignatureData(transaction, segment);
+        const signature = signSegment(signedData);
+        transaction = yield* this.txOps.addSignature(transaction, signature, segment);
+      }
+      return transaction;
+    });
   }
   /**
    * Reverts a transaction by rolling back all inputs owned by this wallet
@@ -165593,144 +164995,123 @@ var TransactingCapabilityImplementation3 = class {
   revertTransaction(wallet, transaction) {
     return pipe(this.txOps.extractOwnInputs(transaction, wallet.publicKey.publicKey), Array_exports.reduce(Either_exports.right(wallet), (walletAcc, utxo) => pipe(walletAcc, Either_exports.flatMap((w) => CoreWallet3.rollbackUtxo(w, utxo)))));
   }
-};
-_TransactingCapabilityImplementation_instances2 = new WeakSet();
-/**
- * Internal method to sign either an unproven or unbound transaction
- * @param transaction - The transaction to sign
- * @param signSegment - The signing function
- * @returns The signed transaction if successful, otherwise an error
- */
-signTransactionInternal_fn = function(transaction, signSegment) {
-  return Either_exports.gen(this, function* () {
-    const segments = this.txOps.getSegments(transaction);
-    if (!segments.length) {
-      throw new SignError({ message: "No segments found in the provided transaction" });
-    }
-    for (const segment of segments) {
-      const signedData = yield* this.txOps.getSignatureData(transaction, segment);
-      const signature = signSegment(signedData);
-      transaction = yield* this.txOps.addSignature(transaction, signature, segment);
-    }
-    return transaction;
-  });
-};
-/**
- * Balances a segment of a transaction
- * @param wallet - The wallet to balance the segment for
- * @param imbalances - The imbalances to balance the segment for
- * @param targetImbalances - The target imbalances to balance the segment for
- * @param coinSelection - The coin selection to use for the balance recipe
- * @returns The balance recipe if successful, otherwise an error
- */
-balanceSegment_fn = function(wallet, imbalances, targetImbalances, coinSelection) {
-  return Either_exports.try({
-    try: () => getBalanceRecipe({
-      coins: this.getCoins().getAvailableCoins(wallet).map(({ utxo }) => utxo),
-      initialImbalances: imbalances,
-      feeTokenType: "",
-      transactionCostModel: {
-        inputFeeOverhead: 0n,
-        outputFeeOverhead: 0n
-      },
-      coinSelection,
-      createOutput: (coin) => ({
-        ...coin,
-        owner: wallet.publicKey.addressHex
+  /**
+   * Balances a segment of a transaction
+   * @param wallet - The wallet to balance the segment for
+   * @param imbalances - The imbalances to balance the segment for
+   * @param targetImbalances - The target imbalances to balance the segment for
+   * @param coinSelection - The coin selection to use for the balance recipe
+   * @returns The balance recipe if successful, otherwise an error
+   */
+  #balanceSegment(wallet, imbalances, targetImbalances, coinSelection) {
+    return Either_exports.try({
+      try: () => getBalanceRecipe({
+        coins: this.getCoins().getAvailableCoins(wallet).map(({ utxo }) => utxo),
+        initialImbalances: imbalances,
+        feeTokenType: "",
+        transactionCostModel: {
+          inputFeeOverhead: 0n,
+          outputFeeOverhead: 0n
+        },
+        coinSelection,
+        createOutput: (coin) => ({
+          ...coin,
+          owner: wallet.publicKey.addressHex
+        }),
+        isCoinEqual: (a, b) => a.intentHash === b.intentHash && a.outputNo === b.outputNo,
+        targetImbalances
       }),
-      isCoinEqual: (a, b) => a.intentHash === b.intentHash && a.outputNo === b.outputNo,
-      targetImbalances
-    }),
-    catch: (err) => {
-      if (err instanceof InsufficientFundsError2) {
-        return new InsufficientFundsError4({
-          message: "Insufficient funds",
-          tokenType: err.tokenType,
-          amount: imbalances.get(err.tokenType) ?? 0n
-        });
-      } else {
-        return new OtherWalletError3({
-          message: "Balancing unshielded segment failed",
-          cause: err
-        });
+      catch: (err) => {
+        if (err instanceof InsufficientFundsError2) {
+          return new InsufficientFundsError4({
+            message: "Insufficient funds",
+            tokenType: err.tokenType,
+            amount: imbalances.get(err.tokenType) ?? 0n
+          });
+        } else {
+          return new OtherWalletError3({
+            message: "Balancing unshielded segment failed",
+            cause: err
+          });
+        }
       }
-    }
-  });
-};
-/**
- * Prepares an offer for a given balance recipe
- * @param wallet - The wallet to prepare the offer for
- * @param balanceRecipe - The balance recipe to prepare the offer for
- * @returns The prepared offer and the new wallet state if successful, otherwise an error
- */
-prepareOffer_fn2 = function(wallet, balanceRecipe) {
-  return Either_exports.gen(function* () {
-    const [spentInputs, updatedWallet] = yield* CoreWallet3.spendUtxos(wallet, balanceRecipe.inputs);
-    const { publicKey } = wallet.publicKey;
-    const ledgerInputs = spentInputs.map((input) => ({
-      ...input,
-      intentHash: input.intentHash,
-      owner: publicKey
-    }));
-    const counterOffer = yield* Either_exports.try({
-      try: () => UnshieldedOffer.new(ledgerInputs, [...balanceRecipe.outputs], []),
-      catch: (error4) => new TransactingError3({ message: "Failed to create counter offer", cause: error4 })
     });
-    return {
-      newState: updatedWallet,
-      offer: counterOffer
-    };
-  });
-};
-mergeOffers_fn = function(offerA, offerB) {
-  return pipe(Option_exports.fromNullable(offerB), Option_exports.match({
-    onNone: () => Either_exports.right(offerA),
-    onSome: (offerB2) => Either_exports.try({
-      try: () => UnshieldedOffer.new([...offerB2.inputs, ...offerA.inputs], [...offerB2.outputs, ...offerA.outputs], [...offerB2.signatures, ...offerA.signatures]),
-      catch: (error4) => new TransactingError3({ message: "Failed to merge offers", cause: error4 })
-    })
-  }));
-};
-/**
- * Balances an unboundish (unproven or unbound) transaction
- * @param wallet - The wallet to balance the transaction with
- * @param transaction - The transaction to balance
- * @returns The balanced transaction and the new wallet state if successful, otherwise an error
- * @TODO - https://shielded.atlassian.net/browse/PM-21260
- */
-balanceUnboundishTransaction_fn = function(wallet, transaction) {
-  return Either_exports.gen(this, function* () {
-    const segments = this.txOps.getSegments(transaction);
-    if (segments.length === 0) {
-      return [void 0, wallet];
-    }
-    for (const segment of [...segments, GUARANTEED_SEGMENT]) {
-      const imbalances = this.txOps.getImbalances(transaction, segment);
-      if (imbalances.size === 0) {
-        continue;
+  }
+  /**
+   * Prepares an offer for a given balance recipe
+   * @param wallet - The wallet to prepare the offer for
+   * @param balanceRecipe - The balance recipe to prepare the offer for
+   * @returns The prepared offer and the new wallet state if successful, otherwise an error
+   */
+  #prepareOffer(wallet, balanceRecipe) {
+    return Either_exports.gen(function* () {
+      const [spentInputs, updatedWallet] = yield* CoreWallet3.spendUtxos(wallet, balanceRecipe.inputs);
+      const { publicKey } = wallet.publicKey;
+      const ledgerInputs = spentInputs.map((input) => ({
+        ...input,
+        intentHash: input.intentHash,
+        owner: publicKey
+      }));
+      const counterOffer = yield* Either_exports.try({
+        try: () => UnshieldedOffer.new(ledgerInputs, [...balanceRecipe.outputs], []),
+        catch: (error4) => new TransactingError3({ message: "Failed to create counter offer", cause: error4 })
+      });
+      return {
+        newState: updatedWallet,
+        offer: counterOffer
+      };
+    });
+  }
+  #mergeOffers(offerA, offerB) {
+    return pipe(Option_exports.fromNullable(offerB), Option_exports.match({
+      onNone: () => Either_exports.right(offerA),
+      onSome: (offerB2) => Either_exports.try({
+        try: () => UnshieldedOffer.new([...offerB2.inputs, ...offerA.inputs], [...offerB2.outputs, ...offerA.outputs], [...offerB2.signatures, ...offerA.signatures]),
+        catch: (error4) => new TransactingError3({ message: "Failed to merge offers", cause: error4 })
+      })
+    }));
+  }
+  /**
+   * Balances an unboundish (unproven or unbound) transaction
+   * @param wallet - The wallet to balance the transaction with
+   * @param transaction - The transaction to balance
+   * @returns The balanced transaction and the new wallet state if successful, otherwise an error
+   * @TODO - https://shielded.atlassian.net/browse/PM-21260
+   */
+  #balanceUnboundishTransaction(wallet, transaction) {
+    return Either_exports.gen(this, function* () {
+      const segments = this.txOps.getSegments(transaction);
+      if (segments.length === 0) {
+        return [void 0, wallet];
       }
-      const intentSegment = segment === GUARANTEED_SEGMENT ? segments[0] : segment;
-      const intent = transaction.intents?.get(intentSegment);
-      if (!intent) {
-        return yield* Either_exports.left(new TransactingError3({ message: `Intent with id ${segment} was not found` }));
+      for (const segment of [...segments, GUARANTEED_SEGMENT]) {
+        const imbalances = this.txOps.getImbalances(transaction, segment);
+        if (imbalances.size === 0) {
+          continue;
+        }
+        const intentSegment = segment === GUARANTEED_SEGMENT ? segments[0] : segment;
+        const intent = transaction.intents?.get(intentSegment);
+        if (!intent) {
+          return yield* Either_exports.left(new TransactingError3({ message: `Intent with id ${segment} was not found` }));
+        }
+        const isBound = this.txOps.isIntentBound(intent);
+        if (isBound) {
+          return yield* Either_exports.left(new TransactingError3({ message: `Intent with id ${segment} is already bound` }));
+        }
+        const recipe = yield* this.#balanceSegment(wallet, imbalances, Imbalances.empty(), this.getCoinSelection());
+        const { offer: offer6 } = yield* this.#prepareOffer(wallet, recipe);
+        const targetOffer = segment !== GUARANTEED_SEGMENT ? intent.fallibleUnshieldedOffer : intent.guaranteedUnshieldedOffer;
+        const mergedOffer = yield* this.#mergeOffers(offer6, targetOffer);
+        if (segment !== GUARANTEED_SEGMENT) {
+          intent.fallibleUnshieldedOffer = mergedOffer;
+        } else {
+          intent.guaranteedUnshieldedOffer = mergedOffer;
+        }
+        transaction.intents = transaction.intents.set(intentSegment, intent);
       }
-      const isBound = this.txOps.isIntentBound(intent);
-      if (isBound) {
-        return yield* Either_exports.left(new TransactingError3({ message: `Intent with id ${segment} is already bound` }));
-      }
-      const recipe = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances2, balanceSegment_fn).call(this, wallet, imbalances, Imbalances.empty(), this.getCoinSelection());
-      const { offer: offer6 } = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances2, prepareOffer_fn2).call(this, wallet, recipe);
-      const targetOffer = segment !== GUARANTEED_SEGMENT ? intent.fallibleUnshieldedOffer : intent.guaranteedUnshieldedOffer;
-      const mergedOffer = yield* __privateMethod(this, _TransactingCapabilityImplementation_instances2, mergeOffers_fn).call(this, offer6, targetOffer);
-      if (segment !== GUARANTEED_SEGMENT) {
-        intent.fallibleUnshieldedOffer = mergedOffer;
-      } else {
-        intent.guaranteedUnshieldedOffer = mergedOffer;
-      }
-      transaction.intents = transaction.intents.set(intentSegment, intent);
-    }
-    return [transaction, wallet];
-  });
+      return [transaction, wallet];
+    });
+  }
 };
 
 // node_modules/@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/CoinsAndBalances.js
@@ -165851,12 +165232,10 @@ var createKeystore = (secretKey, networkId) => {
 };
 
 // node_modules/@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/V1Builder.js
-var _buildState4, _V1Builder_instances3, buildContextFromBuildState_fn3;
-var _V1Builder3 = class _V1Builder3 {
+var V1Builder3 = class _V1Builder {
+  #buildState;
   constructor(buildState = {}) {
-    __privateAdd(this, _V1Builder_instances3);
-    __privateAdd(this, _buildState4);
-    __privateSet(this, _buildState4, buildState);
+    this.#buildState = buildState;
   }
   withDefaults() {
     return this.withSyncDefaults().withSerializationDefaults().withTransactingDefaults().withCoinsAndBalancesDefaults().withTransactionHistoryDefaults().withKeysDefaults().withCoinSelectionDefaults();
@@ -165865,8 +165244,8 @@ var _V1Builder3 = class _V1Builder3 {
     return this.withSync(makeDefaultSyncService2, makeDefaultSyncCapability2);
   }
   withSync(syncService, syncCapability) {
-    return new _V1Builder3({
-      ...__privateGet(this, _buildState4),
+    return new _V1Builder({
+      ...this.#buildState,
       syncService,
       syncCapability
     });
@@ -165875,8 +165254,8 @@ var _V1Builder3 = class _V1Builder3 {
     return this.withSerialization(makeDefaultV1SerializationCapability3);
   }
   withSerialization(serializationCapability) {
-    return new _V1Builder3({
-      ...__privateGet(this, _buildState4),
+    return new _V1Builder({
+      ...this.#buildState,
       serializationCapability
     });
   }
@@ -165884,14 +165263,14 @@ var _V1Builder3 = class _V1Builder3 {
     return this.withTransacting(makeDefaultTransactingCapability3);
   }
   withTransacting(transactingCapability) {
-    return new _V1Builder3({
-      ...__privateGet(this, _buildState4),
+    return new _V1Builder({
+      ...this.#buildState,
       transactingCapability
     });
   }
   withCoinSelection(coinSelection) {
-    return new _V1Builder3({
-      ...__privateGet(this, _buildState4),
+    return new _V1Builder({
+      ...this.#buildState,
       coinSelection
     });
   }
@@ -165902,8 +165281,8 @@ var _V1Builder3 = class _V1Builder3 {
     return this.withCoinsAndBalances(makeDefaultCoinsAndBalancesCapability3);
   }
   withCoinsAndBalances(coinsAndBalancesCapability) {
-    return new _V1Builder3({
-      ...__privateGet(this, _buildState4),
+    return new _V1Builder({
+      ...this.#buildState,
       coinsAndBalancesCapability
     });
   }
@@ -165911,8 +165290,8 @@ var _V1Builder3 = class _V1Builder3 {
     return this.withTransactionHistory(makeDefaultTransactionHistoryService);
   }
   withTransactionHistory(transactionHistoryService) {
-    return new _V1Builder3({
-      ...__privateGet(this, _buildState4),
+    return new _V1Builder({
+      ...this.#buildState,
       transactionHistoryService
     });
   }
@@ -165920,13 +165299,13 @@ var _V1Builder3 = class _V1Builder3 {
     return this.withKeys(makeDefaultKeysCapability3);
   }
   withKeys(keysCapability) {
-    return new _V1Builder3({
-      ...__privateGet(this, _buildState4),
+    return new _V1Builder({
+      ...this.#buildState,
       keysCapability
     });
   }
   build(configuration2) {
-    const v1Context = __privateMethod(this, _V1Builder_instances3, buildContextFromBuildState_fn3).call(this, configuration2);
+    const v1Context = this.#buildContextFromBuildState(configuration2);
     const { networkId } = configuration2;
     return {
       __polyTag__: V1Tag3,
@@ -165949,28 +165328,25 @@ var _V1Builder3 = class _V1Builder3 {
       }
     };
   }
-};
-_buildState4 = new WeakMap();
-_V1Builder_instances3 = new WeakSet();
-buildContextFromBuildState_fn3 = function(configuration2) {
-  if (!isBuildStateFull3(__privateGet(this, _buildState4))) {
-    throw new Error("Not all components are configured in V1 Builder");
+  #buildContextFromBuildState(configuration2) {
+    if (!isBuildStateFull3(this.#buildState)) {
+      throw new Error("Not all components are configured in V1 Builder");
+    }
+    const { syncCapability, syncService, transactingCapability, serializationCapability, coinSelection, coinsAndBalancesCapability, keysCapability, transactionHistoryService } = this.#buildState;
+    const getContext = () => context10;
+    const context10 = {
+      serializationCapability: serializationCapability(configuration2, getContext),
+      syncCapability: syncCapability(configuration2, getContext),
+      syncService: syncService(configuration2, getContext),
+      transactingCapability: transactingCapability(configuration2, getContext),
+      coinsAndBalancesCapability: coinsAndBalancesCapability(configuration2, getContext),
+      keysCapability: keysCapability(configuration2, getContext),
+      coinSelection: coinSelection(configuration2, getContext),
+      transactionHistoryService: transactionHistoryService(configuration2, getContext)
+    };
+    return context10;
   }
-  const { syncCapability, syncService, transactingCapability, serializationCapability, coinSelection, coinsAndBalancesCapability, keysCapability, transactionHistoryService } = __privateGet(this, _buildState4);
-  const getContext = () => context10;
-  const context10 = {
-    serializationCapability: serializationCapability(configuration2, getContext),
-    syncCapability: syncCapability(configuration2, getContext),
-    syncService: syncService(configuration2, getContext),
-    transactingCapability: transactingCapability(configuration2, getContext),
-    coinsAndBalancesCapability: coinsAndBalancesCapability(configuration2, getContext),
-    keysCapability: keysCapability(configuration2, getContext),
-    coinSelection: coinSelection(configuration2, getContext),
-    transactionHistoryService: transactionHistoryService(configuration2, getContext)
-  };
-  return context10;
 };
-var V1Builder3 = _V1Builder3;
 var isBuildStateFull3 = (buildState) => {
   const allBuildStateKeys = [
     "syncService",
@@ -166038,15 +165414,13 @@ var NoOpTransactionHistoryStorage = class _NoOpTransactionHistoryStorage {
 
 // node_modules/@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/UnshieldedWallet.js
 var rx4 = __toESM(require_cjs(), 1);
-var _UnshieldedWalletState = class _UnshieldedWalletState {
-  constructor(state, capabilities) {
-    __publicField(this, "protocolVersion");
-    __publicField(this, "state");
-    __publicField(this, "capabilities");
-    this.protocolVersion = state.version;
-    this.state = state.state;
-    this.capabilities = capabilities;
-  }
+var UnshieldedWalletState = class _UnshieldedWalletState {
+  static mapState = (capabilities) => (state) => {
+    return new _UnshieldedWalletState(state, capabilities);
+  };
+  protocolVersion;
+  state;
+  capabilities;
   get balances() {
     return this.capabilities.coinsAndBalances.getAvailableBalances(this.state);
   }
@@ -166068,14 +165442,15 @@ var _UnshieldedWalletState = class _UnshieldedWalletState {
   get transactionHistory() {
     return this.capabilities.transactionHistory;
   }
+  constructor(state, capabilities) {
+    this.protocolVersion = state.version;
+    this.state = state.state;
+    this.capabilities = capabilities;
+  }
   serialize() {
     return this.capabilities.serialization.serialize(this.state);
   }
 };
-__publicField(_UnshieldedWalletState, "mapState", (capabilities) => (state) => {
-  return new _UnshieldedWalletState(state, capabilities);
-});
-var UnshieldedWalletState = _UnshieldedWalletState;
 function UnshieldedWallet(configuration2) {
   return CustomUnshieldedWallet(configuration2, new V1Builder3().withDefaults());
 }
@@ -166083,17 +165458,17 @@ function CustomUnshieldedWallet(configuration2, builder) {
   const buildArgs = [configuration2];
   const BaseWallet = WalletBuilder.init().withVariant(ProtocolVersion_exports.MinSupportedVersion, builder).build(...buildArgs);
   return class CustomUnshieldedWalletImplementation extends BaseWallet {
-    constructor(runtime41, scope5) {
-      super(runtime41, scope5);
-      __publicField(this, "state");
-      this.state = this.rawState.pipe(rx4.map(UnshieldedWalletState.mapState(CustomUnshieldedWalletImplementation.allVariantsRecord()[V1Tag3].variant)), rx4.shareReplay({ refCount: true, bufferSize: 1 }));
-    }
     static startWithPublicKey(publicKeys) {
       return CustomUnshieldedWalletImplementation.startFirst(CustomUnshieldedWalletImplementation, CoreWallet3.init(publicKeys, configuration2.networkId));
     }
     static restore(serializedState) {
       const deserialized = CustomUnshieldedWalletImplementation.allVariantsRecord()[V1Tag3].variant.deserializeState(serializedState).pipe(Either_exports.getOrThrow);
       return CustomUnshieldedWalletImplementation.startFirst(CustomUnshieldedWalletImplementation, deserialized);
+    }
+    state;
+    constructor(runtime41, scope5) {
+      super(runtime41, scope5);
+      this.state = this.rawState.pipe(rx4.map(UnshieldedWalletState.mapState(CustomUnshieldedWalletImplementation.allVariantsRecord()[V1Tag3].variant)), rx4.shareReplay({ refCount: true, bufferSize: 1 }));
     }
     start() {
       return this.runtime.dispatch({ [V1Tag3]: (v18) => v18.startSyncInBackground() }).pipe(Effect_exports.runPromise);
@@ -169273,9 +168648,9 @@ var CompactTypeField = {
   }
 };
 var CompactTypeEnum = class {
+  maxValue;
+  length;
   constructor(maxValue, length5) {
-    __publicField(this, "maxValue");
-    __publicField(this, "length");
     this.maxValue = maxValue;
     this.length = length5;
   }
@@ -169302,9 +168677,9 @@ var CompactTypeEnum = class {
   }
 };
 var CompactTypeUnsignedInteger = class {
+  maxValue;
+  length;
   constructor(maxValue, length5) {
-    __publicField(this, "maxValue");
-    __publicField(this, "length");
     this.maxValue = maxValue;
     this.length = length5;
   }
@@ -169331,9 +168706,9 @@ var CompactTypeUnsignedInteger = class {
   }
 };
 var CompactTypeVector = class {
+  length;
+  type;
   constructor(length5, type) {
-    __publicField(this, "length");
-    __publicField(this, "type");
     this.length = length5;
     this.type = type;
   }
@@ -169383,8 +168758,8 @@ var CompactTypeBoolean = {
   }
 };
 var CompactTypeBytes = class {
+  length;
   constructor(length5) {
-    __publicField(this, "length");
     this.length = length5;
   }
   alignment() {
@@ -169421,8 +168796,6 @@ var CompactTypeOpaqueString = {
     return [new TextEncoder().encode(value3)];
   }
 };
-new CompactTypeBytes(32);
-new CompactTypeUnsignedInteger(18446744073709551615n, 8);
 function persistentCommit3(rtType, value3, opening) {
   if (opening.length != 32) {
     throw new CompactError("Expected 32-byte string");
@@ -169822,8 +169195,8 @@ var _Either_1 = class {
 };
 var _descriptor_25 = new _Either_1();
 var Contract = class {
+  witnesses;
   constructor(...args_0) {
-    __publicField(this, "witnesses");
     if (args_0.length !== 1) {
       throw new CompactError(`Contract constructor: expected 1 argument, received ${args_0.length}`);
     }
@@ -181278,10 +180651,7 @@ var make77 = (input, arrayInputMode) => {
 };
 var TypeIdError2 = (typeId, tag4) => {
   class Base3 extends Error2 {
-    constructor() {
-      super(...arguments);
-      __publicField(this, "_tag", tag4);
-    }
+    _tag = tag4;
   }
   Base3.prototype[typeId] = typeId;
   Base3.prototype.name = tag4;
@@ -181479,10 +180849,9 @@ var partitionTranscript = (txContext, finalTxContext, publicTranscript, ledgerPa
   return partitionedTranscripts.length === 1 ? Either_exports.right(partitionedTranscripts[0]) : Either_exports.left(new Error(`Expected one transcript partition pair, received: ${partitionedTranscripts.length}`));
 };
 var ContractExecutableImpl = class {
+  compiledContract;
+  transform;
   constructor(compiledContract, transform5 = identity) {
-    __publicField(this, "compiledContract");
-    __publicField(this, "transform");
-    __publicField(this, "contract");
     this.compiledContract = compiledContract;
     this.transform = transform5;
   }
@@ -181653,8 +181022,9 @@ var ContractExecutableImpl = class {
     }
   }
   createContract() {
-    return this.contract ?? (this.contract = createContract(this.compiledContract).pipe(Effect_exports.mapError((err) => make82(String(err), err)), Effect_exports.cached, Effect_exports.runSync));
+    return this.contract ??= createContract(this.compiledContract).pipe(Effect_exports.mapError((err) => make82(String(err), err)), Effect_exports.cached, Effect_exports.runSync);
   }
+  contract;
   // Backing property for `createContract`.
 };
 var make83 = (compiledContract) => new ContractExecutableImpl(compiledContract);
@@ -181729,14 +181099,14 @@ var asEffectOption = (obj) => {
 };
 var asContractAddress = (address) => ContractAddress_exports.ContractAddress(address);
 var InvalidProtocolSchemeError2 = class extends Error {
+  invalidScheme;
+  allowableSchemes;
   /**
    * @param invalidScheme The invalid scheme.
    * @param allowableSchemes The valid schemes that are allowed.
    */
   constructor(invalidScheme, allowableSchemes) {
     super(`Invalid protocol scheme: '${invalidScheme}'. Allowable schemes are one of: ${allowableSchemes.join(",")}`);
-    __publicField(this, "invalidScheme");
-    __publicField(this, "allowableSchemes");
     this.invalidScheme = invalidScheme;
     this.allowableSchemes = allowableSchemes;
   }
@@ -181754,9 +181124,9 @@ var SigningKeyExportError = class extends Error {
   }
 };
 var PrivateStateImportError = class extends Error {
+  cause;
   constructor(message, cause3) {
     super(message);
-    __publicField(this, "cause");
     this.cause = cause3;
     this.name = "PrivateStateImportError";
   }
@@ -181774,9 +181144,9 @@ var InvalidExportFormatError = class extends PrivateStateImportError {
   }
 };
 var ImportConflictError = class extends PrivateStateImportError {
+  conflictCount;
   constructor(conflictCount, entityName = "private state") {
     super(`Import conflicts with ${conflictCount} existing ${entityName}${conflictCount === 1 ? "" : "s"}`, "conflict");
-    __publicField(this, "conflictCount");
     this.conflictCount = conflictCount;
     this.name = "ImportConflictError";
   }
@@ -181930,6 +181300,8 @@ function assertIsContractAddress(contractAddress) {
 // node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
 var isEffectContractError = (error4) => typeof error4 === "object" && error4 !== null && "_tag" in error4 && "cause" in error4 && typeof error4.cause === "object" && error4.cause !== null && "name" in error4.cause && "message" in error4.cause;
 var TxFailedError = class extends Error {
+  finalizedTxData;
+  circuitId;
   /**
    * @param finalizedTxData The finalization data of the transaction that failed.
    * @param circuitId The name of the circuit that was called to create the call
@@ -181938,8 +181310,6 @@ var TxFailedError = class extends Error {
    */
   constructor(finalizedTxData, circuitId) {
     super("Transaction failed");
-    __publicField(this, "finalizedTxData");
-    __publicField(this, "circuitId");
     this.finalizedTxData = finalizedTxData;
     this.circuitId = circuitId;
     this.message = JSON.stringify({
@@ -181974,6 +181344,8 @@ var CallTxFailedError = class extends TxFailedError {
   }
 };
 var ContractTypeError = class extends TypeError {
+  contractState;
+  circuitIds;
   /**
    * Initializes a new {@link ContractTypeError}.
    *
@@ -181983,8 +181355,6 @@ var ContractTypeError = class extends TypeError {
    */
   constructor(contractState, circuitIds) {
     super(`Following operations: ${circuitIds.join(", ")}, are undefined or have mismatched verifier keys for contract state ${contractState.toString(false)}`);
-    __publicField(this, "contractState");
-    __publicField(this, "circuitIds");
     this.contractState = contractState;
     this.circuitIds = circuitIds;
   }
@@ -182020,10 +181390,10 @@ var IncompleteFindContractPrivateStateConfig = class extends Error {
   }
 };
 var ScopedTransactionIdentityMismatchError = class extends Error {
+  cached;
+  requested;
   constructor(cached4, requested) {
     super("Scoped transaction identity mismatch");
-    __publicField(this, "cached");
-    __publicField(this, "requested");
     this.cached = cached4;
     this.requested = requested;
     this.name = "ScopedTransactionIdentityMismatchError";
@@ -182285,16 +181655,15 @@ var mergeSubmitTxOptions = (current2, next4) => {
     circuitId: Array.from(circuitIds)
   };
 };
-var _a88;
 var TransactionContextImpl = class {
+  [TypeId47] = TypeId47;
+  providers;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  options;
+  cachedStates = void 0;
+  currentUnsubmittedCall;
+  submitTxOptions = void 0;
   constructor(providers, options5) {
-    __publicField(this, _a88, TypeId47);
-    __publicField(this, "providers");
-    // eslint-disable-line @typescript-eslint/no-explicit-any
-    __publicField(this, "options");
-    __publicField(this, "cachedStates");
-    __publicField(this, "currentUnsubmittedCall");
-    __publicField(this, "submitTxOptions");
     this.providers = providers;
     this.options = options5;
   }
@@ -182306,7 +181675,7 @@ var TransactionContextImpl = class {
   getCurrentStates() {
     return this.cachedStates?.states;
   }
-  [(_a88 = TypeId47, GetCurrentStatesForIdentity)](identity9) {
+  [GetCurrentStatesForIdentity](identity9) {
     if (!this.cachedStates) {
       return void 0;
     }
@@ -183575,10 +182944,10 @@ var hashPassword = (password) => {
   return createHash("sha256").update(password).digest("hex");
 };
 var StorageEncryption = class {
+  encryptionKey;
+  salt;
+  passwordHash;
   constructor(password, existingSalt) {
-    __publicField(this, "encryptionKey");
-    __publicField(this, "salt");
-    __publicField(this, "passwordHash");
     this.salt = existingSalt ?? randomBytes$1(SALT_LENGTH);
     this.encryptionKey = this.deriveKey(password, this.salt, PBKDF2_ITERATIONS_V2);
     this.passwordHash = hashPassword(password);
@@ -184401,6 +183770,7 @@ var import_cross_fetch = __toESM(require_node_ponyfill(), 1);
 var ws = __toESM(require_node(), 1);
 var Rx2 = __toESM(require_cjs(), 1);
 var IndexerFormattedError = class extends Error {
+  cause;
   /**
    * @param cause An array of GraphQL errors that occurred during the server-side execution.
    */
@@ -184408,7 +183778,6 @@ var IndexerFormattedError = class extends Error {
     super(`Indexer GraphQL error(s):
 ${cause3.reduce((acc, c, idx) => `${idx + 1}. ${c.message}:
 	${acc}`, "")}`);
-    __publicField(this, "cause");
     this.cause = cause3;
   }
 };
@@ -185211,12 +184580,12 @@ var VERIFIER_EXT = ".verifier";
 var ZKIR_DIR = "zkir";
 var ZKIR_EXT = ".bzkir";
 var NodeZkConfigProvider = class extends ZKConfigProvider {
+  directory;
   /**
    * @param directory The path to the base directory containing the key and ZKIR subdirectories.
    */
   constructor(directory) {
     super();
-    __publicField(this, "directory");
     this.directory = directory;
   }
   /**

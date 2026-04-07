@@ -1,7 +1,5 @@
-'use strict';
-
-var chunkVND52AST_cjs = require('./chunk-VND52AST.cjs');
-require('./chunk-HCCQLAA4.cjs');
+import { FormData, file_default } from './chunk-NKJM2XCL.mjs';
+import './chunk-J7LXIPZS.mjs';
 
 // node_modules/@polkadot/x-fetch/node_modules/node-fetch/src/utils/multipart-parser.js
 var s = 0;
@@ -295,7 +293,7 @@ async function toFormData(Body, ct) {
   let contentType;
   let filename;
   const entryChunks = [];
-  const formData = new chunkVND52AST_cjs.FormData();
+  const formData = new FormData();
   const onPartData = (ui8a) => {
     entryValue += decoder.decode(ui8a, { stream: true });
   };
@@ -303,7 +301,7 @@ async function toFormData(Body, ct) {
     entryChunks.push(ui8a);
   };
   const appendFileToFormData = () => {
-    const file = new chunkVND52AST_cjs.file_default(entryChunks, filename, { type: contentType });
+    const file = new file_default(entryChunks, filename, { type: contentType });
     formData.append(entryName, file);
   };
   const appendEntryToFormData = () => {
@@ -354,6 +352,6 @@ async function toFormData(Body, ct) {
   return formData;
 }
 
-exports.toFormData = toFormData;
-//# sourceMappingURL=multipart-parser-SXDWJXMK.cjs.map
-//# sourceMappingURL=multipart-parser-SXDWJXMK.cjs.map
+export { toFormData };
+//# sourceMappingURL=multipart-parser-XYCJRNFG.mjs.map
+//# sourceMappingURL=multipart-parser-XYCJRNFG.mjs.map
