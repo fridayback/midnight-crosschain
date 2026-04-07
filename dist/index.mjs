@@ -11825,7 +11825,6 @@ function ledger2(stateOrChargedState) {
   currentQueryContext: new __compactRuntime.QueryContext(new __compactRuntime.ContractState().data, __compactRuntime.dummyContractAddress())
 });
 new Contract({});
-process.env.MSGPACKR_NO_NATIVE = "1";
 var CrossChainPrivateStateId = "crossChainPrivateState";
 function getDirname() {
   if (typeof import.meta?.url === "string") {

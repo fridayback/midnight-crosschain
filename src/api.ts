@@ -1,15 +1,11 @@
 /*
- * @Author: liulin
+ * @Author: liulin 
  * @Date: 2025-06-20 12:02:08
  * @LastEditors: liulin blue-sky-dl5@163.com
  * @LastEditTime: 2025-12-10 11:23:56
  * @FilePath: /midnight-crosschain/contract/src/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-
-// Force msgpackr to use pure JS implementation to avoid native build issues
-process.env.MSGPACKR_NO_NATIVE = '1';
-
 // export * as CrossChain from "./managed/crosschain/contract/index.cjs";
 // export * from "./witnesses.js";
 

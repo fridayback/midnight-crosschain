@@ -11852,7 +11852,6 @@ function ledger2(stateOrChargedState) {
   currentQueryContext: new __compactRuntime__namespace.QueryContext(new __compactRuntime__namespace.ContractState().data, __compactRuntime__namespace.dummyContractAddress())
 });
 new Contract({});
-process.env.MSGPACKR_NO_NATIVE = "1";
 var CrossChainPrivateStateId = "crossChainPrivateState";
 function getDirname() {
   if (typeof (typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href)) === "string") {
