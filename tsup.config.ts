@@ -50,4 +50,9 @@ export default defineConfig({
   output: {
     exports: 'named',
   },
+
+  // 处理 WASM 文件
+  loader: {
+    '.wasm': 'file',
+  },
 })
