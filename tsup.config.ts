@@ -23,8 +23,8 @@ export default defineConfig({
   // 外部依赖（不打包进 bundle）
   external: [],
   // noExternal: ['wallet-sdk', 'api', 'witnesses'], // 将 wallet-sdk 内联打包
-  noExternal: [/(.*)/],
-  splitting: true,
+  // noExternal: [/^(?!msgpackr|@msgpackr-extract).*$/],
+  // splitting: true,
 
   // 内联依赖
   // noExternal: [],
@@ -51,8 +51,8 @@ export default defineConfig({
     exports: 'named',
   },
 
-  // 处理 WASM 文件
-  loader: {
-    '.wasm': 'file',
-  },
+  // // 处理 WASM 文件
+  // loader: {
+  //   '.wasm': 'file',
+  // },
 })
