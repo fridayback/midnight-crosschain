@@ -22,12 +22,18 @@ export default defineConfig({
 
   // 外部依赖（不打包进 bundle）
   external: [],
-  // noExternal: [/(.*)/], // 将 wallet-sdk 内联打包
-  noExternal: [/^(?!(@msgpackr-extract|classic-level|cpu-features|ssh2)).*$/],
+  
+  // 只内联特定的包，排除那些使用动态 require 的包
+  // 这样 ESM 输出不会包含动态 require 调用
+  noExternal: [
+    /@midnight-ntwrk/,
+    /wallet-sdk/,
+  ],
+  
   splitting: false,
 
-  // 内联依赖
-  // noExternal: [],
+  // 为 ESM 输出启用 shims，处理 Node.js 内置模块
+  shims: true,
 
   // 输出文件扩展名配置
   outExtension: ({ format }) => {
