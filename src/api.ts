@@ -38,7 +38,7 @@ import * as Rx from 'rxjs';
 import { ContractState, ContractAddress, degradeToTransient, ecAdd, ecMul, ecMulGenerator, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash, encodeShieldedCoinInfo, ShieldedTokenType, RawTokenType, encodeUserAddress, rawTokenType } from '@midnight-ntwrk/compact-runtime';
 import assert from 'node:assert';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { MidnightWalletSDK, signTransactionIntents } from './wallet-sdk.js';
+import { MidnightWalletSDK, signTransactionIntents } from './wallet-sdk';
 // import { FinalizedTransaction } from '@midnight-ntwrk/ledger-v7';
 
 

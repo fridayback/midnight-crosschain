@@ -1,6 +1,6 @@
-import * as _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js from '@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/UnshieldedState.js';
-import * as _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances.js';
-import * as _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types_Dust_js from '@midnight-ntwrk/wallet-sdk-dust-wallet/dist/v1/types/Dust.js';
+import * as _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState from '@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/UnshieldedState';
+import * as _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances';
+import * as _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types from '@midnight-ntwrk/wallet-sdk-dust-wallet/dist/v1/types';
 import * as ledger from '@midnight-ntwrk/ledger-v8';
 import { UserAddress as UserAddress$1 } from '@midnight-ntwrk/ledger-v8';
 export { ledger as ledgerV8 };
@@ -65,9 +65,9 @@ declare class MidnightWalletSDK {
         unshieldedBlance: any;
     }>;
     getAvailableCoins(): Promise<{
-        dustAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types_Dust_js.Dust[];
-        shieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js.AvailableCoin[];
-        unshieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js.UtxoWithMeta[];
+        dustAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types.Dust[];
+        shieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances.AvailableCoin[];
+        unshieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState.UtxoWithMeta[];
     }>;
     uninitWallet(): Promise<void>;
     getWalletInstance(): WalletFacade | undefined;
