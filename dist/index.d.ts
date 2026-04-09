@@ -1,8 +1,9 @@
-import * as _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js from '@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/UnshieldedState.js';
-import * as _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances.js';
-import * as _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types_Dust_js from '@midnight-ntwrk/wallet-sdk-dust-wallet/dist/v1/types/Dust.js';
+import * as _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState from '@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/UnshieldedState';
+import * as _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1/CoinsAndBalances';
+import * as _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types from '@midnight-ntwrk/wallet-sdk-dust-wallet/dist/v1/types';
 import * as ledger from '@midnight-ntwrk/ledger-v8';
 import { UserAddress as UserAddress$1 } from '@midnight-ntwrk/ledger-v8';
+export { ledger as ledgerV8 };
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DefaultConfiguration, WalletFacade, CombinedSwapOutputs, FacadeState } from '@midnight-ntwrk/wallet-sdk-facade';
 import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
@@ -13,6 +14,8 @@ import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { SigningKey, ContractAddress, RawTokenType } from '@midnight-ntwrk/compact-runtime';
 import { CompiledContract, ProvableCircuitId } from '@midnight-ntwrk/compact-js';
 import { DeployedContract, FoundContract, FinalizedCallTxData } from '@midnight-ntwrk/midnight-js-contracts';
+import * as midnightJsUtils from '@midnight-ntwrk/midnight-js-utils';
+export { midnightJsUtils as midnightjsutils };
 
 type Configuration = DefaultConfiguration;
 declare const configuration: (indexerHttpUrl: string, indexerWsUrl: string, provingServerUrl: string, node: string, network?: NetworkId.NetworkId, costParameters?: {
@@ -62,9 +65,9 @@ declare class MidnightWalletSDK {
         unshieldedBlance: any;
     }>;
     getAvailableCoins(): Promise<{
-        dustAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types_Dust_js.Dust[];
-        shieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances_js.AvailableCoin[];
-        unshieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState_js.UtxoWithMeta[];
+        dustAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_dust_wallet_dist_v1_types.Dust[];
+        shieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_shielded_dist_v1_CoinsAndBalances.AvailableCoin[];
+        unshieldedAvailableCoins: readonly _midnight_ntwrk_wallet_sdk_unshielded_wallet_dist_v1_UnshieldedState.UtxoWithMeta[];
     }>;
     uninitWallet(): Promise<void>;
     getWalletInstance(): WalletFacade | undefined;
@@ -613,6 +616,7 @@ declare const genSigningKey: () => string;
 declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const getUserAddressFromUnshieldAddress: (unshieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const getUnshieldAddressFromUserAddress: (userAddrHex: string, networkId?: string) => string;
+
 declare const initNetwork: (network: "mainnet" | "testnet-02" | "preview" | "devnet" | "undeployed") => void;
 
 export { CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };

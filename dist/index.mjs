@@ -1,5 +1,8 @@
+import path2 from 'path';
+import { fileURLToPath } from 'url';
 import * as ledger from '@midnight-ntwrk/ledger-v8';
 import { decodeRawTokenType } from '@midnight-ntwrk/ledger-v8';
+export { ledger as ledgerV8 };
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
@@ -9,7 +12,6 @@ import { Buffer as Buffer$1 } from 'buffer';
 import * as Rx from 'rxjs';
 import { DustAddress, UnshieldedAddress, ShieldedAddress, MidnightBech32m } from '@midnight-ntwrk/wallet-sdk-address-format';
 import assert3 from 'assert';
-import path from 'path';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { ContractState, rawTokenType, sampleSigningKey } from '@midnight-ntwrk/compact-runtime';
 import { CompiledContract } from '@midnight-ntwrk/compact-js';
@@ -21,11 +23,13 @@ import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { getNetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { toHex, fromHex, assertIsContractAddress } from '@midnight-ntwrk/midnight-js-utils';
-import { fileURLToPath } from 'url';
+import * as midnightJsUtils from '@midnight-ntwrk/midnight-js-utils';
+export { midnightJsUtils as midnightjsutils };
 
-var __defProp = Object.defineProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => __defNormalProp(obj, key + "" , value);
+// node_modules/tsup/assets/esm_shims.js
+var getFilename = () => fileURLToPath(import.meta.url);
+var getDirname = () => path2.dirname(getFilename());
+var __dirname$1 = /* @__PURE__ */ getDirname();
 var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, node, network = "preview", costParameters = {
   additionalFeeOverhead: 300000000000000n,
   feeBlocksMargin: 5
@@ -546,8 +550,8 @@ var _Either_1 = class {
 };
 var _descriptor_25 = new _Either_1();
 var Contract = class {
+  witnesses;
   constructor(...args_0) {
-    __publicField(this, "witnesses");
     if (args_0.length !== 1) {
       throw new __compactRuntime.CompactError(`Contract constructor: expected 1 argument, received ${args_0.length}`);
     }
@@ -3567,7 +3571,7 @@ var Contract = class {
       tokenPairId: tokenPairId_0,
       tokenAccount: tokenPair_0.midnigthTokenAccount,
       amount: amount_0,
-      fee: 0n
+      fee: contractFee_0
     };
     __compactRuntime.queryLedgerState(
       context,
@@ -11828,18 +11832,18 @@ function ledger2(stateOrChargedState) {
 });
 new Contract({});
 var CrossChainPrivateStateId = "crossChainPrivateState";
-function getDirname() {
+function getDirname2() {
   if (typeof import.meta?.url === "string") {
-    const ret = path.resolve(fileURLToPath(import.meta.url), "..");
+    const ret = path2.resolve(fileURLToPath(import.meta.url), "..");
     return ret;
   }
-  return path.resolve(__dirname, "..");
+  return path2.resolve(__dirname$1, "..");
 }
-var currentDir = getDirname();
+var currentDir = getDirname2();
 console.log("currentDir===>", currentDir);
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
-  zkConfigPath: path.resolve(currentDir, "managed", "crosschain")
+  zkConfigPath: path2.resolve(currentDir, "managed", "crosschain")
 };
 var fromHexWithOrNoPrefix = (hex) => {
   if (hex.startsWith("0x")) {
@@ -11860,7 +11864,7 @@ function pad(s, n) {
 var crosschainContractInstance = new Contract(witnesses);
 var CompiledSimpleContract = CompiledContract.make("CrossChain", Contract).pipe(
   CompiledContract.withWitnesses(witnesses),
-  CompiledContract.withCompiledFileAssets(path.resolve(currentDir, "managed", "crosschain"))
+  CompiledContract.withCompiledFileAssets(path2.resolve(currentDir, "managed", "crosschain"))
 );
 var createWalletAndMidnightProvider = async (wallet) => {
   const walletFacade = wallet.getWalletInstance();

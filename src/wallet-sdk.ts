@@ -5,7 +5,7 @@ import { CombinedSwapOutputs, DefaultConfiguration, FacadeState, WalletFacade } 
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
 import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 
-import type { DefaultV1Configuration as ShieldedConfiguration } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
+// import type { DefaultV1Configuration as ShieldedConfiguration } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
 import {
     createKeystore,
     PublicKey,
@@ -21,7 +21,7 @@ import assert from 'node:assert';
 import { stat } from 'fs';
 // import { LedgerParameters } from '@midnight-ntwrk/ledger-v7';
 
-import { ToolKitClient } from './utils.js';
+// import { ToolKitClient } from './utils.js';
 import { UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
 
 export type Configuration = DefaultConfiguration;//ShieldedConfiguration & DustConfiguration & { indexerUrl: string };
