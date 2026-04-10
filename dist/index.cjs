@@ -7944,7 +7944,7 @@ var require_throttleTime = __commonJS({
     var async_1 = require_async();
     var throttle_1 = require_throttle();
     var timer_1 = require_timer();
-    function throttleTime(duration4, scheduler2, config3) {
+    function throttleTime2(duration4, scheduler2, config3) {
       if (scheduler2 === void 0) {
         scheduler2 = async_1.asyncScheduler;
       }
@@ -7953,7 +7953,7 @@ var require_throttleTime = __commonJS({
         return duration$;
       }, config3);
     }
-    exports$1.throttleTime = throttleTime;
+    exports$1.throttleTime = throttleTime2;
   }
 });
 
@@ -162575,9 +162575,9 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
 };
 var waitForFullySynced = async (facade, forceReturn = false) => {
   const timeCur = Date.now();
-  const state = await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => {
+  const state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
     if (!s.isSynced) {
-      console.log(`wallet is syncing...`);
+      console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
     }
     return s.isSynced || forceReturn;
   })));

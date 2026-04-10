@@ -89,9 +89,9 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
 };
 var waitForFullySynced = async (facade, forceReturn = false) => {
   const timeCur = Date.now();
-  const state = await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => {
+  const state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
     if (!s.isSynced) {
-      console.log(`wallet is syncing...`);
+      console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
     }
     return s.isSynced || forceReturn;
   })));
