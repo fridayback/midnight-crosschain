@@ -162573,9 +162573,14 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
   await wallet.start(shieldedSecretKeys, dustSecretKey);
   return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
-var waitForFullySynced = async (facade) => {
+var waitForFullySynced = async (facade, forceReturn = false) => {
   const timeCur = Date.now();
-  const state = await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
+  const state = await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => {
+    if (!s.isSynced) {
+      console.log(`wallet is syncing...`);
+    }
+    return s.isSynced || forceReturn;
+  })));
   console.log(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
   return state;
 };
@@ -162599,7 +162604,7 @@ var MidnightWalletSDK = class {
     this.unshieldedKeystore = ret.unshieldedKeystore;
     this.dustSecretKey = ret.dustSecretKey;
     const selfWallet = this.walletObj;
-    const state = await waitForFullySynced(this.walletObj);
+    const state = await waitForFullySynced(this.walletObj, true);
     this.walletAddress = {
       shieldedAddress: ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString(),
       unshieldedAddress: UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString(),

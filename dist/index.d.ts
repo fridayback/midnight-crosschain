@@ -29,7 +29,7 @@ strSerializedState?: FacadeSerializedState) => Promise<{
     dustSecretKey: ledger.DustSecretKey;
     unshieldedKeystore: UnshieldedKeystore;
 }>;
-declare const waitForFullySynced: (facade: WalletFacade) => Promise<FacadeState>;
+declare const waitForFullySynced: (facade: WalletFacade, forceReturn?: boolean) => Promise<FacadeState>;
 interface FacadeSerializedState {
     readonly shieldedWalletState: string;
     readonly unshieldedWalletState: string;
