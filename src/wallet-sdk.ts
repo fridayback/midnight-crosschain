@@ -128,9 +128,9 @@ export const initFacadeWallet = async (
 
 export const waitForFullySynced = async (facade: WalletFacade, forceReturn: boolean = false): Promise<FacadeState> => {
     const timeCur = Date.now();
-    const state = await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => {
+    const state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
         if (!s.isSynced) {
-            console.log(`wallet is syncing...`);
+            console.log(`[${new Date().toUTCString()}:] wallet is syncing...`);
         }
         return s.isSynced || forceReturn;
     })));
