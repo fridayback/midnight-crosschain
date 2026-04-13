@@ -2365,7 +2365,7 @@ export class Contract {
                     tokenPairId: tokenPairId_0,
                     tokenAccount: tokenPair_0.midnigthTokenAccount,
                     amount: amount_0,
-                    fee: contractFee_0 };
+                    fee: 0n };
     __compactRuntime.queryLedgerState(context,
                                       partialProofData,
                                       [

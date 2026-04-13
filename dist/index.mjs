@@ -10,7 +10,7 @@ import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 import { createKeystore, UnshieldedWallet, NoOpTransactionHistoryStorage, PublicKey } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
 import * as Rx from 'rxjs';
-import { DustAddress, UnshieldedAddress, ShieldedAddress, MidnightBech32m } from '@midnight-ntwrk/wallet-sdk-address-format';
+import { ShieldedAddress, ShieldedCoinPublicKey, ShieldedEncryptionPublicKey, UnshieldedAddress, DustAddress, MidnightBech32m } from '@midnight-ntwrk/wallet-sdk-address-format';
 import assert3 from 'assert';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { ContractState, rawTokenType, sampleSigningKey } from '@midnight-ntwrk/compact-runtime';
@@ -47,7 +47,7 @@ var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, nod
     batchSize: 1
   };
 };
-var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
+var createWalletKeys = (seed, configuration2) => {
   const hdWallet = HDWallet.fromSeed(seed);
   if (hdWallet.type !== "seedOk") {
     throw new Error("Failed to initialize HDWallet");
@@ -60,6 +60,10 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
   const shieldedSecretKeys = ledger.ZswapSecretKeys.fromSeed(derivationResult.keys[Roles.Zswap]);
   const dustSecretKey = ledger.DustSecretKey.fromSeed(derivationResult.keys[Roles.Dust]);
   const unshieldedKeystore = createKeystore(derivationResult.keys[Roles.NightExternal], configuration2.networkId);
+  return { shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
+};
+var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
+  const { shieldedSecretKeys, dustSecretKey, unshieldedKeystore } = createWalletKeys(seed, configuration2);
   strSerializedState && strSerializedState.shieldedWalletState ? ShieldedWallet(configuration2).restore(strSerializedState.shieldedWalletState) : ShieldedWallet(configuration2).startWithSecretKeys(shieldedSecretKeys);
   strSerializedState && strSerializedState.dustWalletState ? DustWallet(configuration2).restore(strSerializedState.dustWalletState) : DustWallet(configuration2).startWithSecretKey(dustSecretKey, ledger.LedgerParameters.initialParameters().dust);
   strSerializedState && strSerializedState.unshieldedWalletState ? UnshieldedWallet({
@@ -99,20 +103,28 @@ var waitForFullySynced = async (facade, forceReturn = false) => {
   return state;
 };
 var MidnightWalletSDK = class {
-  constructor(config) {
+  constructor(config, strSeed) {
     this.isGenerating = false;
     this.isUnGenerating = false;
     this.config = config;
     this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "" };
     this.bActiveFlag = false;
+    this.seed = Buffer$1.from(strSeed, "hex");
+    if (this.seed.toString("hex").toLowerCase() != strSeed.toLowerCase()) throw "bad seed";
+    const { shieldedSecretKeys, dustSecretKey, unshieldedKeystore } = createWalletKeys(this.seed, this.config);
+    const coinPublicKey = shieldedSecretKeys.coinPublicKey;
+    const encryptionPublicKey = shieldedSecretKeys.encryptionPublicKey;
+    const shieldedAddress = new ShieldedAddress(ShieldedCoinPublicKey.fromHexString(coinPublicKey), ShieldedEncryptionPublicKey.fromHexString(encryptionPublicKey));
+    const unshieldedAddress = new UnshieldedAddress(Buffer$1.from(PublicKey.fromKeyStore(unshieldedKeystore).addressHex, "hex"));
+    this.walletAddress.shieldedAddress = ShieldedAddress.codec.encode(this.config.networkId, shieldedAddress).asString();
+    this.walletAddress.unshieldedAddress = UnshieldedAddress.codec.encode(this.config.networkId, unshieldedAddress).asString();
+    this.walletAddress.dustAddress = DustAddress.codec.encode(this.config.networkId, new DustAddress(dustSecretKey.publicKey)).asString();
   }
   //////////////////////////////////////////
   // to generate a wallet instance
   //////////////////////////////////////////
-  async initWallet(strSeed, store, strSerializedState, saveInterval = 6e5) {
-    const seed = Buffer$1.from(strSeed, "hex");
-    if (seed.toString("hex").toLowerCase() != strSeed.toLowerCase()) throw "bad seed";
-    const ret = await initFacadeWallet(seed, this.config, strSerializedState);
+  async initWallet(store, strSerializedState, saveInterval = 6e5) {
+    const ret = await initFacadeWallet(this.seed, this.config, strSerializedState);
     this.walletObj = ret.wallet;
     this.shieldedSecretKeys = ret.shieldedSecretKeys;
     this.unshieldedKeystore = ret.unshieldedKeystore;
@@ -3576,7 +3588,7 @@ var Contract = class {
       tokenPairId: tokenPairId_0,
       tokenAccount: tokenPair_0.midnigthTokenAccount,
       amount: amount_0,
-      fee: contractFee_0
+      fee: 0n
     };
     __compactRuntime.queryLedgerState(
       context,
@@ -12489,7 +12501,12 @@ var getUnshieldAddressFromUserAddress = (userAddrHex, networkId) => {
 var initNetwork = (network) => {
   setNetworkId(network);
 };
+var getContractState = async (publicDataProvider, contractAddress) => {
+  assertIsContractAddress(contractAddress);
+  const state = await publicDataProvider.queryContractState(contractAddress).then((contractState) => contractState != null ? ledger2(contractState.data) : null);
+  return state;
+};
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

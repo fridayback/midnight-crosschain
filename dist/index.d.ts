@@ -9,7 +9,7 @@ import { DefaultConfiguration, WalletFacade, CombinedSwapOutputs, FacadeState } 
 import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
 import * as _midnight_ntwrk_midnight_js_types from '@midnight-ntwrk/midnight-js-types';
-import { UnboundTransaction, MidnightProviders, WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
+import { UnboundTransaction, MidnightProviders, WalletProvider, MidnightProvider, PublicDataProvider } from '@midnight-ntwrk/midnight-js-types';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { SigningKey, ContractAddress, RawTokenType } from '@midnight-ntwrk/compact-runtime';
 import { CompiledContract, ProvableCircuitId } from '@midnight-ntwrk/compact-js';
@@ -22,6 +22,11 @@ declare const configuration: (indexerHttpUrl: string, indexerWsUrl: string, prov
     additionalFeeOverhead: bigint;
     feeBlocksMargin: number;
 }) => Configuration;
+declare const createWalletKeys: (seed: Buffer$1, configuration: Configuration) => {
+    shieldedSecretKeys: ledger.ZswapSecretKeys;
+    dustSecretKey: ledger.DustSecretKey;
+    unshieldedKeystore: UnshieldedKeystore;
+};
 declare const initFacadeWallet: (seed: Buffer$1, configuration: Configuration, // = defaultConfiguration,
 strSerializedState?: FacadeSerializedState) => Promise<{
     wallet: WalletFacade;
@@ -49,12 +54,15 @@ declare class MidnightWalletSDK {
     private walletAddress;
     private bActiveFlag;
     private storeTimer?;
-    constructor(config: Configuration);
-    initWallet(strSeed: string, store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
+    private seed;
+    constructor(config: Configuration, strSeed: string);
+    initWallet(store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
     getAccountAddress(): {
         shieldedAddress: string;
         unshieldedAddress: string;
         dustAddress: string;
+        coinPublicKey?: string;
+        UserPublicKey?: string;
     };
     registerNightUtxosForDustGeneration(): Promise<void>;
     deregisterFromDustGeneration(): Promise<void>;
@@ -618,5 +626,6 @@ declare const getUserAddressFromUnshieldAddress: (unshieldAddr: string) => Buffe
 declare const getUnshieldAddressFromUserAddress: (userAddrHex: string, networkId?: string) => string;
 
 declare const initNetwork: (network: "mainnet" | "testnet-02" | "preview" | "devnet" | "undeployed") => void;
+declare const getContractState: (publicDataProvider: PublicDataProvider, contractAddress: string) => Promise<Ledger | null>;
 
-export { CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };

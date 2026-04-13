@@ -1,7 +1,7 @@
 import * as ledger from '@midnight-ntwrk/ledger-v8';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
-import { CombinedSwapOutputs, DefaultConfiguration, FacadeState, WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
+import { type CombinedSwapOutputs, type DefaultConfiguration, type FacadeState, WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
 import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 
@@ -11,18 +11,19 @@ import {
     PublicKey,
     // InMemoryTransactionHistoryStorage,
     NoOpTransactionHistoryStorage,
-    UnshieldedKeystore,
+    type UnshieldedKeystore,
     UnshieldedWallet,
 } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer } from 'buffer';
 import * as Rx from 'rxjs';
-import { ShieldedAddress, UnshieldedAddress, DustAddress } from "@midnight-ntwrk/wallet-sdk-address-format"
+import { ShieldedAddress, ShieldedCoinPublicKey, ShieldedEncryptionPublicKey, UnshieldedAddress, DustAddress } from "@midnight-ntwrk/wallet-sdk-address-format"
 import assert from 'node:assert';
 import { stat } from 'fs';
 // import { LedgerParameters } from '@midnight-ntwrk/ledger-v7';
 
 // import { ToolKitClient } from './utils.js';
-import { UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
+import { type UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
+// import { PublicKeys } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
 
 export type Configuration = DefaultConfiguration;//ShieldedConfiguration & DustConfiguration & { indexerUrl: string };
 // export const defaultConfiguration: Configuration = {
@@ -60,17 +61,12 @@ export const configuration = function (indexerHttpUrl: string, indexerWsUrl: str
     };
 }
 
-// TODO: 为了防止hd wallet 的意外变更,是否应该不依赖hd wallet生成三个私钥
-export const initFacadeWallet = async (
-    seed: Buffer,
-    configuration: Configuration,// = defaultConfiguration,
-    strSerializedState?: FacadeSerializedState
-): Promise<{
-    wallet: WalletFacade;
+export const createWalletKeys = (seed: Buffer,configuration: Configuration
+): {
     shieldedSecretKeys: ledger.ZswapSecretKeys;
     dustSecretKey: ledger.DustSecretKey;
     unshieldedKeystore: UnshieldedKeystore;
-}> => {
+} => {
     const hdWallet = HDWallet.fromSeed(seed);
 
     if (hdWallet.type !== 'seedOk') {
@@ -91,6 +87,42 @@ export const initFacadeWallet = async (
     const shieldedSecretKeys = ledger.ZswapSecretKeys.fromSeed(derivationResult.keys[Roles.Zswap]);
     const dustSecretKey = ledger.DustSecretKey.fromSeed(derivationResult.keys[Roles.Dust]);
     const unshieldedKeystore = createKeystore(derivationResult.keys[Roles.NightExternal], configuration.networkId);
+
+    return { shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
+}
+
+// TODO: 为了防止hd wallet 的意外变更,是否应该不依赖hd wallet生成三个私钥
+export const initFacadeWallet = async (
+    seed: Buffer,
+    configuration: Configuration,// = defaultConfiguration,
+    strSerializedState?: FacadeSerializedState
+): Promise<{
+    wallet: WalletFacade;
+    shieldedSecretKeys: ledger.ZswapSecretKeys;
+    dustSecretKey: ledger.DustSecretKey;
+    unshieldedKeystore: UnshieldedKeystore;
+}> => {
+    // const hdWallet = HDWallet.fromSeed(seed);
+
+    // if (hdWallet.type !== 'seedOk') {
+    //     throw new Error('Failed to initialize HDWallet');
+    // }
+
+    // const derivationResult = hdWallet.hdWallet
+    //     .selectAccount(0)
+    //     .selectRoles([Roles.Zswap, Roles.NightExternal, Roles.Dust])
+    //     .deriveKeysAt(0);
+
+    // if (derivationResult.type !== 'keysDerived') {
+    //     throw new Error('Failed to derive keys');
+    // }
+
+    // hdWallet.hdWallet.clear();
+
+    // const shieldedSecretKeys = ledger.ZswapSecretKeys.fromSeed(derivationResult.keys[Roles.Zswap]);
+    // const dustSecretKey = ledger.DustSecretKey.fromSeed(derivationResult.keys[Roles.Dust]);
+    // const unshieldedKeystore = createKeystore(derivationResult.keys[Roles.NightExternal], configuration.networkId);
+    const { shieldedSecretKeys, dustSecretKey, unshieldedKeystore } = createWalletKeys(seed, configuration);
 
     const shieldedWallet = strSerializedState && strSerializedState.shieldedWalletState ?
         ShieldedWallet(configuration).restore(strSerializedState.shieldedWalletState)
@@ -157,24 +189,41 @@ export class MidnightWalletSDK {
     private shieldedSecretKeys?: ledger.ZswapSecretKeys;
     private dustSecretKey?: ledger.DustSecretKey;
     private unshieldedKeystore?: UnshieldedKeystore;
-    private walletAddress: { shieldedAddress: string, unshieldedAddress: string, dustAddress: string };
+    private walletAddress: { shieldedAddress: string, unshieldedAddress: string, dustAddress: string , coinPublicKey?: string, UserPublicKey?: string};
     private bActiveFlag: boolean;
     private storeTimer?: NodeJS.Timeout;
-    constructor(config: Configuration) {
+    private seed: Buffer;
+    constructor(config: Configuration,strSeed: string) {
         this.config = config;
+        
         this.walletAddress = { shieldedAddress: '', unshieldedAddress: '', dustAddress: '' };
         this.bActiveFlag = false;
+
+        this.seed = Buffer.from(strSeed, 'hex');;
+        if (this.seed.toString('hex').toLowerCase() != strSeed.toLowerCase()) throw 'bad seed';
+
+        const { shieldedSecretKeys, dustSecretKey, unshieldedKeystore } = createWalletKeys(this.seed, this.config);
+
+        const coinPublicKey =shieldedSecretKeys.coinPublicKey;
+        const encryptionPublicKey = shieldedSecretKeys.encryptionPublicKey;
+        const shieldedAddress = new ShieldedAddress(ShieldedCoinPublicKey.fromHexString(coinPublicKey),ShieldedEncryptionPublicKey.fromHexString(encryptionPublicKey));
+
+        const unshieldedAddress = new UnshieldedAddress(Buffer.from(PublicKey.fromKeyStore(unshieldedKeystore).addressHex, 'hex'));
+
+        this.walletAddress.shieldedAddress = ShieldedAddress.codec.encode(this.config.networkId, shieldedAddress).asString();
+        this.walletAddress.unshieldedAddress = UnshieldedAddress.codec.encode(this.config.networkId, unshieldedAddress).asString();
+        this.walletAddress.dustAddress = DustAddress.codec.encode(this.config.networkId, new DustAddress(dustSecretKey.publicKey)).asString();
     }
 
     //////////////////////////////////////////
     // to generate a wallet instance
     //////////////////////////////////////////
-    async initWallet(strSeed: string, store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval: number = 600000) {
-        const seed = Buffer.from(strSeed, 'hex');
-        if (seed.toString('hex').toLowerCase() != strSeed.toLowerCase()) throw 'bad seed';
-        let oldState;
+    async initWallet(store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval: number = 600000) {
+        // const seed = Buffer.from(strSeed, 'hex');
+        // if (seed.toString('hex').toLowerCase() != strSeed.toLowerCase()) throw 'bad seed';
+        // let oldState;
 
-        const ret = (await initFacadeWallet(seed, this.config, strSerializedState));
+        const ret = (await initFacadeWallet(this.seed, this.config, strSerializedState));
         this.walletObj = ret.wallet;
         this.shieldedSecretKeys = ret.shieldedSecretKeys;
         this.unshieldedKeystore = ret.unshieldedKeystore;
@@ -453,3 +502,24 @@ export const signTransactionIntents = (
     }
     tx.intents = intents;
 };
+
+// {
+
+    
+// const seed = '1111111111111111111111111111111111111111111111111111111111111113';
+// const networkId = 'preview';
+// const { shieldedSecretKeys, dustSecretKey, unshieldedKeystore } = createWalletKeys(Buffer.from(seed, 'hex'), { networkId });
+
+// const coinPublicKey = shieldedSecretKeys.coinPublicKey;
+// const encryptionPublicKey = shieldedSecretKeys.encryptionPublicKey;
+// const shieldedAddress = new ShieldedAddress(ShieldedCoinPublicKey.fromHexString(coinPublicKey), ShieldedEncryptionPublicKey.fromHexString(encryptionPublicKey));
+
+// console.log(PublicKey.fromKeyStore(unshieldedKeystore).address);
+// console.log(PublicKey.fromKeyStore(unshieldedKeystore).addressHex);
+// console.log(PublicKey.fromKeyStore(unshieldedKeystore).publicKey);
+// const unshieldedAddress = new UnshieldedAddress(Buffer.from(PublicKey.fromKeyStore(unshieldedKeystore).addressHex, 'hex'));
+
+// console.log('Shielded Address: ' + ShieldedAddress.codec.encode(networkId, shieldedAddress).asString());
+// console.log('Unshielded Address: ' + UnshieldedAddress.codec.encode('mainnet', unshieldedAddress).asString());
+// console.log('Dust Address: ' + DustAddress.codec.encode(networkId, new DustAddress(dustSecretKey.publicKey)).asString());
+// }
