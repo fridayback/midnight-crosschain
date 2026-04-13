@@ -186,9 +186,9 @@ export class MidnightWalletSDK {
     private isUnGenerating: boolean = false;
     // private NetWorkId: NetworkId;
     private walletObj?: WalletFacade;
-    private shieldedSecretKeys?: ledger.ZswapSecretKeys;
-    private dustSecretKey?: ledger.DustSecretKey;
-    private unshieldedKeystore?: UnshieldedKeystore;
+    private shieldedSecretKeys: ledger.ZswapSecretKeys;
+    private dustSecretKey: ledger.DustSecretKey;
+    private unshieldedKeystore: UnshieldedKeystore;
     private walletAddress: { shieldedAddress: string, unshieldedAddress: string, dustAddress: string , coinPublicKey?: string, UserPublicKey?: string};
     private bActiveFlag: boolean;
     private storeTimer?: NodeJS.Timeout;
@@ -213,6 +213,10 @@ export class MidnightWalletSDK {
         this.walletAddress.shieldedAddress = ShieldedAddress.codec.encode(this.config.networkId, shieldedAddress).asString();
         this.walletAddress.unshieldedAddress = UnshieldedAddress.codec.encode(this.config.networkId, unshieldedAddress).asString();
         this.walletAddress.dustAddress = DustAddress.codec.encode(this.config.networkId, new DustAddress(dustSecretKey.publicKey)).asString();
+
+        this.shieldedSecretKeys = shieldedSecretKeys;
+        this.unshieldedKeystore = unshieldedKeystore;
+        this.dustSecretKey = dustSecretKey;
     }
 
     //////////////////////////////////////////
@@ -223,19 +227,40 @@ export class MidnightWalletSDK {
         // if (seed.toString('hex').toLowerCase() != strSeed.toLowerCase()) throw 'bad seed';
         // let oldState;
 
-        const ret = (await initFacadeWallet(this.seed, this.config, strSerializedState));
-        this.walletObj = ret.wallet;
-        this.shieldedSecretKeys = ret.shieldedSecretKeys;
-        this.unshieldedKeystore = ret.unshieldedKeystore;
-        this.dustSecretKey = ret.dustSecretKey;
+        // const ret = (await initFacadeWallet(this.seed, this.config, strSerializedState));
+
+        const shieldedWallet = (configuration: DefaultConfiguration) => strSerializedState && strSerializedState.shieldedWalletState ?
+        ShieldedWallet(configuration).restore(strSerializedState.shieldedWalletState)
+        : ShieldedWallet(configuration).startWithSecretKeys(this.shieldedSecretKeys);
+        
+        const dustWallet = (configuration: DefaultConfiguration) => strSerializedState && strSerializedState.dustWalletState ?
+        DustWallet(configuration).restore(strSerializedState.dustWalletState)
+        : DustWallet(configuration).startWithSecretKey(this.dustSecretKey, ledger.LedgerParameters.initialParameters().dust);
+        
+        const unshieldedWallet = (configuration: DefaultConfiguration) => strSerializedState && strSerializedState.unshieldedWalletState ?
+        UnshieldedWallet(configuration).restore(strSerializedState.unshieldedWalletState)
+        : UnshieldedWallet(configuration).startWithPublicKey(PublicKey.fromKeyStore(this.unshieldedKeystore));
+
+    const initParams = {
+        configuration: {
+            ...this.config,
+            txHistoryStorage: new NoOpTransactionHistoryStorage()
+        },
+        // submissionService?: (config: TConfig) => MaybePromise<SubmissionService<ledger.FinalizedTransaction>>;
+        // pendingTransactionsService?: (config: TConfig) => MaybePromise<PendingTransactionsService<ledger.FinalizedTransaction>>;
+        // provingService?: (config: TConfig) => MaybePromise<ProvingService<UnboundTransaction>>;
+        shielded: shieldedWallet,//(config: DefaultConfiguration) => ShieldedWallet(config).startWithSecretKeys(this.shieldedSecretKeys),
+        unshielded: unshieldedWallet,//(config: DefaultConfiguration) => UnshieldedWallet(config).startWithPublicKey(PublicKey.fromKeyStore(this.unshieldedKeystore)),
+        dust: dustWallet,//(config: DefaultConfiguration) => DustWallet(config).startWithSecretKey(this.dustSecretKey, ledger.LedgerParameters.initialParameters().dust),
+    };
+    const wallet = await WalletFacade.init(initParams);
+    await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
+    
+        this.walletObj = wallet;
+
 
         const selfWallet = this.walletObj;
         const state = await waitForFullySynced(this.walletObj, true);//await Rx.firstValueFrom(this.walletObj.state());
-        this.walletAddress = {
-            shieldedAddress: ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString()
-            , unshieldedAddress: UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString()
-            , dustAddress: DustAddress.codec.encode(this.config.networkId, state.dust.address).asString()
-        };
 
         const callBack = async () => {
             const state = await waitForFullySynced(selfWallet);//await Rx.firstValueFrom(selfWallet.state());
@@ -248,8 +273,6 @@ export class MidnightWalletSDK {
         this.storeTimer = setTimeout(async () => {
             await callBack();
         }, saveInterval);
-
-
 
     }
 

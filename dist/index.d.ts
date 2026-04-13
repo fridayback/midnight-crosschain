@@ -48,9 +48,9 @@ declare class MidnightWalletSDK {
     private isGenerating;
     private isUnGenerating;
     private walletObj?;
-    private shieldedSecretKeys?;
-    private dustSecretKey?;
-    private unshieldedKeystore?;
+    private shieldedSecretKeys;
+    private dustSecretKey;
+    private unshieldedKeystore;
     private walletAddress;
     private bActiveFlag;
     private storeTimer?;

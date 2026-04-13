@@ -119,23 +119,37 @@ var MidnightWalletSDK = class {
     this.walletAddress.shieldedAddress = ShieldedAddress.codec.encode(this.config.networkId, shieldedAddress).asString();
     this.walletAddress.unshieldedAddress = UnshieldedAddress.codec.encode(this.config.networkId, unshieldedAddress).asString();
     this.walletAddress.dustAddress = DustAddress.codec.encode(this.config.networkId, new DustAddress(dustSecretKey.publicKey)).asString();
+    this.shieldedSecretKeys = shieldedSecretKeys;
+    this.unshieldedKeystore = unshieldedKeystore;
+    this.dustSecretKey = dustSecretKey;
   }
   //////////////////////////////////////////
   // to generate a wallet instance
   //////////////////////////////////////////
   async initWallet(store, strSerializedState, saveInterval = 6e5) {
-    const ret = await initFacadeWallet(this.seed, this.config, strSerializedState);
-    this.walletObj = ret.wallet;
-    this.shieldedSecretKeys = ret.shieldedSecretKeys;
-    this.unshieldedKeystore = ret.unshieldedKeystore;
-    this.dustSecretKey = ret.dustSecretKey;
-    const selfWallet = this.walletObj;
-    const state = await waitForFullySynced(this.walletObj, true);
-    this.walletAddress = {
-      shieldedAddress: ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString(),
-      unshieldedAddress: UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString(),
-      dustAddress: DustAddress.codec.encode(this.config.networkId, state.dust.address).asString()
+    const shieldedWallet = (configuration2) => strSerializedState && strSerializedState.shieldedWalletState ? ShieldedWallet(configuration2).restore(strSerializedState.shieldedWalletState) : ShieldedWallet(configuration2).startWithSecretKeys(this.shieldedSecretKeys);
+    const dustWallet = (configuration2) => strSerializedState && strSerializedState.dustWalletState ? DustWallet(configuration2).restore(strSerializedState.dustWalletState) : DustWallet(configuration2).startWithSecretKey(this.dustSecretKey, ledger.LedgerParameters.initialParameters().dust);
+    const unshieldedWallet = (configuration2) => strSerializedState && strSerializedState.unshieldedWalletState ? UnshieldedWallet(configuration2).restore(strSerializedState.unshieldedWalletState) : UnshieldedWallet(configuration2).startWithPublicKey(PublicKey.fromKeyStore(this.unshieldedKeystore));
+    const initParams = {
+      configuration: {
+        ...this.config,
+        txHistoryStorage: new NoOpTransactionHistoryStorage()
+      },
+      // submissionService?: (config: TConfig) => MaybePromise<SubmissionService<ledger.FinalizedTransaction>>;
+      // pendingTransactionsService?: (config: TConfig) => MaybePromise<PendingTransactionsService<ledger.FinalizedTransaction>>;
+      // provingService?: (config: TConfig) => MaybePromise<ProvingService<UnboundTransaction>>;
+      shielded: shieldedWallet,
+      //(config: DefaultConfiguration) => ShieldedWallet(config).startWithSecretKeys(this.shieldedSecretKeys),
+      unshielded: unshieldedWallet,
+      //(config: DefaultConfiguration) => UnshieldedWallet(config).startWithPublicKey(PublicKey.fromKeyStore(this.unshieldedKeystore)),
+      dust: dustWallet
+      //(config: DefaultConfiguration) => DustWallet(config).startWithSecretKey(this.dustSecretKey, ledger.LedgerParameters.initialParameters().dust),
     };
+    const wallet = await WalletFacade.init(initParams);
+    await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
+    this.walletObj = wallet;
+    const selfWallet = this.walletObj;
+    await waitForFullySynced(this.walletObj, true);
     const callBack = async () => {
       const state2 = await waitForFullySynced(selfWallet);
       await store({ shieldedWalletState: state2.shielded.serialize(), unshieldedWalletState: state2.unshielded.serialize(), dustWalletState: state2.dust.serialize() });
