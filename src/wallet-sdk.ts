@@ -110,7 +110,7 @@ export const initFacadeWallet = async (
         }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore));
 
     const initParams = {
-        configuration:{
+        configuration: {
             ...configuration,
             txHistoryStorage: new NoOpTransactionHistoryStorage()
         },
@@ -120,15 +120,20 @@ export const initFacadeWallet = async (
         shielded: (config: DefaultConfiguration) => ShieldedWallet(config).startWithSecretKeys(shieldedSecretKeys),
         unshielded: (config: DefaultConfiguration) => UnshieldedWallet(config).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore)),
         dust: (config: DefaultConfiguration) => DustWallet(config).startWithSecretKey(dustSecretKey, ledger.LedgerParameters.initialParameters().dust),
-      };
-      const wallet = await WalletFacade.init(initParams);
+    };
+    const wallet = await WalletFacade.init(initParams);
     await wallet.start(shieldedSecretKeys, dustSecretKey);
     return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
 
-export const waitForFullySynced = async (facade: WalletFacade): Promise<FacadeState> => {
+export const waitForFullySynced = async (facade: WalletFacade, forceReturn: boolean = false): Promise<FacadeState> => {
     const timeCur = Date.now();
-    const state = await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
+    const state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
+        if (!s.isSynced) {
+            console.log(`[${new Date().toUTCString()}:] wallet is syncing...`);
+        }
+        return s.isSynced || forceReturn;
+    })));
     console.log(`Wallet synced in ${(Date.now() - timeCur) / 1000} seconds`);
     return state;
 };
@@ -176,7 +181,7 @@ export class MidnightWalletSDK {
         this.dustSecretKey = ret.dustSecretKey;
 
         const selfWallet = this.walletObj;
-        const state = await waitForFullySynced(this.walletObj);//await Rx.firstValueFrom(this.walletObj.state());
+        const state = await waitForFullySynced(this.walletObj, true);//await Rx.firstValueFrom(this.walletObj.state());
         this.walletAddress = {
             shieldedAddress: ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString()
             , unshieldedAddress: UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString()
@@ -407,44 +412,44 @@ export class MidnightWalletSDK {
  * (UnboundTransaction) intents that contain 'proof' data.
  */
 export const signTransactionIntents = (
-  tx: { intents?: Map<number, any> },
-  signFn: (payload: Uint8Array) => ledger.Signature,
-  proofMarker: 'proof' | 'pre-proof',
+    tx: { intents?: Map<number, any> },
+    signFn: (payload: Uint8Array) => ledger.Signature,
+    proofMarker: 'proof' | 'pre-proof',
 ): void => {
-  if (!tx.intents || tx.intents.size === 0) return;
-  let intents = tx.intents;
-  for (const segment of intents.keys()) {
-    const intent = intents.get(segment);
-    if (!intent) continue;
+    if (!tx.intents || tx.intents.size === 0) return;
+    let intents = tx.intents;
+    for (const segment of intents.keys()) {
+        const intent = intents.get(segment);
+        if (!intent) continue;
 
-    // Clone the intent with the correct proof marker.
-    // The wallet SDK bug hardcodes 'pre-proof' here, which fails for
-    // proven (UnboundTransaction) intents that use 'proof'.
-    const cloned = ledger.Intent.deserialize<ledger.SignatureEnabled, ledger.Proofish, ledger.PreBinding>(
-      'signature',
-      proofMarker,
-      'pre-binding',
-      intent.serialize(),
-    );
+        // Clone the intent with the correct proof marker.
+        // The wallet SDK bug hardcodes 'pre-proof' here, which fails for
+        // proven (UnboundTransaction) intents that use 'proof'.
+        const cloned = ledger.Intent.deserialize<ledger.SignatureEnabled, ledger.Proofish, ledger.PreBinding>(
+            'signature',
+            proofMarker,
+            'pre-binding',
+            intent.serialize(),
+        );
 
-    const sigData = cloned.signatureData(segment);
-    const signature = signFn(sigData);
+        const sigData = cloned.signatureData(segment);
+        const signature = signFn(sigData);
 
-    if (cloned.fallibleUnshieldedOffer) {
-      const sigs = cloned.fallibleUnshieldedOffer.inputs.map(
-        (_: ledger.UtxoSpend, i: number) => cloned.fallibleUnshieldedOffer!.signatures.at(i) ?? signature,
-      );
-      cloned.fallibleUnshieldedOffer = cloned.fallibleUnshieldedOffer.addSignatures(sigs);
+        if (cloned.fallibleUnshieldedOffer) {
+            const sigs = cloned.fallibleUnshieldedOffer.inputs.map(
+                (_: ledger.UtxoSpend, i: number) => cloned.fallibleUnshieldedOffer!.signatures.at(i) ?? signature,
+            );
+            cloned.fallibleUnshieldedOffer = cloned.fallibleUnshieldedOffer.addSignatures(sigs);
+        }
+
+        if (cloned.guaranteedUnshieldedOffer) {
+            const sigs = cloned.guaranteedUnshieldedOffer.inputs.map(
+                (_: ledger.UtxoSpend, i: number) => cloned.guaranteedUnshieldedOffer!.signatures.at(i) ?? signature,
+            );
+            cloned.guaranteedUnshieldedOffer = cloned.guaranteedUnshieldedOffer.addSignatures(sigs);
+        }
+
+        intents.set(segment, cloned);
     }
-
-    if (cloned.guaranteedUnshieldedOffer) {
-      const sigs = cloned.guaranteedUnshieldedOffer.inputs.map(
-        (_: ledger.UtxoSpend, i: number) => cloned.guaranteedUnshieldedOffer!.signatures.at(i) ?? signature,
-      );
-      cloned.guaranteedUnshieldedOffer = cloned.guaranteedUnshieldedOffer.addSignatures(sigs);
-    }
-
-    intents.set(segment, cloned);
-  }
-  tx.intents = intents;
+    tx.intents = intents;
 };

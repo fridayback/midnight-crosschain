@@ -7944,7 +7944,7 @@ var require_throttleTime = __commonJS({
     var async_1 = require_async();
     var throttle_1 = require_throttle();
     var timer_1 = require_timer();
-    function throttleTime(duration4, scheduler2, config3) {
+    function throttleTime2(duration4, scheduler2, config3) {
       if (scheduler2 === void 0) {
         scheduler2 = async_1.asyncScheduler;
       }
@@ -7953,7 +7953,7 @@ var require_throttleTime = __commonJS({
         return duration$;
       }, config3);
     }
-    exports$1.throttleTime = throttleTime;
+    exports$1.throttleTime = throttleTime2;
   }
 });
 
@@ -162573,9 +162573,14 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
   await wallet.start(shieldedSecretKeys, dustSecretKey);
   return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
-var waitForFullySynced = async (facade) => {
+var waitForFullySynced = async (facade, forceReturn = false) => {
   const timeCur = Date.now();
-  const state = await Rx.firstValueFrom(facade.state().pipe(Rx.filter((s) => s.isSynced)));
+  const state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
+    if (!s.isSynced) {
+      console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+    }
+    return s.isSynced || forceReturn;
+  })));
   console.log(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
   return state;
 };
@@ -162599,7 +162604,7 @@ var MidnightWalletSDK = class {
     this.unshieldedKeystore = ret.unshieldedKeystore;
     this.dustSecretKey = ret.dustSecretKey;
     const selfWallet = this.walletObj;
-    const state = await waitForFullySynced(this.walletObj);
+    const state = await waitForFullySynced(this.walletObj, true);
     this.walletAddress = {
       shieldedAddress: ShieldedAddress.codec.encode(this.config.networkId, state.shielded.address).asString(),
       unshieldedAddress: UnshieldedAddress.codec.encode(this.config.networkId, state.unshielded.address).asString(),
