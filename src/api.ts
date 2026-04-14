@@ -21,7 +21,7 @@ import path from 'node:path';
 import { witnesses, type CrossChainPrivateState } from './witnesses';
 import * as CrossChain from "./managed/crosschain/contract/index.js";
 import { type ProvableCircuitId, CompiledContract } from '@midnight-ntwrk/compact-js';
-import { UnboundTransaction, type MidnightProvider, type MidnightProviders, type WalletProvider, createVerifierKey, type VerifierKey } from '@midnight-ntwrk/midnight-js-types';
+import { UnboundTransaction, type MidnightProvider, type MidnightProviders, type WalletProvider, createVerifierKey, type VerifierKey, PublicDataProvider } from '@midnight-ntwrk/midnight-js-types';
 import { deployContract, FinalizedCallTxData, findDeployedContract, type DeployedContract, submitInsertVerifierKeyTx, type FoundContract, submitRemoveVerifierKeyTx } from '@midnight-ntwrk/midnight-js-contracts';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
@@ -933,4 +933,14 @@ export * as midnightjsutils from '@midnight-ntwrk/midnight-js-utils';
 // • 'undeployed' — Local testing
 export const initNetwork = (network: 'mainnet' | 'testnet-02' | 'preview' | 'devnet' | 'undeployed') => {
   setNetworkId(network);
+}
+
+
+export const getContractState = async (config:Config, contractAddress: string) => {
+  assertIsContractAddress(contractAddress);
+  const publicDataProvider = indexerPublicDataProvider(config.indexer, config.indexerWS);
+  const state = await publicDataProvider
+    .queryContractState(contractAddress)
+    .then((contractState) => (contractState != null ? CrossChain.ledger(contractState.data) : null));
+  return state;
 }
