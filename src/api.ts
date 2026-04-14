@@ -936,8 +936,9 @@ export const initNetwork = (network: 'mainnet' | 'testnet-02' | 'preview' | 'dev
 }
 
 
-export const getContractState = async (publicDataProvider: PublicDataProvider, contractAddress: string) => {
+export const getContractState = async (config:Config, contractAddress: string) => {
   assertIsContractAddress(contractAddress);
+  const publicDataProvider = indexerPublicDataProvider(config.indexer, config.indexerWS);
   const state = await publicDataProvider
     .queryContractState(contractAddress)
     .then((contractState) => (contractState != null ? CrossChain.ledger(contractState.data) : null));

@@ -169234,7 +169234,7 @@ var Contract = class {
       tokenPairId: tokenPairId_0,
       tokenAccount: tokenPair_0.midnigthTokenAccount,
       amount: amount_0,
-      fee: 0n
+      fee: contractFee_0
     };
     queryLedgerState(
       context10,
@@ -182382,8 +182382,9 @@ var getUnshieldAddressFromUserAddress = (userAddrHex, networkId) => {
 var initNetwork = (network) => {
   setNetworkId(network);
 };
-var getContractState = async (publicDataProvider, contractAddress) => {
+var getContractState = async (config3, contractAddress) => {
   assertIsContractAddress(contractAddress);
+  const publicDataProvider = indexerPublicDataProvider(config3.indexer, config3.indexerWS);
   const state = await publicDataProvider.queryContractState(contractAddress).then((contractState) => contractState != null ? ledger(contractState.data) : null);
   return state;
 };
