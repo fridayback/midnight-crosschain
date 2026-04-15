@@ -57,6 +57,9 @@ jspm_packages/
 *.sln
 
 # Compact
+<<<<<<< HEAD
+=======
 src/managed/
+>>>>>>> 1.0
 yarn.lock
 package-lock.json

@@ -4,6 +4,11 @@ import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { SigningKey, ContractAddress, RawTokenType } from '@midnight-ntwrk/compact-runtime';
 import { CompiledContract, ProvableCircuitId } from '@midnight-ntwrk/compact-js';
 import { DeployedContract, FoundContract, FinalizedCallTxData } from '@midnight-ntwrk/midnight-js-contracts';
+import { UserAddress as UserAddress$1 } from '@midnight-ntwrk/ledger-v8';
+import * as ledgerV8 from '@midnight-ntwrk/ledger-v8';
+export { ledgerV8 };
+import * as midnightJsUtils from '@midnight-ntwrk/midnight-js-utils';
+export { midnightJsUtils as midnightjsutils };
 
 type CrossChainPrivateState = {};
 declare const createPrivateState: (privateCounter: number) => CrossChainPrivateState;
@@ -390,7 +395,6 @@ declare const CrossChainPrivateStateId = "crossChainPrivateState";
 type CrossChainProviders = MidnightProviders<CrossChainCircuits, typeof CrossChainPrivateStateId, CrossChainPrivateState>;
 type CrossChainContract = Contract<CrossChainPrivateState>;
 type DeployedCrossChainContract = DeployedContract<CrossChainContract> | FoundContract<CrossChainContract>;
-type Address = string;
 declare const ZKConfig: {
     privateStateStoreName: string;
     zkConfigPath: string;
@@ -460,8 +464,8 @@ declare class CrossChainApi {
         amount: string;
         fee: string;
     } | undefined;
-    isVoter(ledger: Ledger, voter: Address | undefined): Promise<boolean>;
-    getUnVotedCrossProposal(ledger: Ledger, voter: Address | undefined): Promise<{
+    isVoter(ledger: Ledger, voter: string | undefined): Promise<boolean>;
+    getUnVotedCrossProposal(ledger: Ledger, voter: string | undefined): Promise<{
         smgId?: string | undefined;
         token?: string | undefined;
         tokenPairId?: string | undefined;
@@ -469,7 +473,7 @@ declare class CrossChainApi {
         fee?: string | undefined;
         toAddr?: UserAddress | undefined;
         ttl?: string | undefined;
-        uniquId: string;
+        uniqueId: string;
     }[]>;
     getUnExecuteCrossProposal(ledger: Ledger): Promise<{
         uniqueId: string;
@@ -492,21 +496,41 @@ declare class CrossChainApi {
     }[]): Promise<FinalizedCallTxData<CrossChainContract, "voteMultiCrossProposal">>;
     executeCrossProposal(uniqueId: string): Promise<FinalizedCallTxData<CrossChainContract, "executeCrossProposal">>;
     getLedgerState(): Promise<Ledger | null>;
-    setSmgPksks(voters: Address[]): Promise<FinalizedCallTxData<CrossChainContract, "setSmgPksks">>;
+    transferOwner(newOwner: string): Promise<FinalizedCallTxData<CrossChainContract, "transferOwner">>;
+    acceptOwner(): Promise<FinalizedCallTxData<CrossChainContract, "acceptOwner">>;
+    updateSmgPk(newVoter: string): Promise<FinalizedCallTxData<CrossChainContract, "updateSmgPk">>;
+    setFeeReceiver(feeReceiver: UserAddress$1): Promise<FinalizedCallTxData<CrossChainContract, "setFeeReceiver">>;
+    setTokenManager(tokenManager: string): Promise<FinalizedCallTxData<CrossChainContract, "setTokenManager">>;
+    addAdmin(admin: string): Promise<FinalizedCallTxData<CrossChainContract, "addAdmin">>;
+    removeAdmin(admin: string): Promise<FinalizedCallTxData<CrossChainContract, "removeAdmin">>;
+    setAdminThreshold(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "setAdminThreshold">>;
+    setSmgPksks(voters: string[]): Promise<FinalizedCallTxData<CrossChainContract, "setSmgPksks">>;
     setSmgPKThreold(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "setSmgPKThreold">>;
     setFeeCommonConfig(chainId: number | string | bigint, fee: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "setFeeCommonConfig">>;
     addTokenPair(tokenPairId: number | string | bigint, fromChainId: number | string | bigint, toChainId: number | string | bigint, midnigthTokenAccount: RawTokenType, domainSep: string, fee: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "addTokenPair">>;
     removeTokenPair(tokenPairId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "removeTokenPair">>;
+    newProposal(proposal: Proposal): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    addAdminProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    removeAdminProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    updateFeeReceiver(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    updateTokenManagerProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    updateAdminThresholdProposal(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     defaultProsal(): Proposal;
+    updateSMGPKThresholdProposal(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    updateFeeCommonConfigProposal(chainId: number | string | bigint, fee: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    voteProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "voteProposal">>;
+    executeProposal(proposalId: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "executeProposal">>;
+    removeExpiredHisTxs(txs: string[]): Promise<FinalizedCallTxData<CrossChainContract, "removeExpiredHisTxs">>;
     updateContractAuthority(newKey: SigningKey): Promise<void>;
     upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined): Promise<void>;
 }
-declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string, newVkHex: string | undefined) => Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
-declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: Address, circuitId: string) => Promise<void>;
+declare const upgradeContractCircuit: (providers: MidnightProviders, contractAddress: string, circuitId: string, newVkHex: string | undefined) => Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
+declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: string, circuitId: string) => Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
 declare const genSigningKey: () => string;
-declare const getUnshieldAddressFromUserAddress: (userAddrHex: string, networkId?: string) => string;
 declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const getUserAddressFromUnshieldAddress: (unshieldAddr: string) => Buffer<ArrayBufferLike>;
+declare const getUnshieldAddressFromUserAddress: (userAddrHex: string, networkId?: string) => string;
+
 declare const initNetwork: (network: "mainnet" | "testnet-02" | "preview" | "devnet" | "undeployed") => void;
 declare class CrossChainState {
     publicDataProvider: PublicDataProvider;
@@ -516,5 +540,6 @@ declare class CrossChainState {
     constructor(indexer: string, indexerWS: string, contractAddress: string);
     getLedgerState(): Promise<Ledger | null>;
 }
+declare const getContractState: (config: Config, contractAddress: string) => Promise<Ledger | null>;
 
-export { type Address, CompiledSimpleContract, type Config, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, CrossChainState, type DeployedCrossChainContract, ZKConfig, createInitialPrivateState, createPrivateState, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, witnesses };
+export { CompiledSimpleContract, type Config, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, CrossChainState, type DeployedCrossChainContract, ZKConfig, createInitialPrivateState, createPrivateState, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, witnesses };

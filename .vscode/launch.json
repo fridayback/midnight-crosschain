@@ -1,0 +1,21 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "test (ts-node)",
+            "program": "${workspaceFolder}/src/test/test.ts",
+            "cwd": "${workspaceFolder}/src",
+            "runtimeArgs": ["--experimental-specifier-resolution=node","--loader","ts-node/esm","--require", "ts-node/register"],
+            "env": { "NODE_ENV": "development" },
+            "sourceMaps": true,
+            "outFiles": ["${workspaceFolder}/src/test/dist/**/*.js"],
+            "console": "integratedTerminal"
+        },
+    ]
+}
