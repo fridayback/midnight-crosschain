@@ -89219,7 +89219,7 @@ __export(dist_exports2, {
   ttlOneHour: () => ttlOneHour
 });
 
-// node_modules/@scure/base/index.js
+// node_modules/@midnight-ntwrk/wallet-sdk-address-format/node_modules/@scure/base/index.js
 function isBytes(a) {
   return a instanceof Uint8Array || ArrayBuffer.isView(a) && a.constructor.name === "Uint8Array";
 }
@@ -89874,6 +89874,27 @@ var submitTx = async (providers, options) => {
   return providers.publicDataProvider.watchForTxData(txId);
 };
 var DEFAULT_SEGMENT_NUMBER = 0;
+var SHIELDED_BURN_COIN_PUBLIC_KEY = "0".repeat(64);
+var BURN_ENCRYPTION_PUBLIC_KEY = "f5b9fa49d3c4f06582dab6ba45c85f6b1927873105b4c8cf363b9b57ca910f65";
+var createEncryptionPublicKeyResolver = (walletCoinPublicKey, walletEncryptionPublicKey, additionalCoinEncPublicKeyMappings) => {
+  const networkId = getNetworkId();
+  const normalizedWalletCpk = parseCoinPublicKeyToHex(walletCoinPublicKey, networkId);
+  const normalizedWalletEpk = parseEncPublicKeyToHex(walletEncryptionPublicKey, networkId);
+  const normalizedAdditionalMappings = additionalCoinEncPublicKeyMappings ? new Map(Array.from(additionalCoinEncPublicKeyMappings, ([k, v]) => [
+    parseCoinPublicKeyToHex(k, networkId),
+    parseEncPublicKeyToHex(v, networkId)
+  ])) : void 0;
+  return (coinPublicKey) => {
+    const normalizedCpk = parseCoinPublicKeyToHex(coinPublicKey, networkId);
+    if (normalizedCpk === normalizedWalletCpk) {
+      return normalizedWalletEpk;
+    }
+    if (normalizedCpk === SHIELDED_BURN_COIN_PUBLIC_KEY) {
+      return BURN_ENCRYPTION_PUBLIC_KEY;
+    }
+    return normalizedAdditionalMappings?.get(normalizedCpk);
+  };
+};
 var checkKeys = (coinInfo) => Object.keys(coinInfo).forEach((key) => {
   if (key !== "value" && key !== "type" && key !== "nonce") {
     throw new TypeError(`Key '${key}' should not be present in output data ${coinInfo}`);
@@ -89900,10 +89921,16 @@ var deserializeCoinInfo = (coinInfo) => {
   checkKeys(res);
   return res;
 };
-var createZswapOutput = ({ coinInfo, recipient }, encryptionPublicKey, segmentNumber = 0) => (
-  // TBD need to confirm segment number and wallet encryptionPublicKey usage.
-  recipient.is_left ? ZswapOutput.new(coinInfo, segmentNumber, recipient.left, encryptionPublicKey) : ZswapOutput.newContractOwned(coinInfo, segmentNumber, recipient.right)
-);
+var createZswapOutput = ({ coinInfo, recipient }, encryptionPublicKeyResolver, segmentNumber = 0) => {
+  if (!recipient.is_left) {
+    return ZswapOutput.newContractOwned(coinInfo, segmentNumber, recipient.right);
+  }
+  const encryptionPublicKey = encryptionPublicKeyResolver(recipient.left);
+  if (!encryptionPublicKey) {
+    throw new Error(`Unable to resolve encryption public key for recipient ${recipient.left}. Provide a mapping via the encryptionPublicKeyResolver.`);
+  }
+  return ZswapOutput.new(coinInfo, segmentNumber, recipient.left, encryptionPublicKey);
+};
 var unprovenOfferFromCoinInfo = ([coinInfo, unproven], f) => {
   const { type, value } = deserializeCoinInfo(coinInfo);
   return f(unproven, type, value);
@@ -89915,10 +89942,11 @@ var unprovenOfferFromMap = (map20, f) => {
   const offers = Array.from(map20, (entry) => unprovenOfferFromCoinInfo(entry, f));
   return offers.reduce((acc, curr) => acc.merge(curr));
 };
-var zswapStateToOffer = (zswapLocalState, encryptionPublicKey, addressAndChainStateTuple) => {
+var zswapStateToOffer = (zswapLocalState, encryptionPublicKeyOrResolver, addressAndChainStateTuple) => {
+  const resolver = typeof encryptionPublicKeyOrResolver === "function" ? encryptionPublicKeyOrResolver : () => encryptionPublicKeyOrResolver;
   const unprovenOutputs = new Map(zswapLocalState.outputs.map((output) => [
     serializeCoinInfo(output.coinInfo),
-    createZswapOutput(output, encryptionPublicKey, DEFAULT_SEGMENT_NUMBER)
+    createZswapOutput(output, resolver, DEFAULT_SEGMENT_NUMBER)
   ]));
   const unprovenInputs = /* @__PURE__ */ new Map();
   const unprovenTransients = /* @__PURE__ */ new Map();
@@ -89949,14 +89977,14 @@ var zswapStateToOffer = (zswapLocalState, encryptionPublicKey, addressAndChainSt
   return offers.reduce((acc, curr) => acc.merge(curr));
 };
 var zswapStateToNewCoins = (receiverCoinPublicKey, zswapState) => zswapState.outputs.filter((output) => output.recipient.left === receiverCoinPublicKey).map(({ coinInfo }) => coinInfo);
-var encryptionPublicKeyForZswapState = (zswapState, walletCoinPublicKey, walletEncryptionPublicKey) => {
+var encryptionPublicKeyResolverForZswapState = (zswapState, walletCoinPublicKey, walletEncryptionPublicKey, additionalCoinEncPublicKeyMappings) => {
   const networkId = getNetworkId();
-  const walletCoinPublicKeyLocal = parseCoinPublicKeyToHex(walletCoinPublicKey, networkId);
-  const localCoinPublicKey = parseCoinPublicKeyToHex(zswapState.coinPublicKey, networkId);
-  if (localCoinPublicKey !== walletCoinPublicKeyLocal) {
+  const walletCpkHex = parseCoinPublicKeyToHex(walletCoinPublicKey, networkId);
+  const localCpkHex = parseCoinPublicKeyToHex(zswapState.coinPublicKey, networkId);
+  if (localCpkHex !== walletCpkHex) {
     throw new Error("Unable to lookup encryption public key (Unsupported coin)");
   }
-  return parseEncPublicKeyToHex(walletEncryptionPublicKey, networkId);
+  return createEncryptionPublicKeyResolver(walletCoinPublicKey, walletEncryptionPublicKey, additionalCoinEncPublicKeyMappings);
 };
 var toLedgerContractState = (contractState) => ContractState2.deserialize(contractState.serialize());
 var fromLedgerContractState = (contractState) => ContractState.deserialize(contractState.serialize());
@@ -90053,7 +90081,8 @@ async function createUnprovenDeployTxFromVerifierKeys(zkConfigProvider, coinPubl
   const exitResult = await contractRuntime.runPromiseExit(contractExec.initialize(initialPrivateState, ...args2));
   try {
     const { public: { contractState }, private: { privateState, signingKey, zswapLocalState } } = exitResultOrError(exitResult);
-    const [contractAddress, initialContractState, unprovenTx] = createUnprovenLedgerDeployTx(contractState, zswapLocalState, encryptionPublicKey);
+    const resolver = createEncryptionPublicKeyResolver(coinPublicKey, encryptionPublicKey, options.additionalCoinEncPublicKeyMappings);
+    const [contractAddress, initialContractState, unprovenTx] = createUnprovenLedgerDeployTx(contractState, zswapLocalState, resolver);
     return {
       public: {
         contractAddress,
@@ -90130,6 +90159,9 @@ var TransactionContextImpl = class {
   constructor(providers, options) {
     this.providers = providers;
     this.options = options;
+  }
+  getAdditionalMappings() {
+    return this.options?.additionalCoinEncPublicKeyMappings;
   }
   /**
    * @deprecated This method bypasses identity validation and may return states from a different
@@ -90290,7 +90322,7 @@ async function createUnprovenCallTxFromInitialStates(zkConfigProvider, options, 
         nextPrivateState: privateState,
         nextZswapLocalState: zswapLocalState,
         privateTranscriptOutputs,
-        unprovenTx: createUnprovenLedgerCallTx(options.circuitId, contractAddress, initialContractState, initialZswapChainState, partitionedTranscript, privateTranscriptOutputs, input, output, zswapLocalState, encryptionPublicKeyForZswapState(zswapLocalState, options.coinPublicKey, walletEncryptionPublicKey)),
+        unprovenTx: createUnprovenLedgerCallTx(options.circuitId, contractAddress, initialContractState, initialZswapChainState, partitionedTranscript, privateTranscriptOutputs, input, output, zswapLocalState, encryptionPublicKeyResolverForZswapState(zswapLocalState, options.coinPublicKey, walletEncryptionPublicKey, options.additionalCoinEncPublicKeyMappings)),
         newCoins: zswapStateToNewCoins(parseCoinPublicKeyToHex(coinPublicKey, getNetworkId()), zswapLocalState)
       }
     };
@@ -90304,6 +90336,7 @@ async function createUnprovenCallTxFromInitialStates(zkConfigProvider, options, 
 }
 var createCallOptions = (callTxOptions, coinPublicKey, ledgerParameters, initialContractState, initialZswapChainState, initialPrivateState) => {
   const callOptionsBase = {
+    additionalCoinEncPublicKeyMappings: callTxOptions.additionalCoinEncPublicKeyMappings,
     compiledContract: callTxOptions.compiledContract,
     contractAddress: callTxOptions.contractAddress,
     circuitId: callTxOptions.circuitId
@@ -90431,8 +90464,9 @@ var submitReplaceAuthorityTx = (providers, compiledContract, contractAddress) =>
   }
 );
 var isTransactionContext = isTransactionContext$1;
-var createCallTxOptions = (compiledContract, circuitId, contractAddress, privateStateId, args2) => {
+var createCallTxOptions = (compiledContract, circuitId, contractAddress, privateStateId, additionalCoinEncPublicKeyMappings, args2) => {
   const callOptionsBase = {
+    additionalCoinEncPublicKeyMappings,
     compiledContract,
     circuitId,
     contractAddress
@@ -90449,7 +90483,7 @@ var createCircuitCallTxInterface = (providers, compiledContract, contractAddress
     [circuitId]: (...args2) => {
       const txCtx = args2.length > 0 && isTransactionContext(args2[0]) ? args2[0] : void 0;
       const callArgs = txCtx ? args2.slice(1) : args2;
-      const callOptions = createCallTxOptions(compiledContract, circuitId, contractAddress, privateStateId, callArgs);
+      const callOptions = createCallTxOptions(compiledContract, circuitId, contractAddress, privateStateId, txCtx?.getAdditionalMappings(), callArgs);
       return txCtx ? submitCallTx(providers, callOptions, txCtx) : submitCallTx(providers, callOptions);
     }
   }), {});
