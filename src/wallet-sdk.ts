@@ -275,14 +275,14 @@ export class MidnightWalletSDK {
     private shieldedSecretKeys: ledger.ZswapSecretKeys;
     private dustSecretKey: ledger.DustSecretKey;
     private unshieldedKeystore: UnshieldedKeystore;
-    private walletAddress: { shieldedAddress: string, unshieldedAddress: string, dustAddress: string , coinPublicKey?: string, UserPublicKey?: string};
+    private walletAddress: { shieldedAddress: string, unshieldedAddress: string, dustAddress: string , coinPublicKey: string, UserPublicKey: string};
     private bActiveFlag: boolean;
     private storeTimer?: NodeJS.Timeout;
     private seed: Buffer;
     constructor(config: Configuration,strSeed: string) {
         this.config = config;
         
-        this.walletAddress = { shieldedAddress: '', unshieldedAddress: '', dustAddress: '' };
+        this.walletAddress = { shieldedAddress: '', unshieldedAddress: '', dustAddress: '', coinPublicKey: '', UserPublicKey: '' };
         this.bActiveFlag = false;
 
         this.seed = Buffer.from(strSeed, 'hex');;

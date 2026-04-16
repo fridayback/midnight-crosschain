@@ -1,5 +1,4 @@
-import path2 from 'path';
-import { fileURLToPath } from 'url';
+import path from 'path';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { ContractState, rawTokenType, sampleSigningKey } from '@midnight-ntwrk/compact-runtime';
 import { CompiledContract } from '@midnight-ntwrk/compact-js';
@@ -15,11 +14,6 @@ import * as midnightJsUtils from '@midnight-ntwrk/midnight-js-utils';
 export { midnightJsUtils as midnightjsutils };
 import { MidnightBech32m, ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import assert2 from 'assert';
-
-// node_modules/tsup/assets/esm_shims.js
-var getFilename = () => fileURLToPath(import.meta.url);
-var getDirname = () => path2.dirname(getFilename());
-var __dirname$1 = /* @__PURE__ */ getDirname();
 
 // src/witnesses.ts
 var createPrivateState = (privateCounter) => ({});
@@ -11550,18 +11544,11 @@ function ledger(stateOrChargedState) {
 });
 new Contract({});
 var CrossChainPrivateStateId = "crossChainPrivateState";
-function getDirname2() {
-  if (typeof import.meta?.url === "string") {
-    const ret = path2.resolve(fileURLToPath(import.meta.url), "..");
-    return ret;
-  }
-  return path2.resolve(__dirname$1, "..");
-}
-var currentDir = getDirname2();
+var currentDir = "";
 console.log("currentDir===>", currentDir);
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
-  zkConfigPath: path2.resolve(currentDir, "managed", "crosschain")
+  zkConfigPath: path.resolve(currentDir, "managed", "crosschain")
 };
 var fromHexWithOrNoPrefix = (hex) => {
   if (hex.startsWith("0x")) {
@@ -11582,7 +11569,7 @@ function pad(s, n) {
 var crosschainContractInstance = new Contract(witnesses);
 var CompiledSimpleContract = CompiledContract.make("CrossChain", Contract).pipe(
   CompiledContract.withWitnesses(witnesses),
-  CompiledContract.withCompiledFileAssets(path2.resolve(currentDir, "managed", "crosschain"))
+  CompiledContract.withCompiledFileAssets(path.resolve(currentDir, "managed", "crosschain"))
 );
 var MAX_SIGNER_COUNT = 29;
 var CrossChainApi = class _CrossChainApi {

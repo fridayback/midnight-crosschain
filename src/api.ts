@@ -37,7 +37,7 @@ import { MidnightBech32m, ShieldedAddress, UnshieldedAddress } from '@midnight-n
 import * as Rx from 'rxjs';
 import { ContractState, ContractAddress, degradeToTransient, ecAdd, ecMul, ecMulGenerator, mulField, persistentHash, sampleSigningKey, SigningKey, transientHash, encodeShieldedCoinInfo, ShieldedTokenType, RawTokenType, encodeUserAddress, rawTokenType } from '@midnight-ntwrk/compact-runtime';
 import assert from 'node:assert';
-import { fileURLToPath, pathToFileURL } from 'url';
+// import { fileURLToPath, pathToFileURL } from 'url';
 // import { MidnightWalletSDK, signTransactionIntents } from './wallet-sdk';
 // import { FinalizedTransaction } from '@midnight-ntwrk/ledger-v7';
 
@@ -68,18 +68,18 @@ export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | 
 // }
 
 // export const currentDir = path.resolve(new URL(getDirname()).pathname, '..');
-function getDirname() {
-  if (typeof import.meta?.url === "string") {
-    // console.log('import.meta.url===>', import.meta.url);
-    // console.log('fileURLToPath(import.meta.url)===>', fileURLToPath(import.meta.url));
-    // console.log('path.dirname(fileURLToPath(import.meta.url))===>', path.dirname(fileURLToPath(import.meta.url)));
-    const ret = path.resolve(fileURLToPath(import.meta.url), "..");
-    // return pathToFileURL(ret).href;
-    return ret;
-  }
-  return path.resolve(__dirname, '..');
-}
-var currentDir = getDirname();//path.resolve(new URL(getDirname()).pathname, "..");
+// function getDirname() {
+//   if (typeof import.meta?.url === "string") {
+//     // console.log('import.meta.url===>', import.meta.url);
+//     // console.log('fileURLToPath(import.meta.url)===>', fileURLToPath(import.meta.url));
+//     // console.log('path.dirname(fileURLToPath(import.meta.url))===>', path.dirname(fileURLToPath(import.meta.url)));
+//     const ret = path.resolve(fileURLToPath(import.meta.url), "..");
+//     // return pathToFileURL(ret).href;
+//     return ret;
+//   }
+//   return path.resolve(__dirname, '..');
+// }
+var currentDir = "";//getDirname();//
 console.log('currentDir===>', currentDir);
 // export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
 // export const currentDir = path.dirname(fileURLToPath(import.meta.url));
