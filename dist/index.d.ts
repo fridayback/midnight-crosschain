@@ -35,6 +35,8 @@ strSerializedState?: FacadeSerializedState) => Promise<{
     unshieldedKeystore: UnshieldedKeystore;
 }>;
 declare const waitForFullySynced: (facade: WalletFacade, forceReturn?: boolean) => Promise<FacadeState>;
+declare const timeout: (ms: number) => Promise<unknown>;
+declare const sleep: (ms: number) => Promise<unknown>;
 interface FacadeSerializedState {
     readonly shieldedWalletState: string;
     readonly unshieldedWalletState: string;
@@ -55,14 +57,17 @@ declare class MidnightWalletSDK {
     private bActiveFlag;
     private storeTimer?;
     private seed;
+    private state;
+    private syncMutex;
     constructor(config: Configuration, strSeed: string);
     initWallet(store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
+    private stateSync;
     getAccountAddress(): {
         shieldedAddress: string;
         unshieldedAddress: string;
         dustAddress: string;
-        coinPublicKey?: string;
-        UserPublicKey?: string;
+        coinPublicKey: string;
+        UserPublicKey: string;
     };
     registerNightUtxosForDustGeneration(): Promise<void>;
     deregisterFromDustGeneration(): Promise<void>;
@@ -622,10 +627,11 @@ declare const upgradeContractCircuit: (providers: MidnightProviders, contractAdd
 declare const removeContractCircuit: (providers: MidnightProviders, contractAddress: string, circuitId: string) => Promise<_midnight_ntwrk_midnight_js_types.FinalizedTxData>;
 declare const genSigningKey: () => string;
 declare const getCoinPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
+declare const getEncryptionPublicKeyFromShieldAddress: (shieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const getUserAddressFromUnshieldAddress: (unshieldAddr: string) => Buffer<ArrayBufferLike>;
 declare const getUnshieldAddressFromUserAddress: (userAddrHex: string, networkId?: string) => string;
 
 declare const initNetwork: (network: "mainnet" | "testnet-02" | "preview" | "devnet" | "undeployed") => void;
 declare const getContractState: (config: Config, contractAddress: string) => Promise<Ledger | null>;
 
-export { CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, type WalletStore, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, sleep, timeout, upgradeContractCircuit, waitForFullySynced, witnesses };

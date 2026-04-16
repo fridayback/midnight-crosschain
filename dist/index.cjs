@@ -375,16 +375,16 @@ var require_timeoutProvider = __commonJS({
     Object.defineProperty(exports$1, "__esModule", { value: true });
     exports$1.timeoutProvider = void 0;
     exports$1.timeoutProvider = {
-      setTimeout: function(handler, timeout5) {
+      setTimeout: function(handler, timeout6) {
         var args2 = [];
         for (var _i = 2; _i < arguments.length; _i++) {
           args2[_i - 2] = arguments[_i];
         }
         var delegate = exports$1.timeoutProvider.delegate;
         if (delegate === null || delegate === void 0 ? void 0 : delegate.setTimeout) {
-          return delegate.setTimeout.apply(delegate, __spreadArray3([handler, timeout5], __read3(args2)));
+          return delegate.setTimeout.apply(delegate, __spreadArray3([handler, timeout6], __read3(args2)));
         }
-        return setTimeout.apply(void 0, __spreadArray3([handler, timeout5], __read3(args2)));
+        return setTimeout.apply(void 0, __spreadArray3([handler, timeout6], __read3(args2)));
       },
       clearTimeout: function(handle) {
         var delegate = exports$1.timeoutProvider.delegate;
@@ -1708,16 +1708,16 @@ var require_intervalProvider = __commonJS({
     Object.defineProperty(exports$1, "__esModule", { value: true });
     exports$1.intervalProvider = void 0;
     exports$1.intervalProvider = {
-      setInterval: function(handler, timeout5) {
+      setInterval: function(handler, timeout6) {
         var args2 = [];
         for (var _i = 2; _i < arguments.length; _i++) {
           args2[_i - 2] = arguments[_i];
         }
         var delegate = exports$1.intervalProvider.delegate;
         if (delegate === null || delegate === void 0 ? void 0 : delegate.setInterval) {
-          return delegate.setInterval.apply(delegate, __spreadArray3([handler, timeout5], __read3(args2)));
+          return delegate.setInterval.apply(delegate, __spreadArray3([handler, timeout6], __read3(args2)));
         }
-        return setInterval.apply(void 0, __spreadArray3([handler, timeout5], __read3(args2)));
+        return setInterval.apply(void 0, __spreadArray3([handler, timeout6], __read3(args2)));
       },
       clearInterval: function(handle) {
         var delegate = exports$1.intervalProvider.delegate;
@@ -3615,7 +3615,7 @@ var require_firstValueFrom = __commonJS({
     exports$1.firstValueFrom = void 0;
     var EmptyError_1 = require_EmptyError();
     var Subscriber_1 = require_Subscriber();
-    function firstValueFrom9(source, config3) {
+    function firstValueFrom8(source, config3) {
       var hasConfig = typeof config3 === "object";
       return new Promise(function(resolve, reject) {
         var subscriber = new Subscriber_1.SafeSubscriber({
@@ -3635,7 +3635,7 @@ var require_firstValueFrom = __commonJS({
         source.subscribe(subscriber);
       });
     }
-    exports$1.firstValueFrom = firstValueFrom9;
+    exports$1.firstValueFrom = firstValueFrom8;
   }
 });
 
@@ -3722,7 +3722,7 @@ var require_timeout = __commonJS({
         this.info = info8;
       };
     });
-    function timeout5(config3, schedulerArg) {
+    function timeout6(config3, schedulerArg) {
       var _a3 = isDate_1.isValidDate(config3) ? { first: config3 } : typeof config3 === "number" ? { each: config3 } : config3, first3 = _a3.first, each = _a3.each, _b = _a3.with, _with = _b === void 0 ? timeoutErrorFactory : _b, _c = _a3.scheduler, scheduler2 = _c === void 0 ? schedulerArg !== null && schedulerArg !== void 0 ? schedulerArg : async_1.asyncScheduler : _c, _d = _a3.meta, meta = _d === void 0 ? null : _d;
       if (first3 == null && each == null) {
         throw new TypeError("No timeout provided.");
@@ -3760,7 +3760,7 @@ var require_timeout = __commonJS({
         !seen && startTimer(first3 != null ? typeof first3 === "number" ? first3 : +first3 - scheduler2.now() : each);
       });
     }
-    exports$1.timeout = timeout5;
+    exports$1.timeout = timeout6;
     function timeoutErrorFactory(info8) {
       throw new exports$1.TimeoutError(info8);
     }
@@ -4799,7 +4799,7 @@ var require_filter = __commonJS({
     exports$1.filter = void 0;
     var lift_1 = require_lift();
     var OperatorSubscriber_1 = require_OperatorSubscriber();
-    function filter23(predicate, thisArg) {
+    function filter22(predicate, thisArg) {
       return lift_1.operate(function(source, subscriber) {
         var index = 0;
         source.subscribe(OperatorSubscriber_1.createOperatorSubscriber(subscriber, function(value3) {
@@ -4807,7 +4807,7 @@ var require_filter = __commonJS({
         }));
       });
     }
-    exports$1.filter = filter23;
+    exports$1.filter = filter22;
   }
 });
 
@@ -34752,7 +34752,7 @@ var init_module = __esm({
           });
         });
       };
-      _proto3.filter = function filter23(fn2) {
+      _proto3.filter = function filter22(fn2) {
         var _this3 = this;
         if (typeof fn2 !== "function") throw new TypeError(fn2 + " is not a function");
         var C = getSpecies(this);
@@ -47611,7 +47611,7 @@ function Body(body) {
   var _ref = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {}, _ref$size = _ref.size;
   let size20 = _ref$size === void 0 ? 0 : _ref$size;
   var _ref$timeout = _ref.timeout;
-  let timeout5 = _ref$timeout === void 0 ? 0 : _ref$timeout;
+  let timeout6 = _ref$timeout === void 0 ? 0 : _ref$timeout;
   if (body == null) {
     body = null;
   } else if (isURLSearchParams(body)) {
@@ -47632,7 +47632,7 @@ function Body(body) {
     error: null
   };
   this.size = size20;
-  this.timeout = timeout5;
+  this.timeout = timeout6;
   if (body instanceof Stream2__default.default) {
     body.on("error", function(err) {
       const error4 = err.name === "AbortError" ? err : new FetchError(`Invalid response body while trying to fetch ${_this.url}: ${err.message}`, "system", err);
@@ -83958,9 +83958,9 @@ var Refinement = class {
    * @since 3.10.0
    */
   _tag = "Refinement";
-  constructor(from8, filter23, annotations3 = {}) {
+  constructor(from8, filter22, annotations3 = {}) {
     this.from = from8;
-    this.filter = filter23;
+    this.filter = filter22;
     this.annotations = annotations3;
   }
   /**
@@ -86973,14 +86973,14 @@ var extend4 = /* @__PURE__ */ dual(2, (self2, that) => make47(extendAST(self2.as
 var compose3 = /* @__PURE__ */ dual((args2) => isSchema(args2[1]), (from8, to) => makeTransformationClass(from8, to, compose2(from8.ast, to.ast)));
 var suspend7 = (f) => make47(new Suspend(() => f().ast));
 var RefineSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/Refine");
-function makeRefineClass(from8, filter23, ast) {
+function makeRefineClass(from8, filter22, ast) {
   return class RefineClass extends make47(ast) {
     static annotations(annotations3) {
       return makeRefineClass(this.from, this.filter, mergeSchemaAnnotations(this.ast, annotations3));
     }
     static [RefineSchemaId] = from8;
     static from = from8;
-    static filter = filter23;
+    static filter = filter22;
     static make = (a, options5) => {
       return getDisableValidationMakeOption(options5) ? a : validateSync(this)(a);
     };
@@ -87016,11 +87016,11 @@ var toFilterParseIssue = (out, ast, input) => {
 };
 function filter14(predicate, annotations3) {
   return (self2) => {
-    function filter23(input, options5, ast2) {
+    function filter22(input, options5, ast2) {
       return toFilterParseIssue(predicate(input, options5, ast2), ast2, input);
     }
-    const ast = new Refinement(self2.ast, filter23, toASTAnnotations(annotations3));
-    return makeRefineClass(self2, filter23, ast);
+    const ast = new Refinement(self2.ast, filter22, toASTAnnotations(annotations3));
+    return makeRefineClass(self2, filter22, ast);
   };
 }
 var filterEffect = /* @__PURE__ */ dual(2, (self2, f) => transformOrFail(self2, typeSchema(self2), {
@@ -95684,13 +95684,13 @@ var aggregateWithinEither = /* @__PURE__ */ dual(3, (self2, sink, schedule5) => 
         }
       }));
     }), unwrap2);
-    const timeout5 = (lastB) => scheduleDriver.next(lastB);
+    const timeout6 = (lastB) => scheduleDriver.next(lastB);
     const scheduledAggregator = (sinkFiber, scheduleFiber, scope5) => {
       const forkSink = pipe(set6(consumed, false), zipRight6(set6(endAfterEmit, false)), zipRight6(pipe(handoffConsumer, pipeToOrFail(toChannel(sink)), collectElements, run2, forkIn2(scope5))));
       const handleSide = (leftovers, b, c) => pipe(set6(sinkLeftovers, flatten4(leftovers)), zipRight6(map21(get12(sinkEndReason), (reason) => {
         switch (reason._tag) {
           case OP_SCHEDULE_END: {
-            return pipe(all10([get12(consumed), forkSink, pipe(timeout5(some2(b)), forkIn2(scope5))]), map21(([wasConsumed, sinkFiber2, scheduleFiber2]) => {
+            return pipe(all10([get12(consumed), forkSink, pipe(timeout6(some2(b)), forkIn2(scope5))]), map21(([wasConsumed, sinkFiber2, scheduleFiber2]) => {
               const toWrite = pipe(c, match2({
                 onNone: () => of3(right2(b)),
                 onSome: (c2) => make6(right2(b), left2(c2))
@@ -95717,7 +95717,7 @@ var aggregateWithinEither = /* @__PURE__ */ dual(3, (self2, sink, schedule5) => 
         })
       }));
     };
-    return unwrapScopedWith3((scope5) => pipeTo(toChannel2(self2), handoffProducer).pipe(run2, forkIn2(scope5), zipRight6(pipeToOrFail(handoffConsumer, toChannel(sink)).pipe(collectElements, run2, forkIn2(scope5), flatMap16((sinkFiber) => timeout5(none2()).pipe(forkIn2(scope5), map21((scheduleFiber) => new StreamImpl(scheduledAggregator(sinkFiber, scheduleFiber, scope5)))))))));
+    return unwrapScopedWith3((scope5) => pipeTo(toChannel2(self2), handoffProducer).pipe(run2, forkIn2(scope5), zipRight6(pipeToOrFail(handoffConsumer, toChannel(sink)).pipe(collectElements, run2, forkIn2(scope5), flatMap16((sinkFiber) => timeout6(none2()).pipe(forkIn2(scope5), map21((scheduleFiber) => new StreamImpl(scheduledAggregator(sinkFiber, scheduleFiber, scope5)))))))));
   }));
 });
 var as13 = /* @__PURE__ */ dual(2, (self2, value3) => map29(self2, () => value3));
@@ -112279,7 +112279,7 @@ var WsProvider = class _WsProvider {
    * @param {number} [cacheCapacity] Custom size of the WsProvider LRUCache. Defaults to `DEFAULT_CAPACITY` (1024)
    * @param {number} [cacheTtl] Custom TTL of the WsProvider LRUCache. Determines how long an object can live in the cache. Defaults to DEFAULT_TTL` (30000)
    */
-  constructor(endpoint = defaults_default.WS_URL, autoConnectMs = RETRY_DELAY, headers = {}, timeout5, cacheCapacity, cacheTtl) {
+  constructor(endpoint = defaults_default.WS_URL, autoConnectMs = RETRY_DELAY, headers = {}, timeout6, cacheCapacity, cacheTtl) {
     const endpoints = Array.isArray(endpoint) ? endpoint : [endpoint];
     if (endpoints.length === 0) {
       throw new Error("WsProvider requires at least one Endpoint");
@@ -112305,7 +112305,7 @@ var WsProvider = class _WsProvider {
       total: defaultEndpointStats()
     };
     this.#endpointStats = defaultEndpointStats();
-    this.#timeout = timeout5 || DEFAULT_TIMEOUT_MS;
+    this.#timeout = timeout6 || DEFAULT_TIMEOUT_MS;
     if (autoConnectMs && autoConnectMs > 0) {
       this.connectWithRetry().catch(noop);
     }
@@ -137466,11 +137466,11 @@ function removeClaimed(validators2, queryValidators, reward, claimedRewardsEras)
   });
 }
 function filterRewards2(eras, valInfo, { claimedRewardsEras, rewards, stakingLedger }) {
-  const filter23 = eras.filter((e) => !extractCompatRewards(claimedRewardsEras, stakingLedger).some((s) => s?.eq(e)));
+  const filter22 = eras.filter((e) => !extractCompatRewards(claimedRewardsEras, stakingLedger).some((s) => s?.eq(e)));
   const validators2 = valInfo.map(([v]) => v);
   const queryValidators = valInfo.map(([, q]) => q);
   return rewards.filter(({ isEmpty: isEmpty19 }) => !isEmpty19).filter((reward) => {
-    if (!filter23.some((e) => reward.era.eq(e))) {
+    if (!filter22.some((e) => reward.era.eq(e))) {
       return false;
     }
     removeClaimed(validators2, queryValidators, reward, claimedRewardsEras);
@@ -156345,9 +156345,9 @@ var PolkadotNodeClient = class _PolkadotNodeClient {
     }), Effect_exports.andThen(Effect_exports.sync(() => this.api.isConnected)), Effect_exports.repeat({
       until: (value3) => value3,
       schedule: Schedule_exports.spaced(this.config.reconnectionDelay)
-    }), Effect_exports.timeout(this.config.reconnectionTimeout), Effect_exports.asVoid, Effect_exports.mapError((timeout5) => new ConnectionError({
+    }), Effect_exports.timeout(this.config.reconnectionTimeout), Effect_exports.asVoid, Effect_exports.mapError((timeout6) => new ConnectionError({
       message: "Could not connect within specified time range (5s)",
-      cause: timeout5
+      cause: timeout6
     })));
   }
   sendMidnightTransaction(serializedTransaction) {
@@ -162588,12 +162588,20 @@ var waitForFullySynced = async (facade, forceReturn = false) => {
   console.log(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
   return state;
 };
+var timeout5 = (ms) => new Promise((resolve, reject) => {
+  setTimeout(() => reject(new Error("Timeout")), ms);
+});
+var sleep5 = (ms) => new Promise((resolve) => {
+  setTimeout(resolve, ms);
+});
 var MidnightWalletSDK = class {
   constructor(config3, strSeed) {
     this.isGenerating = false;
     this.isUnGenerating = false;
+    this.state = null;
+    this.syncMutex = false;
     this.config = config3;
-    this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "" };
+    this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "", coinPublicKey: "", UserPublicKey: "" };
     this.bActiveFlag = false;
     this.seed = buffer$1.Buffer.from(strSeed, "hex");
     if (this.seed.toString("hex").toLowerCase() != strSeed.toLowerCase()) throw "bad seed";
@@ -162634,11 +162642,11 @@ var MidnightWalletSDK = class {
     const wallet = await WalletFacade.init(initParams);
     await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     this.walletObj = wallet;
-    const selfWallet = this.walletObj;
-    await waitForFullySynced(this.walletObj, true);
+    this.walletObj;
+    this.state = await this.stateSync();
     const callBack = async () => {
-      const state2 = await waitForFullySynced(selfWallet);
-      await store({ shieldedWalletState: state2.shielded.serialize(), unshieldedWalletState: state2.unshielded.serialize(), dustWalletState: state2.dust.serialize() });
+      const state = await this.stateSync();
+      await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
       console.log("wallet state saved!");
       clearTimeout(this.storeTimer);
       this.registerNightUtxosForDustGeneration();
@@ -162647,6 +162655,26 @@ var MidnightWalletSDK = class {
     this.storeTimer = setTimeout(async () => {
       await callBack();
     }, saveInterval);
+  }
+  async stateSync(timeoutMs = 3e5) {
+    if (this.syncMutex) {
+      while (this.syncMutex) {
+        await sleep5(100);
+      }
+    } else {
+      await sleep5(200);
+      this.syncMutex = true;
+      const p = [waitForFullySynced(this.walletObj, false), timeout5(timeoutMs)];
+      try {
+        const result2 = await Promise.race(p);
+        this.state = result2;
+        this.syncMutex = false;
+      } catch (error4) {
+        this.syncMutex = false;
+        throw new Error("Wallet state sync failed: " + (error4 instanceof Error ? error4.message : String(error4)));
+      }
+    }
+    return this.state;
   }
   // to get the wallet address
   getAccountAddress() {
@@ -181680,12 +181708,12 @@ var getKeyMaterial = async (zkConfigProvider, keyLocation) => {
     return void 0;
   }
 };
-var makeHttpRequest = async (url2, payload, timeout5, headers = {}) => {
+var makeHttpRequest = async (url2, payload, timeout6, headers = {}) => {
   const response = await fetchRetry(url2, {
     method: "POST",
     body: new Uint8Array(payload),
     headers: { "Content-Type": "application/octet-stream", ...headers },
-    signal: AbortSignal.timeout(timeout5)
+    signal: AbortSignal.timeout(timeout6)
   });
   if (!response.ok) {
     throw new Error(`Failed Proof Server response: url="${response.url}", code="${response.status}", status="${response.statusText}"`);
@@ -181701,19 +181729,19 @@ var httpClientProvingProvider = (url2, zkConfigProvider, config3) => {
   if (proveUrl.protocol !== "http:" && proveUrl.protocol !== "https:") {
     throw new InvalidProtocolSchemeError2(proveUrl.protocol, ["http:", "https:"]);
   }
-  const timeout5 = DEFAULT_TIMEOUT;
+  const timeout6 = DEFAULT_TIMEOUT;
   const headers = {};
   return {
     async check(serializedPreimage, keyLocation) {
       const keyMaterial = await getKeyMaterial(zkConfigProvider, keyLocation);
       const payload = createCheckPayload(serializedPreimage, keyMaterial?.ir);
-      const result2 = await makeHttpRequest(checkUrl, payload, timeout5, headers);
+      const result2 = await makeHttpRequest(checkUrl, payload, timeout6, headers);
       return parseCheckResult(result2);
     },
     async prove(serializedPreimage, keyLocation, overwriteBindingInput) {
       const keyMaterial = await getKeyMaterial(zkConfigProvider, keyLocation);
       const payload = createProvingPayload(serializedPreimage, overwriteBindingInput, keyMaterial);
-      return makeHttpRequest(proveUrl, payload, timeout5, headers);
+      return makeHttpRequest(proveUrl, payload, timeout6, headers);
     }
   };
 };
@@ -181726,9 +181754,6 @@ var httpClientProofProvider = (url2, zkConfigProvider, config3) => {
     }
   };
 };
-
-// src/api.ts
-var Rx3 = __toESM(require_cjs());
 var CrossChainPrivateStateId = "crossChainPrivateState";
 function getDirname() {
   if (typeof (typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href)) === "string") {
@@ -181767,10 +181792,11 @@ var CompiledSimpleContract = CompiledContract_exports.make("CrossChain", Contrac
 var createWalletAndMidnightProvider = async (wallet) => {
   const walletFacade = wallet.getWalletInstance();
   assert8__default.default(walletFacade, "wallet not initialized");
-  const state = await Rx3.firstValueFrom(walletFacade.state().pipe(Rx3.filter((s) => s.isSynced)));
   return {
-    getCoinPublicKey: () => state.shielded.coinPublicKey.toHexString(),
-    getEncryptionPublicKey: () => state.shielded.encryptionPublicKey.toHexString(),
+    getCoinPublicKey: () => wallet.getAccountAddress().coinPublicKey,
+    //state.shielded.coinPublicKey.toHexString(),
+    getEncryptionPublicKey: () => toHex2(getEncryptionPublicKeyFromShieldAddress(wallet.getAccountAddress().shieldedAddress)),
+    //state.shielded.encryptionPublicKey.toHexString(),
     async balanceTx(tx, ttl) {
       const recipe = await walletFacade.balanceUnboundTransaction(
         tx,
@@ -182367,6 +182393,11 @@ var getCoinPublicKeyFromShieldAddress = (shieldAddr) => {
   const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
   return tmp2.coinPublicKey.data;
 };
+var getEncryptionPublicKeyFromShieldAddress = (shieldAddr) => {
+  const tmp1 = MidnightBech32m.parse(shieldAddr);
+  const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
+  return tmp2.encryptionPublicKey.data;
+};
 var getUserAddressFromUnshieldAddress = (unshieldAddr) => {
   const tmp1 = MidnightBech32m.parse(unshieldAddr);
   const tmp2 = UnshieldedAddress.codec.decode(tmp1.network, tmp1);
@@ -182430,6 +182461,7 @@ exports.crosschainContractInstance = crosschainContractInstance;
 exports.genSigningKey = genSigningKey;
 exports.getCoinPublicKeyFromShieldAddress = getCoinPublicKeyFromShieldAddress;
 exports.getContractState = getContractState;
+exports.getEncryptionPublicKeyFromShieldAddress = getEncryptionPublicKeyFromShieldAddress;
 exports.getUnshieldAddressFromUserAddress = getUnshieldAddressFromUserAddress;
 exports.getUserAddressFromUnshieldAddress = getUserAddressFromUnshieldAddress;
 exports.initFacadeWallet = initFacadeWallet;
@@ -182439,6 +182471,8 @@ exports.midnightjsutils = dist_exports2;
 exports.pad = pad3;
 exports.removeContractCircuit = removeContractCircuit;
 exports.signTransactionIntents = signTransactionIntents;
+exports.sleep = sleep5;
+exports.timeout = timeout5;
 exports.upgradeContractCircuit = upgradeContractCircuit;
 exports.waitForFullySynced = waitForFullySynced;
 exports.witnesses = witnesses;

@@ -102,12 +102,20 @@ var waitForFullySynced = async (facade, forceReturn = false) => {
   console.log(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
   return state;
 };
+var timeout = (ms) => new Promise((resolve, reject) => {
+  setTimeout(() => reject(new Error("Timeout")), ms);
+});
+var sleep = (ms) => new Promise((resolve) => {
+  setTimeout(resolve, ms);
+});
 var MidnightWalletSDK = class {
   constructor(config, strSeed) {
     this.isGenerating = false;
     this.isUnGenerating = false;
+    this.state = null;
+    this.syncMutex = false;
     this.config = config;
-    this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "" };
+    this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "", coinPublicKey: "", UserPublicKey: "" };
     this.bActiveFlag = false;
     this.seed = Buffer$1.from(strSeed, "hex");
     if (this.seed.toString("hex").toLowerCase() != strSeed.toLowerCase()) throw "bad seed";
@@ -148,11 +156,11 @@ var MidnightWalletSDK = class {
     const wallet = await WalletFacade.init(initParams);
     await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     this.walletObj = wallet;
-    const selfWallet = this.walletObj;
-    await waitForFullySynced(this.walletObj, true);
+    this.walletObj;
+    this.state = await this.stateSync();
     const callBack = async () => {
-      const state2 = await waitForFullySynced(selfWallet);
-      await store({ shieldedWalletState: state2.shielded.serialize(), unshieldedWalletState: state2.unshielded.serialize(), dustWalletState: state2.dust.serialize() });
+      const state = await this.stateSync();
+      await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
       console.log("wallet state saved!");
       clearTimeout(this.storeTimer);
       this.registerNightUtxosForDustGeneration();
@@ -161,6 +169,26 @@ var MidnightWalletSDK = class {
     this.storeTimer = setTimeout(async () => {
       await callBack();
     }, saveInterval);
+  }
+  async stateSync(timeoutMs = 3e5) {
+    if (this.syncMutex) {
+      while (this.syncMutex) {
+        await sleep(100);
+      }
+    } else {
+      await sleep(200);
+      this.syncMutex = true;
+      const p = [waitForFullySynced(this.walletObj, false), timeout(timeoutMs)];
+      try {
+        const result = await Promise.race(p);
+        this.state = result;
+        this.syncMutex = false;
+      } catch (error) {
+        this.syncMutex = false;
+        throw new Error("Wallet state sync failed: " + (error instanceof Error ? error.message : String(error)));
+      }
+    }
+    return this.state;
   }
   // to get the wallet address
   getAccountAddress() {
@@ -11900,10 +11928,11 @@ var CompiledSimpleContract = CompiledContract.make("CrossChain", Contract).pipe(
 var createWalletAndMidnightProvider = async (wallet) => {
   const walletFacade = wallet.getWalletInstance();
   assert3(walletFacade, "wallet not initialized");
-  const state = await Rx.firstValueFrom(walletFacade.state().pipe(Rx.filter((s) => s.isSynced)));
   return {
-    getCoinPublicKey: () => state.shielded.coinPublicKey.toHexString(),
-    getEncryptionPublicKey: () => state.shielded.encryptionPublicKey.toHexString(),
+    getCoinPublicKey: () => wallet.getAccountAddress().coinPublicKey,
+    //state.shielded.coinPublicKey.toHexString(),
+    getEncryptionPublicKey: () => toHex(getEncryptionPublicKeyFromShieldAddress(wallet.getAccountAddress().shieldedAddress)),
+    //state.shielded.encryptionPublicKey.toHexString(),
     async balanceTx(tx, ttl) {
       const recipe = await walletFacade.balanceUnboundTransaction(
         tx,
@@ -12500,6 +12529,11 @@ var getCoinPublicKeyFromShieldAddress = (shieldAddr) => {
   const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
   return tmp2.coinPublicKey.data;
 };
+var getEncryptionPublicKeyFromShieldAddress = (shieldAddr) => {
+  const tmp1 = MidnightBech32m.parse(shieldAddr);
+  const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
+  return tmp2.encryptionPublicKey.data;
+};
 var getUserAddressFromUnshieldAddress = (unshieldAddr) => {
   const tmp1 = MidnightBech32m.parse(unshieldAddr);
   const tmp2 = UnshieldedAddress.codec.decode(tmp1.network, tmp1);
@@ -12522,6 +12556,6 @@ var getContractState = async (config, contractAddress) => {
   return state;
 };
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, sleep, timeout, upgradeContractCircuit, waitForFullySynced, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

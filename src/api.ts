@@ -128,10 +128,10 @@ export const CompiledSimpleContract =
 export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK): Promise<WalletProvider & MidnightProvider> => {
   const walletFacade = wallet.getWalletInstance();
   assert(walletFacade, "wallet not initialized");
-  const state = await Rx.firstValueFrom(walletFacade.state().pipe(Rx.filter((s) => s.isSynced)));
+  // const state = await Rx.firstValueFrom(walletFacade.state().pipe(Rx.filter((s) => s.isSynced)));
   return {
-    getCoinPublicKey: () => state.shielded.coinPublicKey.toHexString(),
-    getEncryptionPublicKey: () => state.shielded.encryptionPublicKey.toHexString(),
+    getCoinPublicKey: () => wallet.getAccountAddress().coinPublicKey,//state.shielded.coinPublicKey.toHexString(),
+    getEncryptionPublicKey: () => toHex(getEncryptionPublicKeyFromShieldAddress(wallet.getAccountAddress().shieldedAddress)),//state.shielded.encryptionPublicKey.toHexString(),
     async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> {
       // return await wallet.balanceTx(tx, ttl);
       // return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
@@ -904,6 +904,12 @@ export const getCoinPublicKeyFromShieldAddress = (shieldAddr: string) => {
   const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
   // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
   return tmp2.coinPublicKey.data;
+}
+
+export const getEncryptionPublicKeyFromShieldAddress = (shieldAddr: string) => {
+  const tmp1 = MidnightBech32m.parse(shieldAddr);
+  const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
+  return tmp2.encryptionPublicKey.data;
 }
 
 export const getUserAddressFromUnshieldAddress = (unshieldAddr: string) => {
