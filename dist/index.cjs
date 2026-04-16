@@ -162643,9 +162643,8 @@ var MidnightWalletSDK = class {
     await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     this.walletObj = wallet;
     this.walletObj;
-    this.state = await this.stateSync();
     const callBack = async () => {
-      const state = await this.stateSync();
+      const state = await this.stateSync(0);
       await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
       console.log("wallet state saved!");
       clearTimeout(this.storeTimer);
@@ -162664,14 +162663,19 @@ var MidnightWalletSDK = class {
     } else {
       await sleep5(200);
       this.syncMutex = true;
-      const p = [waitForFullySynced(this.walletObj, false), timeout5(timeoutMs)];
-      try {
-        const result2 = await Promise.race(p);
-        this.state = result2;
+      if (timeoutMs > 0) {
+        const p = [waitForFullySynced(this.walletObj, false), timeout5(timeoutMs)];
+        try {
+          const result2 = await Promise.race(p);
+          this.state = result2;
+          this.syncMutex = false;
+        } catch (error4) {
+          this.syncMutex = false;
+          throw new Error("Wallet state sync failed: " + (error4 instanceof Error ? error4.message : String(error4)));
+        }
+      } else {
+        this.state = await waitForFullySynced(this.walletObj, false);
         this.syncMutex = false;
-      } catch (error4) {
-        this.syncMutex = false;
-        throw new Error("Wallet state sync failed: " + (error4 instanceof Error ? error4.message : String(error4)));
       }
     }
     return this.state;

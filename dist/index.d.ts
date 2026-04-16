@@ -5,7 +5,7 @@ import * as ledger from '@midnight-ntwrk/ledger-v8';
 import { UserAddress as UserAddress$1 } from '@midnight-ntwrk/ledger-v8';
 export { ledger as ledgerV8 };
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
-import { DefaultConfiguration, WalletFacade, CombinedSwapOutputs, FacadeState } from '@midnight-ntwrk/wallet-sdk-facade';
+import { DefaultConfiguration, FacadeState, WalletFacade, CombinedSwapOutputs } from '@midnight-ntwrk/wallet-sdk-facade';
 import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
 import * as _midnight_ntwrk_midnight_js_types from '@midnight-ntwrk/midnight-js-types';
@@ -61,7 +61,7 @@ declare class MidnightWalletSDK {
     private syncMutex;
     constructor(config: Configuration, strSeed: string);
     initWallet(store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
-    private stateSync;
+    stateSync(timeoutMs?: number): Promise<FacadeState>;
     getAccountAddress(): {
         shieldedAddress: string;
         unshieldedAddress: string;

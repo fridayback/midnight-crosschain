@@ -23,6 +23,7 @@ import { stat } from 'fs';
 
 // import { ToolKitClient } from './utils.js';
 import { type UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
+import { time } from 'node:console';
 // import { PublicKeys } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
 
 export type Configuration = DefaultConfiguration;//ShieldedConfiguration & DustConfiguration & { indexerUrl: string };
@@ -271,10 +272,10 @@ export class MidnightWalletSDK {
 
 
         const selfWallet = this.walletObj;
-        this.state = await this.stateSync();
+        // this.state = await this.stateSync();
 
         const callBack = async () => {
-            const state = await this.stateSync();
+            const state = await this.stateSync(0);
             await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
             console.log('wallet state saved!');
             clearTimeout(this.storeTimer);
@@ -287,7 +288,7 @@ export class MidnightWalletSDK {
 
     }
 
-    private async stateSync(timeoutMs: number = 300000): Promise<FacadeState> {
+    async stateSync(timeoutMs: number = 300000): Promise<FacadeState> {
         if(this.syncMutex) {
             while(this.syncMutex) {
             await sleep(100);
@@ -295,7 +296,8 @@ export class MidnightWalletSDK {
         } else {
             await sleep(200);// 避免在状态同步完成前多次调用 stateSync 导致的重复同步
             this.syncMutex = true;
-            const p = [waitForFullySynced(this.walletObj!, false), timeout(timeoutMs)];
+            if(timeoutMs > 0) {
+                const p = [waitForFullySynced(this.walletObj!, false), timeout(timeoutMs)];
             try {
                 const result = await Promise.race(p);
                 this.state = result as FacadeState;
@@ -303,6 +305,10 @@ export class MidnightWalletSDK {
             } catch (error) {
                 this.syncMutex = false;
                 throw new Error('Wallet state sync failed: ' + (error instanceof Error ? error.message : String(error)));
+            }
+            }else{
+                this.state = await waitForFullySynced(this.walletObj!, false);
+                this.syncMutex = false;
             }
         }
         return this.state!;
