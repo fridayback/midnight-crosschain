@@ -18,12 +18,13 @@ import { Buffer } from 'buffer';
 import * as Rx from 'rxjs';
 import { ShieldedAddress, ShieldedCoinPublicKey, ShieldedEncryptionPublicKey, UnshieldedAddress, DustAddress } from "@midnight-ntwrk/wallet-sdk-address-format"
 import assert from 'node:assert';
-import { stat } from 'fs';
+// import { stat } from 'fs';
 // import { LedgerParameters } from '@midnight-ntwrk/ledger-v7';
 
 // import { ToolKitClient } from './utils.js';
 import { type UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
-import { time } from 'node:console';
+import { transientHash } from '@midnight-ntwrk/compact-runtime';
+// import { time } from 'node:console';
 // import { PublicKeys } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
 
 export type Configuration = DefaultConfiguration;//ShieldedConfiguration & DustConfiguration & { indexerUrl: string };
@@ -199,7 +200,7 @@ export class MidnightWalletSDK {
     private shieldedSecretKeys: ledger.ZswapSecretKeys;
     private dustSecretKey: ledger.DustSecretKey;
     private unshieldedKeystore: UnshieldedKeystore;
-    private walletAddress: { shieldedAddress: string, unshieldedAddress: string, dustAddress: string , coinPublicKey: string, UserPublicKey: string};
+    private walletAddress: { shieldedAddress: string, unshieldedAddress: string, dustAddress: string , coinPublicKey: string, encryptionPublicKey: string, userPublicKey: string};
     private bActiveFlag: boolean;
     private storeTimer?: NodeJS.Timeout;
     private seed: Buffer;
@@ -208,7 +209,7 @@ export class MidnightWalletSDK {
     constructor(config: Configuration,strSeed: string) {
         this.config = config;
         
-        this.walletAddress = { shieldedAddress: '', unshieldedAddress: '', dustAddress: '' ,coinPublicKey: '', UserPublicKey: ''};
+        this.walletAddress = { shieldedAddress: '', unshieldedAddress: '', dustAddress: '' ,coinPublicKey: '',encryptionPublicKey:'', userPublicKey: ''};
         this.bActiveFlag = false;
 
         this.seed = Buffer.from(strSeed, 'hex');;
@@ -225,10 +226,14 @@ export class MidnightWalletSDK {
         this.walletAddress.shieldedAddress = ShieldedAddress.codec.encode(this.config.networkId, shieldedAddress).asString();
         this.walletAddress.unshieldedAddress = UnshieldedAddress.codec.encode(this.config.networkId, unshieldedAddress).asString();
         this.walletAddress.dustAddress = DustAddress.codec.encode(this.config.networkId, new DustAddress(dustSecretKey.publicKey)).asString();
+        this.walletAddress.coinPublicKey = coinPublicKey;
+        this.walletAddress.encryptionPublicKey = encryptionPublicKey;
+        this.walletAddress.userPublicKey = PublicKey.fromKeyStore(unshieldedKeystore).addressHex;
 
         this.shieldedSecretKeys = shieldedSecretKeys;
         this.unshieldedKeystore = unshieldedKeystore;
         this.dustSecretKey = dustSecretKey;
+        
     }
 
     //////////////////////////////////////////

@@ -67,7 +67,8 @@ declare class MidnightWalletSDK {
         unshieldedAddress: string;
         dustAddress: string;
         coinPublicKey: string;
-        UserPublicKey: string;
+        encryptionPublicKey: string;
+        userPublicKey: string;
     };
     registerNightUtxosForDustGeneration(): Promise<void>;
     deregisterFromDustGeneration(): Promise<void>;
