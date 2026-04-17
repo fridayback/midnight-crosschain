@@ -200,10 +200,11 @@ export class CrossChainApi {
   async init(config: Config, wallet: MidnightWalletSDK) {
     const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
     const zkConfigProvider = new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath);
+    const generatePassword = () => 'TGIUS4d5e61a2b3cf7g8h9j0k@?$#%<+>';
     this.providers = {
       privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
         privateStateStoreName: 'CCPSSN',
-        privateStoragePasswordProvider: () => 'Pwd_' + wallet.getUnshieldedKeystore().getSecretKey().toString('hex'),
+        privateStoragePasswordProvider: generatePassword,
         accountId: wallet.getUnshieldedKeystore().getPublicKey(),
       }),
       publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
