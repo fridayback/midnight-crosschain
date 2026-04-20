@@ -161,16 +161,33 @@ export const initFacadeWallet = async (
 };
 
 
-export const waitForFullySynced = async (facade: WalletFacade, forceReturn: boolean = false): Promise<FacadeState> => {
-    const timeCur = Date.now();
-    const state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
+export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number = 0): Promise<FacadeState> => {
+    try {
+        const timeCur = Date.now();
+    let state;
+    if(timeoutMs > 0) {
+        state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
         if (!s.isSynced) {
             console.log(`[${new Date().toUTCString()}:] wallet is syncing...`);
         }
-        return s.isSynced || forceReturn;
-    })));
+            return s.isSynced;
+        }),Rx.timeout(timeoutMs)));
+       
+    }else {
+        const state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
+            if (!s.isSynced) {
+                console.log(`[${new Date().toUTCString()}:] wallet is syncing...`);
+            }
+            return s.isSynced;
+        })));
+    }
     console.log(`Wallet synced in ${(Date.now() - timeCur) / 1000} seconds`);
-    return state;
+    return state!;
+    } catch (error) {
+        throw new Error('Wallet sync timed out: ' + (error instanceof Error ? error.message : String(error)));
+    }
+    
+    
 };
 
 export const timeout = (ms: number) => new Promise((resolve, reject) => {
@@ -204,8 +221,8 @@ export class MidnightWalletSDK {
     private bActiveFlag: boolean;
     private storeTimer?: NodeJS.Timeout;
     private seed: Buffer;
-    private state: FacadeState | null = null;
-    private syncMutex: Boolean = false;
+    // private state: FacadeState | null = null;
+    // private syncMutex: Boolean = false;
     constructor(config: Configuration,strSeed: string) {
         this.config = config;
         
@@ -276,11 +293,10 @@ export class MidnightWalletSDK {
         this.walletObj = wallet;
 
 
-        const selfWallet = this.walletObj;
-        // this.state = await this.stateSync();
+        // const selfWallet = this.walletObj;
 
         const callBack = async () => {
-            const state = await this.stateSync(0);
+            const state = await waitForFullySynced(this.walletObj!);
             await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
             console.log('wallet state saved!');
             clearTimeout(this.storeTimer);
@@ -291,32 +307,6 @@ export class MidnightWalletSDK {
             await callBack();
         }, saveInterval);
 
-    }
-
-    async stateSync(timeoutMs: number = 300000): Promise<FacadeState> {
-        if(this.syncMutex) {
-            while(this.syncMutex) {
-            await sleep(100);
-        }
-        } else {
-            await sleep(200);// 避免在状态同步完成前多次调用 stateSync 导致的重复同步
-            this.syncMutex = true;
-            if(timeoutMs > 0) {
-                const p = [waitForFullySynced(this.walletObj!, false), timeout(timeoutMs)];
-            try {
-                const result = await Promise.race(p);
-                this.state = result as FacadeState;
-                this.syncMutex = false;
-            } catch (error) {
-                this.syncMutex = false;
-                throw new Error('Wallet state sync failed: ' + (error instanceof Error ? error.message : String(error)));
-            }
-            }else{
-                this.state = await waitForFullySynced(this.walletObj!, false);
-                this.syncMutex = false;
-            }
-        }
-        return this.state!;
     }
 
     // to get the wallet address

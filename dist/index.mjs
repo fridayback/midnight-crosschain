@@ -91,29 +91,43 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
   await wallet.start(shieldedSecretKeys, dustSecretKey);
   return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
-var waitForFullySynced = async (facade, forceReturn = false) => {
-  const timeCur = Date.now();
-  const state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-    if (!s.isSynced) {
-      console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+var waitForFullySynced = async (facade, timeoutMs = 0) => {
+  try {
+    const timeCur = Date.now();
+    let state;
+    if (timeoutMs > 0) {
+      state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
+        if (!s.isSynced) {
+          console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+        }
+        return s.isSynced;
+      }), Rx.timeout(timeoutMs)));
+    } else {
+      const state2 = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
+        if (!s.isSynced) {
+          console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+        }
+        return s.isSynced;
+      })));
     }
-    return s.isSynced || forceReturn;
-  })));
-  console.log(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
-  return state;
+    console.log(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
+    return state;
+  } catch (error) {
+    throw new Error("Wallet sync timed out: " + (error instanceof Error ? error.message : String(error)));
+  }
 };
-var timeout = (ms) => new Promise((resolve, reject) => {
+var timeout2 = (ms) => new Promise((resolve, reject) => {
   setTimeout(() => reject(new Error("Timeout")), ms);
 });
 var sleep = (ms) => new Promise((resolve) => {
   setTimeout(resolve, ms);
 });
 var MidnightWalletSDK = class {
+  // private state: FacadeState | null = null;
+  // private syncMutex: Boolean = false;
   constructor(config, strSeed) {
     this.isGenerating = false;
     this.isUnGenerating = false;
-    this.state = null;
-    this.syncMutex = false;
     this.config = config;
     this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "", coinPublicKey: "", encryptionPublicKey: "", userPublicKey: "" };
     this.bActiveFlag = false;
@@ -159,9 +173,8 @@ var MidnightWalletSDK = class {
     const wallet = await WalletFacade.init(initParams);
     await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     this.walletObj = wallet;
-    this.walletObj;
     const callBack = async () => {
-      const state = await this.stateSync(0);
+      const state = await waitForFullySynced(this.walletObj);
       await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
       console.log("wallet state saved!");
       clearTimeout(this.storeTimer);
@@ -171,31 +184,6 @@ var MidnightWalletSDK = class {
     this.storeTimer = setTimeout(async () => {
       await callBack();
     }, saveInterval);
-  }
-  async stateSync(timeoutMs = 3e5) {
-    if (this.syncMutex) {
-      while (this.syncMutex) {
-        await sleep(100);
-      }
-    } else {
-      await sleep(200);
-      this.syncMutex = true;
-      if (timeoutMs > 0) {
-        const p = [waitForFullySynced(this.walletObj, false), timeout(timeoutMs)];
-        try {
-          const result = await Promise.race(p);
-          this.state = result;
-          this.syncMutex = false;
-        } catch (error) {
-          this.syncMutex = false;
-          throw new Error("Wallet state sync failed: " + (error instanceof Error ? error.message : String(error)));
-        }
-      } else {
-        this.state = await waitForFullySynced(this.walletObj, false);
-        this.syncMutex = false;
-      }
-    }
-    return this.state;
   }
   // to get the wallet address
   getAccountAddress() {
@@ -12565,6 +12553,6 @@ var getContractState = async (config, contractAddress) => {
   return state;
 };
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, sleep, timeout, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, sleep, timeout2 as timeout, upgradeContractCircuit, waitForFullySynced, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

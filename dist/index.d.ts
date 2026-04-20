@@ -5,7 +5,7 @@ import * as ledger from '@midnight-ntwrk/ledger-v8';
 import { UserAddress as UserAddress$1 } from '@midnight-ntwrk/ledger-v8';
 export { ledger as ledgerV8 };
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
-import { DefaultConfiguration, FacadeState, WalletFacade, CombinedSwapOutputs } from '@midnight-ntwrk/wallet-sdk-facade';
+import { DefaultConfiguration, WalletFacade, CombinedSwapOutputs, FacadeState } from '@midnight-ntwrk/wallet-sdk-facade';
 import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
 import * as _midnight_ntwrk_midnight_js_types from '@midnight-ntwrk/midnight-js-types';
@@ -34,7 +34,7 @@ strSerializedState?: FacadeSerializedState) => Promise<{
     dustSecretKey: ledger.DustSecretKey;
     unshieldedKeystore: UnshieldedKeystore;
 }>;
-declare const waitForFullySynced: (facade: WalletFacade, forceReturn?: boolean) => Promise<FacadeState>;
+declare const waitForFullySynced: (facade: WalletFacade, timeoutMs?: number) => Promise<FacadeState>;
 declare const timeout: (ms: number) => Promise<unknown>;
 declare const sleep: (ms: number) => Promise<unknown>;
 interface FacadeSerializedState {
@@ -57,11 +57,8 @@ declare class MidnightWalletSDK {
     private bActiveFlag;
     private storeTimer?;
     private seed;
-    private state;
-    private syncMutex;
     constructor(config: Configuration, strSeed: string);
     initWallet(store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
-    stateSync(timeoutMs?: number): Promise<FacadeState>;
     getAccountAddress(): {
         shieldedAddress: string;
         unshieldedAddress: string;
