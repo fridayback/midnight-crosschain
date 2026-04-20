@@ -103,7 +103,7 @@ var waitForFullySynced = async (facade, timeoutMs = 0) => {
         return s.isSynced;
       }), Rx.timeout(timeoutMs)));
     } else {
-      const state2 = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
+      state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
         if (!s.isSynced) {
           console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
         }
