@@ -294,7 +294,7 @@ export class MidnightWalletSDK {
 
 
         // const selfWallet = this.walletObj;
-
+    await waitForFullySynced(this.walletObj);
         const callBack = async () => {
             const state = await waitForFullySynced(this.walletObj!);
             await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
