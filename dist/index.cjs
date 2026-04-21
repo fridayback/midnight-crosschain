@@ -162659,6 +162659,7 @@ var MidnightWalletSDK = class {
     const wallet = await WalletFacade.init(initParams);
     await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     this.walletObj = wallet;
+    await waitForFullySynced(this.walletObj);
     const callBack = async () => {
       const state = await waitForFullySynced(this.walletObj);
       await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
