@@ -162583,16 +162583,14 @@ var waitForFullySynced = async (facade, timeoutMs = 0) => {
     let state;
     if (timeoutMs > 0) {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        if (!s.isSynced) {
-          console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
-        }
+        console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+        console.log("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         return s.isSynced;
       }), Rx.timeout(timeoutMs)));
     } else {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        if (!s.isSynced) {
-          console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
-        }
+        console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+        console.log("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         return s.isSynced;
       })));
     }
@@ -162659,7 +162657,7 @@ var MidnightWalletSDK = class {
     const wallet = await WalletFacade.init(initParams);
     await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     this.walletObj = wallet;
-    await waitForFullySynced(this.walletObj);
+    await this.registerNightUtxosForDustGeneration();
     const callBack = async () => {
       const state = await waitForFullySynced(this.walletObj);
       await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
