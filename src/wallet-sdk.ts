@@ -227,6 +227,7 @@ export class MidnightWalletSDK {
     private bActiveFlag: boolean;
     private storeTimer?: NodeJS.Timeout;
     private seed: Buffer;
+    private dustBalance: bigint = 0n;
     // private state: FacadeState | null = null;
     // private syncMutex: Boolean = false;
     constructor(config: Configuration,strSeed: string) {
@@ -303,8 +304,15 @@ export class MidnightWalletSDK {
     await this.registerNightUtxosForDustGeneration();
         const callBack = async () => {
             const state = await waitForFullySynced(this.walletObj!);
-            await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
-            console.log('wallet state saved!');
+            const dustb = state.dust.balance(new Date());
+            if((this.dustBalance > 0n && dustb > 0n) || (this.dustBalance == 0n)){
+                await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+                this.dustBalance = dustb;
+                console.log('wallet state saved!');
+            }else{
+                console.log('dust balance abnormal, ignore the backup of wallet state!');
+            }
+            
             clearTimeout(this.storeTimer);
             this.registerNightUtxosForDustGeneration();
             this.storeTimer = setTimeout(callBack, saveInterval);
@@ -333,7 +341,7 @@ export class MidnightWalletSDK {
             this.isGenerating = false;
             return;
         }
-
+        console.log('registerNightUtxosForDustGeneration utxo');
         const signKeyStore = this.unshieldedKeystore;
 
         const dustRegistrationRecipe = await this.walletObj.registerNightUtxosForDustGeneration(

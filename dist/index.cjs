@@ -162612,6 +162612,7 @@ var MidnightWalletSDK = class {
   constructor(config3, strSeed) {
     this.isGenerating = false;
     this.isUnGenerating = false;
+    this.dustBalance = 0n;
     this.config = config3;
     this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "", coinPublicKey: "", encryptionPublicKey: "", userPublicKey: "" };
     this.bActiveFlag = false;
@@ -162660,8 +162661,14 @@ var MidnightWalletSDK = class {
     await this.registerNightUtxosForDustGeneration();
     const callBack = async () => {
       const state = await waitForFullySynced(this.walletObj);
-      await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
-      console.log("wallet state saved!");
+      const dustb = state.dust.balance(/* @__PURE__ */ new Date());
+      if (this.dustBalance > 0n && dustb > 0n || this.dustBalance == 0n) {
+        await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+        this.dustBalance = dustb;
+        console.log("wallet state saved!");
+      } else {
+        console.log("dust balance abnormal, ignore the backup of wallet state!");
+      }
       clearTimeout(this.storeTimer);
       this.registerNightUtxosForDustGeneration();
       this.storeTimer = setTimeout(callBack, saveInterval);
@@ -162686,6 +162693,7 @@ var MidnightWalletSDK = class {
       this.isGenerating = false;
       return;
     }
+    console.log("registerNightUtxosForDustGeneration utxo");
     const signKeyStore = this.unshieldedKeystore;
     const dustRegistrationRecipe = await this.walletObj.registerNightUtxosForDustGeneration(
       nightUtxos,

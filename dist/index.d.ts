@@ -57,6 +57,7 @@ declare class MidnightWalletSDK {
     private bActiveFlag;
     private storeTimer?;
     private seed;
+    private dustBalance;
     constructor(config: Configuration, strSeed: string);
     initWallet(store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
     getAccountAddress(): {
