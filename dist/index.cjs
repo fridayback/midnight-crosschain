@@ -74816,8 +74816,8 @@ var FiberRuntime = class extends Class3 {
       const clockService = get6(this.getFiberRef(currentServices), clockTag);
       const date3 = new Date(clockService.unsafeCurrentTimeMillis());
       withRedactableContext(contextMap, () => {
-        for (const logger2 of loggers) {
-          logger2.log({
+        for (const logger3 of loggers) {
+          logger3.log({
             fiberId: this.id(),
             logLevel: logLevel2,
             message,
@@ -161277,6 +161277,12 @@ function CustomShieldedWallet(configuration2, builder) {
   };
 }
 
+// src/utils.ts
+exports.logger = console;
+var setLogger = function(_logger) {
+  exports.logger = _logger;
+};
+
 // node_modules/@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/RunningV1Variant.js
 var progress4 = (state) => {
   const appliedId = state.progress?.appliedId ?? 0n;
@@ -162583,18 +162589,18 @@ var waitForFullySynced = async (facade, timeoutMs = 0) => {
     let state;
     if (timeoutMs > 0) {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
-        console.log("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+        exports.logger.info(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+        exports.logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         return s.isSynced;
       }), Rx.timeout(timeoutMs)));
     } else {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
-        console.log("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+        exports.logger.info(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+        exports.logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         return s.isSynced;
       })));
     }
-    console.log(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
+    exports.logger.info(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
     return state;
   } catch (error4) {
     throw new Error("Wallet sync timed out: " + (error4 instanceof Error ? error4.message : String(error4)));
@@ -162665,9 +162671,9 @@ var MidnightWalletSDK = class {
       if (this.dustBalance > 0n && dustb > 0n || this.dustBalance == 0n) {
         await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
         this.dustBalance = dustb;
-        console.log("wallet state saved!");
+        exports.logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
       } else {
-        console.log("dust balance abnormal, ignore the backup of wallet state!");
+        exports.logger.info(`dust balance abnormal, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
       }
       clearTimeout(this.storeTimer);
       this.registerNightUtxosForDustGeneration();
@@ -162693,7 +162699,7 @@ var MidnightWalletSDK = class {
       this.isGenerating = false;
       return;
     }
-    console.log("registerNightUtxosForDustGeneration utxo");
+    exports.logger.info("registerNightUtxosForDustGeneration utxo begin");
     const signKeyStore = this.unshieldedKeystore;
     const dustRegistrationRecipe = await this.walletObj.registerNightUtxosForDustGeneration(
       nightUtxos,
@@ -162704,6 +162710,7 @@ var MidnightWalletSDK = class {
     const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
     await this.submitTx(finalizedDustTx);
     this.isGenerating = false;
+    exports.logger.info("registerNightUtxosForDustGeneration utxo end");
   }
   async deregisterFromDustGeneration() {
     if (this.isUnGenerating) return;
@@ -162717,6 +162724,7 @@ var MidnightWalletSDK = class {
       this.isUnGenerating = false;
       return;
     }
+    exports.logger.info("deregisterFromDustGeneration utxo begin");
     const signKeyStore = this.unshieldedKeystore;
     const dustRegistrationRecipe = await this.walletObj.deregisterFromDustGeneration(
       nightUtxos,
@@ -162729,10 +162737,14 @@ var MidnightWalletSDK = class {
     const finalizedDustTx = await this.walletObj.finalizeRecipe(recipe);
     await this.submitTx(finalizedDustTx);
     this.isUnGenerating = false;
+    exports.logger.info("deregisterFromDustGeneration utxo end");
   }
   async submitTx(tx) {
     assert8__default.default(this.walletObj, "walletObj is not initialized!");
+    const time3 = Date.now();
+    exports.logger.info(`[${time3}] submitTx begin`);
     const ret = await this.walletObj.submitTransaction(tx);
+    exports.logger.info(`[${time3}] submitTx end`);
     return ret;
   }
   async getBalances() {
@@ -162761,7 +162773,7 @@ var MidnightWalletSDK = class {
       await this.walletObj?.stop();
     }
     this.bActiveFlag = false;
-    console.log("\n\n...wallet close done!");
+    exports.logger.info("\n\n...wallet close done!");
   }
   getWalletInstance() {
     return this.walletObj;
@@ -181765,7 +181777,7 @@ function getDirname() {
   return path3__namespace.default.resolve(__dirname, "..");
 }
 var currentDir = getDirname();
-console.log("currentDir===>", currentDir);
+exports.logger.info("currentDir===>", currentDir);
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
   zkConfigPath: path3__namespace.default.resolve(currentDir, "managed", "crosschain")
@@ -182474,6 +182486,7 @@ exports.ledgerV8 = midnight_ledger_wasm_fs_exports;
 exports.midnightjsutils = dist_exports2;
 exports.pad = pad3;
 exports.removeContractCircuit = removeContractCircuit;
+exports.setLogger = setLogger;
 exports.signTransactionIntents = signTransactionIntents;
 exports.sleep = sleep5;
 exports.timeout = timeout6;

@@ -5,6 +5,8 @@ import { type CombinedSwapOutputs, type DefaultConfiguration, type FacadeState, 
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
 import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 
+import {logger} from './utils';
+
 // import type { DefaultV1Configuration as ShieldedConfiguration } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
 import {
     createKeystore,
@@ -24,6 +26,7 @@ import assert from 'node:assert';
 // import { ToolKitClient } from './utils.js';
 import { type UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
 import { transientHash } from '@midnight-ntwrk/compact-runtime';
+// import { log } from 'node:console';
 // import { time } from 'node:console';
 // import { PublicKeys } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
 
@@ -167,8 +170,8 @@ export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number
     let state;
     if(timeoutMs > 0) {
         state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
-            console.log(`[${new Date().toUTCString()}:] wallet is syncing...`);
-            console.log("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+            logger.info(`[${new Date().toUTCString()}:] wallet is syncing...`);
+            logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
 
             // if(global.syncLogger) {
             //     global.syncLogger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
@@ -178,8 +181,8 @@ export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number
        
     }else {
         state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
-            console.log(`[${new Date().toUTCString()}:] wallet is syncing...`);
-            console.log("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+            logger.info(`[${new Date().toUTCString()}:] wallet is syncing...`);
+            logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
 
             // if(global.syncLogger) {
             //     global.syncLogger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
@@ -187,7 +190,7 @@ export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number
             return s.isSynced;
         })));
     }
-    console.log(`Wallet synced in ${(Date.now() - timeCur) / 1000} seconds`);
+    logger.info(`Wallet synced in ${(Date.now() - timeCur) / 1000} seconds`);
     return state!;
     } catch (error) {
         throw new Error('Wallet sync timed out: ' + (error instanceof Error ? error.message : String(error)));
@@ -308,9 +311,9 @@ export class MidnightWalletSDK {
             if((this.dustBalance > 0n && dustb > 0n) || (this.dustBalance == 0n)){
                 await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
                 this.dustBalance = dustb;
-                console.log('wallet state saved!');
+                logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
             }else{
-                console.log('dust balance abnormal, ignore the backup of wallet state!');
+                logger.info(`dust balance abnormal, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
             }
             
             clearTimeout(this.storeTimer);
@@ -341,7 +344,7 @@ export class MidnightWalletSDK {
             this.isGenerating = false;
             return;
         }
-        console.log('registerNightUtxosForDustGeneration utxo');
+        logger.info('registerNightUtxosForDustGeneration utxo begin');
         const signKeyStore = this.unshieldedKeystore;
 
         const dustRegistrationRecipe = await this.walletObj.registerNightUtxosForDustGeneration(
@@ -356,6 +359,7 @@ export class MidnightWalletSDK {
         const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
 
         this.isGenerating = false;
+        logger.info('registerNightUtxosForDustGeneration utxo end');
     }
 
     async deregisterFromDustGeneration() {
@@ -371,7 +375,7 @@ export class MidnightWalletSDK {
             this.isUnGenerating = false;
             return;
         }
-
+        logger.info('deregisterFromDustGeneration utxo begin');
         const signKeyStore = this.unshieldedKeystore;
 
         const dustRegistrationRecipe = await this.walletObj.deregisterFromDustGeneration(
@@ -389,12 +393,16 @@ export class MidnightWalletSDK {
         const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
 
         this.isUnGenerating = false;
+        logger.info('deregisterFromDustGeneration utxo end');
     }
 
     async submitTx(tx: ledger.FinalizedTransaction) {
         assert(this.walletObj, "walletObj is not initialized!");
         // const txHash = await this.walletObj.submitTransaction(tx);
+        const time = Date.now();
+        logger.info(`[${time}] submitTx begin`)
         const ret = await this.walletObj.submitTransaction(tx);
+        logger.info(`[${time}] submitTx end`);
         return ret;
     }
 
@@ -402,7 +410,7 @@ export class MidnightWalletSDK {
     async getBalances() {
         assert(this.walletObj, "walletObj is not initialized!");
         let curState = await waitForFullySynced(this.walletObj);
-        // console.log("\n\n...getAccountBalance...curState: ", curState);
+        // logger.info("\n\n...getAccountBalance...curState: ", curState);
 
         // balances: Record<TokenType, bigint>;
         // let aryBalance = new Array();
@@ -428,7 +436,7 @@ export class MidnightWalletSDK {
         const dustAvailableCoins = curState.dust.availableCoins;
         const shieldedAvailableCoins = curState.shielded.availableCoins;
         const unshieldedAvailableCoins = curState.unshielded.availableCoins;
-        // console.log("\n\n...getAvailableCoins...curBalance: ", availableCoins);
+        // logger.info("\n\n...getAvailableCoins...curBalance: ", availableCoins);
 
         return { dustAvailableCoins, shieldedAvailableCoins, unshieldedAvailableCoins };
     }
@@ -442,7 +450,7 @@ export class MidnightWalletSDK {
             await this.walletObj?.stop();
         }
         this.bActiveFlag = false;
-        console.log("\n\n...wallet close done!");
+        logger.info("\n\n...wallet close done!");
     }
 
     getWalletInstance() {
@@ -584,12 +592,12 @@ export const signTransactionIntents = (
 // const encryptionPublicKey = shieldedSecretKeys.encryptionPublicKey;
 // const shieldedAddress = new ShieldedAddress(ShieldedCoinPublicKey.fromHexString(coinPublicKey), ShieldedEncryptionPublicKey.fromHexString(encryptionPublicKey));
 
-// console.log(PublicKey.fromKeyStore(unshieldedKeystore).address);
-// console.log(PublicKey.fromKeyStore(unshieldedKeystore).addressHex);
-// console.log(PublicKey.fromKeyStore(unshieldedKeystore).publicKey);
+// logger.info(PublicKey.fromKeyStore(unshieldedKeystore).address);
+// logger.info(PublicKey.fromKeyStore(unshieldedKeystore).addressHex);
+// logger.info(PublicKey.fromKeyStore(unshieldedKeystore).publicKey);
 // const unshieldedAddress = new UnshieldedAddress(Buffer.from(PublicKey.fromKeyStore(unshieldedKeystore).addressHex, 'hex'));
 
-// console.log('Shielded Address: ' + ShieldedAddress.codec.encode(networkId, shieldedAddress).asString());
-// console.log('Unshielded Address: ' + UnshieldedAddress.codec.encode('mainnet', unshieldedAddress).asString());
-// console.log('Dust Address: ' + DustAddress.codec.encode(networkId, new DustAddress(dustSecretKey.publicKey)).asString());
+// logger.info('Shielded Address: ' + ShieldedAddress.codec.encode(networkId, shieldedAddress).asString());
+// logger.info('Unshielded Address: ' + UnshieldedAddress.codec.encode('mainnet', unshieldedAddress).asString());
+// logger.info('Dust Address: ' + DustAddress.codec.encode(networkId, new DustAddress(dustSecretKey.publicKey)).asString());
 // }

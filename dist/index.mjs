@@ -30,6 +30,12 @@ export { midnightJsUtils as midnightjsutils };
 var getFilename = () => fileURLToPath(import.meta.url);
 var getDirname = () => path2.dirname(getFilename());
 var __dirname$1 = /* @__PURE__ */ getDirname();
+
+// src/utils.ts
+var logger = console;
+var setLogger = function(_logger) {
+  logger = _logger;
+};
 var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, node, network = "preview", costParameters = {
   additionalFeeOverhead: 300000000000000n,
   feeBlocksMargin: 5
@@ -97,18 +103,18 @@ var waitForFullySynced = async (facade, timeoutMs = 0) => {
     let state;
     if (timeoutMs > 0) {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
-        console.log("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+        logger.info(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+        logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         return s.isSynced;
       }), Rx.timeout(timeoutMs)));
     } else {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        console.log(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
-        console.log("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+        logger.info(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+        logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         return s.isSynced;
       })));
     }
-    console.log(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
+    logger.info(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
     return state;
   } catch (error) {
     throw new Error("Wallet sync timed out: " + (error instanceof Error ? error.message : String(error)));
@@ -179,9 +185,9 @@ var MidnightWalletSDK = class {
       if (this.dustBalance > 0n && dustb > 0n || this.dustBalance == 0n) {
         await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
         this.dustBalance = dustb;
-        console.log("wallet state saved!");
+        logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
       } else {
-        console.log("dust balance abnormal, ignore the backup of wallet state!");
+        logger.info(`dust balance abnormal, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
       }
       clearTimeout(this.storeTimer);
       this.registerNightUtxosForDustGeneration();
@@ -207,7 +213,7 @@ var MidnightWalletSDK = class {
       this.isGenerating = false;
       return;
     }
-    console.log("registerNightUtxosForDustGeneration utxo");
+    logger.info("registerNightUtxosForDustGeneration utxo begin");
     const signKeyStore = this.unshieldedKeystore;
     const dustRegistrationRecipe = await this.walletObj.registerNightUtxosForDustGeneration(
       nightUtxos,
@@ -218,6 +224,7 @@ var MidnightWalletSDK = class {
     const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
     await this.submitTx(finalizedDustTx);
     this.isGenerating = false;
+    logger.info("registerNightUtxosForDustGeneration utxo end");
   }
   async deregisterFromDustGeneration() {
     if (this.isUnGenerating) return;
@@ -231,6 +238,7 @@ var MidnightWalletSDK = class {
       this.isUnGenerating = false;
       return;
     }
+    logger.info("deregisterFromDustGeneration utxo begin");
     const signKeyStore = this.unshieldedKeystore;
     const dustRegistrationRecipe = await this.walletObj.deregisterFromDustGeneration(
       nightUtxos,
@@ -243,10 +251,14 @@ var MidnightWalletSDK = class {
     const finalizedDustTx = await this.walletObj.finalizeRecipe(recipe);
     await this.submitTx(finalizedDustTx);
     this.isUnGenerating = false;
+    logger.info("deregisterFromDustGeneration utxo end");
   }
   async submitTx(tx) {
     assert3(this.walletObj, "walletObj is not initialized!");
+    const time = Date.now();
+    logger.info(`[${time}] submitTx begin`);
     const ret = await this.walletObj.submitTransaction(tx);
+    logger.info(`[${time}] submitTx end`);
     return ret;
   }
   async getBalances() {
@@ -275,7 +287,7 @@ var MidnightWalletSDK = class {
       await this.walletObj?.stop();
     }
     this.bActiveFlag = false;
-    console.log("\n\n...wallet close done!");
+    logger.info("\n\n...wallet close done!");
   }
   getWalletInstance() {
     return this.walletObj;
@@ -11901,7 +11913,7 @@ function getDirname2() {
   return path2.resolve(__dirname$1, "..");
 }
 var currentDir = getDirname2();
-console.log("currentDir===>", currentDir);
+logger.info("currentDir===>", currentDir);
 var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
   zkConfigPath: path2.resolve(currentDir, "managed", "crosschain")
@@ -12560,6 +12572,6 @@ var getContractState = async (config, contractAddress) => {
   return state;
 };
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, pad, removeContractCircuit, signTransactionIntents, sleep, timeout2 as timeout, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, logger, pad, removeContractCircuit, setLogger, signTransactionIntents, sleep, timeout2 as timeout, upgradeContractCircuit, waitForFullySynced, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

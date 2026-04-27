@@ -40,6 +40,7 @@ import assert from 'node:assert';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { MidnightWalletSDK, signTransactionIntents } from './wallet-sdk';
 // import { FinalizedTransaction } from '@midnight-ntwrk/ledger-v7';
+import { logger } from './utils';
 
 
 
@@ -70,9 +71,9 @@ export type DeployedCrossChainContract = DeployedContract<CrossChainContract> | 
 // export const currentDir = path.resolve(new URL(getDirname()).pathname, '..');
 function getDirname() {
   if (typeof import.meta?.url === "string") {
-    // console.log('import.meta.url===>', import.meta.url);
-    // console.log('fileURLToPath(import.meta.url)===>', fileURLToPath(import.meta.url));
-    // console.log('path.dirname(fileURLToPath(import.meta.url))===>', path.dirname(fileURLToPath(import.meta.url)));
+    // logger.info('import.meta.url===>', import.meta.url);
+    // logger.info('fileURLToPath(import.meta.url)===>', fileURLToPath(import.meta.url));
+    // logger.info('path.dirname(fileURLToPath(import.meta.url))===>', path.dirname(fileURLToPath(import.meta.url)));
     const ret = path.resolve(fileURLToPath(import.meta.url), "..");
     // return pathToFileURL(ret).href;
     return ret;
@@ -80,7 +81,7 @@ function getDirname() {
   return path.resolve(__dirname, '..');
 }
 var currentDir = getDirname();//path.resolve(new URL(getDirname()).pathname, "..");
-console.log('currentDir===>', currentDir);
+logger.info('currentDir===>', currentDir);
 // export const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
 // export const currentDir = path.dirname(fileURLToPath(import.meta.url));
 // export type Address = string;
@@ -887,7 +888,7 @@ export const genSigningKey = () => {
 
 // export const configureProviders = async (wallet: WalletFacade & Resource, config: Config) => {
 //   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-//   // console.log('^^^^^^^^^^^^^^',ZKConfig.zkConfigPath)
+//   // logger.info('^^^^^^^^^^^^^^',ZKConfig.zkConfigPath)
 //   return {
 //     privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
 //       privateStateStoreName: ZKConfig.privateStateStoreName,
@@ -904,7 +905,7 @@ export const getCoinPublicKeyFromShieldAddress = (shieldAddr: string) => {
   const tmp1 = MidnightBech32m.parse(shieldAddr);
   // const tmp1 = MidnightBech32m.parse('mn_shield-addr_test10th0dtqgnpanzwmqj236zccpkmj9xxpkl7r7e7cr5e3v7k0stm5qxqxa9m6z5f4603nyuu4kw9c65ektu48hhyrtu2f07h42ycppkvw9ccyry600');
   const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
-  // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
+  // logger.info('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
   return tmp2.coinPublicKey.data;
 }
 
@@ -918,7 +919,7 @@ export const getUserAddressFromUnshieldAddress = (unshieldAddr: string) => {
   const tmp1 = MidnightBech32m.parse(unshieldAddr);
   // const tmp1 = MidnightBech32m.parse('mn_shield-addr_test10th0dtqgnpanzwmqj236zccpkmj9xxpkl7r7e7cr5e3v7k0stm5qxqxa9m6z5f4603nyuu4kw9c65ektu48hhyrtu2f07h42ycppkvw9ccyry600');
   const tmp2 = UnshieldedAddress.codec.decode(tmp1.network, tmp1);
-  // console.log('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
+  // logger.info('coinPublicKeyString:', toHex(tmp2.coinPublicKey.data));
   return tmp2.data;
 }
 
@@ -944,7 +945,7 @@ export const initNetwork = (network: 'mainnet' | 'testnet-02' | 'preview' | 'dev
 }
 
 
-export const getContractState = async (config:Config, contractAddress: string) => {
+export const getContractState = async (config: Config, contractAddress: string) => {
   assertIsContractAddress(contractAddress);
   const publicDataProvider = indexerPublicDataProvider(config.indexer, config.indexerWS);
   const state = await publicDataProvider
