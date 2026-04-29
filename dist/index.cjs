@@ -161283,6 +161283,99 @@ var setLogger = function(_logger) {
   exports.logger = _logger;
 };
 
+// node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs
+var dist_exports = {};
+__export(dist_exports, {
+  assertDefined: () => assertDefined,
+  assertIsContractAddress: () => assertIsContractAddress,
+  assertIsHex: () => assertIsHex,
+  assertUndefined: () => assertUndefined,
+  fromHex: () => fromHex,
+  isHex: () => isHex2,
+  parseCoinPublicKeyToHex: () => parseCoinPublicKeyToHex,
+  parseEncPublicKeyToHex: () => parseEncPublicKeyToHex,
+  parseHex: () => parseHex,
+  toHex: () => toHex,
+  ttlOneHour: () => ttlOneHour
+});
+function assertDefined(value3, message) {
+  if (!value3) {
+    throw new Error(message ?? "Expected value to be defined");
+  }
+}
+function assertUndefined(value3, message) {
+  if (value3) {
+    throw new Error(message ?? "Expected value to be null or undefined");
+  }
+}
+var ttlOneHour = () => new Date(Date.now() + 60 * 60 * 1e3);
+var HEX_STRING_REGEXP = /^(?<prefix>(0x)?)(?<byteChars>([0-9A-Fa-f]{2})*)(?<incompleteChars>.*)$/;
+var parseHex = (source) => {
+  const groups = HEX_STRING_REGEXP.exec(source)?.groups;
+  return {
+    hasPrefix: groups.prefix === "0x",
+    byteChars: groups.byteChars,
+    incompleteChars: groups.incompleteChars
+  };
+};
+var toHex = (bytes4) => buffer$1.Buffer.from(bytes4).toString("hex");
+var fromHex = (str) => buffer$1.Buffer.from(str, "hex");
+var isHex2 = (source, byteLen) => {
+  if (!source || byteLen !== void 0 && byteLen <= 0) {
+    return false;
+  }
+  const parsedHex = parseHex(source);
+  const validByteLen = byteLen ? parsedHex.byteChars.length / 2 === byteLen : parsedHex.byteChars.length > 0;
+  return validByteLen && !parsedHex.incompleteChars;
+};
+function assertIsHex(source, byteLen) {
+  if (!source) {
+    throw new TypeError("Input string must have non-zero length.");
+  }
+  if (byteLen !== void 0 && byteLen <= 0) {
+    throw new Error("Expected byte length must be greater than zero.");
+  }
+  const parsedHex = parseHex(source);
+  if (parsedHex.incompleteChars) {
+    if (parsedHex.incompleteChars.length % 2 > 0) {
+      throw new TypeError(`The last byte of input string '${source}' is incomplete.`);
+    }
+    const invalidCharPos = parsedHex.byteChars.length + (parsedHex.hasPrefix ? 2 : 0);
+    throw new TypeError(`Invalid hex-digit '${source[invalidCharPos]}' found in input string at index ${invalidCharPos}.`);
+  }
+  if (!parsedHex.byteChars) {
+    throw new TypeError(`Input string '${source}' is not a valid hex-string.`);
+  }
+  if (byteLen) {
+    const actualByteLen = parsedHex.byteChars.length / 2;
+    if (byteLen !== actualByteLen) {
+      throw new TypeError(`Expected an input string with byte length of ${byteLen}, got ${actualByteLen}.`);
+    }
+  }
+}
+var parseCoinPublicKeyToHex = (possibleBech32, zswapNetworkId) => {
+  if (isHex2(possibleBech32))
+    return possibleBech32;
+  const parsedBech32 = MidnightBech32m.parse(possibleBech32);
+  const decoded = ShieldedCoinPublicKey.codec.decode(zswapNetworkId, parsedBech32);
+  return buffer$1.Buffer.from(decoded.data).toString("hex");
+};
+var parseEncPublicKeyToHex = (possibleBech32, zswapNetworkId) => {
+  if (isHex2(possibleBech32))
+    return possibleBech32;
+  const parsedBech32 = MidnightBech32m.parse(possibleBech32);
+  const decoded = ShieldedEncryptionPublicKey.codec.decode(zswapNetworkId, parsedBech32);
+  return buffer$1.Buffer.from(decoded.data).toString("hex");
+};
+function assertIsContractAddress(contractAddress) {
+  const CONTRACT_ADDRESS_BYTE_LENGTH = 32;
+  assertIsHex(contractAddress, CONTRACT_ADDRESS_BYTE_LENGTH);
+  const parsedHex = parseHex(contractAddress);
+  if (parsedHex.hasPrefix) {
+    throw new TypeError(`Unexpected '0x' prefix in contract address '${contractAddress}'`);
+  }
+}
+
 // node_modules/@midnight-ntwrk/wallet-sdk-unshielded-wallet/dist/v1/RunningV1Variant.js
 var progress4 = (state) => {
   const appliedId = state.progress?.appliedId ?? 0n;
@@ -162638,6 +162731,9 @@ var MidnightWalletSDK = class {
     this.shieldedSecretKeys = shieldedSecretKeys;
     this.unshieldedKeystore = unshieldedKeystore;
     this.dustSecretKey = dustSecretKey;
+  }
+  static getDustBalanceFromDustState(strSerializedState) {
+    return DustLocalState.deserialize(fromHex(strSerializedState)).walletBalance(/* @__PURE__ */ new Date());
   }
   //////////////////////////////////////////
   // to generate a wallet instance
@@ -177730,12 +177826,12 @@ var make78 = (message, source, meta, cause3) => new ParseError4({
 });
 
 // node_modules/@midnight-ntwrk/platform-js/dist/esm/effect/internal/hex.js
-var HEX_STRING_REGEXP = /^(?<prefix>(0x)?)(?<byteChars>([0-9A-Fa-f]{2})*)(?<incompleteChars>.*)$/;
-var parseHex = (source) => {
+var HEX_STRING_REGEXP2 = /^(?<prefix>(0x)?)(?<byteChars>([0-9A-Fa-f]{2})*)(?<incompleteChars>.*)$/;
+var parseHex2 = (source) => {
   if (!source) {
     return left2(make78("Source string must have non-zero length", source));
   }
-  const match26 = source.match(HEX_STRING_REGEXP);
+  const match26 = source.match(HEX_STRING_REGEXP2);
   if (!match26 || !match26.groups) {
     return left2(make78(`Source string '${source}' is not a valid hex-string`, source));
   }
@@ -177765,7 +177861,7 @@ var defaultHexConstructionConstraints = {
 };
 var make79 = (options5) => {
   const mergedOptions = { ...defaultHexConstructionConstraints, ...options5 };
-  return refined((source) => match(parseHex(source), {
+  return refined((source) => match(parseHex2(source), {
     onLeft: (error4) => some2(error(error4.message, error4.meta)),
     onRight: (parsedHex) => {
       if (mergedOptions.requirePrefix && !parsedHex.hasPrefix) {
@@ -178282,99 +178378,6 @@ var getNetworkId = () => {
   }
   return currentNetworkId;
 };
-
-// node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs
-var dist_exports2 = {};
-__export(dist_exports2, {
-  assertDefined: () => assertDefined,
-  assertIsContractAddress: () => assertIsContractAddress,
-  assertIsHex: () => assertIsHex,
-  assertUndefined: () => assertUndefined,
-  fromHex: () => fromHex,
-  isHex: () => isHex2,
-  parseCoinPublicKeyToHex: () => parseCoinPublicKeyToHex,
-  parseEncPublicKeyToHex: () => parseEncPublicKeyToHex,
-  parseHex: () => parseHex3,
-  toHex: () => toHex2,
-  ttlOneHour: () => ttlOneHour
-});
-function assertDefined(value3, message) {
-  if (!value3) {
-    throw new Error(message ?? "Expected value to be defined");
-  }
-}
-function assertUndefined(value3, message) {
-  if (value3) {
-    throw new Error(message ?? "Expected value to be null or undefined");
-  }
-}
-var ttlOneHour = () => new Date(Date.now() + 60 * 60 * 1e3);
-var HEX_STRING_REGEXP2 = /^(?<prefix>(0x)?)(?<byteChars>([0-9A-Fa-f]{2})*)(?<incompleteChars>.*)$/;
-var parseHex3 = (source) => {
-  const groups = HEX_STRING_REGEXP2.exec(source)?.groups;
-  return {
-    hasPrefix: groups.prefix === "0x",
-    byteChars: groups.byteChars,
-    incompleteChars: groups.incompleteChars
-  };
-};
-var toHex2 = (bytes4) => buffer$1.Buffer.from(bytes4).toString("hex");
-var fromHex = (str) => buffer$1.Buffer.from(str, "hex");
-var isHex2 = (source, byteLen) => {
-  if (!source || byteLen !== void 0 && byteLen <= 0) {
-    return false;
-  }
-  const parsedHex = parseHex3(source);
-  const validByteLen = byteLen ? parsedHex.byteChars.length / 2 === byteLen : parsedHex.byteChars.length > 0;
-  return validByteLen && !parsedHex.incompleteChars;
-};
-function assertIsHex(source, byteLen) {
-  if (!source) {
-    throw new TypeError("Input string must have non-zero length.");
-  }
-  if (byteLen !== void 0 && byteLen <= 0) {
-    throw new Error("Expected byte length must be greater than zero.");
-  }
-  const parsedHex = parseHex3(source);
-  if (parsedHex.incompleteChars) {
-    if (parsedHex.incompleteChars.length % 2 > 0) {
-      throw new TypeError(`The last byte of input string '${source}' is incomplete.`);
-    }
-    const invalidCharPos = parsedHex.byteChars.length + (parsedHex.hasPrefix ? 2 : 0);
-    throw new TypeError(`Invalid hex-digit '${source[invalidCharPos]}' found in input string at index ${invalidCharPos}.`);
-  }
-  if (!parsedHex.byteChars) {
-    throw new TypeError(`Input string '${source}' is not a valid hex-string.`);
-  }
-  if (byteLen) {
-    const actualByteLen = parsedHex.byteChars.length / 2;
-    if (byteLen !== actualByteLen) {
-      throw new TypeError(`Expected an input string with byte length of ${byteLen}, got ${actualByteLen}.`);
-    }
-  }
-}
-var parseCoinPublicKeyToHex = (possibleBech32, zswapNetworkId) => {
-  if (isHex2(possibleBech32))
-    return possibleBech32;
-  const parsedBech32 = MidnightBech32m.parse(possibleBech32);
-  const decoded = ShieldedCoinPublicKey.codec.decode(zswapNetworkId, parsedBech32);
-  return buffer$1.Buffer.from(decoded.data).toString("hex");
-};
-var parseEncPublicKeyToHex = (possibleBech32, zswapNetworkId) => {
-  if (isHex2(possibleBech32))
-    return possibleBech32;
-  const parsedBech32 = MidnightBech32m.parse(possibleBech32);
-  const decoded = ShieldedEncryptionPublicKey.codec.decode(zswapNetworkId, parsedBech32);
-  return buffer$1.Buffer.from(decoded.data).toString("hex");
-};
-function assertIsContractAddress(contractAddress) {
-  const CONTRACT_ADDRESS_BYTE_LENGTH = 32;
-  assertIsHex(contractAddress, CONTRACT_ADDRESS_BYTE_LENGTH);
-  const parsedHex = parseHex3(contractAddress);
-  if (parsedHex.hasPrefix) {
-    throw new TypeError(`Unexpected '0x' prefix in contract address '${contractAddress}'`);
-  }
-}
 
 // node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs
 var isEffectContractError = (error4) => typeof error4 === "object" && error4 !== null && "_tag" in error4 && "cause" in error4 && typeof error4.cause === "object" && error4.cause !== null && "name" in error4.cause && "message" in error4.cause;
@@ -179143,7 +179146,7 @@ var setOrGetInitialPrivateState = async (privateStateProvider, options5) => {
   }
   return void 0;
 };
-var verifierKeysEqual = (a, b) => a.length === b.length && toHex2(a) === toHex2(b);
+var verifierKeysEqual = (a, b) => a.length === b.length && toHex(a) === toHex(b);
 var verifyContractState = (verifierKeys, contractState) => {
   const mismatchedCircuitIds = verifierKeys.reduce((acc, [circuitId, localVk]) => !contractState.operation(circuitId) || !verifierKeysEqual(localVk, contractState.operation(circuitId).verifierKey) ? [...acc, circuitId] : acc, []);
   if (mismatchedCircuitIds.length > 0) {
@@ -181809,14 +181812,21 @@ var createWalletAndMidnightProvider = async (wallet) => {
   return {
     getCoinPublicKey: () => wallet.getAccountAddress().coinPublicKey,
     //state.shielded.coinPublicKey.toHexString(),
-    getEncryptionPublicKey: () => toHex2(getEncryptionPublicKeyFromShieldAddress(wallet.getAccountAddress().shieldedAddress)),
+    getEncryptionPublicKey: () => toHex(getEncryptionPublicKeyFromShieldAddress(wallet.getAccountAddress().shieldedAddress)),
     //state.shielded.encryptionPublicKey.toHexString(),
     async balanceTx(tx, ttl) {
-      const recipe = await walletFacade.balanceUnboundTransaction(
-        tx,
-        { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
-        { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1e3) }
-      );
+      let recipe;
+      exports.logger.debug("balanceTx begin");
+      try {
+        recipe = await walletFacade.balanceUnboundTransaction(
+          tx,
+          { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
+          { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1e3) }
+        );
+      } catch (error4) {
+        exports.logger.error("balanceTx begin", error4);
+        throw error4;
+      }
       const signFn = (payload) => wallet.getUnshieldedKeystore().signData(payload);
       signTransactionIntents(recipe.baseTransaction, signFn, "proof");
       if (recipe.balancingTransaction) {
@@ -181954,8 +181964,8 @@ var CrossChainApi = class _CrossChainApi {
     if (ledger2.crossProposal.member(uniquId_0)) {
       const crossTxInfo = ledger2.crossProposal.lookup(uniquId_0);
       return {
-        smgId: toHex2(crossTxInfo.smgId),
-        token: toHex2(crossTxInfo.token),
+        smgId: toHex(crossTxInfo.smgId),
+        token: toHex(crossTxInfo.token),
         tokenPairId: crossTxInfo.tokenPairId.toString(10),
         amount: crossTxInfo.amount.toString(10),
         fee: crossTxInfo.fee.toString(10),
@@ -181971,14 +181981,14 @@ var CrossChainApi = class _CrossChainApi {
   static currentExecuteCrossProposal(ledger2) {
     const smgEvent = ledger2.currentExecuteCrossProposal;
     return {
-      smgId: toHex2(smgEvent.crossProposal.smgId),
-      uniqueId: toHex2(smgEvent.uniqueId),
-      token: toHex2(smgEvent.crossProposal.token),
+      smgId: toHex(smgEvent.crossProposal.smgId),
+      uniqueId: toHex(smgEvent.uniqueId),
+      token: toHex(smgEvent.crossProposal.token),
       tokenPairId: smgEvent.crossProposal.tokenPairId.toString(10),
       isMappingToken: smgEvent.crossProposal.isMappingToken,
       amount: smgEvent.crossProposal.amount.toString(10),
       fee: smgEvent.crossProposal.fee.toString(10),
-      toAddr: toHex2(smgEvent.crossProposal.toAddr.bytes),
+      toAddr: toHex(smgEvent.crossProposal.toAddr.bytes),
       ttl: smgEvent.crossProposal.ttl.toString(10)
     };
   }
@@ -181987,8 +181997,8 @@ var CrossChainApi = class _CrossChainApi {
       return;
     } else {
       return {
-        smgId: toHex2(ledger2.latestOutBoundCrosstxInfo.smgId),
-        fromAddr: toHex2(ledger2.latestOutBoundCrosstxInfo.fromAddr.bytes),
+        smgId: toHex(ledger2.latestOutBoundCrosstxInfo.smgId),
+        fromAddr: toHex(ledger2.latestOutBoundCrosstxInfo.fromAddr.bytes),
         toAddr: ledger2.latestOutBoundCrosstxInfo.toAddr,
         tokenPairId: ledger2.latestOutBoundCrosstxInfo.tokenPairId.toString(10),
         tokenAccount: ledger2.latestOutBoundCrosstxInfo.tokenAccount,
@@ -182022,8 +182032,8 @@ var CrossChainApi = class _CrossChainApi {
       if (voters.size() >= ledger2.smgPKThreshold) continue;
       if (voters.member(voterIndex)) continue;
       else {
-        const crossTxInfo = _CrossChainApi.getCrossTxInfo(ledger2, toHex2(uniqueId));
-        res.push({ uniqueId: toHex2(uniqueId), ...crossTxInfo });
+        const crossTxInfo = _CrossChainApi.getCrossTxInfo(ledger2, toHex(uniqueId));
+        res.push({ uniqueId: toHex(uniqueId), ...crossTxInfo });
       }
     }
     return res;
@@ -182034,13 +182044,13 @@ var CrossChainApi = class _CrossChainApi {
       const voters = ledger2.crossProposalVoters.lookup(uniqueId);
       if (voters.size() >= ledger2.smgPKThreshold) {
         res.push({
-          uniqueId: toHex2(uniqueId),
-          smgId: toHex2(crossProposal.smgId),
+          uniqueId: toHex(uniqueId),
+          smgId: toHex(crossProposal.smgId),
           tokenPairId: crossProposal.tokenPairId.toString(10),
-          token: toHex2(crossProposal.token),
+          token: toHex(crossProposal.token),
           amount: crossProposal.amount.toString(10),
           fee: crossProposal.fee.toString(10),
-          toAddr: toHex2(crossProposal.toAddr.bytes),
+          toAddr: toHex(crossProposal.toAddr.bytes),
           ttl: crossProposal.ttl.toString(10)
         });
       }
@@ -182483,7 +182493,7 @@ exports.getUserAddressFromUnshieldAddress = getUserAddressFromUnshieldAddress;
 exports.initFacadeWallet = initFacadeWallet;
 exports.initNetwork = initNetwork;
 exports.ledgerV8 = midnight_ledger_wasm_fs_exports;
-exports.midnightjsutils = dist_exports2;
+exports.midnightjsutils = dist_exports;
 exports.pad = pad3;
 exports.removeContractCircuit = removeContractCircuit;
 exports.setLogger = setLogger;

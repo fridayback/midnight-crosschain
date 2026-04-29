@@ -59,6 +59,7 @@ declare class MidnightWalletSDK {
     private seed;
     private dustBalance;
     constructor(config: Configuration, strSeed: string);
+    static getDustBalanceFromDustState(strSerializedState: string): bigint;
     initWallet(store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
     getAccountAddress(): {
         shieldedAddress: string;

@@ -137,11 +137,19 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
       // return await wallet.balanceTx(tx, ttl);
       // return walletFacade.balanceUnboundTransaction(tx,{shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey()}, { ttl: ttl ?? new Date(Date.now() + 60 * 60 * 1000) })
       //   .then((tx) => walletFacade.finalizeRecipe(tx));
-      const recipe = await walletFacade.balanceUnboundTransaction(
+      let recipe;
+      logger.debug('balanceTx begin');
+      try {
+        recipe = await walletFacade.balanceUnboundTransaction(
         tx,
         { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
         { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) },
       );
+      } catch (error) {
+        logger.error('balanceTx begin',error);
+        throw error;
+      }
+      
 
       // Work around wallet SDK bug: signRecipe uses hardcoded 'pre-proof'
       // marker when cloning intents, but proven (UnboundTransaction) intents
@@ -160,6 +168,7 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
     },
     submitTx(tx: FinalizedTransaction): Promise<TransactionId> {
       // return walletFacade.submitTransaction(tx);
+      // logger.info(`submitTx: ${tx.toString()}`);
       return wallet.submitTx(tx);
     },
   };

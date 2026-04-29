@@ -7,6 +7,9 @@ import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
 import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
+import { fromHex, toHex, assertIsContractAddress } from '@midnight-ntwrk/midnight-js-utils';
+import * as midnightJsUtils from '@midnight-ntwrk/midnight-js-utils';
+export { midnightJsUtils as midnightjsutils };
 import { createKeystore, UnshieldedWallet, NoOpTransactionHistoryStorage, PublicKey } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
 import * as Rx from 'rxjs';
@@ -22,9 +25,6 @@ import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-p
 import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { getNetworkId, setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
-import { toHex, fromHex, assertIsContractAddress } from '@midnight-ntwrk/midnight-js-utils';
-import * as midnightJsUtils from '@midnight-ntwrk/midnight-js-utils';
-export { midnightJsUtils as midnightjsutils };
 
 // node_modules/tsup/assets/esm_shims.js
 var getFilename = () => fileURLToPath(import.meta.url);
@@ -152,6 +152,9 @@ var MidnightWalletSDK = class {
     this.shieldedSecretKeys = shieldedSecretKeys;
     this.unshieldedKeystore = unshieldedKeystore;
     this.dustSecretKey = dustSecretKey;
+  }
+  static getDustBalanceFromDustState(strSerializedState) {
+    return ledger.DustLocalState.deserialize(fromHex(strSerializedState)).walletBalance(/* @__PURE__ */ new Date());
   }
   //////////////////////////////////////////
   // to generate a wallet instance
@@ -11948,11 +11951,18 @@ var createWalletAndMidnightProvider = async (wallet) => {
     getEncryptionPublicKey: () => toHex(getEncryptionPublicKeyFromShieldAddress(wallet.getAccountAddress().shieldedAddress)),
     //state.shielded.encryptionPublicKey.toHexString(),
     async balanceTx(tx, ttl) {
-      const recipe = await walletFacade.balanceUnboundTransaction(
-        tx,
-        { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
-        { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1e3) }
-      );
+      let recipe;
+      logger.debug("balanceTx begin");
+      try {
+        recipe = await walletFacade.balanceUnboundTransaction(
+          tx,
+          { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
+          { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1e3) }
+        );
+      } catch (error) {
+        logger.error("balanceTx begin", error);
+        throw error;
+      }
       const signFn = (payload) => wallet.getUnshieldedKeystore().signData(payload);
       signTransactionIntents(recipe.baseTransaction, signFn, "proof");
       if (recipe.balancingTransaction) {

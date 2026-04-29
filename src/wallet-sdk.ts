@@ -6,7 +6,7 @@ import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
 import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 
 import {logger} from './utils';
-
+import { fromHex} from '@midnight-ntwrk/midnight-js-utils';
 // import type { DefaultV1Configuration as ShieldedConfiguration } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
 import {
     createKeystore,
@@ -261,6 +261,10 @@ export class MidnightWalletSDK {
         this.unshieldedKeystore = unshieldedKeystore;
         this.dustSecretKey = dustSecretKey;
         
+    }
+
+    static getDustBalanceFromDustState(strSerializedState: string): bigint {
+        return ledger.DustLocalState.deserialize( fromHex(strSerializedState) ).walletBalance(new Date());
     }
 
     //////////////////////////////////////////
