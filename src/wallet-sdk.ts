@@ -284,6 +284,8 @@ export class MidnightWalletSDK {
         // const ret = (await initFacadeWallet(this.seed, this.config, strSerializedState));
         if(strSerializedState){
             this.state = strSerializedState;
+            this.dustBalance = MidnightWalletSDK.getDustBalanceFromDustState(JSON.parse(strSerializedState.dustWalletState).state);
+             logger.info(`initial dust balance from serialized state: ${this.dustBalance}`);
         }
 
         const shieldedWallet = (configuration: DefaultConfiguration) => strSerializedState && strSerializedState.shieldedWalletState ?
