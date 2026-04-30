@@ -1,5 +1,5 @@
 import * as ledger from '@midnight-ntwrk/ledger-v8';
-import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
+import { NetworkId, WalletState } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { type CombinedSwapOutputs, type DefaultConfiguration, type FacadeState, WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
@@ -26,6 +26,7 @@ import assert from 'node:assert';
 // import { ToolKitClient } from './utils.js';
 import { type UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
 import { transientHash } from '@midnight-ntwrk/compact-runtime';
+import { log } from 'node:console';
 // import { log } from 'node:console';
 // import { time } from 'node:console';
 // import { PublicKeys } from '@midnight-ntwrk/wallet-sdk-shielded/dist/v1';
@@ -231,7 +232,9 @@ export class MidnightWalletSDK {
     private storeTimer?: NodeJS.Timeout;
     private seed: Buffer;
     private dustBalance: bigint = 0n;
-    // private state: FacadeState | null = null;
+    private state: FacadeSerializedState | null = null;
+    private storeCallback?: (walletState: FacadeSerializedState) => Promise<void> = (WalletState: FacadeSerializedState) => Promise.resolve();
+    private storeInterval: number = 600000; // default to 10 minutes
     // private syncMutex: Boolean = false;
     constructor(config: Configuration,strSeed: string) {
         this.config = config;
@@ -275,7 +278,15 @@ export class MidnightWalletSDK {
         // if (seed.toString('hex').toLowerCase() != strSeed.toLowerCase()) throw 'bad seed';
         // let oldState;
 
+        this.storeCallback = store;
+        this.storeInterval = saveInterval;
+
         // const ret = (await initFacadeWallet(this.seed, this.config, strSerializedState));
+        if(strSerializedState){
+            this.state = strSerializedState;
+            this.dustBalance = MidnightWalletSDK.getDustBalanceFromDustState(strSerializedState.dustWalletState);
+            logger.info(`initial dust balance from serialized state: dustBalance = ${this.dustBalance}`);
+        }
 
         const shieldedWallet = (configuration: DefaultConfiguration) => strSerializedState && strSerializedState.shieldedWalletState ?
         ShieldedWallet(configuration).restore(strSerializedState.shieldedWalletState)
@@ -313,8 +324,11 @@ export class MidnightWalletSDK {
             const state = await waitForFullySynced(this.walletObj!);
             const dustb = state.dust.balance(new Date());
             if((this.dustBalance > 0n && dustb > 0n) || (this.dustBalance == 0n)){
-                await store({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+                if(this.storeCallback){
+                    await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+                }
                 this.dustBalance = dustb;
+                this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
                 logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
             }else{
                 logger.info(`dust balance abnormal, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
@@ -322,7 +336,7 @@ export class MidnightWalletSDK {
             
             clearTimeout(this.storeTimer);
             this.registerNightUtxosForDustGeneration();
-            this.storeTimer = setTimeout(callBack, saveInterval);
+            this.storeTimer = setTimeout(callBack, this.storeInterval);
         }
         this.storeTimer = setTimeout(async () => {
             await callBack();
@@ -411,6 +425,7 @@ export class MidnightWalletSDK {
     }
 
 
+
     async getBalances() {
         assert(this.walletObj, "walletObj is not initialized!");
         let curState = await waitForFullySynced(this.walletObj);
@@ -422,6 +437,17 @@ export class MidnightWalletSDK {
         const dustBalance = curState.dust.balance(new Date());
         const shieldedBlance = curState.shielded.balances;
         const unshieldedBlance = curState.unshielded.balances;
+
+        if(this.dustBalance > 0n && dustBalance == 0n){
+            logger.warn(`dust balance abnormal, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustBalance}`);
+            await this.uninitWallet();
+            logger.info(`uninitWallet done, start to reinitialize the wallet!`);
+            await this.initWallet(this.storeCallback!, this.state!, this.storeInterval);
+            logger.info(`reinitWallet done!`);
+            throw new Error(`dust balance abnormal, maybe due to wallet abnormality, wallet has been reinitialized, please check the wallet status and try again later!`);
+        }
+
+
 
         // 使用 replacer 将 bigint 转换为字符串
         const replacer = (key: any, value: any) => typeof value === 'bigint' ? value.toString() : value;

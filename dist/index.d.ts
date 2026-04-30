@@ -58,6 +58,9 @@ declare class MidnightWalletSDK {
     private storeTimer?;
     private seed;
     private dustBalance;
+    private state;
+    private storeCallback?;
+    private storeInterval;
     constructor(config: Configuration, strSeed: string);
     static getDustBalanceFromDustState(strSerializedState: string): bigint;
     initWallet(store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
