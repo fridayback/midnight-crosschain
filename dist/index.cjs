@@ -162705,7 +162705,7 @@ var timeout6 = (ms) => new Promise((resolve, reject) => {
 var sleep5 = (ms) => new Promise((resolve) => {
   setTimeout(resolve, ms);
 });
-var MidnightWalletSDK = class _MidnightWalletSDK {
+var MidnightWalletSDK = class {
   // default to 10 minutes
   // private syncMutex: Boolean = false;
   constructor(config3, strSeed) {
@@ -162746,8 +162746,6 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     this.storeInterval = saveInterval;
     if (strSerializedState) {
       this.state = strSerializedState;
-      this.dustBalance = _MidnightWalletSDK.getDustBalanceFromDustState(strSerializedState.dustWalletState);
-      exports.logger.info(`initial dust balance from serialized state: dustBalance = ${this.dustBalance}`);
     }
     const shieldedWallet = (configuration2) => strSerializedState && strSerializedState.shieldedWalletState ? ShieldedWallet(configuration2).restore(strSerializedState.shieldedWalletState) : ShieldedWallet(configuration2).startWithSecretKeys(this.shieldedSecretKeys);
     const dustWallet = (configuration2) => strSerializedState && strSerializedState.dustWalletState ? DustWallet(configuration2).restore(strSerializedState.dustWalletState) : DustWallet(configuration2).startWithSecretKey(this.dustSecretKey, LedgerParameters.initialParameters().dust);
