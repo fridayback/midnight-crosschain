@@ -11981,7 +11981,7 @@ var createWalletAndMidnightProvider = async (wallet) => {
           { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1e3) }
         );
       } catch (error) {
-        logger.error("balanceTx begin", error);
+        logger.error("balanceTx error", error);
         throw error;
       }
       const signFn = (payload) => wallet.getUnshieldedKeystore().signData(payload);
@@ -12599,7 +12599,11 @@ var initNetwork = (network) => {
 var getContractState = async (config, contractAddress) => {
   assertIsContractAddress(contractAddress);
   const publicDataProvider = indexerPublicDataProvider(config.indexer, config.indexerWS);
-  const state = await publicDataProvider.queryContractState(contractAddress).then((contractState) => contractState != null ? ledger2(contractState.data) : null);
+  const state = await publicDataProvider.queryContractState(contractAddress).then((contractState) => {
+    const ledgerState = contractState != null ? ledger2(contractState.data) : null;
+    const balances = contractState?.balance;
+    return { ledgerState, balances };
+  });
   return state;
 };
 

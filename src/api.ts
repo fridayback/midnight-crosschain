@@ -141,15 +141,15 @@ export const createWalletAndMidnightProvider = async (wallet: MidnightWalletSDK)
       logger.debug('balanceTx begin');
       try {
         recipe = await walletFacade.balanceUnboundTransaction(
-        tx,
-        { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
-        { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) },
-      );
+          tx,
+          { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
+          { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) },
+        );
       } catch (error) {
-        logger.error('balanceTx begin',error);
+        logger.error('balanceTx error', error);
         throw error;
       }
-      
+
 
       // Work around wallet SDK bug: signRecipe uses hardcoded 'pre-proof'
       // marker when cloning intents, but proven (UnboundTransaction) intents
@@ -959,6 +959,10 @@ export const getContractState = async (config: Config, contractAddress: string) 
   const publicDataProvider = indexerPublicDataProvider(config.indexer, config.indexerWS);
   const state = await publicDataProvider
     .queryContractState(contractAddress)
-    .then((contractState) => (contractState != null ? CrossChain.ledger(contractState.data) : null));
+    .then((contractState) => {
+      const ledgerState = (contractState != null ? CrossChain.ledger(contractState.data) : null)
+      const balances = contractState?.balance;
+      return { ledgerState, balances };
+    });
   return state;
 }
