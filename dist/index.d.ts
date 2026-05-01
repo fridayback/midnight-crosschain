@@ -540,6 +540,11 @@ declare class CrossChainState {
     constructor(indexer: string, indexerWS: string, contractAddress: string);
     getLedgerState(): Promise<Ledger | null>;
 }
-declare const getContractState: (config: Config, contractAddress: string) => Promise<Ledger | null>;
+declare const getContractState: (config: Config, contractAddress: string) => Promise<{
+    ledgerState: Ledger | null;
+    balances: {
+        [key: string]: string | number | bigint;
+    };
+}>;
 
 export { CompiledSimpleContract, type Config, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, CrossChainState, type DeployedCrossChainContract, ZKConfig, createInitialPrivateState, createPrivateState, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initNetwork, pad, removeContractCircuit, upgradeContractCircuit, witnesses };

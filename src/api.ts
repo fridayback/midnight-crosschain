@@ -1126,11 +1126,25 @@ export class CrossChainState {
   }
 
 }
-export const getContractState = async (config:Config, contractAddress: string) => {
+
+
+export const getContractState = async (config: Config, contractAddress: string) => {
   assertIsContractAddress(contractAddress);
   const publicDataProvider = indexerPublicDataProvider(config.indexer, config.indexerWS);
   const state = await publicDataProvider
     .queryContractState(contractAddress)
-    .then((contractState) => (contractState != null ? CrossChain.ledger(contractState.data) : null));
+    .then((contractState) => {
+      const ledgerState = (contractState != null ? CrossChain.ledger(contractState.data) : null)
+      let balances :{ [key: string]: string|bigint|number } = {};
+      for (const [key, value] of contractState?.balance!) {
+        if(key.tag == 'shielded') continue;
+        else{
+          const tokenType = (key as UnshieldedTokenType).raw; ;
+          balances[tokenType] = value.toString(10);
+        }
+        
+      };
+      return { ledgerState, balances };
+    });
   return state;
 }

@@ -12202,7 +12202,18 @@ var CrossChainState = class {
 var getContractState = async (config, contractAddress) => {
   midnightJsUtils.assertIsContractAddress(contractAddress);
   const publicDataProvider = midnightJsIndexerPublicDataProvider.indexerPublicDataProvider(config.indexer, config.indexerWS);
-  const state = await publicDataProvider.queryContractState(contractAddress).then((contractState) => contractState != null ? ledger(contractState.data) : null);
+  const state = await publicDataProvider.queryContractState(contractAddress).then((contractState) => {
+    const ledgerState = contractState != null ? ledger(contractState.data) : null;
+    let balances = {};
+    for (const [key, value] of contractState?.balance) {
+      if (key.tag == "shielded") continue;
+      else {
+        const tokenType = key.raw;
+        balances[tokenType] = value.toString(10);
+      }
+    }
+    return { ledgerState, balances };
+  });
   return state;
 };
 
