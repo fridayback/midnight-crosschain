@@ -10,7 +10,6 @@ import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet
 import { Buffer as Buffer$1 } from 'buffer';
 import * as _midnight_ntwrk_midnight_js_types from '@midnight-ntwrk/midnight-js-types';
 import { UnboundTransaction, MidnightProviders, WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
-import * as _midnight_ntwrk_onchain_runtime_v3 from '@midnight-ntwrk/onchain-runtime-v3';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 import { SigningKey, ContractAddress, RawTokenType } from '@midnight-ntwrk/compact-runtime';
 import { CompiledContract, ProvableCircuitId } from '@midnight-ntwrk/compact-js';
@@ -638,7 +637,9 @@ declare const getUnshieldAddressFromUserAddress: (userAddrHex: string, networkId
 declare const initNetwork: (network: "mainnet" | "testnet-02" | "preview" | "devnet" | "undeployed") => void;
 declare const getContractState: (config: Config, contractAddress: string) => Promise<{
     ledgerState: Ledger | null;
-    balances: Map<_midnight_ntwrk_onchain_runtime_v3.TokenType, bigint> | undefined;
+    balances: {
+        [key: string]: string | number | bigint;
+    };
 }>;
 
 declare let logger: Console;

@@ -182465,7 +182465,14 @@ var getContractState = async (config3, contractAddress) => {
   const publicDataProvider = indexerPublicDataProvider(config3.indexer, config3.indexerWS);
   const state = await publicDataProvider.queryContractState(contractAddress).then((contractState) => {
     const ledgerState = contractState != null ? ledger(contractState.data) : null;
-    const balances = contractState?.balance;
+    let balances = {};
+    for (const [key, value3] of contractState?.balance) {
+      if (key.tag == "shielded") continue;
+      else {
+        const tokenType = key.raw;
+        balances[tokenType] = value3.toString(10);
+      }
+    }
     return { ledgerState, balances };
   });
   return state;

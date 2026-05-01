@@ -961,7 +961,15 @@ export const getContractState = async (config: Config, contractAddress: string) 
     .queryContractState(contractAddress)
     .then((contractState) => {
       const ledgerState = (contractState != null ? CrossChain.ledger(contractState.data) : null)
-      const balances = contractState?.balance;
+      let balances :{ [key: string]: string|bigint|number } = {};
+      for (const [key, value] of contractState?.balance!) {
+        if(key.tag == 'shielded') continue;
+        else{
+          const tokenType = (key as UnshieldedTokenType).raw; ;
+          balances[tokenType] = value.toString(10);
+        }
+        
+      };
       return { ledgerState, balances };
     });
   return state;
