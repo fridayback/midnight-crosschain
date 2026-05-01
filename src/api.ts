@@ -1110,8 +1110,7 @@ export const initNetwork = (network: 'mainnet' | 'testnet-02' | 'preview' | 'dev
 export class CrossChainState {
   publicDataProvider!: PublicDataProvider;
   contractAddress!: string;
-  MaxSmgSignators = 29;
-  MaxMergeCoins = 4;
+
   constructor(indexer: string, indexerWS: string, contractAddress: string) {
     assertIsContractAddress(contractAddress);
     this.publicDataProvider = indexerPublicDataProvider(indexer, indexerWS);
@@ -1122,6 +1121,26 @@ export class CrossChainState {
     const state = await this.publicDataProvider
       .queryContractState(this.contractAddress)
       .then((contractState) => (contractState != null ? CrossChain.ledger(contractState.data) : null));
+    return state;
+  }
+
+  async getContractState() {
+    assertIsContractAddress(this.contractAddress);
+    const state = await this.publicDataProvider
+      .queryContractState(this.contractAddress)
+      .then((contractState) => {
+        const ledgerState = (contractState != null ? CrossChain.ledger(contractState.data) : null)
+        let balances :{ [key: string]: string|bigint|number } = {};
+        for (const [key, value] of contractState?.balance!) {
+          if(key.tag == 'shielded') continue;
+          else{
+            const tokenType = (key as UnshieldedTokenType).raw; ;
+            balances[tokenType] = value.toString(10);
+          }
+          
+        };
+        return { ledgerState, balances };
+      });
     return state;
   }
 

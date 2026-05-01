@@ -535,10 +535,14 @@ declare const initNetwork: (network: "mainnet" | "testnet-02" | "preview" | "dev
 declare class CrossChainState {
     publicDataProvider: PublicDataProvider;
     contractAddress: string;
-    MaxSmgSignators: number;
-    MaxMergeCoins: number;
     constructor(indexer: string, indexerWS: string, contractAddress: string);
     getLedgerState(): Promise<Ledger | null>;
+    getContractState(): Promise<{
+        ledgerState: Ledger | null;
+        balances: {
+            [key: string]: string | number | bigint;
+        };
+    }>;
 }
 declare const getContractState: (config: Config, contractAddress: string) => Promise<{
     ledgerState: Ledger | null;

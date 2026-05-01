@@ -12165,14 +12165,28 @@ var initNetwork = (network) => {
 };
 var CrossChainState = class {
   constructor(indexer, indexerWS, contractAddress) {
-    this.MaxSmgSignators = 29;
-    this.MaxMergeCoins = 4;
     assertIsContractAddress(contractAddress);
     this.publicDataProvider = indexerPublicDataProvider(indexer, indexerWS);
     this.contractAddress = contractAddress;
   }
   async getLedgerState() {
     const state = await this.publicDataProvider.queryContractState(this.contractAddress).then((contractState) => contractState != null ? ledger(contractState.data) : null);
+    return state;
+  }
+  async getContractState() {
+    assertIsContractAddress(this.contractAddress);
+    const state = await this.publicDataProvider.queryContractState(this.contractAddress).then((contractState) => {
+      const ledgerState = contractState != null ? ledger(contractState.data) : null;
+      let balances = {};
+      for (const [key, value] of contractState?.balance) {
+        if (key.tag == "shielded") continue;
+        else {
+          const tokenType = key.raw;
+          balances[tokenType] = value.toString(10);
+        }
+      }
+      return { ledgerState, balances };
+    });
     return state;
   }
 };
