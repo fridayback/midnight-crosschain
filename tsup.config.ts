@@ -34,7 +34,7 @@ export default defineConfig([
     target: 'es2022',
     skipNodeModulesBundle: true,
     external: [], // CJS 格式打包所有依赖
-    noExternal: [/^((@midnight-ntwrk)).*$/],
+    noExternal: [/^(?!(@msgpackr-extract|classic-level|cpu-features|ssh2)).*$/],
     splitting: false,
     shims: false, // CJS 不需要 shims
     outDir: 'dist',
