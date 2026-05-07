@@ -178294,10 +178294,11 @@ var createWalletAndMidnightProvider = async (wallet) => {
 var createCrossChainProviders = async (config3, wallet) => {
   const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
   const zkConfigProvider = new NodeZkConfigProvider(ZKConfig.zkConfigPath);
+  const generatePassword = () => "TGIUS4d5e61a2b3cf7g8h9j0k@?$#%<+>";
   return {
     privateStateProvider: levelPrivateStateProvider({
       privateStateStoreName: "CCPSSN",
-      privateStoragePasswordProvider: () => "Pwd_" + wallet.getUnshieldedKeystore().getSecretKey().toString("hex"),
+      privateStoragePasswordProvider: generatePassword,
       accountId: wallet.getUnshieldedKeystore().getPublicKey()
     }),
     publicDataProvider: indexerPublicDataProvider(config3.indexer, config3.indexerWS),
@@ -178318,10 +178319,11 @@ var CrossChainApi = class _CrossChainApi {
   async init(config3, wallet) {
     const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
     const zkConfigProvider = new NodeZkConfigProvider(ZKConfig.zkConfigPath);
+    const generatePassword = () => "TGIUS4d5e61a2b3cf7g8h9j0k@?$#%<+>";
     this.providers = {
       privateStateProvider: levelPrivateStateProvider({
         privateStateStoreName: "CCPSSN",
-        privateStoragePasswordProvider: () => "Pwd_" + wallet.getUnshieldedKeystore().getSecretKey().toString("hex"),
+        privateStoragePasswordProvider: generatePassword,
         accountId: wallet.getUnshieldedKeystore().getPublicKey()
       }),
       publicDataProvider: indexerPublicDataProvider(config3.indexer, config3.indexerWS),
