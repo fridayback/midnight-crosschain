@@ -171,8 +171,8 @@ export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number
     let state;
     if(timeoutMs > 0) {
         state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
-            logger.info(`[${new Date().toUTCString()}:] wallet is syncing...`);
-            logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+            logger.debug(`[${new Date().toUTCString()}:] wallet is syncing...`);
+            logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
 
             // if(global.syncLogger) {
             //     global.syncLogger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
@@ -182,8 +182,8 @@ export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number
        
     }else {
         state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
-            logger.info(`[${new Date().toUTCString()}:] wallet is syncing...`);
-            logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+            logger.debug(`[${new Date().toUTCString()}:] wallet is syncing...`);
+            logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
 
             // if(global.syncLogger) {
             //     global.syncLogger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
@@ -191,7 +191,7 @@ export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number
             return s.isSynced;
         })));
     }
-    logger.info(`Wallet synced in ${(Date.now() - timeCur) / 1000} seconds`);
+    logger.debug(`Wallet synced in ${(Date.now() - timeCur) / 1000} seconds`);
     return state!;
     } catch (error) {
         throw new Error('Wallet sync timed out: ' + (error instanceof Error ? error.message : String(error)));

@@ -162682,18 +162682,18 @@ var waitForFullySynced = async (facade, timeoutMs = 0) => {
     let state;
     if (timeoutMs > 0) {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        exports.logger.info(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
-        exports.logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+        exports.logger.debug(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+        exports.logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         return s.isSynced;
       }), Rx.timeout(timeoutMs)));
     } else {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        exports.logger.info(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
-        exports.logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+        exports.logger.debug(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
+        exports.logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         return s.isSynced;
       })));
     }
-    exports.logger.info(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
+    exports.logger.debug(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
     return state;
   } catch (error4) {
     throw new Error("Wallet sync timed out: " + (error4 instanceof Error ? error4.message : String(error4)));
