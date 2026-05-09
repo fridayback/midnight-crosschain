@@ -228,7 +228,7 @@ export class MidnightWalletSDK {
     private dustSecretKey: ledger.DustSecretKey;
     private unshieldedKeystore: UnshieldedKeystore;
     private walletAddress: { shieldedAddress: string, unshieldedAddress: string, dustAddress: string , coinPublicKey: string, encryptionPublicKey: string, userPublicKey: string};
-    private bActiveFlag: boolean;
+    private bActiveFlag: boolean = false;
     private storeTimer?: NodeJS.Timeout;
     private seed: Buffer;
     private dustBalance: bigint = 0n;
@@ -244,7 +244,7 @@ export class MidnightWalletSDK {
             this.submitTimeout = submitTimeout;
         }
         this.walletAddress = { shieldedAddress: '', unshieldedAddress: '', dustAddress: '' ,coinPublicKey: '',encryptionPublicKey:'', userPublicKey: ''};
-        this.bActiveFlag = false;
+        // this.bActiveFlag = false;
 
         this.seed = Buffer.from(strSeed, 'hex');;
         if (this.seed.toString('hex').toLowerCase() != strSeed.toLowerCase()) throw 'bad seed';
@@ -322,6 +322,8 @@ export class MidnightWalletSDK {
         await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     
         this.walletObj = wallet;
+
+        this.bActiveFlag = true;// set active flag to true after wallet is initialized successfully
 
         await this.registerNightUtxosForDustGeneration();
         const callBack = async () => {
@@ -453,6 +455,7 @@ export class MidnightWalletSDK {
 
     async submitTx(tx: ledger.FinalizedTransaction) {
         assert(this.walletObj, "walletObj is not initialized!");
+        assert(this.bActiveFlag,"wallet is not active, cannot submit transaction!");
         // const txHash = await this.walletObj.submitTransaction(tx);
         const time = Date.now();
         logger.info(`[${time}] submitTx begin`)
@@ -526,10 +529,11 @@ export class MidnightWalletSDK {
         }
 
         if (true === this.bActiveFlag) {
+            this.bActiveFlag = false;
             await this.walletObj?.stop();
         }
-        this.bActiveFlag = false;
-        logger.info("\n\n...wallet close done!");
+        
+        logger.info("...wallet close done!");
     }
 
     getWalletInstance() {
@@ -595,6 +599,7 @@ export class MidnightWalletSDK {
     async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<ledger.FinalizedTransaction> {
         
         assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+        assert(this.bActiveFlag, "wallet is not active, cannot balance transaction!");
         try {
             this.semaphore++;
             const recipe = await this.walletObj.balanceUnboundTransaction(

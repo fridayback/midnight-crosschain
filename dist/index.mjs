@@ -132,6 +132,7 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
   constructor(config, strSeed, submitTimeout) {
     this.isGenerating = false;
     this.isUnGenerating = false;
+    this.bActiveFlag = false;
     this.dustBalance = 0n;
     this.state = null;
     this.storeCallback = (WalletState) => Promise.resolve();
@@ -144,7 +145,6 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
       this.submitTimeout = submitTimeout;
     }
     this.walletAddress = { shieldedAddress: "", unshieldedAddress: "", dustAddress: "", coinPublicKey: "", encryptionPublicKey: "", userPublicKey: "" };
-    this.bActiveFlag = false;
     this.seed = Buffer$1.from(strSeed, "hex");
     if (this.seed.toString("hex").toLowerCase() != strSeed.toLowerCase()) throw "bad seed";
     const { shieldedSecretKeys, dustSecretKey, unshieldedKeystore } = createWalletKeys(this.seed, this.config);
@@ -198,6 +198,7 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     const wallet = await WalletFacade.init(initParams);
     await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     this.walletObj = wallet;
+    this.bActiveFlag = true;
     await this.registerNightUtxosForDustGeneration();
     const callBack = async () => {
       const state = await waitForFullySynced(this.walletObj);
@@ -304,6 +305,7 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
   }
   async submitTx(tx) {
     assert3(this.walletObj, "walletObj is not initialized!");
+    assert3(this.bActiveFlag, "wallet is not active, cannot submit transaction!");
     const time = Date.now();
     logger.info(`[${time}] submitTx begin`);
     try {
@@ -345,10 +347,10 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
       clearTimeout(this.storeTimer);
     }
     if (true === this.bActiveFlag) {
+      this.bActiveFlag = false;
       await this.walletObj?.stop();
     }
-    this.bActiveFlag = false;
-    logger.info("\n\n...wallet close done!");
+    logger.info("...wallet close done!");
   }
   getWalletInstance() {
     return this.walletObj;
@@ -391,6 +393,7 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
   }
   async balanceTx(tx, ttl) {
     assert3(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
+    assert3(this.bActiveFlag, "wallet is not active, cannot balance transaction!");
     try {
       this.semaphore++;
       const recipe = await this.walletObj.balanceUnboundTransaction(
