@@ -236,10 +236,13 @@ export class MidnightWalletSDK {
     private storeCallback?: (walletState: FacadeSerializedState) => Promise<void> = (WalletState: FacadeSerializedState) => Promise.resolve();
     private storeInterval: number = 600000; // default to 10 minutes
     private semaphore: number = 0; 
+    private submitTimeout: number = 300 * 1000; // default to 60 seconds
     // private syncMutex: Boolean = false;
-    constructor(config: Configuration,strSeed: string) {
+    constructor(config: Configuration,strSeed: string, submitTimeout?: number) {
         this.config = config;
-        
+        if (submitTimeout !== undefined) {
+            this.submitTimeout = submitTimeout;
+        }
         this.walletAddress = { shieldedAddress: '', unshieldedAddress: '', dustAddress: '' ,coinPublicKey: '',encryptionPublicKey:'', userPublicKey: ''};
         this.bActiveFlag = false;
 
@@ -340,12 +343,16 @@ export class MidnightWalletSDK {
                 }
                 
             }else{
-                // logger.info(`dust balance abnormal, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
-                logger.warn(`dust balance abnormal, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
-                await this.uninitWallet();
-                logger.info(`uninitWallet done, start to reinitialize the wallet!`);
-                await this.initWallet(this.storeCallback!, this.state!, this.storeInterval);
-                logger.info(`reinitWallet done!`);
+
+                if(this.semaphore <= 0){
+                    logger.warn(`dust balance abnormal, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+                    await this.uninitWallet();
+                    logger.info(`uninitWallet done, start to reinitialize the wallet!`);
+                    await this.initWallet(this.storeCallback!, this.state!, this.storeInterval);
+                    logger.info(`reinitWallet done!`);
+                }else{
+                    logger.warn(`dust balance abnormal but semaphore = ${this.semaphore}, maybe wallet is submitting transaction, skip the reinitialization of wallet for now! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+                }
             }
             
             clearTimeout(this.storeTimer);
@@ -449,10 +456,21 @@ export class MidnightWalletSDK {
         // const txHash = await this.walletObj.submitTransaction(tx);
         const time = Date.now();
         logger.info(`[${time}] submitTx begin`)
-        const ret = await this.walletObj.submitTransaction(tx);
-        this.semaphore--;
-        logger.info(`[${time}] submitTx end, semaphore = ${this.semaphore}, txHash = ${ret}`);
-        return ret;
+        
+        try {
+            const ret = await Promise.race([
+                this.walletObj.submitTransaction(tx),
+                timeout(this.submitTimeout) // set timeout for transaction submission to prevent hanging
+            ]);
+            logger.info(`submitTx success, semaphore = ${this.semaphore}, txHash = ${ret}`);
+            return ret as string;
+        } catch (error) {
+            logger.error(`submitTx failed: ${error instanceof Error ? error.message : String(error)}, semaphore = ${this.semaphore}`);
+            throw error;
+        } finally {
+            this.semaphore--; // decrease the semaphore after transaction submission is completed (either success or failure)
+            logger.info(`submitTx finally, semaphore = ${this.semaphore}`);
+        }
     }
 
 
@@ -575,21 +593,29 @@ export class MidnightWalletSDK {
     }
 
     async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<ledger.FinalizedTransaction> {
-        this.semaphore++;
+        
         assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
-        const recipe = await this.walletObj.balanceUnboundTransaction(
-            tx,
-            { shieldedSecretKeys: this.shieldedSecretKeys, dustSecretKey: this.dustSecretKey },
-            { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) },
-        );
-        const unshieldedKeystore = this.unshieldedKeystore;
-        const signFn = (payload: Uint8Array) => unshieldedKeystore.signData(payload);
-        signTransactionIntents(recipe.baseTransaction, signFn, 'proof');
-        if (recipe.balancingTransaction) {
-            signTransactionIntents(recipe.balancingTransaction, signFn, 'pre-proof');
+        try {
+            this.semaphore++;
+            const recipe = await this.walletObj.balanceUnboundTransaction(
+                tx,
+                { shieldedSecretKeys: this.shieldedSecretKeys, dustSecretKey: this.dustSecretKey },
+                { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) },
+            );
+            const unshieldedKeystore = this.unshieldedKeystore;
+            const signFn = (payload: Uint8Array) => unshieldedKeystore.signData(payload);
+            signTransactionIntents(recipe.baseTransaction, signFn, 'proof');
+            if (recipe.balancingTransaction) {
+                signTransactionIntents(recipe.balancingTransaction, signFn, 'pre-proof');
+            }
+            const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
+            return finalizedTx;
+        } catch (error) {
+            logger.error("Error occurred while balancing transaction:", error);
+            throw error;
+        }finally {
+            this.semaphore--;
         }
-        const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
-        return finalizedTx;
     }
 
 }
