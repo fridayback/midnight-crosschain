@@ -208,21 +208,46 @@ export class CrossChainApi {
   }
 
   async init(config: Config, wallet: MidnightWalletSDK) {
-    const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-    const zkConfigProvider = new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath);
     const generatePassword = () => 'TGIUS4d5e61a2b3cf7g8h9j0k@?$#%<+>';
+
+    const privateStateProvider = levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
+      privateStateStoreName: 'CCPSSN',
+      privateStoragePasswordProvider: generatePassword,
+      accountId: wallet.getUnshieldedKeystore().getPublicKey(),
+    });
+
+    const publicDataProvider = indexerPublicDataProvider(config.indexer, config.indexerWS);
+
+    const zkConfigProvider = new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath);
+    
+    const proofProvider = httpClientProofProvider(config.proofServer, zkConfigProvider);
+
+    let walletAndMidnightProvider: WalletProvider & MidnightProvider = {
+      getCoinPublicKey: () => wallet.getAccountAddress().coinPublicKey,
+      getEncryptionPublicKey: () => toHex(getEncryptionPublicKeyFromShieldAddress(wallet.getAccountAddress().shieldedAddress)),
+      balanceTx: async (tx: UnboundTransaction, ttl?: Date): Promise<FinalizedTransaction> => {
+        throw new Error('Wallet not initialized');
+      },
+      submitTx: async (tx: FinalizedTransaction): Promise<TransactionId> => {
+        throw new Error('Wallet not initialized');
+      },
+    };
+
+    // If wallet is already initialized, create provider immediately. Otherwise, the user will need to call setWallet after wallet is initialized to set the provider.
+    // This is to support both cases where wallet is initialized before or after the API.
+    if (wallet.getWalletInstance()) {
+      walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+    }
+
     this.providers = {
-      privateStateProvider: levelPrivateStateProvider<typeof CrossChainPrivateStateId>({
-        privateStateStoreName: 'CCPSSN',
-        privateStoragePasswordProvider: generatePassword,
-        accountId: wallet.getUnshieldedKeystore().getPublicKey(),
-      }),
-      publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
-      zkConfigProvider: new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath),
-      proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+      privateStateProvider,
+      publicDataProvider,
+      zkConfigProvider,
+      proofProvider,
       walletProvider: walletAndMidnightProvider,
       midnightProvider: walletAndMidnightProvider,
     };
+
   }
 
   async setWallet(wallet: MidnightWalletSDK) {
@@ -961,14 +986,14 @@ export const getContractState = async (config: Config, contractAddress: string) 
     .queryContractState(contractAddress)
     .then((contractState) => {
       const ledgerState = (contractState != null ? CrossChain.ledger(contractState.data) : null)
-      let balances :{ [key: string]: string|bigint|number } = {};
+      let balances: { [key: string]: string | bigint | number } = {};
       for (const [key, value] of contractState?.balance!) {
-        if(key.tag == 'shielded') continue;
-        else{
-          const tokenType = (key as UnshieldedTokenType).raw; ;
+        if (key.tag == 'shielded') continue;
+        else {
+          const tokenType = (key as UnshieldedTokenType).raw;;
           balances[tokenType] = value.toString(10);
         }
-        
+
       };
       return { ledgerState, balances };
     });

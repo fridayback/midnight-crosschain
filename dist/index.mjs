@@ -12023,18 +12023,33 @@ var CrossChainApi = class _CrossChainApi {
     this.providers = providers;
   }
   async init(config, wallet) {
-    const walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
-    const zkConfigProvider = new NodeZkConfigProvider(ZKConfig.zkConfigPath);
     const generatePassword = () => "TGIUS4d5e61a2b3cf7g8h9j0k@?$#%<+>";
+    const privateStateProvider = levelPrivateStateProvider({
+      privateStateStoreName: "CCPSSN",
+      privateStoragePasswordProvider: generatePassword,
+      accountId: wallet.getUnshieldedKeystore().getPublicKey()
+    });
+    const publicDataProvider = indexerPublicDataProvider(config.indexer, config.indexerWS);
+    const zkConfigProvider = new NodeZkConfigProvider(ZKConfig.zkConfigPath);
+    const proofProvider = httpClientProofProvider(config.proofServer, zkConfigProvider);
+    let walletAndMidnightProvider = {
+      getCoinPublicKey: () => wallet.getAccountAddress().coinPublicKey,
+      getEncryptionPublicKey: () => toHex(getEncryptionPublicKeyFromShieldAddress(wallet.getAccountAddress().shieldedAddress)),
+      balanceTx: async (tx, ttl) => {
+        throw new Error("Wallet not initialized");
+      },
+      submitTx: async (tx) => {
+        throw new Error("Wallet not initialized");
+      }
+    };
+    if (wallet.getWalletInstance()) {
+      walletAndMidnightProvider = await createWalletAndMidnightProvider(wallet);
+    }
     this.providers = {
-      privateStateProvider: levelPrivateStateProvider({
-        privateStateStoreName: "CCPSSN",
-        privateStoragePasswordProvider: generatePassword,
-        accountId: wallet.getUnshieldedKeystore().getPublicKey()
-      }),
-      publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
-      zkConfigProvider: new NodeZkConfigProvider(ZKConfig.zkConfigPath),
-      proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+      privateStateProvider,
+      publicDataProvider,
+      zkConfigProvider,
+      proofProvider,
       walletProvider: walletAndMidnightProvider,
       midnightProvider: walletAndMidnightProvider
     };
