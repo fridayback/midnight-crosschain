@@ -235,6 +235,7 @@ export class MidnightWalletSDK {
     private state: FacadeSerializedState | null = null;
     private storeCallback?: (walletState: FacadeSerializedState) => Promise<void> = (WalletState: FacadeSerializedState) => Promise.resolve();
     private storeInterval: number = 600000; // default to 10 minutes
+    private semaphore: number = 0; 
     // private syncMutex: Boolean = false;
     constructor(config: Configuration,strSeed: string) {
         this.config = config;
@@ -278,6 +279,8 @@ export class MidnightWalletSDK {
         // if (seed.toString('hex').toLowerCase() != strSeed.toLowerCase()) throw 'bad seed';
         // let oldState;
 
+        this.semaphore = 0;
+
         this.storeCallback = store;
         this.storeInterval = saveInterval;
 
@@ -300,38 +303,49 @@ export class MidnightWalletSDK {
         UnshieldedWallet(configuration).restore(strSerializedState.unshieldedWalletState)
         : UnshieldedWallet(configuration).startWithPublicKey(PublicKey.fromKeyStore(this.unshieldedKeystore));
 
-    const initParams = {
-        configuration: {
-            ...this.config,
-            txHistoryStorage: new NoOpTransactionHistoryStorage()
-        },
-        // submissionService?: (config: TConfig) => MaybePromise<SubmissionService<ledger.FinalizedTransaction>>;
-        // pendingTransactionsService?: (config: TConfig) => MaybePromise<PendingTransactionsService<ledger.FinalizedTransaction>>;
-        // provingService?: (config: TConfig) => MaybePromise<ProvingService<UnboundTransaction>>;
-        shielded: shieldedWallet,//(config: DefaultConfiguration) => ShieldedWallet(config).startWithSecretKeys(this.shieldedSecretKeys),
-        unshielded: unshieldedWallet,//(config: DefaultConfiguration) => UnshieldedWallet(config).startWithPublicKey(PublicKey.fromKeyStore(this.unshieldedKeystore)),
-        dust: dustWallet,//(config: DefaultConfiguration) => DustWallet(config).startWithSecretKey(this.dustSecretKey, ledger.LedgerParameters.initialParameters().dust),
-    };
-    const wallet = await WalletFacade.init(initParams);
-    await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
+        const initParams = {
+            configuration: {
+                ...this.config,
+                txHistoryStorage: new NoOpTransactionHistoryStorage()
+            },
+            // submissionService?: (config: TConfig) => MaybePromise<SubmissionService<ledger.FinalizedTransaction>>;
+            // pendingTransactionsService?: (config: TConfig) => MaybePromise<PendingTransactionsService<ledger.FinalizedTransaction>>;
+            // provingService?: (config: TConfig) => MaybePromise<ProvingService<UnboundTransaction>>;
+            shielded: shieldedWallet,//(config: DefaultConfiguration) => ShieldedWallet(config).startWithSecretKeys(this.shieldedSecretKeys),
+            unshielded: unshieldedWallet,//(config: DefaultConfiguration) => UnshieldedWallet(config).startWithPublicKey(PublicKey.fromKeyStore(this.unshieldedKeystore)),
+            dust: dustWallet,//(config: DefaultConfiguration) => DustWallet(config).startWithSecretKey(this.dustSecretKey, ledger.LedgerParameters.initialParameters().dust),
+        };
+        const wallet = await WalletFacade.init(initParams);
+        await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     
         this.walletObj = wallet;
 
-
-        // const selfWallet = this.walletObj;
-    await this.registerNightUtxosForDustGeneration();
+        await this.registerNightUtxosForDustGeneration();
         const callBack = async () => {
             const state = await waitForFullySynced(this.walletObj!);
             const dustb = state.dust.balance(new Date());
             if((this.dustBalance > 0n && dustb > 0n) || (this.dustBalance == 0n)){
                 if(this.storeCallback){
-                    await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+                    if(this.semaphore <= 0){
+                        this.dustBalance = dustb;
+                        this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
+                        
+                        await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+                        logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
+                    }else{
+                        logger.info(`semaphore = ${this.semaphore}, wallet state is submitting transaction, skip this round of wallet state backup!`);
+                    }
+                }else{
+                    logger.info(`store callback is not set, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
                 }
-                this.dustBalance = dustb;
-                this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
-                logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
+                
             }else{
-                logger.info(`dust balance abnormal, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+                // logger.info(`dust balance abnormal, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+                logger.warn(`dust balance abnormal, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+                await this.uninitWallet();
+                logger.info(`uninitWallet done, start to reinitialize the wallet!`);
+                await this.initWallet(this.storeCallback!, this.state!, this.storeInterval);
+                logger.info(`reinitWallet done!`);
             }
             
             clearTimeout(this.storeTimer);
@@ -373,8 +387,17 @@ export class MidnightWalletSDK {
         );
 
         const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
-
-        const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
+        // increase semaphore for the pending transaction of dust generation, which usually takes a long time to be included in a block, 
+        // to prevent wallet state from being saved during this period, which may cause the saved state to be out of sync with the actual 
+        // wallet state on chain due to the delay of wallet state update after the transaction is included in a block.
+        this.semaphore++; 
+        try {
+            const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
+        } catch (error) {
+            this.semaphore--; // if submit transaction failed, decrease the semaphore immediately to allow wallet state to be saved in the future.
+            logger.error('Failed to submit dust generation transaction:', error);
+        }
+        
 
         this.isGenerating = false;
         logger.info('registerNightUtxosForDustGeneration utxo end');
@@ -408,7 +431,14 @@ export class MidnightWalletSDK {
 
         const finalizedDustTx = await this.walletObj.finalizeRecipe(recipe);
 
-        const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
+       
+        this.semaphore++; 
+        try {
+            const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
+        } catch (error) {
+            this.semaphore--; // if submit transaction failed, decrease the semaphore immediately to allow wallet state to be saved in the future.
+            logger.error('Failed to submit dust deregister transaction:', error);
+        }
 
         this.isUnGenerating = false;
         logger.info('deregisterFromDustGeneration utxo end');
@@ -420,7 +450,8 @@ export class MidnightWalletSDK {
         const time = Date.now();
         logger.info(`[${time}] submitTx begin`)
         const ret = await this.walletObj.submitTransaction(tx);
-        logger.info(`[${time}] submitTx end`);
+        this.semaphore--;
+        logger.info(`[${time}] submitTx end, semaphore = ${this.semaphore}, txHash = ${ret}`);
         return ret;
     }
 
@@ -438,14 +469,14 @@ export class MidnightWalletSDK {
         const shieldedBlance = curState.shielded.balances;
         const unshieldedBlance = curState.unshielded.balances;
 
-        if(this.dustBalance > 0n && dustBalance == 0n){
-            logger.warn(`dust balance abnormal, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustBalance}`);
-            await this.uninitWallet();
-            logger.info(`uninitWallet done, start to reinitialize the wallet!`);
-            await this.initWallet(this.storeCallback!, this.state!, this.storeInterval);
-            logger.info(`reinitWallet done!`);
-            throw new Error(`dust balance abnormal, maybe due to wallet abnormality, wallet has been reinitialized, please check the wallet status and try again later!`);
-        }
+        // if(this.dustBalance > 0n && dustBalance == 0n){
+        //     logger.warn(`dust balance abnormal, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustBalance}`);
+        //     await this.uninitWallet();
+        //     logger.info(`uninitWallet done, start to reinitialize the wallet!`);
+        //     await this.initWallet(this.storeCallback!, this.state!, this.storeInterval);
+        //     logger.info(`reinitWallet done!`);
+        //     throw new Error(`dust balance abnormal, maybe due to wallet abnormality, wallet has been reinitialized, please check the wallet status and try again later!`);
+        // }
 
 
 
@@ -544,6 +575,7 @@ export class MidnightWalletSDK {
     }
 
     async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<ledger.FinalizedTransaction> {
+        this.semaphore++;
         assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
         const recipe = await this.walletObj.balanceUnboundTransaction(
             tx,
