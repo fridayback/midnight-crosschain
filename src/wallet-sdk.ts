@@ -597,7 +597,7 @@ export class MidnightWalletSDK {
     }
 
     async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<ledger.FinalizedTransaction> {
-        
+        logger.info("balanceTx begin");
         assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
         assert(this.bActiveFlag, "wallet is not active, cannot balance transaction!");
         try {

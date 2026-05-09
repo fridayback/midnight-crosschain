@@ -162971,6 +162971,7 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     return submittedTxHash;
   }
   async balanceTx(tx, ttl) {
+    exports.logger.info("balanceTx begin");
     assert8__default.default(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
     assert8__default.default(this.bActiveFlag, "wallet is not active, cannot balance transaction!");
     try {
