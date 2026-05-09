@@ -162990,10 +162990,9 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
       const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
       return finalizedTx;
     } catch (error4) {
-      exports.logger.error("Error occurred while balancing transaction:", error4);
-      throw error4;
-    } finally {
       this.semaphore--;
+      exports.logger.error(`balanceTx failed: ${error4 instanceof Error ? error4.message : String(error4)}, semaphore = ${this.semaphore}`);
+      throw error4;
     }
   }
 };
