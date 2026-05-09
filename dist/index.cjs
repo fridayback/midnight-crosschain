@@ -181885,24 +181885,7 @@ var createWalletAndMidnightProvider = async (wallet) => {
     getEncryptionPublicKey: () => toHex(getEncryptionPublicKeyFromShieldAddress(wallet.getAccountAddress().shieldedAddress)),
     //state.shielded.encryptionPublicKey.toHexString(),
     async balanceTx(tx, ttl) {
-      let recipe;
-      exports.logger.debug("balanceTx begin");
-      try {
-        recipe = await walletFacade.balanceUnboundTransaction(
-          tx,
-          { shieldedSecretKeys: wallet.getShieldedSecretKeys(), dustSecretKey: wallet.getDustSecretKey() },
-          { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1e3) }
-        );
-      } catch (error4) {
-        exports.logger.error("balanceTx error", error4);
-        throw error4;
-      }
-      const signFn = (payload) => wallet.getUnshieldedKeystore().signData(payload);
-      signTransactionIntents(recipe.baseTransaction, signFn, "proof");
-      if (recipe.balancingTransaction) {
-        signTransactionIntents(recipe.balancingTransaction, signFn, "pre-proof");
-      }
-      return walletFacade.finalizeRecipe(recipe);
+      return await wallet.balanceTx(tx, ttl);
     },
     submitTx(tx) {
       return wallet.submitTx(tx);
