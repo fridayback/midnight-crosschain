@@ -246,11 +246,15 @@ export class MidnightWalletSDK {
     private submitTimeout: number = 300 * 1000; // default to 60 seconds
     private concurrency: number = 0; // 
     private lastStateSaveTime: number = 0; // to record the last time when wallet state is saved, to prevent saving wallet state too frequently when there are many pending transactions.
+    private forceReInitTime: number = 30 * 60 * 1000; // if there are pending transactions for a long time (default to 30 minutes), which may indicate that there is something wrong with the wallet or the pending transactions, try to reinitialize the wallet to see if it can recover from the abnormal state.
     // private syncMutex: Boolean = false;
-    constructor(config: Configuration,strSeed: string, submitTimeout?: number) {
+    constructor(config: Configuration,strSeed: string, submitTimeout?: number, forceReInitTime?: number) {
         this.config = config;
         if (submitTimeout !== undefined) {
             this.submitTimeout = submitTimeout;
+        }
+        if (forceReInitTime !== undefined) {
+            this.forceReInitTime = forceReInitTime;
         }
         this.walletAddress = { shieldedAddress: '', unshieldedAddress: '', dustAddress: '' ,coinPublicKey: '',encryptionPublicKey:'', userPublicKey: ''};
         // this.bActiveFlag = false;
@@ -370,7 +374,7 @@ export class MidnightWalletSDK {
                 // if there are pending transactions and it's been more than 30 minutes since the last time wallet state is saved, 
                 // which may indicate that there is something wrong with the wallet or the pending transactions, 
                 // try to reinitialize the wallet to see if it can recover from the abnormal state.
-                if(Date.now() - this.lastStateSaveTime > 30 * 60 * 1000){ 
+                if(Date.now() - this.lastStateSaveTime > this.forceReInitTime){ 
                     logger.warn(`there are pending transactions for a long time, pendingTxCount = ${this.pendingTxCount}, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
                     await this.uninitWallet();
                     logger.info(`uninitWallet done, start to reinitialize the wallet!`);
