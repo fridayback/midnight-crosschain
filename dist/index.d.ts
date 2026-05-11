@@ -34,7 +34,7 @@ strSerializedState?: FacadeSerializedState) => Promise<{
     dustSecretKey: ledger.DustSecretKey;
     unshieldedKeystore: UnshieldedKeystore;
 }>;
-declare const waitForFullySynced: (facade: WalletFacade, timeoutMs?: number) => Promise<FacadeState>;
+declare const waitForFullySynced: (facade: WalletFacade, timeoutMs?: number, storeFn?: WalletStore | undefined) => Promise<FacadeState>;
 declare class WalletSDKError extends Error {
     constructor(message: string);
 }
@@ -652,5 +652,16 @@ declare const getContractState: (config: Config, contractAddress: string) => Pro
 
 declare let logger: Console;
 declare const setLogger: (_logger: Console) => void;
+declare class Semaphore {
+    private max;
+    private current;
+    private queue;
+    constructor(max: number);
+    acquire(timeout: number): Promise<void>;
+    release(): void;
+    setMax(max: number): void;
+    getCurrent(): number;
+    getMax(): number;
+}
 
-export { CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, WalletSDKError, type WalletStore, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, logger, pad, removeContractCircuit, setLogger, signTransactionIntents, sleep, upgradeContractCircuit, waitForFullySynced, wallet_timeout, witnesses };
+export { CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, Semaphore, WalletSDKError, type WalletStore, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, logger, pad, removeContractCircuit, setLogger, signTransactionIntents, sleep, upgradeContractCircuit, waitForFullySynced, wallet_timeout, witnesses };

@@ -36,6 +36,58 @@ var logger = console;
 var setLogger = function(_logger) {
   logger = _logger;
 };
+var Semaphore = class {
+  constructor(max) {
+    this.max = max;
+    this.current = 0;
+    this.queue = [];
+  }
+  acquire(timeout2) {
+    return new Promise((resolve, reject) => {
+      if (this.current < this.max) {
+        this.current++;
+        resolve();
+        return;
+      }
+      const timer = setTimeout(() => {
+        const index = this.queue.findIndex((item) => item.timer === timer);
+        if (index !== -1) {
+          this.queue.splice(index, 1);
+        }
+        logger.warn("Concurrency slot timeout", { timeout: timeout2, current: this.current, max: this.max });
+        reject(new Error(`Request timed out after ${timeout2}ms waiting for concurrency slot`));
+      }, timeout2);
+      this.queue.push({ resolve, reject, timer });
+    });
+  }
+  release() {
+    if (this.queue.length > 0) {
+      const next = this.queue.shift();
+      clearTimeout(next.timer);
+      next.resolve();
+    } else {
+      this.current = Math.max(0, this.current - 1);
+    }
+  }
+  setMax(max) {
+    if (this.max !== max) {
+      logger.debug("Concurrency max updated", { from: this.max, to: max });
+    }
+    this.max = max;
+    while (this.queue.length > 0 && this.current < this.max) {
+      const next = this.queue.shift();
+      clearTimeout(next.timer);
+      this.current++;
+      next.resolve();
+    }
+  }
+  getCurrent() {
+    return this.current;
+  }
+  getMax() {
+    return this.max;
+  }
+};
 var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, node, network = "preview", costParameters = {
   additionalFeeOverhead: 300000000000000n,
   feeBlocksMargin: 5
@@ -97,24 +149,31 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
   await wallet.start(shieldedSecretKeys, dustSecretKey);
   return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
-var waitForFullySynced = async (facade, timeoutMs = 0) => {
+var waitForFullySynced = async (facade, timeoutMs = 0, storeFn = void 0) => {
   try {
-    const timeCur = Date.now();
+    let timeCur = Date.now();
+    const timeStart = timeCur;
     let state;
     if (timeoutMs > 0) {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        logger.debug(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
         logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+        if (Date.now() - timeCur > 6e4 && storeFn) {
+          storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
+          timeCur = Date.now();
+        }
         return s.isSynced;
       }), Rx.timeout(timeoutMs)));
     } else {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        logger.debug(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
         logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+        if (Date.now() - timeCur > 6e4 && storeFn) {
+          storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
+          timeCur = Date.now();
+        }
         return s.isSynced;
       })));
     }
-    logger.debug(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
+    logger.debug(`Wallet synced in ${(Date.now() - timeStart) / 1e3} seconds`);
     return state;
   } catch (error) {
     throw new WalletSDKError("Wallet sync timed out: " + (error instanceof Error ? error.message : String(error)));
@@ -184,6 +243,7 @@ var MidnightWalletSDK = class {
   // to generate a wallet instance
   //////////////////////////////////////////
   async initWallet(store, strSerializedState, saveInterval = 6e5) {
+    logger.info("Initializing wallet...");
     this.pendingTxCount = 0;
     this.storeCallback = store;
     this.storeInterval = saveInterval;
@@ -236,14 +296,13 @@ var MidnightWalletSDK = class {
         }
       }
       clearTimeout(this.storeTimer);
-      this.pendingTxCount = 0;
       this.registerNightUtxosForDustGeneration();
       this.storeTimer = setTimeout(callBack, this.storeInterval);
     };
     if (this.storeTimer) {
       clearTimeout(this.storeTimer);
     }
-    const state = await waitForFullySynced(this.walletObj);
+    const state = await waitForFullySynced(this.walletObj, 0, this.storeCallback);
     if (this.storeCallback) {
       this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
       await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
@@ -432,7 +491,7 @@ var MidnightWalletSDK = class {
       }
       const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
       const { dustAvailableCoins: dustAvailableCoins2 } = await this.getAvailableCoins();
-      logger.info("balanceTx end, current dust available coins: ", dustAvailableCoins2.length);
+      logger.info("balanceTx end, current dust available coins: ", dustAvailableCoins2.length, " pendingTxCount:", this.pendingTxCount);
       return finalizedTx;
     } catch (error) {
       this.pendingTxCount--;
@@ -12684,6 +12743,6 @@ var getContractState = async (config, contractAddress) => {
   return state;
 };
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, WalletSDKError, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, logger, pad, removeContractCircuit, setLogger, signTransactionIntents, sleep, upgradeContractCircuit, waitForFullySynced, wallet_timeout, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, Semaphore, WalletSDKError, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, logger, pad, removeContractCircuit, setLogger, signTransactionIntents, sleep, upgradeContractCircuit, waitForFullySynced, wallet_timeout, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

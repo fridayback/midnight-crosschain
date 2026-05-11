@@ -161282,6 +161282,58 @@ exports.logger = console;
 var setLogger = function(_logger) {
   exports.logger = _logger;
 };
+var Semaphore2 = class {
+  constructor(max11) {
+    this.max = max11;
+    this.current = 0;
+    this.queue = [];
+  }
+  acquire(timeout6) {
+    return new Promise((resolve, reject) => {
+      if (this.current < this.max) {
+        this.current++;
+        resolve();
+        return;
+      }
+      const timer = setTimeout(() => {
+        const index = this.queue.findIndex((item) => item.timer === timer);
+        if (index !== -1) {
+          this.queue.splice(index, 1);
+        }
+        exports.logger.warn("Concurrency slot timeout", { timeout: timeout6, current: this.current, max: this.max });
+        reject(new Error(`Request timed out after ${timeout6}ms waiting for concurrency slot`));
+      }, timeout6);
+      this.queue.push({ resolve, reject, timer });
+    });
+  }
+  release() {
+    if (this.queue.length > 0) {
+      const next4 = this.queue.shift();
+      clearTimeout(next4.timer);
+      next4.resolve();
+    } else {
+      this.current = Math.max(0, this.current - 1);
+    }
+  }
+  setMax(max11) {
+    if (this.max !== max11) {
+      exports.logger.debug("Concurrency max updated", { from: this.max, to: max11 });
+    }
+    this.max = max11;
+    while (this.queue.length > 0 && this.current < this.max) {
+      const next4 = this.queue.shift();
+      clearTimeout(next4.timer);
+      this.current++;
+      next4.resolve();
+    }
+  }
+  getCurrent() {
+    return this.current;
+  }
+  getMax() {
+    return this.max;
+  }
+};
 
 // node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs
 var dist_exports = {};
@@ -162676,24 +162728,31 @@ var initFacadeWallet = async (seed, configuration2, strSerializedState) => {
   await wallet.start(shieldedSecretKeys, dustSecretKey);
   return { wallet, shieldedSecretKeys, dustSecretKey, unshieldedKeystore };
 };
-var waitForFullySynced = async (facade, timeoutMs = 0) => {
+var waitForFullySynced = async (facade, timeoutMs = 0, storeFn = void 0) => {
   try {
-    const timeCur = Date.now();
+    let timeCur = Date.now();
+    const timeStart = timeCur;
     let state;
     if (timeoutMs > 0) {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        exports.logger.debug(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
         exports.logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+        if (Date.now() - timeCur > 6e4 && storeFn) {
+          storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
+          timeCur = Date.now();
+        }
         return s.isSynced;
       }), Rx.timeout(timeoutMs)));
     } else {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
-        exports.logger.debug(`[${(/* @__PURE__ */ new Date()).toUTCString()}:] wallet is syncing...`);
         exports.logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+        if (Date.now() - timeCur > 6e4 && storeFn) {
+          storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
+          timeCur = Date.now();
+        }
         return s.isSynced;
       })));
     }
-    exports.logger.debug(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
+    exports.logger.debug(`Wallet synced in ${(Date.now() - timeStart) / 1e3} seconds`);
     return state;
   } catch (error4) {
     throw new WalletSDKError("Wallet sync timed out: " + (error4 instanceof Error ? error4.message : String(error4)));
@@ -162763,6 +162822,7 @@ var MidnightWalletSDK = class {
   // to generate a wallet instance
   //////////////////////////////////////////
   async initWallet(store, strSerializedState, saveInterval = 6e5) {
+    exports.logger.info("Initializing wallet...");
     this.pendingTxCount = 0;
     this.storeCallback = store;
     this.storeInterval = saveInterval;
@@ -162815,14 +162875,13 @@ var MidnightWalletSDK = class {
         }
       }
       clearTimeout(this.storeTimer);
-      this.pendingTxCount = 0;
       this.registerNightUtxosForDustGeneration();
       this.storeTimer = setTimeout(callBack, this.storeInterval);
     };
     if (this.storeTimer) {
       clearTimeout(this.storeTimer);
     }
-    const state = await waitForFullySynced(this.walletObj);
+    const state = await waitForFullySynced(this.walletObj, 0, this.storeCallback);
     if (this.storeCallback) {
       this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
       await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
@@ -163011,7 +163070,7 @@ var MidnightWalletSDK = class {
       }
       const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
       const { dustAvailableCoins: dustAvailableCoins2 } = await this.getAvailableCoins();
-      exports.logger.info("balanceTx end, current dust available coins: ", dustAvailableCoins2.length);
+      exports.logger.info("balanceTx end, current dust available coins: ", dustAvailableCoins2.length, " pendingTxCount:", this.pendingTxCount);
       return finalizedTx;
     } catch (error4) {
       this.pendingTxCount--;
@@ -182578,6 +182637,7 @@ exports.CompiledSimpleContract = CompiledSimpleContract;
 exports.CrossChainApi = CrossChainApi;
 exports.CrossChainPrivateStateId = CrossChainPrivateStateId;
 exports.MidnightWalletSDK = MidnightWalletSDK;
+exports.Semaphore = Semaphore2;
 exports.WalletSDKError = WalletSDKError;
 exports.ZKConfig = ZKConfig;
 exports.configuration = configuration;
