@@ -236,6 +236,7 @@ var MidnightWalletSDK = class {
         }
       }
       clearTimeout(this.storeTimer);
+      this.pendingTxCount = 0;
       this.registerNightUtxosForDustGeneration();
       this.storeTimer = setTimeout(callBack, this.storeInterval);
     };
