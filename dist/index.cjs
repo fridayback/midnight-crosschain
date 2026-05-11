@@ -375,16 +375,16 @@ var require_timeoutProvider = __commonJS({
     Object.defineProperty(exports$1, "__esModule", { value: true });
     exports$1.timeoutProvider = void 0;
     exports$1.timeoutProvider = {
-      setTimeout: function(handler, timeout7) {
+      setTimeout: function(handler, timeout6) {
         var args2 = [];
         for (var _i = 2; _i < arguments.length; _i++) {
           args2[_i - 2] = arguments[_i];
         }
         var delegate = exports$1.timeoutProvider.delegate;
         if (delegate === null || delegate === void 0 ? void 0 : delegate.setTimeout) {
-          return delegate.setTimeout.apply(delegate, __spreadArray3([handler, timeout7], __read3(args2)));
+          return delegate.setTimeout.apply(delegate, __spreadArray3([handler, timeout6], __read3(args2)));
         }
-        return setTimeout.apply(void 0, __spreadArray3([handler, timeout7], __read3(args2)));
+        return setTimeout.apply(void 0, __spreadArray3([handler, timeout6], __read3(args2)));
       },
       clearTimeout: function(handle) {
         var delegate = exports$1.timeoutProvider.delegate;
@@ -1708,16 +1708,16 @@ var require_intervalProvider = __commonJS({
     Object.defineProperty(exports$1, "__esModule", { value: true });
     exports$1.intervalProvider = void 0;
     exports$1.intervalProvider = {
-      setInterval: function(handler, timeout7) {
+      setInterval: function(handler, timeout6) {
         var args2 = [];
         for (var _i = 2; _i < arguments.length; _i++) {
           args2[_i - 2] = arguments[_i];
         }
         var delegate = exports$1.intervalProvider.delegate;
         if (delegate === null || delegate === void 0 ? void 0 : delegate.setInterval) {
-          return delegate.setInterval.apply(delegate, __spreadArray3([handler, timeout7], __read3(args2)));
+          return delegate.setInterval.apply(delegate, __spreadArray3([handler, timeout6], __read3(args2)));
         }
-        return setInterval.apply(void 0, __spreadArray3([handler, timeout7], __read3(args2)));
+        return setInterval.apply(void 0, __spreadArray3([handler, timeout6], __read3(args2)));
       },
       clearInterval: function(handle) {
         var delegate = exports$1.intervalProvider.delegate;
@@ -3722,7 +3722,7 @@ var require_timeout = __commonJS({
         this.info = info8;
       };
     });
-    function timeout7(config3, schedulerArg) {
+    function timeout6(config3, schedulerArg) {
       var _a3 = isDate_1.isValidDate(config3) ? { first: config3 } : typeof config3 === "number" ? { each: config3 } : config3, first3 = _a3.first, each = _a3.each, _b = _a3.with, _with = _b === void 0 ? timeoutErrorFactory : _b, _c = _a3.scheduler, scheduler2 = _c === void 0 ? schedulerArg !== null && schedulerArg !== void 0 ? schedulerArg : async_1.asyncScheduler : _c, _d = _a3.meta, meta = _d === void 0 ? null : _d;
       if (first3 == null && each == null) {
         throw new TypeError("No timeout provided.");
@@ -3760,7 +3760,7 @@ var require_timeout = __commonJS({
         !seen && startTimer(first3 != null ? typeof first3 === "number" ? first3 : +first3 - scheduler2.now() : each);
       });
     }
-    exports$1.timeout = timeout7;
+    exports$1.timeout = timeout6;
     function timeoutErrorFactory(info8) {
       throw new exports$1.TimeoutError(info8);
     }
@@ -47611,7 +47611,7 @@ function Body(body) {
   var _ref = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {}, _ref$size = _ref.size;
   let size20 = _ref$size === void 0 ? 0 : _ref$size;
   var _ref$timeout = _ref.timeout;
-  let timeout7 = _ref$timeout === void 0 ? 0 : _ref$timeout;
+  let timeout6 = _ref$timeout === void 0 ? 0 : _ref$timeout;
   if (body == null) {
     body = null;
   } else if (isURLSearchParams(body)) {
@@ -47632,7 +47632,7 @@ function Body(body) {
     error: null
   };
   this.size = size20;
-  this.timeout = timeout7;
+  this.timeout = timeout6;
   if (body instanceof Stream2__default.default) {
     body.on("error", function(err) {
       const error4 = err.name === "AbortError" ? err : new FetchError(`Invalid response body while trying to fetch ${_this.url}: ${err.message}`, "system", err);
@@ -95684,13 +95684,13 @@ var aggregateWithinEither = /* @__PURE__ */ dual(3, (self2, sink, schedule5) => 
         }
       }));
     }), unwrap2);
-    const timeout7 = (lastB) => scheduleDriver.next(lastB);
+    const timeout6 = (lastB) => scheduleDriver.next(lastB);
     const scheduledAggregator = (sinkFiber, scheduleFiber, scope5) => {
       const forkSink = pipe(set6(consumed, false), zipRight6(set6(endAfterEmit, false)), zipRight6(pipe(handoffConsumer, pipeToOrFail(toChannel(sink)), collectElements, run2, forkIn2(scope5))));
       const handleSide = (leftovers, b, c) => pipe(set6(sinkLeftovers, flatten4(leftovers)), zipRight6(map21(get12(sinkEndReason), (reason) => {
         switch (reason._tag) {
           case OP_SCHEDULE_END: {
-            return pipe(all10([get12(consumed), forkSink, pipe(timeout7(some2(b)), forkIn2(scope5))]), map21(([wasConsumed, sinkFiber2, scheduleFiber2]) => {
+            return pipe(all10([get12(consumed), forkSink, pipe(timeout6(some2(b)), forkIn2(scope5))]), map21(([wasConsumed, sinkFiber2, scheduleFiber2]) => {
               const toWrite = pipe(c, match2({
                 onNone: () => of3(right2(b)),
                 onSome: (c2) => make6(right2(b), left2(c2))
@@ -95717,7 +95717,7 @@ var aggregateWithinEither = /* @__PURE__ */ dual(3, (self2, sink, schedule5) => 
         })
       }));
     };
-    return unwrapScopedWith3((scope5) => pipeTo(toChannel2(self2), handoffProducer).pipe(run2, forkIn2(scope5), zipRight6(pipeToOrFail(handoffConsumer, toChannel(sink)).pipe(collectElements, run2, forkIn2(scope5), flatMap16((sinkFiber) => timeout7(none2()).pipe(forkIn2(scope5), map21((scheduleFiber) => new StreamImpl(scheduledAggregator(sinkFiber, scheduleFiber, scope5)))))))));
+    return unwrapScopedWith3((scope5) => pipeTo(toChannel2(self2), handoffProducer).pipe(run2, forkIn2(scope5), zipRight6(pipeToOrFail(handoffConsumer, toChannel(sink)).pipe(collectElements, run2, forkIn2(scope5), flatMap16((sinkFiber) => timeout6(none2()).pipe(forkIn2(scope5), map21((scheduleFiber) => new StreamImpl(scheduledAggregator(sinkFiber, scheduleFiber, scope5)))))))));
   }));
 });
 var as13 = /* @__PURE__ */ dual(2, (self2, value3) => map29(self2, () => value3));
@@ -112279,7 +112279,7 @@ var WsProvider = class _WsProvider {
    * @param {number} [cacheCapacity] Custom size of the WsProvider LRUCache. Defaults to `DEFAULT_CAPACITY` (1024)
    * @param {number} [cacheTtl] Custom TTL of the WsProvider LRUCache. Determines how long an object can live in the cache. Defaults to DEFAULT_TTL` (30000)
    */
-  constructor(endpoint = defaults_default.WS_URL, autoConnectMs = RETRY_DELAY, headers = {}, timeout7, cacheCapacity, cacheTtl) {
+  constructor(endpoint = defaults_default.WS_URL, autoConnectMs = RETRY_DELAY, headers = {}, timeout6, cacheCapacity, cacheTtl) {
     const endpoints = Array.isArray(endpoint) ? endpoint : [endpoint];
     if (endpoints.length === 0) {
       throw new Error("WsProvider requires at least one Endpoint");
@@ -112305,7 +112305,7 @@ var WsProvider = class _WsProvider {
       total: defaultEndpointStats()
     };
     this.#endpointStats = defaultEndpointStats();
-    this.#timeout = timeout7 || DEFAULT_TIMEOUT_MS;
+    this.#timeout = timeout6 || DEFAULT_TIMEOUT_MS;
     if (autoConnectMs && autoConnectMs > 0) {
       this.connectWithRetry().catch(noop);
     }
@@ -156345,9 +156345,9 @@ var PolkadotNodeClient = class _PolkadotNodeClient {
     }), Effect_exports.andThen(Effect_exports.sync(() => this.api.isConnected)), Effect_exports.repeat({
       until: (value3) => value3,
       schedule: Schedule_exports.spaced(this.config.reconnectionDelay)
-    }), Effect_exports.timeout(this.config.reconnectionTimeout), Effect_exports.asVoid, Effect_exports.mapError((timeout7) => new ConnectionError({
+    }), Effect_exports.timeout(this.config.reconnectionTimeout), Effect_exports.asVoid, Effect_exports.mapError((timeout6) => new ConnectionError({
       message: "Could not connect within specified time range (5s)",
-      cause: timeout7
+      cause: timeout6
     })));
   }
   sendMidnightTransaction(serializedTransaction) {
@@ -162635,11 +162635,11 @@ var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, nod
 var createWalletKeys = (seed, configuration2) => {
   const hdWallet = HDWallet.fromSeed(seed);
   if (hdWallet.type !== "seedOk") {
-    throw new Error("Failed to initialize HDWallet");
+    throw new WalletSDKError("Failed to initialize HDWallet");
   }
   const derivationResult = hdWallet.hdWallet.selectAccount(0).selectRoles([Roles.Zswap, Roles.NightExternal, Roles.Dust]).deriveKeysAt(0);
   if (derivationResult.type !== "keysDerived") {
-    throw new Error("Failed to derive keys");
+    throw new WalletSDKError("Failed to derive keys");
   }
   hdWallet.hdWallet.clear();
   const shieldedSecretKeys = ZswapSecretKeys.fromSeed(derivationResult.keys[Roles.Zswap]);
@@ -162696,17 +162696,23 @@ var waitForFullySynced = async (facade, timeoutMs = 0) => {
     exports.logger.debug(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
     return state;
   } catch (error4) {
-    throw new Error("Wallet sync timed out: " + (error4 instanceof Error ? error4.message : String(error4)));
+    throw new WalletSDKError("Wallet sync timed out: " + (error4 instanceof Error ? error4.message : String(error4)));
   }
 };
-var timeout6 = (ms) => new Promise((resolve, reject) => {
-  setTimeout(() => reject(new Error("Timeout")), ms);
+var WalletSDKError = class extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "WalletSDKError";
+  }
+};
+var wallet_timeout = (ms, errmsg) => new Promise((resolve, reject) => {
+  setTimeout(() => reject(new WalletSDKError(errmsg)), ms);
 });
 var sleep5 = (ms) => new Promise((resolve) => {
   setTimeout(resolve, ms);
 });
 var MidnightWalletSDK = class _MidnightWalletSDK {
-  // default to 60 seconds
+  // to record the last time when wallet state is saved, to prevent saving wallet state too frequently when there are many pending transactions.
   // private syncMutex: Boolean = false;
   constructor(config3, strSeed, submitTimeout) {
     this.isGenerating = false;
@@ -162717,8 +162723,12 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     this.storeCallback = (WalletState2) => Promise.resolve();
     this.storeInterval = 6e5;
     // default to 10 minutes
-    this.semaphore = 0;
+    this.pendingTxCount = 0;
     this.submitTimeout = 300 * 1e3;
+    // default to 60 seconds
+    this.concurrency = 0;
+    // 
+    this.lastStateSaveTime = 0;
     this.config = config3;
     if (submitTimeout !== void 0) {
       this.submitTimeout = submitTimeout;
@@ -162748,7 +162758,7 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
   // to generate a wallet instance
   //////////////////////////////////////////
   async initWallet(store, strSerializedState, saveInterval = 6e5) {
-    this.semaphore = 0;
+    this.pendingTxCount = 0;
     this.storeCallback = store;
     this.storeInterval = saveInterval;
     if (strSerializedState) {
@@ -162777,33 +162787,39 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     const wallet = await WalletFacade.init(initParams);
     await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     this.walletObj = wallet;
+    const state = await waitForFullySynced(this.walletObj);
+    if (this.storeCallback) {
+      this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
+      await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+      exports.logger.info(`wallet state saved for the first time after initialization, dustBalance = ${this.dustBalance}`);
+    } else {
+      exports.logger.info(`store callback is not set, ignore the first time backup of wallet state after initialization! this.dustBalance = ${this.dustBalance}`);
+    }
+    this.concurrency = state.dust.availableCoins.length;
     this.bActiveFlag = true;
     await this.registerNightUtxosForDustGeneration();
     const callBack = async () => {
-      const state = await waitForFullySynced(this.walletObj);
-      const dustb = state.dust.balance(/* @__PURE__ */ new Date());
-      if (this.dustBalance > 0n && dustb > 0n || this.dustBalance == 0n) {
+      const state2 = await waitForFullySynced(this.walletObj);
+      const dustb = state2.dust.balance(/* @__PURE__ */ new Date());
+      if (this.pendingTxCount <= 0) {
         if (this.storeCallback) {
-          if (this.semaphore <= 0) {
-            this.dustBalance = dustb;
-            this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
-            await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
-            exports.logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
-          } else {
-            exports.logger.info(`semaphore = ${this.semaphore}, wallet state is submitting transaction, skip this round of wallet state backup!`);
-          }
+          this.dustBalance = dustb;
+          this.state = { shieldedWalletState: state2.shielded.serialize(), unshieldedWalletState: state2.unshielded.serialize(), dustWalletState: state2.dust.serialize() };
+          await this.storeCallback?.({ shieldedWalletState: state2.shielded.serialize(), unshieldedWalletState: state2.unshielded.serialize(), dustWalletState: state2.dust.serialize() });
+          exports.logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
         } else {
-          exports.logger.info(`store callback is not set, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+          exports.logger.info(`store callback is not set, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}`);
         }
+        this.lastStateSaveTime = Date.now();
       } else {
-        if (this.semaphore <= 0) {
-          exports.logger.warn(`dust balance abnormal, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+        if (Date.now() - this.lastStateSaveTime > 30 * 60 * 1e3) {
+          exports.logger.warn(`there are pending transactions for a long time, pendingTxCount = ${this.pendingTxCount}, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
           await this.uninitWallet();
           exports.logger.info(`uninitWallet done, start to reinitialize the wallet!`);
           await this.initWallet(this.storeCallback, this.state, this.storeInterval);
           exports.logger.info(`reinitWallet done!`);
         } else {
-          exports.logger.warn(`dust balance abnormal but semaphore = ${this.semaphore}, maybe wallet is submitting transaction, skip the reinitialization of wallet for now! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+          exports.logger.info(`there are pending transactions, pendingTxCount = ${this.pendingTxCount}, maybe wallet is submitting transaction, skip the backup of wallet for now! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
         }
       }
       clearTimeout(this.storeTimer);
@@ -162839,11 +162855,11 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
       // this.walletAddress.dustAddress
     );
     const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
-    this.semaphore++;
+    this.pendingTxCount++;
     try {
       const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
     } catch (error4) {
-      this.semaphore--;
+      this.pendingTxCount--;
       exports.logger.error("Failed to submit dust generation transaction:", error4);
     }
     this.isGenerating = false;
@@ -162872,11 +162888,11 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     const unshieldedKeystore = this.unshieldedKeystore;
     const recipe = await this.walletObj?.signRecipe(dustRegistrationRecipe, (payload) => unshieldedKeystore.signData(payload));
     const finalizedDustTx = await this.walletObj.finalizeRecipe(recipe);
-    this.semaphore++;
+    this.pendingTxCount++;
     try {
       const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
     } catch (error4) {
-      this.semaphore--;
+      this.pendingTxCount--;
       exports.logger.error("Failed to submit dust deregister transaction:", error4);
     }
     this.isUnGenerating = false;
@@ -162888,19 +162904,19 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     const time3 = Date.now();
     exports.logger.info(`[${time3}] submitTx begin`);
     try {
+      const { dustAvailableCoins } = await this.getAvailableCoins();
+      exports.logger.info(`submitTx...current available dust coins: ${dustAvailableCoins.length}, pendingTxCount = ${this.pendingTxCount}`);
       const ret = await Promise.race([
         this.walletObj.submitTransaction(tx),
-        timeout6(this.submitTimeout)
+        wallet_timeout(this.submitTimeout, "Transaction submission timed out")
         // set timeout for transaction submission to prevent hanging
       ]);
-      exports.logger.info(`submitTx success, semaphore = ${this.semaphore}, txHash = ${ret}`);
+      exports.logger.info(`submitTx success, pendingTxCount = ${this.pendingTxCount}, txHash = ${ret}`);
+      this.pendingTxCount--;
       return ret;
     } catch (error4) {
-      exports.logger.error(`submitTx failed: ${error4 instanceof Error ? error4.message : String(error4)}, semaphore = ${this.semaphore}`);
+      exports.logger.error(`submitTx failed: ${error4 instanceof Error ? error4.message : String(error4)}, pendingTxCount = ${this.pendingTxCount}`);
       throw error4;
-    } finally {
-      this.semaphore--;
-      exports.logger.info(`submitTx finally, semaphore = ${this.semaphore}`);
     }
   }
   async getBalances() {
@@ -162971,11 +162987,12 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     return submittedTxHash;
   }
   async balanceTx(tx, ttl) {
-    exports.logger.info("balanceTx begin");
+    const { dustAvailableCoins } = await this.getAvailableCoins();
+    exports.logger.info("balanceTx begin, current dust available coins: ", dustAvailableCoins.length);
     assert8__default.default(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
     assert8__default.default(this.bActiveFlag, "wallet is not active, cannot balance transaction!");
     try {
-      this.semaphore++;
+      this.pendingTxCount++;
       const recipe = await this.walletObj.balanceUnboundTransaction(
         tx,
         { shieldedSecretKeys: this.shieldedSecretKeys, dustSecretKey: this.dustSecretKey },
@@ -162988,10 +163005,12 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
         signTransactionIntents(recipe.balancingTransaction, signFn, "pre-proof");
       }
       const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
+      const { dustAvailableCoins: dustAvailableCoins2 } = await this.getAvailableCoins();
+      exports.logger.info("balanceTx end, current dust available coins: ", dustAvailableCoins2.length);
       return finalizedTx;
     } catch (error4) {
-      this.semaphore--;
-      exports.logger.error(`balanceTx failed: ${error4 instanceof Error ? error4.message : String(error4)}, semaphore = ${this.semaphore}`);
+      this.pendingTxCount--;
+      exports.logger.error(`balanceTx failed: ${error4 instanceof Error ? error4.message : String(error4)}, pendingTxCount = ${this.pendingTxCount}`);
       throw error4;
     }
   }
@@ -181794,12 +181813,12 @@ var getKeyMaterial = async (zkConfigProvider, keyLocation) => {
     return void 0;
   }
 };
-var makeHttpRequest = async (url2, payload, timeout7, headers = {}) => {
+var makeHttpRequest = async (url2, payload, timeout6, headers = {}) => {
   const response = await fetchRetry(url2, {
     method: "POST",
     body: new Uint8Array(payload),
     headers: { "Content-Type": "application/octet-stream", ...headers },
-    signal: AbortSignal.timeout(timeout7)
+    signal: AbortSignal.timeout(timeout6)
   });
   if (!response.ok) {
     throw new Error(`Failed Proof Server response: url="${response.url}", code="${response.status}", status="${response.statusText}"`);
@@ -181815,19 +181834,19 @@ var httpClientProvingProvider = (url2, zkConfigProvider, config3) => {
   if (proveUrl.protocol !== "http:" && proveUrl.protocol !== "https:") {
     throw new InvalidProtocolSchemeError2(proveUrl.protocol, ["http:", "https:"]);
   }
-  const timeout7 = DEFAULT_TIMEOUT;
+  const timeout6 = DEFAULT_TIMEOUT;
   const headers = {};
   return {
     async check(serializedPreimage, keyLocation) {
       const keyMaterial = await getKeyMaterial(zkConfigProvider, keyLocation);
       const payload = createCheckPayload(serializedPreimage, keyMaterial?.ir);
-      const result2 = await makeHttpRequest(checkUrl, payload, timeout7, headers);
+      const result2 = await makeHttpRequest(checkUrl, payload, timeout6, headers);
       return parseCheckResult(result2);
     },
     async prove(serializedPreimage, keyLocation, overwriteBindingInput) {
       const keyMaterial = await getKeyMaterial(zkConfigProvider, keyLocation);
       const payload = createProvingPayload(serializedPreimage, overwriteBindingInput, keyMaterial);
-      return makeHttpRequest(proveUrl, payload, timeout7, headers);
+      return makeHttpRequest(proveUrl, payload, timeout6, headers);
     }
   };
 };
@@ -182554,6 +182573,7 @@ exports.CompiledSimpleContract = CompiledSimpleContract;
 exports.CrossChainApi = CrossChainApi;
 exports.CrossChainPrivateStateId = CrossChainPrivateStateId;
 exports.MidnightWalletSDK = MidnightWalletSDK;
+exports.WalletSDKError = WalletSDKError;
 exports.ZKConfig = ZKConfig;
 exports.configuration = configuration;
 exports.createCrossChainProviders = createCrossChainProviders;
@@ -182577,9 +182597,9 @@ exports.removeContractCircuit = removeContractCircuit;
 exports.setLogger = setLogger;
 exports.signTransactionIntents = signTransactionIntents;
 exports.sleep = sleep5;
-exports.timeout = timeout6;
 exports.upgradeContractCircuit = upgradeContractCircuit;
 exports.waitForFullySynced = waitForFullySynced;
+exports.wallet_timeout = wallet_timeout;
 exports.witnesses = witnesses;
 //# sourceMappingURL=index.cjs.map
 //# sourceMappingURL=index.cjs.map

@@ -56,11 +56,11 @@ var configuration = function(indexerHttpUrl, indexerWsUrl, provingServerUrl, nod
 var createWalletKeys = (seed, configuration2) => {
   const hdWallet = HDWallet.fromSeed(seed);
   if (hdWallet.type !== "seedOk") {
-    throw new Error("Failed to initialize HDWallet");
+    throw new WalletSDKError("Failed to initialize HDWallet");
   }
   const derivationResult = hdWallet.hdWallet.selectAccount(0).selectRoles([Roles.Zswap, Roles.NightExternal, Roles.Dust]).deriveKeysAt(0);
   if (derivationResult.type !== "keysDerived") {
-    throw new Error("Failed to derive keys");
+    throw new WalletSDKError("Failed to derive keys");
   }
   hdWallet.hdWallet.clear();
   const shieldedSecretKeys = ledger.ZswapSecretKeys.fromSeed(derivationResult.keys[Roles.Zswap]);
@@ -117,17 +117,23 @@ var waitForFullySynced = async (facade, timeoutMs = 0) => {
     logger.debug(`Wallet synced in ${(Date.now() - timeCur) / 1e3} seconds`);
     return state;
   } catch (error) {
-    throw new Error("Wallet sync timed out: " + (error instanceof Error ? error.message : String(error)));
+    throw new WalletSDKError("Wallet sync timed out: " + (error instanceof Error ? error.message : String(error)));
   }
 };
-var timeout2 = (ms) => new Promise((resolve, reject) => {
-  setTimeout(() => reject(new Error("Timeout")), ms);
+var WalletSDKError = class extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "WalletSDKError";
+  }
+};
+var wallet_timeout = (ms, errmsg) => new Promise((resolve, reject) => {
+  setTimeout(() => reject(new WalletSDKError(errmsg)), ms);
 });
 var sleep = (ms) => new Promise((resolve) => {
   setTimeout(resolve, ms);
 });
 var MidnightWalletSDK = class _MidnightWalletSDK {
-  // default to 60 seconds
+  // to record the last time when wallet state is saved, to prevent saving wallet state too frequently when there are many pending transactions.
   // private syncMutex: Boolean = false;
   constructor(config, strSeed, submitTimeout) {
     this.isGenerating = false;
@@ -138,8 +144,12 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     this.storeCallback = (WalletState) => Promise.resolve();
     this.storeInterval = 6e5;
     // default to 10 minutes
-    this.semaphore = 0;
+    this.pendingTxCount = 0;
     this.submitTimeout = 300 * 1e3;
+    // default to 60 seconds
+    this.concurrency = 0;
+    // 
+    this.lastStateSaveTime = 0;
     this.config = config;
     if (submitTimeout !== void 0) {
       this.submitTimeout = submitTimeout;
@@ -169,7 +179,7 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
   // to generate a wallet instance
   //////////////////////////////////////////
   async initWallet(store, strSerializedState, saveInterval = 6e5) {
-    this.semaphore = 0;
+    this.pendingTxCount = 0;
     this.storeCallback = store;
     this.storeInterval = saveInterval;
     if (strSerializedState) {
@@ -198,33 +208,39 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     const wallet = await WalletFacade.init(initParams);
     await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     this.walletObj = wallet;
+    const state = await waitForFullySynced(this.walletObj);
+    if (this.storeCallback) {
+      this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
+      await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+      logger.info(`wallet state saved for the first time after initialization, dustBalance = ${this.dustBalance}`);
+    } else {
+      logger.info(`store callback is not set, ignore the first time backup of wallet state after initialization! this.dustBalance = ${this.dustBalance}`);
+    }
+    this.concurrency = state.dust.availableCoins.length;
     this.bActiveFlag = true;
     await this.registerNightUtxosForDustGeneration();
     const callBack = async () => {
-      const state = await waitForFullySynced(this.walletObj);
-      const dustb = state.dust.balance(/* @__PURE__ */ new Date());
-      if (this.dustBalance > 0n && dustb > 0n || this.dustBalance == 0n) {
+      const state2 = await waitForFullySynced(this.walletObj);
+      const dustb = state2.dust.balance(/* @__PURE__ */ new Date());
+      if (this.pendingTxCount <= 0) {
         if (this.storeCallback) {
-          if (this.semaphore <= 0) {
-            this.dustBalance = dustb;
-            this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
-            await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
-            logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
-          } else {
-            logger.info(`semaphore = ${this.semaphore}, wallet state is submitting transaction, skip this round of wallet state backup!`);
-          }
+          this.dustBalance = dustb;
+          this.state = { shieldedWalletState: state2.shielded.serialize(), unshieldedWalletState: state2.unshielded.serialize(), dustWalletState: state2.dust.serialize() };
+          await this.storeCallback?.({ shieldedWalletState: state2.shielded.serialize(), unshieldedWalletState: state2.unshielded.serialize(), dustWalletState: state2.dust.serialize() });
+          logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
         } else {
-          logger.info(`store callback is not set, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+          logger.info(`store callback is not set, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}`);
         }
+        this.lastStateSaveTime = Date.now();
       } else {
-        if (this.semaphore <= 0) {
-          logger.warn(`dust balance abnormal, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+        if (Date.now() - this.lastStateSaveTime > 30 * 60 * 1e3) {
+          logger.warn(`there are pending transactions for a long time, pendingTxCount = ${this.pendingTxCount}, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
           await this.uninitWallet();
           logger.info(`uninitWallet done, start to reinitialize the wallet!`);
           await this.initWallet(this.storeCallback, this.state, this.storeInterval);
           logger.info(`reinitWallet done!`);
         } else {
-          logger.warn(`dust balance abnormal but semaphore = ${this.semaphore}, maybe wallet is submitting transaction, skip the reinitialization of wallet for now! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+          logger.info(`there are pending transactions, pendingTxCount = ${this.pendingTxCount}, maybe wallet is submitting transaction, skip the backup of wallet for now! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
         }
       }
       clearTimeout(this.storeTimer);
@@ -260,11 +276,11 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
       // this.walletAddress.dustAddress
     );
     const finalizedDustTx = await this.walletObj.finalizeRecipe(dustRegistrationRecipe);
-    this.semaphore++;
+    this.pendingTxCount++;
     try {
       const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
     } catch (error) {
-      this.semaphore--;
+      this.pendingTxCount--;
       logger.error("Failed to submit dust generation transaction:", error);
     }
     this.isGenerating = false;
@@ -293,11 +309,11 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     const unshieldedKeystore = this.unshieldedKeystore;
     const recipe = await this.walletObj?.signRecipe(dustRegistrationRecipe, (payload) => unshieldedKeystore.signData(payload));
     const finalizedDustTx = await this.walletObj.finalizeRecipe(recipe);
-    this.semaphore++;
+    this.pendingTxCount++;
     try {
       const dustRegistrationTxHash = await this.submitTx(finalizedDustTx);
     } catch (error) {
-      this.semaphore--;
+      this.pendingTxCount--;
       logger.error("Failed to submit dust deregister transaction:", error);
     }
     this.isUnGenerating = false;
@@ -309,19 +325,19 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     const time = Date.now();
     logger.info(`[${time}] submitTx begin`);
     try {
+      const { dustAvailableCoins } = await this.getAvailableCoins();
+      logger.info(`submitTx...current available dust coins: ${dustAvailableCoins.length}, pendingTxCount = ${this.pendingTxCount}`);
       const ret = await Promise.race([
         this.walletObj.submitTransaction(tx),
-        timeout2(this.submitTimeout)
+        wallet_timeout(this.submitTimeout, "Transaction submission timed out")
         // set timeout for transaction submission to prevent hanging
       ]);
-      logger.info(`submitTx success, semaphore = ${this.semaphore}, txHash = ${ret}`);
+      logger.info(`submitTx success, pendingTxCount = ${this.pendingTxCount}, txHash = ${ret}`);
+      this.pendingTxCount--;
       return ret;
     } catch (error) {
-      logger.error(`submitTx failed: ${error instanceof Error ? error.message : String(error)}, semaphore = ${this.semaphore}`);
+      logger.error(`submitTx failed: ${error instanceof Error ? error.message : String(error)}, pendingTxCount = ${this.pendingTxCount}`);
       throw error;
-    } finally {
-      this.semaphore--;
-      logger.info(`submitTx finally, semaphore = ${this.semaphore}`);
     }
   }
   async getBalances() {
@@ -392,11 +408,12 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     return submittedTxHash;
   }
   async balanceTx(tx, ttl) {
-    logger.info("balanceTx begin");
+    const { dustAvailableCoins } = await this.getAvailableCoins();
+    logger.info("balanceTx begin, current dust available coins: ", dustAvailableCoins.length);
     assert3(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
     assert3(this.bActiveFlag, "wallet is not active, cannot balance transaction!");
     try {
-      this.semaphore++;
+      this.pendingTxCount++;
       const recipe = await this.walletObj.balanceUnboundTransaction(
         tx,
         { shieldedSecretKeys: this.shieldedSecretKeys, dustSecretKey: this.dustSecretKey },
@@ -409,10 +426,12 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
         signTransactionIntents(recipe.balancingTransaction, signFn, "pre-proof");
       }
       const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
+      const { dustAvailableCoins: dustAvailableCoins2 } = await this.getAvailableCoins();
+      logger.info("balanceTx end, current dust available coins: ", dustAvailableCoins2.length);
       return finalizedTx;
     } catch (error) {
-      this.semaphore--;
-      logger.error(`balanceTx failed: ${error instanceof Error ? error.message : String(error)}, semaphore = ${this.semaphore}`);
+      this.pendingTxCount--;
+      logger.error(`balanceTx failed: ${error instanceof Error ? error.message : String(error)}, pendingTxCount = ${this.pendingTxCount}`);
       throw error;
     }
   }
@@ -12660,6 +12679,6 @@ var getContractState = async (config, contractAddress) => {
   return state;
 };
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, logger, pad, removeContractCircuit, setLogger, signTransactionIntents, sleep, timeout2 as timeout, upgradeContractCircuit, waitForFullySynced, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, WalletSDKError, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, logger, pad, removeContractCircuit, setLogger, signTransactionIntents, sleep, upgradeContractCircuit, waitForFullySynced, wallet_timeout, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map
