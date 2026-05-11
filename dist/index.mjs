@@ -132,7 +132,7 @@ var wallet_timeout = (ms, errmsg) => new Promise((resolve, reject) => {
 var sleep = (ms) => new Promise((resolve) => {
   setTimeout(resolve, ms);
 });
-var MidnightWalletSDK = class _MidnightWalletSDK {
+var MidnightWalletSDK = class {
   // if there are pending transactions for a long time (default to 30 minutes), which may indicate that there is something wrong with the wallet or the pending transactions, try to reinitialize the wallet to see if it can recover from the abnormal state.
   // private syncMutex: Boolean = false;
   constructor(config, strSeed, submitTimeout, forceReInitTime) {
@@ -189,8 +189,6 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     this.storeInterval = saveInterval;
     if (strSerializedState) {
       this.state = strSerializedState;
-      this.dustBalance = _MidnightWalletSDK.getDustBalanceFromDustState(JSON.parse(strSerializedState.dustWalletState).state);
-      logger.info(`initial dust balance from serialized state: ${this.dustBalance}`);
     }
     const shieldedWallet = (configuration2) => strSerializedState && strSerializedState.shieldedWalletState ? ShieldedWallet(configuration2).restore(strSerializedState.shieldedWalletState) : ShieldedWallet(configuration2).startWithSecretKeys(this.shieldedSecretKeys);
     const dustWallet = (configuration2) => strSerializedState && strSerializedState.dustWalletState ? DustWallet(configuration2).restore(strSerializedState.dustWalletState) : DustWallet(configuration2).startWithSecretKey(this.dustSecretKey, ledger.LedgerParameters.initialParameters().dust);
@@ -213,17 +211,6 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     const wallet = await WalletFacade.init(initParams);
     await wallet.start(this.shieldedSecretKeys, this.dustSecretKey);
     this.walletObj = wallet;
-    const state = await waitForFullySynced(this.walletObj);
-    if (this.storeCallback) {
-      this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
-      await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
-      logger.info(`wallet state saved for the first time after initialization, dustBalance = ${this.dustBalance}`);
-    } else {
-      logger.info(`store callback is not set, ignore the first time backup of wallet state after initialization! this.dustBalance = ${this.dustBalance}`);
-    }
-    this.concurrency = state.dust.availableCoins.length;
-    this.bActiveFlag = true;
-    await this.registerNightUtxosForDustGeneration();
     const callBack = async () => {
       const state2 = await waitForFullySynced(this.walletObj);
       const dustb = state2.dust.balance(/* @__PURE__ */ new Date());
@@ -252,6 +239,20 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
       this.registerNightUtxosForDustGeneration();
       this.storeTimer = setTimeout(callBack, this.storeInterval);
     };
+    if (this.storeTimer) {
+      clearTimeout(this.storeTimer);
+    }
+    const state = await waitForFullySynced(this.walletObj);
+    if (this.storeCallback) {
+      this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
+      await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+      logger.info(`wallet state saved for the first time after initialization, dustBalance = ${this.dustBalance}`);
+      this.lastStateSaveTime = Date.now();
+    } else {
+      logger.info(`store callback is not set, ignore the first time backup of wallet state after initialization! this.dustBalance = ${this.dustBalance}`);
+    }
+    this.concurrency = state.dust.availableCoins.length;
+    this.bActiveFlag = true;
     this.storeTimer = setTimeout(async () => {
       await callBack();
     }, saveInterval);

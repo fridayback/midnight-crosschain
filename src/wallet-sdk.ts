@@ -303,8 +303,8 @@ export class MidnightWalletSDK {
         // const ret = (await initFacadeWallet(this.seed, this.config, strSerializedState));
         if(strSerializedState){
             this.state = strSerializedState;
-            this.dustBalance = MidnightWalletSDK.getDustBalanceFromDustState(JSON.parse(strSerializedState.dustWalletState).state);
-             logger.info(`initial dust balance from serialized state: ${this.dustBalance}`);
+            // this.dustBalance = MidnightWalletSDK.getDustBalanceFromDustState(JSON.parse(strSerializedState.dustWalletState).state);
+            //  logger.info(`initial dust balance from serialized state: ${this.dustBalance}`);
         }
 
         const shieldedWallet = (configuration: DefaultConfiguration) => strSerializedState && strSerializedState.shieldedWalletState ?
@@ -336,19 +336,20 @@ export class MidnightWalletSDK {
     
         this.walletObj = wallet;
 
-        const state = await waitForFullySynced(this.walletObj);
-        if(this.storeCallback){
-            this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
-            await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
-            logger.info(`wallet state saved for the first time after initialization, dustBalance = ${this.dustBalance}`);
-        }else{
-            logger.info(`store callback is not set, ignore the first time backup of wallet state after initialization! this.dustBalance = ${this.dustBalance}`);
-        }
+        // const state = await waitForFullySynced(this.walletObj);
+        // if(this.storeCallback){
+        //     this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
+        //     await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+        //     logger.info(`wallet state saved for the first time after initialization, dustBalance = ${this.dustBalance}`);
+        //     this.lastStateSaveTime = Date.now(); // update last state save time after wallet state is saved successfully for the first time after initialization.
+        // }else{
+        //     logger.info(`store callback is not set, ignore the first time backup of wallet state after initialization! this.dustBalance = ${this.dustBalance}`);
+        // }
 
-        this.concurrency = state.dust.availableCoins.length;
-        this.bActiveFlag = true;// set active flag to true after wallet is initialized successfully
+        // this.concurrency = state.dust.availableCoins.length;
+        // this.bActiveFlag = true;// set active flag to true after wallet is initialized successfully
 
-        await this.registerNightUtxosForDustGeneration();
+        // await this.registerNightUtxosForDustGeneration();
         const callBack = async () => {
             const state = await waitForFullySynced(this.walletObj!);
             const dustb = state.dust.balance(new Date());
@@ -389,6 +390,22 @@ export class MidnightWalletSDK {
             this.registerNightUtxosForDustGeneration();
             this.storeTimer = setTimeout(callBack, this.storeInterval);
         }
+        
+        if(this.storeTimer) {
+            clearTimeout(this.storeTimer);
+        }
+        const state = await waitForFullySynced(this.walletObj);
+        if(this.storeCallback){
+            this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
+            await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+            logger.info(`wallet state saved for the first time after initialization, dustBalance = ${this.dustBalance}`);
+            this.lastStateSaveTime = Date.now(); // update last state save time after wallet state is saved successfully for the first time after initialization.
+        }else{
+            logger.info(`store callback is not set, ignore the first time backup of wallet state after initialization! this.dustBalance = ${this.dustBalance}`);
+        }
+
+        this.concurrency = state.dust.availableCoins.length;
+        this.bActiveFlag = true;// set active flag to true after wallet is initialized successfully
         this.storeTimer = setTimeout(async () => {
             await callBack();
         }, saveInterval);
