@@ -329,8 +329,6 @@ var MidnightWalletSDK = class {
   async submitTx(tx) {
     assert3(this.walletObj, "walletObj is not initialized!");
     assert3(this.bActiveFlag, "wallet is not active, cannot submit transaction!");
-    const time = Date.now();
-    logger.info(`[${time}] submitTx begin`);
     try {
       const { dustAvailableCoins } = await this.getAvailableCoins();
       logger.info(`submitTx...current available dust coins: ${dustAvailableCoins.length}, pendingTxCount = ${this.pendingTxCount}`);
@@ -339,8 +337,8 @@ var MidnightWalletSDK = class {
         wallet_timeout(this.submitTimeout, "Transaction submission timed out")
         // set timeout for transaction submission to prevent hanging
       ]);
-      logger.info(`submitTx success, pendingTxCount = ${this.pendingTxCount}, txHash = ${ret}`);
       this.pendingTxCount--;
+      logger.info(`submitTx success, pendingTxCount = ${this.pendingTxCount}, txHash = ${ret}`);
       return ret;
     } catch (error) {
       logger.error(`submitTx failed: ${error instanceof Error ? error.message : String(error)}, pendingTxCount = ${this.pendingTxCount}`);

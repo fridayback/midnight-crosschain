@@ -387,10 +387,11 @@ export class MidnightWalletSDK {
             }
             
             clearTimeout(this.storeTimer);
+            this.pendingTxCount = 0; // reset pendingTxCount after handling the pending transactions, which will allow wallet state to be saved in the future if there is no new pending transaction.
             this.registerNightUtxosForDustGeneration();
             this.storeTimer = setTimeout(callBack, this.storeInterval);
         }
-        
+
         if(this.storeTimer) {
             clearTimeout(this.storeTimer);
         }
@@ -503,7 +504,7 @@ export class MidnightWalletSDK {
         assert(this.bActiveFlag,"wallet is not active, cannot submit transaction!");
         // const txHash = await this.walletObj.submitTransaction(tx);
         const time = Date.now();
-        logger.info(`[${time}] submitTx begin`)
+        // logger.info(`[${time}] submitTx begin`)
         
         try {
             const {dustAvailableCoins} = await this.getAvailableCoins();
@@ -512,8 +513,9 @@ export class MidnightWalletSDK {
                 this.walletObj.submitTransaction(tx),
                 wallet_timeout(this.submitTimeout, 'Transaction submission timed out') // set timeout for transaction submission to prevent hanging
             ]);
-            logger.info(`submitTx success, pendingTxCount = ${this.pendingTxCount}, txHash = ${ret}`);
+            
             this.pendingTxCount--;// decrease pendingTxCount after transaction is submitted successfully, which will allow wallet state to be saved in the future if there is no pending transaction.
+            logger.info(`submitTx success, pendingTxCount = ${this.pendingTxCount}, txHash = ${ret}`);
             return ret as string;
         } catch (error) {
             logger.error(`submitTx failed: ${error instanceof Error ? error.message : String(error)}, pendingTxCount = ${this.pendingTxCount}`);
