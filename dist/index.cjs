@@ -162982,14 +162982,14 @@ var MidnightWalletSDK = class {
     assert8__default.default(this.bActiveFlag, "wallet is not active, cannot submit transaction!");
     try {
       const { dustAvailableCoins } = await this.getAvailableCoins();
-      exports.logger.info(`submitTx...current available dust coins: ${dustAvailableCoins.length}, pendingTxCount = ${this.pendingTxCount}`);
+      exports.logger.debug(`submitTx...current available dust coins: ${dustAvailableCoins.length}, pendingTxCount = ${this.pendingTxCount}`);
       const ret = await Promise.race([
         this.walletObj.submitTransaction(tx),
         wallet_timeout(this.submitTimeout, "Transaction submission timed out")
         // set timeout for transaction submission to prevent hanging
       ]);
       this.pendingTxCount--;
-      exports.logger.info(`submitTx success, pendingTxCount = ${this.pendingTxCount}, txHash = ${ret}`);
+      exports.logger.debug(`submitTx success, pendingTxCount = ${this.pendingTxCount}, txHash = ${ret}`);
       return ret;
     } catch (error4) {
       exports.logger.error(`submitTx failed: ${error4 instanceof Error ? error4.message : String(error4)}, pendingTxCount = ${this.pendingTxCount}`);
@@ -163065,7 +163065,7 @@ var MidnightWalletSDK = class {
   }
   async balanceTx(tx, ttl) {
     const { dustAvailableCoins } = await this.getAvailableCoins();
-    exports.logger.info("balanceTx begin, current dust available coins: ", dustAvailableCoins.length);
+    exports.logger.debug("balanceTx begin, current dust available coins: ", dustAvailableCoins.length);
     assert8__default.default(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
     assert8__default.default(this.bActiveFlag, "wallet is not active, cannot balance transaction!");
     try {
@@ -163081,9 +163081,11 @@ var MidnightWalletSDK = class {
       if (recipe.balancingTransaction) {
         signTransactionIntents(recipe.balancingTransaction, signFn, "pre-proof");
       }
+      const ret = await this.getAvailableCoins();
+      exports.logger.debug("balanceTx 2 balanceUnboundTransaction end, current dust available coins: ", ret.dustAvailableCoins.length);
       const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
       const { dustAvailableCoins: dustAvailableCoins2 } = await this.getAvailableCoins();
-      exports.logger.info("balanceTx end, current dust available coins: ", dustAvailableCoins2.length, " pendingTxCount:", this.pendingTxCount);
+      exports.logger.debug("balanceTx end, current dust available coins: ", dustAvailableCoins2.length, " pendingTxCount:", this.pendingTxCount);
       return finalizedTx;
     } catch (error4) {
       this.pendingTxCount--;

@@ -170,7 +170,7 @@ export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number
                 if(Date.now() - timeCur > 60_000 && storeFn) {
                     // Store the wallet state periodically
                     storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
-                    logger.info('backup wallet state during sync, appliedIndex:', s.dust.progress.appliedIndex, ',highestRelevantWalletIndex:', s.dust.progress.highestRelevantWalletIndex, ',isSynced', s.isSynced);
+                    logger.debug('backup wallet state during sync, appliedIndex:', s.dust.progress.appliedIndex, ',highestRelevantWalletIndex:', s.dust.progress.highestRelevantWalletIndex, ',isSynced', s.isSynced);
                     timeCur = Date.now();
                 }
                 return s.isSynced;
@@ -183,7 +183,7 @@ export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number
                 if(Date.now() - timeCur > 60_000 && storeFn) {
                     // Store the wallet state periodically
                     storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
-                    logger.info('backup wallet state during sync, appliedIndex:', s.dust.progress.appliedIndex, ',highestRelevantWalletIndex:', s.dust.progress.highestRelevantWalletIndex, ',isSynced', s.isSynced);
+                    logger.debug('backup wallet state during sync, appliedIndex:', s.dust.progress.appliedIndex, ',highestRelevantWalletIndex:', s.dust.progress.highestRelevantWalletIndex, ',isSynced', s.isSynced);
                     timeCur = Date.now();
                 }
                 return s.isSynced;
@@ -512,14 +512,14 @@ export class MidnightWalletSDK {
         
         try {
             const {dustAvailableCoins} = await this.getAvailableCoins();
-            logger.info(`submitTx...current available dust coins: ${dustAvailableCoins.length}, pendingTxCount = ${this.pendingTxCount}`);
+            logger.debug(`submitTx...current available dust coins: ${dustAvailableCoins.length}, pendingTxCount = ${this.pendingTxCount}`);
             const ret = await Promise.race([
                 this.walletObj.submitTransaction(tx),
                 wallet_timeout(this.submitTimeout, 'Transaction submission timed out') // set timeout for transaction submission to prevent hanging
             ]);
             
             this.pendingTxCount--;// decrease pendingTxCount after transaction is submitted successfully, which will allow wallet state to be saved in the future if there is no pending transaction.
-            logger.info(`submitTx success, pendingTxCount = ${this.pendingTxCount}, txHash = ${ret}`);
+            logger.debug(`submitTx success, pendingTxCount = ${this.pendingTxCount}, txHash = ${ret}`);
             return ret as string;
         } catch (error) {
             logger.error(`submitTx failed: ${error instanceof Error ? error.message : String(error)}, pendingTxCount = ${this.pendingTxCount}`);
@@ -649,7 +649,7 @@ export class MidnightWalletSDK {
 
     async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<ledger.FinalizedTransaction> {
         const {dustAvailableCoins} = await this.getAvailableCoins();
-        logger.info("balanceTx begin, current dust available coins: ", dustAvailableCoins.length);
+        logger.debug("balanceTx begin, current dust available coins: ", dustAvailableCoins.length);
         assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
         assert(this.bActiveFlag, "wallet is not active, cannot balance transaction!");
         try {
@@ -665,12 +665,16 @@ export class MidnightWalletSDK {
             if (recipe.balancingTransaction) {
                 signTransactionIntents(recipe.balancingTransaction, signFn, 'pre-proof');
             }
+
+            const ret = await this.getAvailableCoins();
+            logger.debug("balanceTx 2 balanceUnboundTransaction end, current dust available coins: ", ret.dustAvailableCoins.length);
+        
             // increase pendingTxCount for the pending transaction of balancing, 
             // which usually takes a long time to be included in a block, to prevent wallet state from being saved during this period, which may cause the saved state to be out of sync with the actual wallet state on chain due to the delay of wallet state update after the transaction is included in a block.
             
             const finalizedTx = await this.walletObj.finalizeRecipe(recipe);
             const {dustAvailableCoins} = await this.getAvailableCoins();
-            logger.info("balanceTx end, current dust available coins: ", dustAvailableCoins.length," pendingTxCount:",this.pendingTxCount);
+            logger.debug("balanceTx end, current dust available coins: ", dustAvailableCoins.length," pendingTxCount:",this.pendingTxCount);
             return finalizedTx;
         } catch (error) {
             this.pendingTxCount--;
