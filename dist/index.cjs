@@ -162738,6 +162738,7 @@ var waitForFullySynced = async (facade, timeoutMs = 0, storeFn = void 0) => {
         exports.logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         if (Date.now() - timeCur > 6e4 && storeFn) {
           storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
+          exports.logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
           timeCur = Date.now();
         }
         return s.isSynced;
@@ -162747,6 +162748,7 @@ var waitForFullySynced = async (facade, timeoutMs = 0, storeFn = void 0) => {
         exports.logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         if (Date.now() - timeCur > 6e4 && storeFn) {
           storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
+          exports.logger.info("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
           timeCur = Date.now();
         }
         return s.isSynced;
