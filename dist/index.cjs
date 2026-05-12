@@ -162820,6 +162820,17 @@ var MidnightWalletSDK = class {
   static getDustBalanceFromDustState(strSerializedState) {
     return DustLocalState.deserialize(fromHex(strSerializedState)).walletBalance(/* @__PURE__ */ new Date());
   }
+  setForceReInitTime(time3) {
+    if (time3 <= 3e5) {
+      exports.logger.warn(`force reinitialization time ${time3} is too short, which may cause the wallet to be reinitialized too frequently when there are many pending transactions, so we set it to 5 minutes.`);
+      this.forceReInitTime = 3e5;
+    } else {
+      this.forceReInitTime = time3;
+    }
+  }
+  get walletForceReInitTime() {
+    return this.forceReInitTime;
+  }
   //////////////////////////////////////////
   // to generate a wallet instance
   //////////////////////////////////////////

@@ -71,6 +71,8 @@ declare class MidnightWalletSDK {
     private forceReInitTime;
     constructor(config: Configuration, strSeed: string, submitTimeout?: number, forceReInitTime?: number);
     static getDustBalanceFromDustState(strSerializedState: string): bigint;
+    setForceReInitTime(time: number): void;
+    get walletForceReInitTime(): number;
     initWallet(store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
     getAccountAddress(): {
         shieldedAddress: string;

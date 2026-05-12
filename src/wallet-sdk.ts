@@ -285,6 +285,19 @@ export class MidnightWalletSDK {
         return ledger.DustLocalState.deserialize( fromHex(strSerializedState) ).walletBalance(new Date());
     }
 
+    setForceReInitTime(time: number) {
+        if(time <= 300_000) { // if the time is too short, it may cause the wallet to be reinitialized too frequently when there are many pending transactions, which may cause the wallet to be stuck in the state of reinitialization and never get fully synced, so we set a lower limit of 5 minutes for the force reinitialization time.
+            logger.warn(`force reinitialization time ${time} is too short, which may cause the wallet to be reinitialized too frequently when there are many pending transactions, so we set it to 5 minutes.`);
+            this.forceReInitTime = 300_000;
+        }else{
+            this.forceReInitTime = time;
+        }
+    }
+
+    get walletForceReInitTime(): number {
+        return this.forceReInitTime;
+    }
+
     //////////////////////////////////////////
     // to generate a wallet instance
     //////////////////////////////////////////

@@ -241,6 +241,17 @@ var MidnightWalletSDK = class {
   static getDustBalanceFromDustState(strSerializedState) {
     return ledger.DustLocalState.deserialize(fromHex(strSerializedState)).walletBalance(/* @__PURE__ */ new Date());
   }
+  setForceReInitTime(time) {
+    if (time <= 3e5) {
+      logger.warn(`force reinitialization time ${time} is too short, which may cause the wallet to be reinitialized too frequently when there are many pending transactions, so we set it to 5 minutes.`);
+      this.forceReInitTime = 3e5;
+    } else {
+      this.forceReInitTime = time;
+    }
+  }
+  get walletForceReInitTime() {
+    return this.forceReInitTime;
+  }
   //////////////////////////////////////////
   // to generate a wallet instance
   //////////////////////////////////////////
