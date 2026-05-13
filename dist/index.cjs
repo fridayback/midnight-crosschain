@@ -162738,7 +162738,7 @@ var waitForFullySynced = async (facade, timeoutMs = 0, storeFn = void 0) => {
         exports.logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         if (Date.now() - timeCur > 6e4 && storeFn) {
           storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
-          exports.logger.info("backup wallet state during sync, appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+          exports.logger.debug("backup wallet state during sync, appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
           timeCur = Date.now();
         }
         return s.isSynced;
@@ -162748,7 +162748,7 @@ var waitForFullySynced = async (facade, timeoutMs = 0, storeFn = void 0) => {
         exports.logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
         if (Date.now() - timeCur > 6e4 && storeFn) {
           storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
-          exports.logger.info("backup wallet state during sync, appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
+          exports.logger.debug("backup wallet state during sync, appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ",isSynced", s.isSynced);
           timeCur = Date.now();
         }
         return s.isSynced;
@@ -163065,6 +163065,7 @@ var MidnightWalletSDK = class {
   }
   async balanceTx(tx, ttl) {
     const { dustAvailableCoins } = await this.getAvailableCoins();
+    dustAvailableCoins.length;
     exports.logger.debug("balanceTx begin, current dust available coins: ", dustAvailableCoins.length);
     assert8__default.default(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
     assert8__default.default(this.bActiveFlag, "wallet is not active, cannot balance transaction!");
@@ -163088,7 +163089,6 @@ var MidnightWalletSDK = class {
       exports.logger.debug("balanceTx end, current dust available coins: ", dustAvailableCoins2.length, " pendingTxCount:", this.pendingTxCount);
       return finalizedTx;
     } catch (error4) {
-      this.pendingTxCount--;
       exports.logger.error(`balanceTx failed: ${error4 instanceof Error ? error4.message : String(error4)}, pendingTxCount = ${this.pendingTxCount}`);
       throw error4;
     }

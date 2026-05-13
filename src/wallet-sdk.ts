@@ -649,6 +649,7 @@ export class MidnightWalletSDK {
 
     async balanceTx(tx: UnboundTransaction, ttl?: Date): Promise<ledger.FinalizedTransaction> {
         const {dustAvailableCoins} = await this.getAvailableCoins();
+        const originalDustCount = dustAvailableCoins.length;
         logger.debug("balanceTx begin, current dust available coins: ", dustAvailableCoins.length);
         assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
         assert(this.bActiveFlag, "wallet is not active, cannot balance transaction!");
@@ -677,7 +678,7 @@ export class MidnightWalletSDK {
             logger.debug("balanceTx end, current dust available coins: ", dustAvailableCoins.length," pendingTxCount:",this.pendingTxCount);
             return finalizedTx;
         } catch (error) {
-            this.pendingTxCount--;
+            // this.pendingTxCount--;
             logger.error(`balanceTx failed: ${error instanceof Error ? error.message : String(error)}, pendingTxCount = ${this.pendingTxCount}`);
             throw error;
         }
