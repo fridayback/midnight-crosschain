@@ -162877,12 +162877,9 @@ var MidnightWalletSDK = class {
         }
         this.lastStateSaveTime = Date.now();
       } else {
-        if (Date.now() - this.lastStateSaveTime > this.forceReInitTime) {
+        if (Date.now() - this.lastStateSaveTime > this.forceReInitTime || dustb == 0n && this.dustBalance > 0n && this.pendingTxCount > 0) {
           exports.logger.warn(`there are pending transactions for a long time, pendingTxCount = ${this.pendingTxCount}, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
-          await this.uninitWallet();
-          exports.logger.info(`uninitWallet done, start to reinitialize the wallet!`);
-          await this.initWallet(this.storeCallback, this.state, this.storeInterval);
-          exports.logger.info(`reinitWallet done!`);
+          await this.reInitWallet();
         } else {
           exports.logger.info(`there are pending transactions, pendingTxCount = ${this.pendingTxCount}, maybe wallet is submitting transaction, skip the backup of wallet for now! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
         }
@@ -162995,6 +162992,13 @@ var MidnightWalletSDK = class {
       exports.logger.error(`submitTx failed: ${error4 instanceof Error ? error4.message : String(error4)}, pendingTxCount = ${this.pendingTxCount}`);
       throw error4;
     }
+  }
+  async reInitWallet() {
+    exports.logger.info(`force reinitialization of wallet is triggered,  maybe due to wallet abnormality or pending transactions for a long time! this.dustBalance = ${this.dustBalance}, pendingTxCount = ${this.pendingTxCount}`);
+    await this.uninitWallet();
+    exports.logger.info(`uninitWallet done, start to reinitialize the wallet!`);
+    await this.initWallet(this.storeCallback, this.state, this.storeInterval);
+    exports.logger.info(`reinitWallet done!`);
   }
   async getBalances() {
     assert8__default.default(this.walletObj, "walletObj is not initialized!");

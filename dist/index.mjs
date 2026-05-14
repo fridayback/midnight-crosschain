@@ -298,12 +298,9 @@ var MidnightWalletSDK = class {
         }
         this.lastStateSaveTime = Date.now();
       } else {
-        if (Date.now() - this.lastStateSaveTime > this.forceReInitTime) {
+        if (Date.now() - this.lastStateSaveTime > this.forceReInitTime || dustb == 0n && this.dustBalance > 0n && this.pendingTxCount > 0) {
           logger.warn(`there are pending transactions for a long time, pendingTxCount = ${this.pendingTxCount}, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
-          await this.uninitWallet();
-          logger.info(`uninitWallet done, start to reinitialize the wallet!`);
-          await this.initWallet(this.storeCallback, this.state, this.storeInterval);
-          logger.info(`reinitWallet done!`);
+          await this.reInitWallet();
         } else {
           logger.info(`there are pending transactions, pendingTxCount = ${this.pendingTxCount}, maybe wallet is submitting transaction, skip the backup of wallet for now! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
         }
@@ -416,6 +413,13 @@ var MidnightWalletSDK = class {
       logger.error(`submitTx failed: ${error instanceof Error ? error.message : String(error)}, pendingTxCount = ${this.pendingTxCount}`);
       throw error;
     }
+  }
+  async reInitWallet() {
+    logger.info(`force reinitialization of wallet is triggered,  maybe due to wallet abnormality or pending transactions for a long time! this.dustBalance = ${this.dustBalance}, pendingTxCount = ${this.pendingTxCount}`);
+    await this.uninitWallet();
+    logger.info(`uninitWallet done, start to reinitialize the wallet!`);
+    await this.initWallet(this.storeCallback, this.state, this.storeInterval);
+    logger.info(`reinitWallet done!`);
   }
   async getBalances() {
     assert3(this.walletObj, "walletObj is not initialized!");

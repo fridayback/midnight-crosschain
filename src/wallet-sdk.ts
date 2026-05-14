@@ -378,12 +378,12 @@ export class MidnightWalletSDK {
                 // if there are pending transactions and it's been more than 30 minutes since the last time wallet state is saved, 
                 // which may indicate that there is something wrong with the wallet or the pending transactions, 
                 // try to reinitialize the wallet to see if it can recover from the abnormal state.
-                if(Date.now() - this.lastStateSaveTime > this.forceReInitTime){ 
+                // also, if there are pending transactions for a long time and the dust balance is 0 while the last saved dust balance is greater than 0,
+                //  which may indicate that the wallet state is out of sync with the actual wallet state on chain due to some abnormality of the wallet, 
+                // try to reinitialize the wallet to see if it can recover from the abnormal state.
+                if(Date.now() - this.lastStateSaveTime > this.forceReInitTime || (dustb == 0n && this.dustBalance > 0n && this.pendingTxCount > 0)) { 
                     logger.warn(`there are pending transactions for a long time, pendingTxCount = ${this.pendingTxCount}, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
-                    await this.uninitWallet();
-                    logger.info(`uninitWallet done, start to reinitialize the wallet!`);
-                    await this.initWallet(this.storeCallback!, this.state!, this.storeInterval);
-                    logger.info(`reinitWallet done!`);
+                    await this.reInitWallet();
                 }else{
                     logger.info(`there are pending transactions, pendingTxCount = ${this.pendingTxCount}, maybe wallet is submitting transaction, skip the backup of wallet for now! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
                 }
@@ -527,7 +527,13 @@ export class MidnightWalletSDK {
         }
     }
 
-
+    private async reInitWallet() {
+        logger.info(`force reinitialization of wallet is triggered,  maybe due to wallet abnormality or pending transactions for a long time! this.dustBalance = ${this.dustBalance}, pendingTxCount = ${this.pendingTxCount}`);
+        await this.uninitWallet();
+        logger.info(`uninitWallet done, start to reinitialize the wallet!`);
+        await this.initWallet(this.storeCallback!, this.state!, this.storeInterval);
+        logger.info(`reinitWallet done!`);
+    }
 
     async getBalances() {
         assert(this.walletObj, "walletObj is not initialized!");
@@ -541,12 +547,9 @@ export class MidnightWalletSDK {
         const shieldedBlance = curState.shielded.balances;
         const unshieldedBlance = curState.unshielded.balances;
 
-        // if(this.dustBalance > 0n && dustBalance == 0n){
+        // if(this.dustBalance > 0n && dustBalance == 0n && this.pendingTxCount > 0) {
         //     logger.warn(`dust balance abnormal, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustBalance}`);
-        //     await this.uninitWallet();
-        //     logger.info(`uninitWallet done, start to reinitialize the wallet!`);
-        //     await this.initWallet(this.storeCallback!, this.state!, this.storeInterval);
-        //     logger.info(`reinitWallet done!`);
+        //     await this.reInitWallet();
         //     throw new Error(`dust balance abnormal, maybe due to wallet abnormality, wallet has been reinitialized, please check the wallet status and try again later!`);
         // }
 
