@@ -237,6 +237,7 @@ export class MidnightWalletSDK {
     private storeTimer?: NodeJS.Timeout;
     private seed: Buffer;
     private dustBalance: bigint = 0n;
+    private availableDustUtxoCount: number = 0; // to record the count of available dust utxos, which is used to determine whether there are changes in dust utxos after a transaction is submitted, to prevent the wallet state from being saved when there are pending transactions that may cause the wallet state to be out of sync with the actual wallet state on chain.
     private state: FacadeSerializedState | null = null;
     private storeCallback?: (walletState: FacadeSerializedState) => Promise<void> = (WalletState: FacadeSerializedState) => Promise.resolve();
     private storeInterval: number = 600000; // default to 10 minutes
@@ -281,8 +282,8 @@ export class MidnightWalletSDK {
         
     }
 
-    static getDustBalanceFromDustState(strSerializedState: string): bigint {
-        return ledger.DustLocalState.deserialize( fromHex(strSerializedState) ).walletBalance(new Date());
+    static getDustBalanceFromDustState(strSerializedState: string): ledger.DustLocalState {
+        return ledger.DustLocalState.deserialize( fromHex(strSerializedState) );//.walletBalance(new Date());
     }
 
     setForceReInitTime(time: number) {
@@ -320,8 +321,10 @@ export class MidnightWalletSDK {
         // const ret = (await initFacadeWallet(this.seed, this.config, strSerializedState));
         if(strSerializedState){
             this.state = strSerializedState;
-            // this.dustBalance = MidnightWalletSDK.getDustBalanceFromDustState(JSON.parse(strSerializedState.dustWalletState).state);
-            //  logger.info(`initial dust balance from serialized state: ${this.dustBalance}`);
+            const dustLocalState = MidnightWalletSDK.getDustBalanceFromDustState(strSerializedState.dustWalletState);
+            this.dustBalance = dustLocalState.walletBalance(new Date());
+            this.availableDustUtxoCount = dustLocalState.utxos.length;
+            logger.debug(`initWallet with serialized state, deserialized dust balance: ${this.dustBalance}, available dust utxo count: ${this.availableDustUtxoCount}`);
         }
 
         const shieldedWallet = (configuration: DefaultConfiguration) => strSerializedState && strSerializedState.shieldedWalletState ?
@@ -364,28 +367,28 @@ export class MidnightWalletSDK {
                 // logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
                 if(this.storeCallback){
                     this.dustBalance = dustb;
+                    this.availableDustUtxoCount = state.dust.availableCoins.length;
                     this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
                         
                     await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
-                    logger.info(`wallet state saved, dustBalance = ${this.dustBalance}`);
+                    logger.info(`wallet state saved, dustBalance = ${this.dustBalance}, available dust utxo count = ${this.availableDustUtxoCount}`);
                 }else{
-                    logger.info(`store callback is not set, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}`);
+                    logger.info(`store callback is not set, ignore the backup of wallet state! this.dustBalance = ${this.dustBalance}, available dust utxo count = ${this.availableDustUtxoCount}`);
                 }
 
                 this.lastStateSaveTime = Date.now(); // update last state save time after wallet state is saved successfully or ignored due to store callback is not set.
                 
             }else{
-                // if there are pending transactions and it's been more than 30 minutes since the last time wallet state is saved, 
-                // which may indicate that there is something wrong with the wallet or the pending transactions, 
-                // try to reinitialize the wallet to see if it can recover from the abnormal state.
-                // also, if there are pending transactions for a long time and the dust balance is 0 while the last saved dust balance is greater than 0,
-                //  which may indicate that the wallet state is out of sync with the actual wallet state on chain due to some abnormality of the wallet, 
-                // try to reinitialize the wallet to see if it can recover from the abnormal state.
-                if(Date.now() - this.lastStateSaveTime > this.forceReInitTime || (dustb == 0n && this.dustBalance > 0n && this.pendingTxCount > 0)) { 
-                    logger.warn(`there are pending transactions for a long time, pendingTxCount = ${this.pendingTxCount}, maybe due to wallet abnormality, reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+                // if there are pending transactions and it's been more than 30 minutes since the last time wallet state is saved or the count of available dust utxos is less than the pending transaction count 
+                // (which may indicate that there are pending transactions that have not been included in a block for a long time and the wallet state has not been updated for a long time due to the pending
+                //  transactions, and the wallet state may be out of sync with the actual wallet state on chain, 
+                // which may cause the wallet to be stuck in the state of having pending transactions and never get fully synced, 
+                // so we force reinitialize the wallet to see if it can recover from the abnormal state),
+                if(Date.now() - this.lastStateSaveTime > this.forceReInitTime || (this.availableDustUtxoCount < this.pendingTxCount)) { 
+                    logger.warn(`there are pending transactions for a long time,  reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}, pendingTxCount = ${this.pendingTxCount}, availableDustUtxoCount = ${this.availableDustUtxoCount}`);
                     await this.reInitWallet();
                 }else{
-                    logger.info(`there are pending transactions, pendingTxCount = ${this.pendingTxCount}, maybe wallet is submitting transaction, skip the backup of wallet for now! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
+                    logger.info(`there are pending transactions, pendingTxCount = ${this.pendingTxCount}, availableDustUtxoCount = ${this.availableDustUtxoCount}, skip saving wallet state to prevent the wallet state from being out of sync with the actual wallet state on chain! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}`);
                 }
             }
             
@@ -402,11 +405,13 @@ export class MidnightWalletSDK {
         const state = await waitForFullySynced(this.walletObj, 0, this.storeCallback);
         if(this.storeCallback){
             this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
+            this.availableDustUtxoCount = state.dust.availableCoins.length;
+            this.dustBalance = state.dust.balance(new Date());
             await this.storeCallback?.({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
-            logger.info(`wallet state saved for the first time after initialization, dustBalance = ${this.dustBalance}`);
+            logger.info(`wallet state saved for the first time after initialization, dustBalance = ${this.dustBalance}, available dust utxo count = ${this.availableDustUtxoCount}`);
             this.lastStateSaveTime = Date.now(); // update last state save time after wallet state is saved successfully for the first time after initialization.
         }else{
-            logger.info(`store callback is not set, ignore the first time backup of wallet state after initialization! this.dustBalance = ${this.dustBalance}`);
+            logger.info(`store callback is not set, ignore the first time backup of wallet state after initialization! this.dustBalance = ${this.dustBalance}, available dust utxo count = ${this.availableDustUtxoCount}`);
         }
 
         this.concurrency = state.dust.availableCoins.length;
@@ -528,7 +533,7 @@ export class MidnightWalletSDK {
     }
 
     private async reInitWallet() {
-        logger.info(`force reinitialization of wallet is triggered,  maybe due to wallet abnormality or pending transactions for a long time! this.dustBalance = ${this.dustBalance}, pendingTxCount = ${this.pendingTxCount}`);
+        logger.info(`force reinitialization of wallet is triggered,  maybe due to wallet abnormality or pending transactions for a long time! this.dustBalance = ${this.dustBalance}, availableDustUtxoCount = ${this.availableDustUtxoCount}, pendingTxCount = ${this.pendingTxCount}`);
         await this.uninitWallet();
         logger.info(`uninitWallet done, start to reinitialize the wallet!`);
         await this.initWallet(this.storeCallback!, this.state!, this.storeInterval);

@@ -61,6 +61,7 @@ declare class MidnightWalletSDK {
     private storeTimer?;
     private seed;
     private dustBalance;
+    private availableDustUtxoCount;
     private state;
     private storeCallback?;
     private storeInterval;
@@ -70,7 +71,7 @@ declare class MidnightWalletSDK {
     private lastStateSaveTime;
     private forceReInitTime;
     constructor(config: Configuration, strSeed: string, submitTimeout?: number, forceReInitTime?: number);
-    static getDustBalanceFromDustState(strSerializedState: string): bigint;
+    static getDustBalanceFromDustState(strSerializedState: string): ledger.DustLocalState;
     setForceReInitTime(time: number): void;
     get walletForceReInitTime(): number;
     initWallet(store: WalletStore, strSerializedState?: FacadeSerializedState, saveInterval?: number): Promise<void>;
