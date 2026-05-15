@@ -264,7 +264,7 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     this.storeInterval = saveInterval;
     if (strSerializedState) {
       this.state = strSerializedState;
-      const dustLocalState = _MidnightWalletSDK.getDustBalanceFromDustState(strSerializedState.dustWalletState);
+      const dustLocalState = _MidnightWalletSDK.getDustBalanceFromDustState(JSON.parse(strSerializedState.dustWalletState).state);
       this.dustBalance = dustLocalState.walletBalance(/* @__PURE__ */ new Date());
       this.availableDustUtxoCount = dustLocalState.utxos.length;
       logger.debug(`initWallet with serialized state, deserialized dust balance: ${this.dustBalance}, available dust utxo count: ${this.availableDustUtxoCount}`);

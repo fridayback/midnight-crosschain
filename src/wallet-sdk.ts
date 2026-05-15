@@ -321,7 +321,7 @@ export class MidnightWalletSDK {
         // const ret = (await initFacadeWallet(this.seed, this.config, strSerializedState));
         if(strSerializedState){
             this.state = strSerializedState;
-            const dustLocalState = MidnightWalletSDK.getDustBalanceFromDustState(strSerializedState.dustWalletState);
+            const dustLocalState = MidnightWalletSDK.getDustBalanceFromDustState(JSON.parse(strSerializedState.dustWalletState).state);
             this.dustBalance = dustLocalState.walletBalance(new Date());
             this.availableDustUtxoCount = dustLocalState.utxos.length;
             logger.debug(`initWallet with serialized state, deserialized dust balance: ${this.dustBalance}, available dust utxo count: ${this.availableDustUtxoCount}`);
