@@ -163033,9 +163033,20 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
     }
     if (true === this.bActiveFlag) {
       this.bActiveFlag = false;
-      await this.walletObj?.stop();
+      exports.logger.info("try to stop wallet...");
+      let p = this.walletObj?.stop();
+      Promise.race([
+        p,
+        wallet_timeout(60 * 1e3, "Wallet stop timed out")
+        // set timeout for wallet stop to prevent hanging
+      ]).then(() => {
+        exports.logger.info("wallet stopped successfully!");
+      }).catch((error4) => {
+        exports.logger.error(`Failed to stop wallet: ${error4 instanceof Error ? error4.message : String(error4)}`);
+        exports.logger.error("Exiting process to prevent wallet from being in an inconsistent state.");
+        process.exit(1);
+      });
     }
-    exports.logger.info("...wallet close done!");
   }
   getWalletInstance() {
     return this.walletObj;

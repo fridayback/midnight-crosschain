@@ -21,6 +21,7 @@ import * as Rx from 'rxjs';
 import { ShieldedAddress, ShieldedCoinPublicKey, ShieldedEncryptionPublicKey, UnshieldedAddress, DustAddress } from "@midnight-ntwrk/wallet-sdk-address-format"
 import assert from 'node:assert';
 import { type UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
+import { log } from 'node:console';
 
 
 export type Configuration = DefaultConfiguration;//ShieldedConfiguration & DustConfiguration & { indexerUrl: string };
@@ -587,10 +588,21 @@ export class MidnightWalletSDK {
 
         if (true === this.bActiveFlag) {
             this.bActiveFlag = false;
-            await this.walletObj?.stop();
+            logger.info("try to stop wallet...");
+            let p = this.walletObj?.stop();
+            Promise.race([
+                p!,
+                wallet_timeout(60 * 1000, 'Wallet stop timed out') // set timeout for wallet stop to prevent hanging
+            ]).then(() => {
+                logger.info("wallet stopped successfully!");
+            }).catch((error) => {
+                logger.error(`Failed to stop wallet: ${error instanceof Error ? error.message : String(error)}`);
+                logger.error("Exiting process to prevent wallet from being in an inconsistent state.");
+                process.exit(1); // exit the process if wallet stop failed, to prevent the wallet from being in an inconsistent state.
+            });
         }
         
-        logger.info("...wallet close done!");
+        // logger.info("...wallet close done!");
     }
 
     getWalletInstance() {
