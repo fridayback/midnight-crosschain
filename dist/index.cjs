@@ -162884,7 +162884,7 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
         }
         this.lastStateSaveTime = Date.now();
       } else {
-        if (Date.now() - this.lastStateSaveTime > this.forceReInitTime || this.availableDustUtxoCount < this.pendingTxCount) {
+        if (Date.now() - this.lastStateSaveTime > this.forceReInitTime && this.availableDustUtxoCount < this.pendingTxCount) {
           exports.logger.warn(`there are pending transactions for a long time,  reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}, pendingTxCount = ${this.pendingTxCount}, availableDustUtxoCount = ${this.availableDustUtxoCount}`);
           await this.reInitWallet();
         } else {

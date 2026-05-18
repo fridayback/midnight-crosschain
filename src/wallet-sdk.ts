@@ -379,12 +379,10 @@ export class MidnightWalletSDK {
                 this.lastStateSaveTime = Date.now(); // update last state save time after wallet state is saved successfully or ignored due to store callback is not set.
                 
             }else{
-                // if there are pending transactions and it's been more than 30 minutes since the last time wallet state is saved or the count of available dust utxos is less than the pending transaction count 
-                // (which may indicate that there are pending transactions that have not been included in a block for a long time and the wallet state has not been updated for a long time due to the pending
-                //  transactions, and the wallet state may be out of sync with the actual wallet state on chain, 
-                // which may cause the wallet to be stuck in the state of having pending transactions and never get fully synced, 
-                // so we force reinitialize the wallet to see if it can recover from the abnormal state),
-                if(Date.now() - this.lastStateSaveTime > this.forceReInitTime || (this.availableDustUtxoCount < this.pendingTxCount)) { 
+                // if there are pending transactions and it's been more than 30 minutes since the last time wallet state is saved and the count of available dust utxos is less than the pending transaction count, 
+                // which may indicate that there are pending transactions for a long time and the wallet state may be out of sync with the actual wallet state on chain,
+                //  try to reinitialize the wallet to see if it can recover from the abnormal state.
+                if((Date.now() - this.lastStateSaveTime > this.forceReInitTime) && (this.availableDustUtxoCount < this.pendingTxCount)) { 
                     logger.warn(`there are pending transactions for a long time,  reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}, pendingTxCount = ${this.pendingTxCount}, availableDustUtxoCount = ${this.availableDustUtxoCount}`);
                     await this.reInitWallet();
                 }else{
