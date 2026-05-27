@@ -1165,14 +1165,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('voteProposal',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 581 char 1',
+                                     'crosschain.compact line 582 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(proposalId_0) === 'bigint' && proposalId_0 >= 0n && proposalId_0 <= 4294967295n)) {
           __compactRuntime.typeError('voteProposal',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 581 char 1',
+                                     'crosschain.compact line 582 char 1',
                                      'Uint<0..4294967296>',
                                      proposalId_0)
         }
@@ -1201,14 +1201,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('executeProposal',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 590 char 1',
+                                     'crosschain.compact line 591 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(proposalId_0) === 'bigint' && proposalId_0 >= 0n && proposalId_0 <= 4294967295n)) {
           __compactRuntime.typeError('executeProposal',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 590 char 1',
+                                     'crosschain.compact line 591 char 1',
                                      'Uint<0..4294967296>',
                                      proposalId_0)
         }
@@ -1237,14 +1237,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('removeExpiredHisTxs',
                                      'argument 1 (as invoked from Typescript)',
-                                     'crosschain.compact line 624 char 1',
+                                     'crosschain.compact line 626 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(Array.isArray(txs_0) && txs_0.length === 20 && txs_0.every((t) => t.buffer instanceof ArrayBuffer && t.BYTES_PER_ELEMENT === 1 && t.length === 32))) {
           __compactRuntime.typeError('removeExpiredHisTxs',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'crosschain.compact line 624 char 1',
+                                     'crosschain.compact line 626 char 1',
                                      'Vector<20, Bytes<32>>',
                                      txs_0)
         }
@@ -3277,7 +3277,9 @@ export class Contract {
     this._sendUnshielded_0(context,
                            partialProofData,
                            token_0,
-                           amount_0,
+                           (__compactRuntime.assert(amount_0 >= fee_0,
+                                                    'result of subtraction would be negative'),
+                            amount_0 - fee_0),
                            this._right_0(toAddr_0));
     return [];
   }
@@ -3341,7 +3343,9 @@ export class Contract {
                                     throw new __compactRuntime.CompactError('crosschain.compact line 398 char 34: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                                   }
                                   return t1;
-                                })(amount_0),
+                                })((__compactRuntime.assert(amount_0 >= fee_0,
+                                                            'result of subtraction would be negative'),
+                                    amount_0 - fee_0)),
                                 this._right_0(toAddr_0));
     return [];
   }
@@ -4620,11 +4624,34 @@ export class Contract {
     return [];
   }
   _newProposal_0(context, partialProofData, newProposal_0) {
+    let tmp_0;
+    __compactRuntime.assert((tmp_0 = this._ownPublicKey_0(context,
+                                                          partialProofData),
+                             _descriptor_2.fromValue(__compactRuntime.queryLedgerState(context,
+                                                                                       partialProofData,
+                                                                                       [
+                                                                                        { dup: { n: 0 } },
+                                                                                        { idx: { cached: false,
+                                                                                                 pushPath: false,
+                                                                                                 path: [
+                                                                                                        { tag: 'value',
+                                                                                                          value: { value: _descriptor_15.toValue(1n),
+                                                                                                                   alignment: _descriptor_15.alignment() } },
+                                                                                                        { tag: 'value',
+                                                                                                          value: { value: _descriptor_15.toValue(0n),
+                                                                                                                   alignment: _descriptor_15.alignment() } }] } },
+                                                                                        { push: { storage: false,
+                                                                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_4.toValue(tmp_0),
+                                                                                                                                               alignment: _descriptor_4.alignment() }).encode() } },
+                                                                                        'member',
+                                                                                        { popeq: { cached: true,
+                                                                                                   result: undefined } }]).value)),
+                            'only admin can create proposal');
     __compactRuntime.assert(newProposal_0.pType !== 6
                             &&
                             newProposal_0.pType !== 3,
                             'ProposalType not supoorted');
-    const tmp_0 = 1n;
+    const tmp_1 = 1n;
     __compactRuntime.queryLedgerState(context,
                                       partialProofData,
                                       [
@@ -4638,14 +4665,14 @@ export class Contract {
                                                          value: { value: _descriptor_15.toValue(2n),
                                                                   alignment: _descriptor_15.alignment() } }] } },
                                        { addi: { immediate: parseInt(__compactRuntime.valueToBigInt(
-                                                              { value: _descriptor_12.toValue(tmp_0),
+                                                              { value: _descriptor_12.toValue(tmp_1),
                                                                 alignment: _descriptor_12.alignment() }
                                                                 .value
                                                             )) } },
                                        { ins: { cached: true, n: 2 } }]);
-    const tmp_1 = ((t1) => {
+    const tmp_2 = ((t1) => {
                     if (t1 > 4294967295n) {
-                      throw new __compactRuntime.CompactError('crosschain.compact line 575 char 20: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
+                      throw new __compactRuntime.CompactError('crosschain.compact line 576 char 20: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
                     }
                     return t1;
                   })(_descriptor_1.fromValue(__compactRuntime.queryLedgerState(context,
@@ -4676,16 +4703,16 @@ export class Contract {
                                                          value: { value: _descriptor_15.toValue(3n),
                                                                   alignment: _descriptor_15.alignment() } }] } },
                                        { push: { storage: false,
-                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_3.toValue(tmp_1),
+                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_3.toValue(tmp_2),
                                                                                               alignment: _descriptor_3.alignment() }).encode() } },
                                        { push: { storage: true,
                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_10.toValue(newProposal_0),
                                                                                               alignment: _descriptor_10.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } },
                                        { ins: { cached: true, n: 2 } }]);
-    const tmp_2 = ((t1) => {
+    const tmp_3 = ((t1) => {
                     if (t1 > 4294967295n) {
-                      throw new __compactRuntime.CompactError('crosschain.compact line 576 char 32: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
+                      throw new __compactRuntime.CompactError('crosschain.compact line 577 char 32: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
                     }
                     return t1;
                   })(_descriptor_1.fromValue(__compactRuntime.queryLedgerState(context,
@@ -4716,7 +4743,7 @@ export class Contract {
                                                          value: { value: _descriptor_15.toValue(5n),
                                                                   alignment: _descriptor_15.alignment() } }] } },
                                        { push: { storage: false,
-                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_3.toValue(tmp_2),
+                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_3.toValue(tmp_3),
                                                                                               alignment: _descriptor_3.alignment() }).encode() } },
                                        { push: { storage: true,
                                                  value: __compactRuntime.StateValue.newMap(
@@ -4728,7 +4755,7 @@ export class Contract {
                          partialProofData,
                          ((t1) => {
                            if (t1 > 4294967295n) {
-                             throw new __compactRuntime.CompactError('crosschain.compact line 577 char 16: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
+                             throw new __compactRuntime.CompactError('crosschain.compact line 578 char 16: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 4294967295');
                            }
                            return t1;
                          })(_descriptor_1.fromValue(__compactRuntime.queryLedgerState(context,
@@ -4792,7 +4819,33 @@ export class Contract {
                                                                                        { popeq: { cached: true,
                                                                                                   result: undefined } }]).value),
                             'proposal does not exist');
-    const tmp_1 = this._ownPublicKey_0(context, partialProofData);
+    let tmp_1;
+    __compactRuntime.assert((tmp_1 = this._ownPublicKey_0(context,
+                                                          partialProofData),
+                             _descriptor_2.fromValue(__compactRuntime.queryLedgerState(context,
+                                                                                       partialProofData,
+                                                                                       [
+                                                                                        { dup: { n: 0 } },
+                                                                                        { idx: { cached: false,
+                                                                                                 pushPath: false,
+                                                                                                 path: [
+                                                                                                        { tag: 'value',
+                                                                                                          value: { value: _descriptor_15.toValue(1n),
+                                                                                                                   alignment: _descriptor_15.alignment() } },
+                                                                                                        { tag: 'value',
+                                                                                                          value: { value: _descriptor_15.toValue(5n),
+                                                                                                                   alignment: _descriptor_15.alignment() } },
+                                                                                                        { tag: 'value',
+                                                                                                          value: { value: _descriptor_3.toValue(proposalId_0),
+                                                                                                                   alignment: _descriptor_3.alignment() } }] } },
+                                                                                        { push: { storage: false,
+                                                                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_4.toValue(tmp_1),
+                                                                                                                                               alignment: _descriptor_4.alignment() }).encode() } },
+                                                                                        'member',
+                                                                                        { popeq: { cached: true,
+                                                                                                   result: undefined } }]).value)),
+                            'already voted');
+    const tmp_2 = this._ownPublicKey_0(context, partialProofData);
     __compactRuntime.queryLedgerState(context,
                                       partialProofData,
                                       [
@@ -4809,7 +4862,7 @@ export class Contract {
                                                          value: { value: _descriptor_3.toValue(proposalId_0),
                                                                   alignment: _descriptor_3.alignment() } }] } },
                                        { push: { storage: false,
-                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_4.toValue(tmp_1),
+                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_4.toValue(tmp_2),
                                                                                               alignment: _descriptor_4.alignment() }).encode() } },
                                        { push: { storage: true,
                                                  value: __compactRuntime.StateValue.newNull().encode() } },
@@ -4818,6 +4871,47 @@ export class Contract {
     return [];
   }
   _executeProposal_0(context, partialProofData, proposalId_0) {
+    let tmp_0;
+    __compactRuntime.assert((tmp_0 = this._ownPublicKey_0(context,
+                                                          partialProofData),
+                             _descriptor_2.fromValue(__compactRuntime.queryLedgerState(context,
+                                                                                       partialProofData,
+                                                                                       [
+                                                                                        { dup: { n: 0 } },
+                                                                                        { idx: { cached: false,
+                                                                                                 pushPath: false,
+                                                                                                 path: [
+                                                                                                        { tag: 'value',
+                                                                                                          value: { value: _descriptor_15.toValue(1n),
+                                                                                                                   alignment: _descriptor_15.alignment() } },
+                                                                                                        { tag: 'value',
+                                                                                                          value: { value: _descriptor_15.toValue(0n),
+                                                                                                                   alignment: _descriptor_15.alignment() } }] } },
+                                                                                        { push: { storage: false,
+                                                                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_4.toValue(tmp_0),
+                                                                                                                                               alignment: _descriptor_4.alignment() }).encode() } },
+                                                                                        'member',
+                                                                                        { popeq: { cached: true,
+                                                                                                   result: undefined } }]).value))
+                            ||
+                            this._equal_23(_descriptor_4.fromValue(__compactRuntime.queryLedgerState(context,
+                                                                                                     partialProofData,
+                                                                                                     [
+                                                                                                      { dup: { n: 0 } },
+                                                                                                      { idx: { cached: false,
+                                                                                                               pushPath: false,
+                                                                                                               path: [
+                                                                                                                      { tag: 'value',
+                                                                                                                        value: { value: _descriptor_15.toValue(1n),
+                                                                                                                                 alignment: _descriptor_15.alignment() } },
+                                                                                                                      { tag: 'value',
+                                                                                                                        value: { value: _descriptor_15.toValue(12n),
+                                                                                                                                 alignment: _descriptor_15.alignment() } }] } },
+                                                                                                      { popeq: { cached: false,
+                                                                                                                 result: undefined } }]).value),
+                                           this._ownPublicKey_0(context,
+                                                                partialProofData)),
+                            'not authorized');
     __compactRuntime.assert(_descriptor_2.fromValue(__compactRuntime.queryLedgerState(context,
                                                                                       partialProofData,
                                                                                       [
@@ -4855,8 +4949,8 @@ export class Contract {
                                                                                               alignment: _descriptor_3.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } },
                                        { ins: { cached: true, n: 1 } }]);
-    let tmp_0;
-    const currentProposal_0 = (tmp_0 = _descriptor_3.fromValue(__compactRuntime.queryLedgerState(context,
+    let tmp_1;
+    const currentProposal_0 = (tmp_1 = _descriptor_3.fromValue(__compactRuntime.queryLedgerState(context,
                                                                                                  partialProofData,
                                                                                                  [
                                                                                                   { dup: { n: 0 } },
@@ -4888,7 +4982,7 @@ export class Contract {
                                                                                                     pushPath: false,
                                                                                                     path: [
                                                                                                            { tag: 'value',
-                                                                                                             value: { value: _descriptor_3.toValue(tmp_0),
+                                                                                                             value: { value: _descriptor_3.toValue(tmp_1),
                                                                                                                       alignment: _descriptor_3.alignment() } }] } },
                                                                                            { popeq: { cached: false,
                                                                                                       result: undefined } }]).value));
@@ -4913,7 +5007,7 @@ export class Contract {
                                         partialProofData,
                                         ((t1) => {
                                           if (t1 > 255n) {
-                                            throw new __compactRuntime.CompactError('crosschain.compact line 605 char 23: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
+                                            throw new __compactRuntime.CompactError('crosschain.compact line 607 char 23: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                                           }
                                           return t1;
                                         })(currentProposal_0.threshold));
@@ -4923,7 +5017,7 @@ export class Contract {
                                         partialProofData,
                                         ((t1) => {
                                           if (t1 > 255n) {
-                                            throw new __compactRuntime.CompactError('crosschain.compact line 607 char 21: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
+                                            throw new __compactRuntime.CompactError('crosschain.compact line 609 char 21: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                                           }
                                           return t1;
                                         })(currentProposal_0.threshold));
@@ -4980,7 +5074,7 @@ export class Contract {
                                                                                               alignment: _descriptor_3.alignment() }).encode() } },
                                        { rem: { cached: false } },
                                        { ins: { cached: true, n: 2 } }]);
-    const tmp_1 = 0n;
+    const tmp_2 = 0n;
     __compactRuntime.queryLedgerState(context,
                                       partialProofData,
                                       [
@@ -4994,52 +5088,14 @@ export class Contract {
                                                  value: __compactRuntime.StateValue.newCell({ value: _descriptor_15.toValue(4n),
                                                                                               alignment: _descriptor_15.alignment() }).encode() } },
                                        { push: { storage: true,
-                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_3.toValue(tmp_1),
+                                                 value: __compactRuntime.StateValue.newCell({ value: _descriptor_3.toValue(tmp_2),
                                                                                               alignment: _descriptor_3.alignment() }).encode() } },
                                        { ins: { cached: false, n: 1 } },
                                        { ins: { cached: true, n: 1 } }]);
-    if (currentProposal_0.pType === 1) {
-      __compactRuntime.queryLedgerState(context,
-                                        partialProofData,
-                                        [
-                                         { idx: { cached: false,
-                                                  pushPath: true,
-                                                  path: [
-                                                         { tag: 'value',
-                                                           value: { value: _descriptor_15.toValue(1n),
-                                                                    alignment: _descriptor_15.alignment() } }] } },
-                                         { push: { storage: false,
-                                                   value: __compactRuntime.StateValue.newCell({ value: _descriptor_15.toValue(3n),
-                                                                                                alignment: _descriptor_15.alignment() }).encode() } },
-                                         { push: { storage: true,
-                                                   value: __compactRuntime.StateValue.newMap(
-                                                            new __compactRuntime.StateMap()
-                                                          ).encode() } },
-                                         { ins: { cached: false, n: 1 } },
-                                         { ins: { cached: true, n: 1 } }]);
-      __compactRuntime.queryLedgerState(context,
-                                        partialProofData,
-                                        [
-                                         { idx: { cached: false,
-                                                  pushPath: true,
-                                                  path: [
-                                                         { tag: 'value',
-                                                           value: { value: _descriptor_15.toValue(1n),
-                                                                    alignment: _descriptor_15.alignment() } }] } },
-                                         { push: { storage: false,
-                                                   value: __compactRuntime.StateValue.newCell({ value: _descriptor_15.toValue(5n),
-                                                                                                alignment: _descriptor_15.alignment() }).encode() } },
-                                         { push: { storage: true,
-                                                   value: __compactRuntime.StateValue.newMap(
-                                                            new __compactRuntime.StateMap()
-                                                          ).encode() } },
-                                         { ins: { cached: false, n: 1 } },
-                                         { ins: { cached: true, n: 1 } }]);
-    }
     return [];
   }
   _removeExpiredHisTxs_0(context, partialProofData, txs_0) {
-    __compactRuntime.assert(this._equal_23(_descriptor_4.fromValue(__compactRuntime.queryLedgerState(context,
+    __compactRuntime.assert(this._equal_24(_descriptor_4.fromValue(__compactRuntime.queryLedgerState(context,
                                                                                                      partialProofData,
                                                                                                      [
                                                                                                       { dup: { n: 0 } },
@@ -5093,7 +5149,7 @@ export class Contract {
                              partialProofData,
                              ((t1) => {
                                if (t1 > 18446744073709551615n) {
-                                 throw new __compactRuntime.CompactError('crosschain.compact line 632 char 51: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
+                                 throw new __compactRuntime.CompactError('crosschain.compact line 634 char 51: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                                }
                                return t1;
                              })(_descriptor_1.fromValue(__compactRuntime.queryLedgerState(context,
@@ -5269,6 +5325,14 @@ export class Contract {
     return true;
   }
   _equal_23(x0, y0) {
+    {
+      let x1 = x0.bytes;
+      let y1 = y0.bytes;
+      if (!x1.every((x, i) => y1[i] === x)) { return false; }
+    }
+    return true;
+  }
+  _equal_24(x0, y0) {
     {
       let x1 = x0.bytes;
       let y1 = y0.bytes;

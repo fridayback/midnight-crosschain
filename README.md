@@ -3,7 +3,7 @@
 ## 1. install
 
 ```
-yarn add midnight-crosschain@https://github.com/fridayback/midnight-crosschain.git#0.8
+yarn add midnight-crosschain@https://github.com/fridayback/midnight-crosschain.git#0.22
 ```
 
 ## 2. How to use
