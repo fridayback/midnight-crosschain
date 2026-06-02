@@ -617,10 +617,10 @@ export circuit executeProposal(proposalId: Uint<32>): [] {
   proposalVoters.remove(disclose(proposalId));
   currentExcuteProposalId = 0;
   
-  // if(currentProposal.pType == ProposalType.RemoveAdmin){
-  //   proposals.resetToDefault();
-  //   proposalVoters.resetToDefault();
-  // }
+  if(currentProposal.pType == ProposalType.RemoveAdmin){
+    proposals.resetToDefault();
+    proposalVoters.resetToDefault();
+  }
 }
 
 export circuit removeExpiredHisTxs(txs: Vector<20,Bytes<32>>): []{
