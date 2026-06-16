@@ -34,7 +34,7 @@ strSerializedState?: FacadeSerializedState) => Promise<{
     dustSecretKey: ledger.DustSecretKey;
     unshieldedKeystore: UnshieldedKeystore;
 }>;
-declare const waitForFullySynced: (facade: WalletFacade, timeoutMs?: number, storeFn?: WalletStore | undefined) => Promise<FacadeState>;
+declare const waitForFullySynced: (facade: WalletFacade, storeFn?: WalletStore | undefined) => Promise<FacadeState>;
 declare class WalletSDKError extends Error {
     constructor(message: string);
 }

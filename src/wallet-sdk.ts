@@ -158,37 +158,18 @@ export const initFacadeWallet = async (
 };
 
 
-export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number = 0, storeFn: WalletStore | undefined = undefined): Promise<FacadeState> => {
+export const waitForFullySynced = async (facade: WalletFacade, storeFn: WalletStore | undefined = undefined): Promise<FacadeState> => {
     try {
         let timeCur = Date.now();
         const timeStart = timeCur;
         let state;
-        if(timeoutMs > 0) {
-            state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
-                // logger.debug(`[${new Date().toUTCString()}:] wallet is syncing...`);
-                logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex,", availableDustUtxoCount:", s.dust.availableCoins.length, ",isSynced", s.isSynced);
-
-                if(Date.now() - timeCur > 60_000 && storeFn) {
-                    // Store the wallet state periodically
-                    storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
-                    logger.debug('backup wallet state during sync, appliedIndex:', s.dust.progress.appliedIndex, ',highestRelevantWalletIndex:', s.dust.progress.highestRelevantWalletIndex,", availableDustUtxoCount:", s.dust.availableCoins.length,  ',isSynced', s.isSynced);
-                    timeCur = Date.now();
-                }
-                return s.isSynced;
-            }),Rx.timeout(timeoutMs)));
-       
-        }else {
-            state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
-                // logger.debug(`[${new Date().toUTCString()}:] wallet is syncing...`);
+        state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
                 logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex,", availableDustUtxoCount:", s.dust.availableCoins.length,  ",isSynced", s.isSynced);
-                if(Date.now() - timeCur > 60_000 && storeFn) {
-                    // Store the wallet state periodically
-                    storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
-                    logger.debug('backup wallet state during sync, appliedIndex:', s.dust.progress.appliedIndex, ',highestRelevantWalletIndex:', s.dust.progress.highestRelevantWalletIndex,", availableDustUtxoCount:", s.dust.availableCoins.length,  ',isSynced', s.isSynced);
-                    timeCur = Date.now();
-                }
                 return s.isSynced;
             })));
+        if(storeFn) {
+            await storeFn({ shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() });
+            logger.debug('backup wallet state during sync, appliedIndex:', state.dust.progress.appliedIndex, ',highestRelevantWalletIndex:', state.dust.progress.highestRelevantWalletIndex,", availableDustUtxoCount:", state.dust.availableCoins.length,  ',isSynced', state.isSynced);
         }
         logger.debug(`Wallet synced in ${(Date.now() - timeStart) / 1000} seconds`);
         return state!;
@@ -358,7 +339,7 @@ export class MidnightWalletSDK {
         this.walletObj = wallet;
 
         const callBack = async () => {
-            const state = await waitForFullySynced(this.walletObj!);
+            const state = await waitForFullySynced(this.walletObj!,this.storeCallback);
             const dustb = state.dust.balance(new Date());
             // if((this.dustBalance > 0n && dustb > 0n) || (this.dustBalance == 0n)){
             if(this.pendingTxCount <= 0) {
@@ -401,7 +382,7 @@ export class MidnightWalletSDK {
         if(this.storeTimer) {
             clearTimeout(this.storeTimer);
         }
-        const state = await waitForFullySynced(this.walletObj, 0, this.storeCallback);
+        const state = await waitForFullySynced(this.walletObj, this.storeCallback);
         if(this.storeCallback){
             this.state = { shieldedWalletState: state.shielded.serialize(), unshieldedWalletState: state.unshielded.serialize(), dustWalletState: state.dust.serialize() };
             this.availableDustUtxoCount = state.dust.availableCoins.length;
@@ -470,7 +451,7 @@ export class MidnightWalletSDK {
         if (this.isUnGenerating) return;
         this.isUnGenerating = true;
         assert(this.walletObj && this.shieldedSecretKeys && this.unshieldedKeystore && this.dustSecretKey, "wallet uninitialized");
-        const state = await waitForFullySynced(this.walletObj);
+        const state = await waitForFullySynced(this.walletObj, this.storeCallback);
 
         const nightUtxos = state.unshielded.availableCoins.filter(
             (coin) => coin.meta.registeredForDustGeneration === true && coin.utxo.type === ledger.nativeToken().raw,
