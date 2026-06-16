@@ -157,7 +157,7 @@ var waitForFullySynced = async (facade, timeoutMs = 0, storeFn = void 0) => {
     if (timeoutMs > 0) {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
         logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ", availableDustUtxoCount:", s.dust.availableCoins.length, ",isSynced", s.isSynced);
-        if (Date.now() - timeCur > 6e4 && storeFn) {
+        if (storeFn) {
           storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
           logger.debug("backup wallet state during sync, appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ", availableDustUtxoCount:", s.dust.availableCoins.length, ",isSynced", s.isSynced);
           timeCur = Date.now();
@@ -167,7 +167,7 @@ var waitForFullySynced = async (facade, timeoutMs = 0, storeFn = void 0) => {
     } else {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
         logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ", availableDustUtxoCount:", s.dust.availableCoins.length, ",isSynced", s.isSynced);
-        if (Date.now() - timeCur > 6e4 && storeFn) {
+        if (storeFn) {
           storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
           logger.debug("backup wallet state during sync, appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ", availableDustUtxoCount:", s.dust.availableCoins.length, ",isSynced", s.isSynced);
           timeCur = Date.now();

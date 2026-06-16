@@ -168,7 +168,7 @@ export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number
                 // logger.debug(`[${new Date().toUTCString()}:] wallet is syncing...`);
                 logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex,", availableDustUtxoCount:", s.dust.availableCoins.length, ",isSynced", s.isSynced);
 
-                if(Date.now() - timeCur > 60_000 && storeFn) {
+                if(storeFn) {
                     // Store the wallet state periodically
                     storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
                     logger.debug('backup wallet state during sync, appliedIndex:', s.dust.progress.appliedIndex, ',highestRelevantWalletIndex:', s.dust.progress.highestRelevantWalletIndex,", availableDustUtxoCount:", s.dust.availableCoins.length,  ',isSynced', s.isSynced);
@@ -181,7 +181,7 @@ export const waitForFullySynced = async (facade: WalletFacade, timeoutMs: number
             state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5_000),Rx.filter((s) => {
                 // logger.debug(`[${new Date().toUTCString()}:] wallet is syncing...`);
                 logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex,", availableDustUtxoCount:", s.dust.availableCoins.length,  ",isSynced", s.isSynced);
-                if(Date.now() - timeCur > 60_000 && storeFn) {
+                if(storeFn) {
                     // Store the wallet state periodically
                     storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
                     logger.debug('backup wallet state during sync, appliedIndex:', s.dust.progress.appliedIndex, ',highestRelevantWalletIndex:', s.dust.progress.highestRelevantWalletIndex,", availableDustUtxoCount:", s.dust.availableCoins.length,  ',isSynced', s.isSynced);
