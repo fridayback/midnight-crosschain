@@ -853,7 +853,7 @@ export class CrossChainApi {
   }
 
   async updateContractAuthority(newKey: SigningKey) {
-    // return await this.crossChainContract.contractMaintenanceTx.replaceAuthority(newKey);
+    return await this.crossChainContract.contractMaintenanceTx.replaceAuthority(newKey);
   }
 
   async upgradeContract(circuitId: CrossChainCircuits, newCircuitHex: string | undefined) {
