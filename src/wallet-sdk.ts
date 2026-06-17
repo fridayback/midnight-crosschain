@@ -383,7 +383,7 @@ export class MidnightWalletSDK {
                 // if there are pending transactions and it's been more than 30 minutes since the last time wallet state is saved and the count of available dust utxos is less than the pending transaction count, 
                 // which may indicate that there are pending transactions for a long time and the wallet state may be out of sync with the actual wallet state on chain,
                 //  try to reinitialize the wallet to see if it can recover from the abnormal state.
-                if((Date.now() - this.lastStateSaveTime > this.forceReInitTime) && (this.availableDustUtxoCount < this.pendingTxCount)) { 
+                if((Date.now() - this.lastStateSaveTime > this.forceReInitTime) && (this.availableDustUtxoCount < this.pendingTxCount) || (Date.now() - this.lastStateSaveTime > this.forceReInitTime*2)) { 
                     logger.warn(`there are pending transactions for a long time,  reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}, pendingTxCount = ${this.pendingTxCount}, availableDustUtxoCount = ${this.availableDustUtxoCount}`);
                     await this.reInitWallet();
                 }else{
