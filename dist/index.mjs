@@ -157,7 +157,7 @@ var waitForFullySynced = async (facade, timeoutMs = 0, storeFn = void 0) => {
     if (timeoutMs > 0) {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
         logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ", availableDustUtxoCount:", s.dust.availableCoins.length, ",isSynced", s.isSynced);
-        if (Date.now() - timeCur > 6e4 && storeFn) {
+        if (storeFn) {
           storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
           logger.debug("backup wallet state during sync, appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ", availableDustUtxoCount:", s.dust.availableCoins.length, ",isSynced", s.isSynced);
           timeCur = Date.now();
@@ -167,7 +167,7 @@ var waitForFullySynced = async (facade, timeoutMs = 0, storeFn = void 0) => {
     } else {
       state = await Rx.firstValueFrom(facade.state().pipe(Rx.throttleTime(5e3), Rx.filter((s) => {
         logger.debug("waitForFullySynced_sync_dust appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ", availableDustUtxoCount:", s.dust.availableCoins.length, ",isSynced", s.isSynced);
-        if (Date.now() - timeCur > 6e4 && storeFn) {
+        if (storeFn) {
           storeFn({ shieldedWalletState: s.shielded.serialize(), unshieldedWalletState: s.unshielded.serialize(), dustWalletState: s.dust.serialize() });
           logger.debug("backup wallet state during sync, appliedIndex:", s.dust.progress.appliedIndex, ",highestRelevantWalletIndex:", s.dust.progress.highestRelevantWalletIndex, ", availableDustUtxoCount:", s.dust.availableCoins.length, ",isSynced", s.isSynced);
           timeCur = Date.now();
@@ -305,7 +305,7 @@ var MidnightWalletSDK = class _MidnightWalletSDK {
         }
         this.lastStateSaveTime = Date.now();
       } else {
-        if (Date.now() - this.lastStateSaveTime > this.forceReInitTime && this.availableDustUtxoCount < this.pendingTxCount) {
+        if (Date.now() - this.lastStateSaveTime > this.forceReInitTime && this.availableDustUtxoCount < this.pendingTxCount || Date.now() - this.lastStateSaveTime > this.forceReInitTime * 2) {
           logger.warn(`there are pending transactions for a long time,  reinitialize the wallet! this.dustBalance = ${this.dustBalance}, synced dustbalance = ${dustb}, pendingTxCount = ${this.pendingTxCount}, availableDustUtxoCount = ${this.availableDustUtxoCount}`);
           await this.reInitWallet();
         } else {
@@ -8900,6 +8900,76 @@ var Contract = class {
         { ins: { cached: true, n: 1 } }
       ]
     );
+    if (currentProposal_0.pType === 1) {
+      __compactRuntime.queryLedgerState(
+        context,
+        partialProofData,
+        [
+          { idx: {
+            cached: false,
+            pushPath: true,
+            path: [
+              {
+                tag: "value",
+                value: {
+                  value: _descriptor_15.toValue(1n),
+                  alignment: _descriptor_15.alignment()
+                }
+              }
+            ]
+          } },
+          { push: {
+            storage: false,
+            value: __compactRuntime.StateValue.newCell({
+              value: _descriptor_15.toValue(3n),
+              alignment: _descriptor_15.alignment()
+            }).encode()
+          } },
+          { push: {
+            storage: true,
+            value: __compactRuntime.StateValue.newMap(
+              new __compactRuntime.StateMap()
+            ).encode()
+          } },
+          { ins: { cached: false, n: 1 } },
+          { ins: { cached: true, n: 1 } }
+        ]
+      );
+      __compactRuntime.queryLedgerState(
+        context,
+        partialProofData,
+        [
+          { idx: {
+            cached: false,
+            pushPath: true,
+            path: [
+              {
+                tag: "value",
+                value: {
+                  value: _descriptor_15.toValue(1n),
+                  alignment: _descriptor_15.alignment()
+                }
+              }
+            ]
+          } },
+          { push: {
+            storage: false,
+            value: __compactRuntime.StateValue.newCell({
+              value: _descriptor_15.toValue(5n),
+              alignment: _descriptor_15.alignment()
+            }).encode()
+          } },
+          { push: {
+            storage: true,
+            value: __compactRuntime.StateValue.newMap(
+              new __compactRuntime.StateMap()
+            ).encode()
+          } },
+          { ins: { cached: false, n: 1 } },
+          { ins: { cached: true, n: 1 } }
+        ]
+      );
+    }
     return [];
   }
   _removeExpiredHisTxs_0(context, partialProofData, txs_0) {
@@ -12830,6 +12900,7 @@ var CrossChainApi = class _CrossChainApi {
     return finalizedTxData;
   }
   async updateContractAuthority(newKey) {
+    return await this.crossChainContract.contractMaintenanceTx.replaceAuthority(newKey);
   }
   async upgradeContract(circuitId, newCircuitHex) {
     if (newCircuitHex) {
