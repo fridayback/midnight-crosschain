@@ -8,6 +8,7 @@ import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DefaultConfiguration, WalletFacade, CombinedSwapOutputs, FacadeState } from '@midnight-ntwrk/wallet-sdk-facade';
 import { UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer as Buffer$1 } from 'buffer';
+import { ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as _midnight_ntwrk_midnight_js_types from '@midnight-ntwrk/midnight-js-types';
 import { UnboundTransaction, MidnightProviders, WalletProvider, MidnightProvider } from '@midnight-ntwrk/midnight-js-types';
 import * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
@@ -119,6 +120,8 @@ declare class MidnightWalletSDK {
 declare const signTransactionIntents: (tx: {
     intents?: Map<number, any>;
 }, signFn: (payload: Uint8Array) => ledger.Signature, proofMarker: "proof" | "pre-proof") => void;
+declare const bech32ToUnShieldedAddress: (unshieldAddr: string) => UnshieldedAddress;
+declare const bech32ToShieldedAddress: (shieldAddr: string) => ShieldedAddress;
 
 type CrossChainPrivateState = {};
 declare const createPrivateState: (privateCounter: number) => CrossChainPrivateState;
@@ -668,4 +671,4 @@ declare class Semaphore {
     getMax(): number;
 }
 
-export { CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, Semaphore, WalletSDKError, type WalletStore, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, logger, pad, removeContractCircuit, setLogger, signTransactionIntents, sleep, upgradeContractCircuit, waitForFullySynced, wallet_timeout, witnesses };
+export { CompiledSimpleContract, type Config, type Configuration, CrossChainApi, type CrossChainCircuits, type CrossChainContract, type CrossChainPrivateState, CrossChainPrivateStateId, type CrossChainProviders, type DeployedCrossChainContract, type FacadeSerializedState, MidnightWalletSDK, Semaphore, WalletSDKError, type WalletStore, ZKConfig, bech32ToShieldedAddress, bech32ToUnShieldedAddress, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, logger, pad, removeContractCircuit, setLogger, signTransactionIntents, sleep, upgradeContractCircuit, waitForFullySynced, wallet_timeout, witnesses };

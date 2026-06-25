@@ -18,7 +18,7 @@ import {
 } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { Buffer } from 'buffer';
 import * as Rx from 'rxjs';
-import { ShieldedAddress, ShieldedCoinPublicKey, ShieldedEncryptionPublicKey, UnshieldedAddress, DustAddress } from "@midnight-ntwrk/wallet-sdk-address-format"
+import { ShieldedAddress, ShieldedCoinPublicKey, ShieldedEncryptionPublicKey, UnshieldedAddress, DustAddress, MidnightBech32m } from "@midnight-ntwrk/wallet-sdk-address-format"
 import assert from 'node:assert';
 import { type UnboundTransaction } from '@midnight-ntwrk/midnight-js-types';
 import { log } from 'node:console';
@@ -752,6 +752,20 @@ export const signTransactionIntents = (
     }
     tx.intents = intents;
 };
+
+export const bech32ToUnShieldedAddress = (unshieldAddr: string): UnshieldedAddress => {
+   const tmp1 = MidnightBech32m.parse(unshieldAddr);
+   const tmp2 = UnshieldedAddress.codec.decode(tmp1.network, tmp1);
+
+   return tmp2;
+}
+
+export const bech32ToShieldedAddress = (shieldAddr: string): ShieldedAddress => {
+    const tmp1 = MidnightBech32m.parse(shieldAddr);
+    const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
+
+    return tmp2;
+}
 
 // {
 

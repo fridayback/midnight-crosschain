@@ -178412,6 +178412,16 @@ var signTransactionIntents = (tx, signFn, proofMarker) => {
   }
   tx.intents = intents;
 };
+var bech32ToUnShieldedAddress = (unshieldAddr) => {
+  const tmp1 = MidnightBech32m.parse(unshieldAddr);
+  const tmp2 = UnshieldedAddress.codec.decode(tmp1.network, tmp1);
+  return tmp2;
+};
+var bech32ToShieldedAddress = (shieldAddr) => {
+  const tmp1 = MidnightBech32m.parse(shieldAddr);
+  const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
+  return tmp2;
+};
 
 // src/witnesses.ts
 var createPrivateState = (privateCounter) => ({});
@@ -197994,6 +198004,8 @@ exports.MidnightWalletSDK = MidnightWalletSDK;
 exports.Semaphore = Semaphore2;
 exports.WalletSDKError = WalletSDKError;
 exports.ZKConfig = ZKConfig;
+exports.bech32ToShieldedAddress = bech32ToShieldedAddress;
+exports.bech32ToUnShieldedAddress = bech32ToUnShieldedAddress;
 exports.configuration = configuration;
 exports.createCrossChainProviders = createCrossChainProviders;
 exports.createInitialPrivateState = createInitialPrivateState;

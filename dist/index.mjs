@@ -569,6 +569,16 @@ var signTransactionIntents = (tx, signFn, proofMarker) => {
   }
   tx.intents = intents;
 };
+var bech32ToUnShieldedAddress = (unshieldAddr) => {
+  const tmp1 = MidnightBech32m.parse(unshieldAddr);
+  const tmp2 = UnshieldedAddress.codec.decode(tmp1.network, tmp1);
+  return tmp2;
+};
+var bech32ToShieldedAddress = (shieldAddr) => {
+  const tmp1 = MidnightBech32m.parse(shieldAddr);
+  const tmp2 = ShieldedAddress.codec.decode(tmp1.network, tmp1);
+  return tmp2;
+};
 
 // src/witnesses.ts
 var createPrivateState = (privateCounter) => ({});
@@ -12782,6 +12792,6 @@ var getContractState = async (config, contractAddress) => {
   return state;
 };
 
-export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, Semaphore, WalletSDKError, ZKConfig, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, logger, pad, removeContractCircuit, setLogger, signTransactionIntents, sleep, upgradeContractCircuit, waitForFullySynced, wallet_timeout, witnesses };
+export { CompiledSimpleContract, CrossChainApi, CrossChainPrivateStateId, MidnightWalletSDK, Semaphore, WalletSDKError, ZKConfig, bech32ToShieldedAddress, bech32ToUnShieldedAddress, configuration, createCrossChainProviders, createInitialPrivateState, createPrivateState, createWalletAndMidnightProvider, createWalletKeys, crosschainContractInstance, genSigningKey, getCoinPublicKeyFromShieldAddress, getContractState, getEncryptionPublicKeyFromShieldAddress, getUnshieldAddressFromUserAddress, getUserAddressFromUnshieldAddress, initFacadeWallet, initNetwork, logger, pad, removeContractCircuit, setLogger, signTransactionIntents, sleep, upgradeContractCircuit, waitForFullySynced, wallet_timeout, witnesses };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map
