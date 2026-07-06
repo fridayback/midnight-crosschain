@@ -12122,12 +12122,6 @@ var ZKConfig = {
   privateStateStoreName: "crosschain-private-state",
   zkConfigPath: path2.resolve(currentDir, "managed", "crosschain")
 };
-var fromHexWithOrNoPrefix = (hex) => {
-  if (hex.startsWith("0x")) {
-    return fromHex(hex.slice(2));
-  }
-  return fromHex(hex);
-};
 function pad(s, n) {
   const encoder = new TextEncoder();
   const utf8Bytes = encoder.encode(s);
@@ -12646,7 +12640,7 @@ var CrossChainApi = class _CrossChainApi {
     proposal.addr = addr_0;
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
-  async updateFeeReceiver(addr) {
+  async updateFeeReceiverProposal(addr) {
     const addr_0 = { bytes: getUserAddressFromUnshieldAddress(addr) };
     let proposal = this.defaultProsal();
     proposal.pType = ProposalType.UpdateFeeReceiver;
@@ -12670,11 +12664,11 @@ var CrossChainApi = class _CrossChainApi {
   defaultProsal() {
     return {
       pType: ProposalType.UpdateAdminThreshold,
-      addr: { bytes: fromHexWithOrNoPrefix("") },
-      addrUnshielded: { bytes: fromHexWithOrNoPrefix("") },
+      addr: { bytes: new Uint8Array(32).fill(0) },
+      addrUnshielded: { bytes: new Uint8Array(32).fill(0) },
       threshold: BigInt(0),
-      feeConfig: { fee: BigInt(0), chainId: BigInt(0) },
-      smgPubkeys: new Array(this.MaxSmgSignators).fill({ x: 0n, y: 0n })
+      feeConfig: { chainId: BigInt(0), fee: BigInt(0) },
+      smgPubkeys: new Array(this.MaxSmgSignators).fill({ bytes: new Uint8Array(32).fill(0) })
     };
   }
   async updateSMGPKThresholdProposal(threshold) {
@@ -12689,7 +12683,7 @@ var CrossChainApi = class _CrossChainApi {
     const fee_0 = BigInt(fee);
     let proposal = this.defaultProsal();
     proposal.pType = ProposalType.UpdateFeeCommonConfig;
-    proposal.feeConfig = { fee: fee_0, chainId: chainId_0 };
+    proposal.feeConfig = { chainId: chainId_0, fee: fee_0 };
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
   // //////////////////////////////////////////////////////////////////////////////////////////

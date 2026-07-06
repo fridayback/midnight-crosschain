@@ -629,7 +629,7 @@ declare class CrossChainApi {
     newProposal(proposal: Proposal): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     addAdminProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     removeAdminProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
-    updateFeeReceiver(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    updateFeeReceiverProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     updateTokenManagerProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     updateAdminThresholdProposal(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     defaultProsal(): Proposal;

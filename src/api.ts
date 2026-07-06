@@ -772,7 +772,7 @@ export class CrossChainApi {
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
 
-  async updateFeeReceiver(addr: string) {
+  async updateFeeReceiverProposal(addr: string) {
     const addr_0 = { bytes: getUserAddressFromUnshieldAddress(addr) };
     let proposal = this.defaultProsal();
     proposal.pType = CrossChain.ProposalType.UpdateFeeReceiver;
@@ -802,11 +802,11 @@ export class CrossChainApi {
   defaultProsal(): CrossChain.Proposal {
     return {
       pType: CrossChain.ProposalType.UpdateAdminThreshold,
-      addr: { bytes: fromHexWithOrNoPrefix("") },
-      addrUnshielded: { bytes: fromHexWithOrNoPrefix("") },
+      addr: { bytes: new Uint8Array(32).fill(0) } as CrossChain.ZswapCoinPublicKey,
+      addrUnshielded: { bytes: new Uint8Array(32).fill(0) } as CrossChain.UserAddress,
       threshold: BigInt(0),
-      feeConfig: { fee: BigInt(0), chainId: BigInt(0) },
-      smgPubkeys: new Array(this.MaxSmgSignators).fill({ x: 0n, y: 0n })
+      feeConfig: { chainId: BigInt(0), fee: BigInt(0) } as CrossChain.FeeConfig,
+      smgPubkeys: new Array(this.MaxSmgSignators).fill({ bytes: new Uint8Array(32).fill(0) } as CrossChain.ZswapCoinPublicKey),
     };
   }
   async updateSMGPKThresholdProposal(threshold: number | string | bigint) {
@@ -824,7 +824,7 @@ export class CrossChainApi {
 
     let proposal = this.defaultProsal();
     proposal.pType = CrossChain.ProposalType.UpdateFeeCommonConfig;
-    proposal.feeConfig = { fee: fee_0, chainId: chainId_0 };
+    proposal.feeConfig = { chainId: chainId_0, fee: fee_0 };
 
     return await this.crossChainContract.callTx.newProposal(proposal);
   }

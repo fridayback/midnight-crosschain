@@ -469,6 +469,7 @@ export circuit transferOwner(newOwner: ZswapCoinPublicKey): [] {
 export circuit acceptOwner(): [] {
   assert(pendingOwner == ownPublicKey(), "only pending owner can accept ownership");
   owner = pendingOwner;
+  pendingOwner = default<ZswapCoinPublicKey>();
 }
 
 export circuit setFeeReceiver(newFeeReceiver: UserAddress):[]{
