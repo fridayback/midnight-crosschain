@@ -220,7 +220,7 @@ export class CrossChainApi {
     const publicDataProvider = indexerPublicDataProvider(config.indexer, config.indexerWS);
 
     const zkConfigProvider = new NodeZkConfigProvider<CrossChainCircuits>(ZKConfig.zkConfigPath);
-    
+
     const proofProvider = httpClientProofProvider(config.proofServer, zkConfigProvider);
 
     let walletAndMidnightProvider: WalletProvider & MidnightProvider = {
@@ -799,7 +799,7 @@ export class CrossChainApi {
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
 
-    async setSmgPksksProposal(voters: string[]): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">> {
+  async setSmgPksksProposal(voters: string[]): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">> {
     assert(voters.length > 0, 'voters must not be empty');
     const voters_0 = voters.map(voter => {
       return { bytes: getCoinPublicKeyFromShieldAddress(voter) }
