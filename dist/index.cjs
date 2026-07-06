@@ -197841,6 +197841,20 @@ var CrossChainApi = class _CrossChainApi {
     proposal6.threshold = threshold_0;
     return await this.crossChainContract.callTx.newProposal(proposal6);
   }
+  async setSmgPksksProposal(voters) {
+    assert8__default.default(voters.length > 0, "voters must not be empty");
+    const voters_0 = voters.map((voter) => {
+      return { bytes: getCoinPublicKeyFromShieldAddress(voter) };
+    });
+    for (let index = voters_0.length; index < MAX_SIGNER_COUNT; index++) {
+      voters_0.push({ bytes: Buffer.alloc(32) });
+    }
+    let proposal6 = this.defaultProsal();
+    proposal6.pType = ProposalType.SetSmgPKS;
+    proposal6.smgPubkeys = voters_0;
+    const finalizedTxData = await this.crossChainContract.callTx.newProposal(proposal6);
+    return finalizedTxData;
+  }
   defaultProsal() {
     return {
       pType: ProposalType.UpdateAdminThreshold,

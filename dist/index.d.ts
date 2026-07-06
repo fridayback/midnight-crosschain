@@ -632,6 +632,7 @@ declare class CrossChainApi {
     updateFeeReceiverProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     updateTokenManagerProposal(addr: string): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     updateAdminThresholdProposal(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
+    setSmgPksksProposal(voters: string[]): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     defaultProsal(): Proposal;
     updateSMGPKThresholdProposal(threshold: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;
     updateFeeCommonConfigProposal(chainId: number | string | bigint, fee: number | string | bigint): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">>;

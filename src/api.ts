@@ -799,6 +799,23 @@ export class CrossChainApi {
     return await this.crossChainContract.callTx.newProposal(proposal);
   }
 
+    async setSmgPksksProposal(voters: string[]): Promise<FinalizedCallTxData<CrossChainContract, "newProposal">> {
+    assert(voters.length > 0, 'voters must not be empty');
+    const voters_0 = voters.map(voter => {
+      return { bytes: getCoinPublicKeyFromShieldAddress(voter) }
+      // return { bytes: fromHexWithOrNoPrefix(parseCoinPublicKeyToHex(voter, getZswapNetworkId())) } 
+    });
+    for (let index = voters_0.length; index < MAX_SIGNER_COUNT; index++) {
+      voters_0.push({ bytes: Buffer.alloc(32) });
+    }
+
+    let proposal = this.defaultProsal();
+    proposal.pType = CrossChain.ProposalType.SetSmgPKS;
+    proposal.smgPubkeys = voters_0;
+    const finalizedTxData = await this.crossChainContract.callTx.newProposal(proposal);
+    return finalizedTxData;
+  }
+
   defaultProsal(): CrossChain.Proposal {
     return {
       pType: CrossChain.ProposalType.UpdateAdminThreshold,
